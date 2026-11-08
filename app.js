@@ -1,0 +1,2400 @@
+import { queryItems, insertItem, removeItem } from "/js/wix/items.js";
+import { wixRequest } from "/js/wix/client.js";
+import { subscribeMember, getMemberState, login as memberLogin, register as memberRegister, verifyEmail as memberVerify, logout as memberLogout } from "/js/wix/member-store.js";
+
+const COUNTRY = {"AE": "United Arab Emirates", "AR": "Argentina", "AT": "Austria", "AU": "Australia", "BD": "Bangladesh", "BE": "Belgium", "BG": "Bulgaria", "BM": "Bermuda", "BR": "Brazil", "CA": "Canada", "CH": "Switzerland", "CL": "Chile", "CN": "China", "CO": "Colombia", "CY": "Cyprus", "CZ": "Czechia", "DE": "Germany", "DK": "Denmark", "EE": "Estonia", "EG": "Egypt", "ES": "Spain", "ET": "Ethiopia", "FI": "Finland", "FR": "France", "GB": "United Kingdom", "Global": "Global", "HK": "Hong Kong", "HU": "Hungary", "ID": "Indonesia", "IE": "Ireland", "IL": "Israel", "IN": "India", "IS": "Iceland", "IT": "Italy", "JP": "Japan", "KE": "Kenya", "KR": "South Korea", "KW": "Kuwait", "LI": "Liechtenstein", "LK": "Sri Lanka", "LT": "Lithuania", "LU": "Luxembourg", "MA": "Morocco", "MX": "Mexico", "MY": "Malaysia", "NG": "Nigeria", "NL": "Netherlands", "NO": "Norway", "NZ": "New Zealand", "PA": "Panama", "PE": "Peru", "PH": "Philippines", "PK": "Pakistan", "PL": "Poland", "PT": "Portugal", "QA": "Qatar", "RO": "Romania", "RU": "Russia", "SA": "Saudi Arabia", "SE": "Sweden", "SG": "Singapore", "SK": "Slovakia", "TG": "Togo", "TH": "Thailand", "TR": "Türkiye", "TW": "Taiwan", "US": "United States", "UY": "Uruguay", "VN": "Vietnam", "ZA": "South Africa"};
+const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials = n => String(n || '?').replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase() || String(n || '?')[0];
+
+COUNTRY.WW = 'Online / worldwide';
+
+/* ---------- companies, from the Wix CMS (collection "Companies") ---------- */
+const mkCo = it => ({
+  wid: it._id, name: it.title || it._id, web: it.website || it._id, cat: it.category || 'Other', cc: it.country || 'WW', bio: it.bio || '',
+  added: it.addedBy === 'reviewer' ? 1 : it.addedBy === 'owner' ? 2 : 0, country: COUNTRY[it.country] || it.country || COUNTRY.WW,
+  id: 'co-' + (it.slug || slug(it.title || it._id)), catId: 'cat-' + slug(it.category || 'Other'), raw: it
+});
+let COS = [], CATS = [], BYID = {}, BYWID = {}, CATBYID = {}, FORM_CATS = [];
+const CLAIMS = {};
+const SB_CATS = [];
+const ensureCat = (name, id) => { let k = CATBYID[id]; if (!k) { const w = name.replace(/&/g, '').split(/\s+/).filter(Boolean); k = { name, id, items: [], short: (w[0][0] + (w[1] ? w[1][0] : '')).toUpperCase(), tone: (CATS.length % 6) + 1 }; CATS.push(k); CATBYID[id] = k; } return k; };
+function indexCompanies(items) {
+  COS = items.map(mkCo);
+  CATS = []; CATBYID = {};
+  COS.forEach(c => { let k = CATS.find(x => x.name === c.cat); if (!k) { k = { name: c.cat, id: c.catId, items: [] }; CATS.push(k); } k.items.push(c); });
+  CATS.forEach((k, i) => { const w = k.name.replace(/&/g,'').split(/\s+/).filter(Boolean); k.short = (w[0][0] + (w[1] ? w[1][0] : '')).toUpperCase(); k.tone = (i % 6) + 1; });
+  BYID = Object.fromEntries(COS.map(c => [c.id, c]));
+  BYWID = Object.fromEntries(COS.map(c => [c.wid, c]));
+  CATBYID = Object.fromEntries(CATS.map(c => [c.id, c]));
+  FORM_CATS = [...new Set(CATS.map(k => k.name))].sort((a, b) => a.localeCompare(b));
+  for (const k of Object.keys(CLAIMS)) delete CLAIMS[k];
+  COS.forEach(c => { const s = c.raw.claimStatus; if (s === 'verified' || s === 'pending') CLAIMS[c.id] = { verified: s === 'verified' ? (c.raw.verifiedVia || 'email') : 'pending', plan: c.raw.plan === 'plus' ? 'plus' : 'basic' }; });
+  computeFeatured();
+}
+function addCompanyLocal(it) { const c = mkCo(it); COS.push(c); BYID[c.id] = c; BYWID[c.wid] = c; ensureCat(c.cat, c.catId).items.push(c); if (!FORM_CATS.includes(c.cat)) FORM_CATS.push(c.cat); return c; }
+/* A company's item id is its website (domain, plus any path), so Wix itself refuses a second company with the same website. */
+const companyIdFor = w => String(w || '').toLowerCase().trim().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/[?#].*$/, '').replace(/\/+$/, '').replace(/\//g, '-').slice(0, 120);
+const uniqueSlug = name => { const b = slug(name) || 'company'; let s = b, n = 2; while (BYID['co-' + s]) s = b + '-' + n++; return s; };
+
+/* ---------- browser storage (best effort, for small per-visitor conveniences only) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- published reviews, from the Wix CMS (collection "Reviews"; drafts are never returned to visitors) ---------- */
+let REVIEWS = {}, EMP = {};
+const reviewsFor = id => REVIEWS[id] || [];
+const avgOf = list => { const r = list.filter(x => x.rating); return r.length ? r.reduce((s, x) => s + x.rating, 0) / r.length : 0; };
+const empData = id => { const d = EMP[id] || {}; return { reviews: d.reviews || [], salaries: d.salaries || [], interviews: d.interviews || [] }; };
+const empBucket = id => { const d = EMP[id] = EMP[id] || {}; d.reviews = d.reviews || []; d.salaries = d.salaries || []; d.interviews = d.interviews || []; return d; };
+const recPct = list => list.length ? Math.round(list.filter(r => r.rec === 'yes').length / list.length * 100) : 0;
+const EMP_ZERO = () => ({ overall: 0, pay: 0, culture: 0, mgmt: 0, growth: 0, wlb: 0 });
+const monthOf = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }); };
+function indexReviews(items) {
+  REVIEWS = {}; EMP = {};
+  items.sort((a, b) => String(b._createdDate || '').localeCompare(String(a._createdDate || '')));
+  for (const r of items) {
+    const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
+    const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', date: monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: r.reply || '', replyFrom: c.name, verified: !!r.workEmailVerified };
+    if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
+    else if (r.type === 'interview') empBucket(c.id).interviews.push({ ...base, role: r.jobTitle || '', outcome: r.interviewOutcome || '', diff: r.interviewDifficulty || '', exp: r.interviewExperience || '', process: r.body || '', questions: r.interviewQuestions || '' });
+    else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: !!r.proofChecked, invited: !!r.invited });
+  }
+}
+async function fetchAll(collectionId) {
+  const out = []; let skip = 0;
+  for (let i = 0; i < 60; i++) {
+    const page = await queryItems(collectionId, { limit: 100, skip });
+    out.push(...page.items);
+    if (!page.hasNext || !page.items.length) break;
+    skip += page.items.length;
+  }
+  return out;
+}
+let LOADED = false, LOAD_ERR = '';
+async function loadData() {
+  try {
+    const cos = await fetchAll('Companies');
+    indexCompanies(cos);
+    const rvs = await fetchAll('Reviews');
+    indexReviews(rvs);
+    LOADED = true; LOAD_ERR = '';
+  } catch (e) { LOAD_ERR = e && e.message ? e.message : String(e); }
+}
+
+/* ---------- page state ---------- */
+const S = { heroTab: 'companies', jobFilter: { q: '', type: '', mode: '' }, jobPending: null, blogCat: 'All', pitchSent: false, contactSent: false, user: null, memberLoading: true, auth: { mode: 'signin', error: '' }, notice: '', returnTo: '', draft: null, q: '', catFilter: { country: '', text: '', sort: 'name' }, rating: 0, listStep: 0, listData: {}, claim: '', dashTab: 'overview', copied: false, coTab: '', returnTab: '', emp: EMP_ZERO(), formCache: {} };
+function syncUser(s) {
+  const m = s.member || {};
+  S.memberLoading = !!s.loading;
+  S.user = s.loggedIn ? { type: 'reviewer', id: m.id || '', email: m.loginEmail || '', name: m.displayName || m.firstName || (m.loginEmail ? m.loginEmail.split('@')[0] : 'Member') } : null;
+}
+
+/* ---------- icons ---------- */
+const STAR = (fill, size = 20) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill ? 'var(--star)' : 'none'}" stroke="${fill ? 'var(--star-line)' : 'var(--soft)'}" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.8z"/></svg>`;
+const starRow = (r, size) => `<span class="stars" role="img" aria-label="${r} out of 5 stars">${[1,2,3,4,5].map(n => STAR(n <= Math.round(r), size)).join('')}</span>`;
+const TICK = (c = 'var(--accent)') => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+
+/* ---------- reusable bits ---------- */
+const IC = {
+  pin: '<path d="M12 21s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  home: '<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/>',
+  cash: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',
+  bag: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 13h18"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.8z"/>',
+};
+const ic = (k, s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+const scoreOf = c => { const l = reviewsFor(c.id), er = empData(c.id).reviews; const all = l.length ? l : er; return all.length ? avgOf(all) : 0; };
+const rBadge = c => { const s = scoreOf(c); return s ? `<span class="rbadge" aria-label="Rated ${s.toFixed(1)} out of 5">${s.toFixed(1)}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${IC.star}</svg></span>` : '<span class="rbadge none">Not rated</span>'; };
+const qStats = c => { const ed = empData(c.id); const items = [['customers', reviewsFor(c.id).length + ed.reviews.length, 'Reviews'], ['interviews', ed.interviews.length, 'Interviews']].filter(x => x[1]); if (!items.length) return ''; return `<div class="qstats" style="grid-template-columns:repeat(${items.length},1fr)">${items.map(([k, n, l]) => `<a href="#${c.id}" data-act="cotab-link" data-tab="${k}"><b>${n}</b><span>${l}</span></a>`).join('')}</div>`; };
+const toneOf = s => { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6 + 1; };
+const avatar = (c, size = 48, fs = 16) => { const k = toneOf(c.name); return `<span class="avatar" aria-hidden="true" style="width:${size}px;height:${size}px;font-size:${fs}px;border-radius:${Math.round(size * .28)}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; };
+function ratingLine(c) {
+  const list = reviewsFor(c.id), er = empData(c.id).reviews; const parts = [];
+  if (list.length) parts.push(`Customers ${avgOf(list).toFixed(1)} ★ (${list.length})`);
+  if (er.length) parts.push(`Employees ${avgOf(er).toFixed(1)} ★ (${er.length})`);
+  return parts.join(' · ');
+}
+function coCard(c) {
+  return `<article class="cocard">
+    <div class="cohead">${avatar(c)}<div style="min-width:0"><a href="#${c.id}">${esc(c.name)}</a><div class="meta">${esc(c.web)} · ${esc(c.country)}</div></div>${scoreOf(c) ? rBadge(c) : ''}</div>
+    <div class="tags"><a class="pill cat" href="#${c.catId}" style="text-decoration:none">${esc(c.cat)}</a></div>
+    <p class="bio">${esc(c.bio)}</p>
+    ${qStats(c)}
+    <a class="btn o" href="#${c.id}">Write a review</a>
+  </article>`;
+}
+function listRow(c) {
+  return `<article class="listrow">
+    ${avatar(c, 56, 18)}
+    <div class="info"><div class="name"><a href="#${c.id}">${esc(c.name)}</a>${scoreOf(c) ? rBadge(c) : ''}</div>
+      <span class="meta" style="font-size:14px">${esc(c.web)} · ${esc(c.country)}</span>
+      <p class="bio" style="margin-block:2px">${esc(c.bio)}</p>
+      ${ratingLine(c) ? `<span class="meta" style="font-size:14px">${esc(ratingLine(c))}</span>` : ''}</div>
+    <a class="btn o" href="#${c.id}">Write a review</a>
+  </article>`;
+}
+const ICONS = {"bank":"<path d=\"M3 10l9-6 9 6\"/><path d=\"M5 10v8M9.5 10v8M14.5 10v8M19 10v8\"/><path d=\"M3 20h18\"/>","code":"<path d=\"M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14\"/>","heart":"<path d=\"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z\"/><path d=\"M8 12h2l1-2 2 4 1-2h2\"/>","shield":"<path d=\"M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z\"/><path d=\"M8.5 12l2.5 2.5 4.5-5\"/>","cup":"<path d=\"M5 9h12v4a6 6 0 0 1-12 0z\"/><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"/><path d=\"M8 3.5v2.5M11 3.5v2.5M14 3.5v2.5\"/>","basket":"<path d=\"M3 10h18l-2 10H5z\"/><path d=\"M8 10l3-6M16 10l-3-6M9 14v3M15 14v3M12 14v3\"/>","car":"<path d=\"M4 15.5l1.7-5.1A2 2 0 0 1 7.6 9h8.8a2 2 0 0 1 1.9 1.4l1.7 5.1V19H4z\"/><path d=\"M4 15.5h16\"/><circle cx=\"8\" cy=\"17.2\" r=\".6\"/><circle cx=\"16\" cy=\"17.2\" r=\".6\"/>","house":"<path d=\"M4 11l8-7 8 7\"/><path d=\"M6 9.5V20h12V9.5\"/><path d=\"M10 20v-5h4v5\"/>","card":"<rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2.5\"/><path d=\"M3 10h18M7 15h3\"/>","factory":"<path d=\"M3 20V11l5 3v-3l5 3V5h4v15\"/><path d=\"M2 20h20M17 9h3v11\"/>","layers":"<path d=\"M12 3l9 5-9 5-9-5z\"/><path d=\"M3 12.5l9 5 9-5\"/><path d=\"M3 16.5l9 5 9-5\"/>","cart":"<path d=\"M3 4h2l2.4 11h10.2L20 7.5H6.3\"/><circle cx=\"9\" cy=\"19.5\" r=\"1.3\"/><circle cx=\"17\" cy=\"19.5\" r=\"1.3\"/>","plane":"<path d=\"M21 15.5v-2l-7.5-4.5V4.5a1.5 1.5 0 0 0-3 0V9L3 13.5v2l7.5-2.3V18l-2 1.5V21l3.5-1 3.5 1v-1.5l-2-1.5v-4.8z\"/>","bolt":"<path d=\"M13 2.5L5 13.5h6l-1 8 8-11h-6z\"/>","bag":"<path d=\"M5.5 8h13l-1 12.5h-11z\"/><path d=\"M9 10V7a3 3 0 0 1 6 0v3\"/>","cap":"<path d=\"M2 9.5l10-5 10 5-10 5z\"/><path d=\"M6 11.5V16c3 2.2 9 2.2 12 0v-4.5M21 10v5\"/>","truck":"<path d=\"M2.5 6h11v10h-11zM13.5 9.5h4.5l3 3.5v3h-7.5\"/><circle cx=\"6.5\" cy=\"17.5\" r=\"1.7\"/><circle cx=\"17\" cy=\"17.5\" r=\"1.7\"/>","shirt":"<path d=\"M8 4L3 7l2 4.5 2-1V20h10v-9.5l2 1L21 7l-5-3a4 4 0 0 1-8 0z\"/>","sparkle":"<path d=\"M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z\"/><path d=\"M18.5 15v5M16 17.5h5\"/>","trend":"<path d=\"M4 20h16\"/><path d=\"M5 15.5l4.5-4.5 3 3L19 7.5\"/><path d=\"M14.5 7.5H19V12\"/>","chip":"<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\"/><rect x=\"9.5\" y=\"9.5\" width=\"5\" height=\"5\" rx=\"1\"/><path d=\"M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5\"/>","scale":"<path d=\"M12 4v16M7 20h10M5 7h14\"/><path d=\"M5 7l-2.5 6a2.5 2.5 0 0 0 5 0zM19 7l-2.5 6a2.5 2.5 0 0 0 5 0z\"/>","person":"<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4.5 20.5a7.5 7.5 0 0 1 15 0\"/>","signal":"<path d=\"M4 10a11.3 11.3 0 0 1 16 0M7 13.5a7 7 0 0 1 10 0M10 17a2.8 2.8 0 0 1 4 0\"/><circle cx=\"12\" cy=\"20\" r=\".8\"/>","play":"<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"3.5\"/><path d=\"M10 9.2l5 2.8-5 2.8z\"/>","phone":"<rect x=\"6.5\" y=\"2.5\" width=\"11\" height=\"19\" rx=\"2.5\"/><path d=\"M10.5 18.5h3\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9S14.6 18.4 12 21c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z\"/>","bed":"<path d=\"M3 19V6M3 14h18v5M21 14a3.5 3.5 0 0 0-3.5-3.5H11V14\"/><circle cx=\"7\" cy=\"11\" r=\"1.6\"/>","news":"<path d=\"M4 5h13v14H6a2 2 0 0 1-2-2z\"/><path d=\"M17 9h3v8a2 2 0 0 1-2 2\"/><path d=\"M7.5 8.5h6M7.5 12h6M7.5 15.5h4\"/>","chat":"<path d=\"M4 5h16v11H9.5L5 20v-4H4z\"/><path d=\"M8 9.5h8M8 12.5h5\"/>","game":"<rect x=\"2.5\" y=\"7\" width=\"19\" height=\"11\" rx=\"5.5\"/><path d=\"M7.5 10.5v4M5.5 12.5h4\"/><circle cx=\"15.5\" cy=\"11.5\" r=\".6\"/><circle cx=\"17.5\" cy=\"13.8\" r=\".6\"/>","server":"<rect x=\"3\" y=\"4\" width=\"18\" height=\"7\" rx=\"2\"/><rect x=\"3\" y=\"13\" width=\"18\" height=\"7\" rx=\"2\"/><path d=\"M7 7.5h.01M7 16.5h.01M11 7.5h6M11 16.5h6\"/>","pin":"<path d=\"M12 21.5s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>","coin":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 7.5h3.8a2.2 2.2 0 0 1 0 4.5H9.5h4.3a2.25 2.25 0 0 1 0 4.5H9.5zM11 6v1.5M11 16.5V18\"/>","rocket":"<path d=\"M12 2.5c3 2.5 4.5 6 4.5 10L14 17h-4l-2.5-4.5C7.5 8.5 9 5 12 2.5z\"/><circle cx=\"12\" cy=\"10\" r=\"1.6\"/><path d=\"M10 17l-1.5 4M14 17l1.5 4M7.5 12.5L5 15v2.5l3-1M16.5 12.5L19 15v2.5l-3-1\"/>","pick":"<path d=\"M14.5 9.5L4 20\"/><path d=\"M6 6.5c4.5-3.5 9.5-3.5 13.5 0-1.5.2-3 .8-4.2 1.7L9.6 9.7C8.8 8.5 7.6 7.4 6 6.5z\"/>","sofa":"<path d=\"M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3\"/><path d=\"M3 12a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3z\"/><path d=\"M5.5 17v2.5M18.5 17v2.5\"/>"};
+const CATICON = {"Fintech & Banking":"card","Travel & Hospitality":"globe","Mobility & Logistics":"truck","Social Media & Entertainment":"chat","Consumer Brands":"bag","Health & Wellness":"heart","Banking & Finance":"bank","Technology & Software":"code","Health & Pharmacy":"heart","Insurance":"shield","Food & Beverage Brands":"cup","Groceries & Retail":"basket","Automotive":"car","Real Estate":"house","Payments & Fintech":"card","Industrial & Manufacturing":"factory","IT Services & Consulting":"layers","E-commerce & Marketplaces":"cart","Airlines":"plane","Energy & Utilities":"bolt","Food & Delivery":"bag","Education & E-learning":"cap","Logistics & Delivery":"truck","Fashion & Apparel":"shirt","Beauty & Personal Care":"sparkle","Stock Brokers & Investing":"trend","Semiconductors & Hardware":"chip","Professional Services":"scale","Jobs & Freelancing":"person","Telecom & Internet":"signal","Streaming & Entertainment":"play","Consumer Electronics":"phone","Travel & Booking":"globe","Hotels & Hospitality":"bed","Media & News":"news","Social Media & Communication":"chat","Home & Furniture":"sofa","Mining & Metals":"pick","Gaming":"game","Web Hosting & Website Builders":"server","Ride-hailing & Mobility":"pin","Crypto Exchanges":"coin","Aerospace & Defense":"rocket"};
+Object.assign(CATICON, {'Marketing & Creative Agencies':'trend','Digital & Development Agencies':'code','Design & Branding Studios':'sparkle','PR & Communications Agencies':'news','Recruitment & Staffing Agencies':'person','Consulting & Professional Services':'scale','SaaS & B2B Software':'layers','Online Stores & D2C Brands':'bag'});
+const catIcon = (name, s = 24) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[CATICON[name]] || ICONS.layers}</svg>`;
+const catTile = k => `<a class="cattile" href="#${k.id}"><span class="ic" style="background:var(--t${k.tone});color:var(--t${k.tone}i)">${catIcon(k.name)}</span><span><b>${esc(k.name)}</b><small>${k.items.length} ${k.items.length === 1 ? 'company' : 'companies'}</small></span><svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>`;
+const crumbs = items => `<nav class="crumbs" aria-label="Breadcrumb">${items.map((it, i) => i < items.length - 1 ? `<a href="${it[1]}">${esc(it[0])}</a><span aria-hidden="true">/</span>` : `<span>${esc(it[0])}</span>`).join('')}</nav>`;
+
+/* ---------- views ---------- */
+const FEATURED_PICK = ["Razorpay", "Notion", "Zepto", "CRED", "Deel", "Glossier", "Monzo", "Bolt"];
+let FEATURED = [];
+function computeFeatured() { FEATURED = (() => { const picked = FEATURED_PICK.map(n => COS.find(c => c.name === n)).filter(Boolean); const rest = CATS.slice().sort((a, b) => b.items.length - a.items.length).map(k => k.items[0]).filter(c => c && !picked.includes(c)); return picked.concat(rest).slice(0, 8); })(); }
+const CHIPS = [['Edtech','Education & E-learning'],['Fintech','Fintech & Banking'],['HR and hiring','Jobs & Freelancing'],['Mobility','Mobility & Logistics'],['Crypto','Crypto Exchanges'],['E-commerce','E-commerce & Marketplaces']];
+
+function heroCard() {
+  const c = { name: 'Example Company', id: 'example' };
+  return `<aside class="scard" aria-label="Example of a company page">
+    <span class="back" aria-hidden="true"></span>
+    <div class="card"><span class="tag">Example profile</span>
+      <div class="top">${coLogo(c, 52)}
+        <div style="flex:1;min-width:0"><b>${esc(c.name)}</b><span class="meta">Education &amp; E-learning · India</span></div><span class="pill ver">${TICK('#fff')}Verified</span></div>
+      <div class="two">
+        <div class="tile c"><small>Customers</small><b>4.0</b>${starRow(4, 14)}<span>4 reviews</span></div>
+        <div class="tile e"><small>Employees</small><b>3.3</b>${starRow(3, 14)}<span>3 reviews · 67% recommend</span></div>
+      </div>
+      <div class="quote"><p>“Mock tests made the difference”</p><small>Customer · backed by an invoice</small></div>
+      <div class="quote e"><p>“Students are motivated, and the team listens to teachers”</p><small>Employee · anonymous</small></div>
+      <div class="foot"><span>Customers and employees, one page</span><a href="#categories">Browse companies →</a></div>
+    </div></aside>`;
+}
+function heroForm() {
+  if (S.heroTab === 'jobs') return `<form class="bigsearch" role="search" id="hero-jobs-form" autocomplete="off">
+      <div class="split"><div class="hsearch"><label class="sr" for="hj-what">Job title or company</label><input id="hj-what" type="search" placeholder="Job title or company"></div>
+      <div class="hsearch"><label class="sr" for="hj-where">City or remote</label><input id="hj-where" class="where" type="search" placeholder="City or “remote”"></div></div>
+      <button class="btn gold lg" type="submit">Find jobs</button></form>`;
+  const sal = S.heroTab === 'salaries';
+  return `<form class="bigsearch" role="search" id="hero-search-form" autocomplete="off">
+      <div class="hsearch"><label class="sr" for="hero-search">${sal ? 'Company to see salaries' : 'Search companies or websites'}</label>
+      <input id="hero-search" type="search" placeholder="${sal ? 'Company name' : 'Search startups and growing companies'}" data-suggest="hero">
+      <div class="sugg" id="sugg-hero" hidden></div></div>
+      <button class="btn gold lg" type="submit">${sal ? 'See salaries' : 'Search'}</button></form>`;
+}
+const jobTile = j => `<a class="jtile" href="#jobs">
+    <div class="top">${avatar({ name: j.biz }, 44, 15)}<div style="min-width:0"><b>${esc(j.title)}</b><span class="meta">${esc(j.biz)}${j.sample ? ' · Sample' : ''}</span></div></div>
+    <div class="jtags"><span class="jtag">${ic('pin', 14)}${esc(j.loc)}</span><span class="jtag">${ic('clock', 14)}${esc(j.type)}</span>${j.pay ? `<span class="jtag pay">${ic('cash', 14)}${esc(j.pay)}</span>` : ''}</div></a>`;
+
+function vAdd() {
+  const p = S.addPrefill || '';
+  const ctry = Object.entries(COUNTRY).sort((a, b) => a[0] === 'WW' ? -1 : b[0] === 'WW' ? 1 : a[1].localeCompare(b[1]));
+  return `<div class="wrap">${crumbs([['Home','#home'],['Add a company']])}
+    <div class="pagehead"><h1>Add a company or website</h1><p>Missing a company? Add it, then write the first review. The company can claim it later.</p></div>
+    <div class="layout"><form class="formcard mainc" id="add-form" novalidate style="max-width:720px">
+      <div class="field"><label class="l" for="a-name">Company or website name</label><input id="a-name" type="text" maxlength="80" value="${esc(p)}" placeholder="e.g. Blue Lotus Sarees" aria-describedby="err-a-name"><p class="err" id="err-a-name" hidden>Enter a name of at least 2 characters.</p></div>
+      <div class="field"><label class="l" for="a-web">Website or social page</label><input id="a-web" type="text" maxlength="120" inputmode="url" placeholder="e.g. bluelotus.in or instagram.com/bluelotus" aria-describedby="hint-a-web err-a-web"><p class="meta" id="hint-a-web">This is how people tell similar names apart.</p><p class="err" id="err-a-web" hidden>Enter a website or social page, like company.com.</p></div>
+      <div class="row"><div class="field"><label class="l" for="a-cat">Category</label><select id="a-cat">${CATS.slice().sort((x, y) => x.name.localeCompare(y.name)).map(k => `<option value="${esc(k.name)}" ${k.name === S.addCat ? 'selected' : ''}>${esc(k.name)}</option>`).join('')}</select></div>
+        <div class="field"><label class="l" for="a-cc">Country</label><select id="a-cc">${ctry.map(([cc, n]) => `<option value="${cc}" ${cc === 'WW' ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></div></div>
+      <div><button class="btn p lg" type="submit">Add and write a review</button></div>
+      <p class="meta">Only add real companies you have dealt with. We check new profiles and remove duplicates and fakes.</p>
+    </form>
+    <aside class="side"><div class="box soft"><h2>What happens next</h2><p>The profile goes live as an unclaimed profile marked “Added by a reviewer”. When the owner claims it, they can add details and reply to reviews, but they can never remove reviews.</p></div></aside></div></div>`;
+}
+
+function recentReviews() {
+  const items = Object.entries(REVIEWS).filter(([cid, l]) => BYID[cid] && l.some(r => !r.seed)).map(([cid, l]) => [BYID[cid], l.find(r => !r.seed)]).slice(0, 6);
+  if (items.length < 3) return '';
+  return `<section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Fresh</p><h2>Recently reviewed</h2></div></div>
+    <div class="jgrid">${items.map(([c, r]) => `<a class="jtile" href="#${c.id}"><div class="top">${avatar(c, 44, 15)}<div style="min-width:0"><b>${esc(c.name)}</b><span class="meta">${esc(c.cat)}</span></div></div>${starRow(r.rating, 16)}<div><b style="font-size:15px">${esc(r.title)}</b><p class="meta" style="margin-top:4px">${esc(r.body.length > 140 ? r.body.slice(0, 140) + '…' : r.body)}</p></div></a>`).join('')}</div></section>`;
+}
+
+const TOOL_IC = {
+  compare: '<path d="M9 4v16M15 4v16"/><path d="M4 8h5M15 8h5M4 16h5M15 16h5"/>',
+  hike: '<path d="M4 19h16"/><path d="M5 15.5l4.5-4.5 3 3L19 7.5"/><path d="M14.5 7.5H19V12"/>',
+  offer: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h4"/>',
+  rate: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  gratuity: '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9.5v5M17 9.5v5"/>',
+  hra: '<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
+  fair: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/>'
+};
+const TOOLS = [
+  { id: 'offer', name: 'Compare job offers', d: 'Weigh two offers on pay, bonus, benefits and costs, and see which is worth more each year.', tone: 2 },
+  { id: 'hike', name: 'Salary hike calculator', d: 'Work out your new salary from a hike, or the hike behind an offer. Any currency.', tone: 3 },
+  { id: 'rate', name: 'Freelance rate calculator', d: 'Find the hourly and day rate a freelancer or small team needs to hit an income target.', tone: 4 },
+  { id: 'gratuity', name: 'Gratuity calculator', d: 'Estimate gratuity on leaving a job in India, using the 15/26 formula.', tone: 5, region: 'India' },
+  { id: 'hra', name: 'HRA exemption calculator', d: 'Estimate how much of your house rent allowance is tax-free in India (old tax regime).', tone: 6, region: 'India' },
+
+];
+const TOOLBYID = Object.fromEntries(TOOLS.map(x => ['tool-' + x.id, x]));
+const toolIcon = (x, s = 22) => `<span class="ti" style="background:var(--t${x.tone});color:var(--t${x.tone}i)"><svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TOOL_IC[x.id]}</svg></span>`;
+const toolCard = x => `<a class="toolcard${x.soon ? ' off' : ''}" href="${x.soon ? '#tools' : '#tool-' + x.id}" ${x.soon ? 'aria-disabled="true"' : ''}>${toolIcon(x)}<span><b>${esc(x.name)}</b><span class="d">${esc(x.d)}</span>${x.region ? `<span class="tag">${x.region}</span>` : ''}${x.soon ? '<span class="tag">Coming soon</span>' : ''}</span></a>`;
+const CURS = ['₹','$','£','€','AED ','SGD ','A$','C$'];
+const curSel = (id, v) => `<div class="field"><label class="l" for="${id}">Currency</label><select id="${id}" data-tool>${CURS.map(c => `<option value="${c}" ${c === (v || '₹') ? 'selected' : ''}>${c.trim()}</option>`).join('')}</select></div>`;
+const numF = (id, label, v, hint) => `<div class="field"><label class="l" for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" min="0" step="any" value="${v}" data-tool>${hint ? `<p class="meta">${hint}</p>` : ''}</div>`;
+const money = (cur, n) => cur + Math.round(n).toLocaleString(cur === '₹' ? 'en-IN' : 'en');
+const tv = id => { const el = document.getElementById(id); return el ? (el.type === 'checkbox' ? el.checked : el.tagName === 'SELECT' ? el.value : parseFloat(el.value) || 0) : 0; };
+
+function toolForm(id) {
+  if (id === 'hike') return `<form class="box" novalidate onsubmit="return false">
+      <h2>Your new salary</h2><div class="two">${curSel('h-cur')}${numF('h-now', 'Current salary (yearly)', 600000)}</div>
+      <div class="two">${numF('h-pct', 'Hike', 12, 'Percent')}${numF('h-offer', 'Or an offered salary (yearly)', 0, 'Leave at 0 to use the hike above')}</div></form>`;
+  if (id === 'offer') return `<form class="box" novalidate onsubmit="return false"><h2>Two offers, side by side</h2>${curSel('o-cur')}
+      <div class="offer">${['a', 'b'].map((k, i) => `<fieldset><legend>Offer ${k.toUpperCase()}</legend>
+        <div class="field"><label class="l" for="o-${k}-co">Company (optional)</label><input id="o-${k}-co" type="text" data-tool placeholder="${i ? 'e.g. The company offering you a job' : 'e.g. Your current employer'}"></div>
+        ${numF(`o-${k}-base`, 'Base salary (yearly)', i ? 900000 : 800000)}${numF(`o-${k}-bonus`, 'Expected bonus (yearly)', i ? 0 : 80000)}
+        ${numF(`o-${k}-ben`, 'Benefits worth (yearly)', i ? 30000 : 50000, 'Insurance, meals, learning budget')}${numF(`o-${k}-join`, 'Joining bonus (one-off)', i ? 75000 : 0)}
+        ${numF(`o-${k}-cost`, 'Costs to you (yearly)', i ? 20000 : 60000, 'Commute, relocation, equipment')}</fieldset>`).join('')}</div></form>`;
+  if (id === 'rate') return `<form class="box" novalidate onsubmit="return false"><h2>Your target</h2><div class="two">${curSel('r-cur')}${numF('r-income', 'Income you want (yearly)', 1500000, 'Before tax, for you or your team')}</div>
+      <div class="two">${numF('r-costs', 'Business costs (yearly)', 300000, 'Software, office, hardware, insurance')}${numF('r-margin', 'Profit margin', 15, 'Percent, for growth and slow months')}</div>
+      <div class="two">${numF('r-weeks', 'Working weeks a year', 46, 'After holidays and sick days')}${numF('r-hours', 'Hours a week', 40)}</div>
+      ${numF('r-bill', 'Billable share of your time', 60, 'Percent. Sales, admin and email are not billable.')}</form>`;
+  if (id === 'gratuity') return `<form class="box" novalidate onsubmit="return false"><h2>Your service</h2>
+      ${numF('g-sal', 'Last monthly basic salary plus dearness allowance (₹)', 50000, 'Not your full CTC. Leave out HRA, special allowance and bonus.')}
+      <div class="two">${numF('g-years', 'Years of service', 7)}${numF('g-months', 'Extra months', 7)}</div>
+      <label class="check"><input id="g-act" type="checkbox" checked data-tool><span>My employer is covered by gratuity law (usually 10 or more employees)</span></label></form>`;
+  if (id === 'hra') return `<form class="box" novalidate onsubmit="return false"><h2>Your salary and rent (yearly, ₹)</h2>
+      <div class="two">${numF('x-basic', 'Basic salary plus dearness allowance', 720000)}${numF('x-hra', 'HRA received', 300000)}</div>
+      ${numF('x-rent', 'Rent paid', 300000)}
+      <label class="check"><input id="x-metro" type="checkbox" checked data-tool><span>I live in a city that counts as metro under current tax rules (50% limit instead of 40%)</span></label></form>`;
+  if (id === 'compare') { const opts = COS.slice().sort((a, b) => a.name.localeCompare(b.name)).map(c => `<option value="${esc(c.name)}"></option>`).join('');
+    return `<form class="box" novalidate onsubmit="return false"><h2>Pick two companies</h2><datalist id="co-list">${opts}</datalist>
+      <div class="two"><div class="field"><label class="l" for="c-a">First company</label><input id="c-a" list="co-list" type="text" value="${esc(S.cmpA || 'Revolut')}" data-tool></div>
+      <div class="field"><label class="l" for="c-b">Second company</label><input id="c-b" list="co-list" type="text" value="${esc(S.cmpB || 'Monzo')}" data-tool></div></div>
+      <div id="cmp-out"></div></form>`; }
+  return '';
+}
+
+function toolResult(id) {
+  if (id === 'hike') { const c = tv('h-cur'), now = tv('h-now'), pct = tv('h-pct'), offer = tv('h-offer');
+    const nw = offer > 0 ? offer : now * (1 + pct / 100), p = now > 0 ? (nw / now - 1) * 100 : 0;
+    return `<h2>Result</h2><div><span class="note">New yearly salary</span><div class="big">${money(c, nw)}</div></div>
+      <div class="row2"><span>Hike</span><b>${p.toFixed(1)}%</b></div><div class="row2"><span>Extra a year</span><b>${money(c, nw - now)}</b></div><div class="row2"><span>Extra a month</span><b>${money(c, (nw - now) / 12)}</b></div>
+      <p class="note">Before tax. A bigger hike is worth less if the company has poor reviews. <a href="#search" style="color:var(--gold)">Check the company</a>.</p>`; }
+  if (id === 'offer') { const c = tv('o-cur'); const v = k => { const base = tv(`o-${k}-base`), bonus = tv(`o-${k}-bonus`), ben = tv(`o-${k}-ben`), join = tv(`o-${k}-join`), cost = tv(`o-${k}-cost`); return { yr: base + bonus + ben - cost, first: base + bonus + ben + join - cost, name: (document.getElementById(`o-${k}-co`) || {}).value || '' }; };
+    const a = v('a'), b = v('b'), d = b.yr - a.yr, w = d === 0 ? 'Both offers are worth the same each year' : `${d > 0 ? 'Offer B' : 'Offer A'} is worth ${money(c, Math.abs(d))} more each year`;
+    const link = x => x.name.trim() ? (() => { const m = COS.find(co => co.name.toLowerCase() === x.name.trim().toLowerCase()); return m ? `<a href="#${m.id}" style="color:var(--gold)">Read ${esc(m.name)} reviews</a>` : ''; })() : '';
+    return `<h2>Result</h2><div class="big" style="font-size:28px">${w}</div>
+      <div class="row2"><span>Offer A, yearly value</span><b>${money(c, a.yr)}</b></div><div class="row2"><span>Offer B, yearly value</span><b>${money(c, b.yr)}</b></div>
+      <div class="row2"><span>Offer A, first year</span><b>${money(c, a.first)}</b></div><div class="row2"><span>Offer B, first year</span><b>${money(c, b.first)}</b></div>
+      <p class="note">Yearly value = base + bonus + benefits − your costs. First year adds the joining bonus. Money isn't everything: compare the reviews too. ${[link(a), link(b)].filter(Boolean).join(' · ')}</p>`; }
+  if (id === 'rate') { const c = tv('r-cur'), need = (tv('r-income') + tv('r-costs')) * (1 + tv('r-margin') / 100), hrs = tv('r-weeks') * tv('r-hours') * tv('r-bill') / 100;
+    if (hrs <= 0) return `<h2>Result</h2><div class="warn">Enter working weeks, hours and a billable share above 0.</div>`;
+    const hr = need / hrs;
+    return `<h2>Result</h2><div><span class="note">Minimum hourly rate</span><div class="big">${money(c, hr)}</div></div>
+      <div class="row2"><span>Day rate (8 hours)</span><b>${money(c, hr * 8)}</b></div><div class="row2"><span>Billable hours a year</span><b>${Math.round(hrs).toLocaleString('en')}</b></div><div class="row2"><span>Revenue needed a year</span><b>${money(c, need)}</b></div>
+      <p class="note">Charge at least this to cover your income, costs and margin. Clients judge freelancers and small teams by reviews as much as price.</p>`; }
+  if (id === 'gratuity') { const sal = tv('g-sal'), y = Math.floor(tv('g-years')), m = Math.floor(tv('g-months')), act = tv('g-act');
+    const yrs = act ? y + (m >= 6 ? 1 : 0) : y, amt = act ? sal * 15 / 26 * yrs : sal * 15 / 30 * yrs, months = y * 12 + m;
+    return `<h2>Estimate</h2><div><span class="note">Estimated gratuity</span><div class="big">${money('₹', amt)}</div></div>
+      <div class="row2"><span>Years counted</span><b>${yrs}</b></div><div class="row2"><span>Formula</span><b>${act ? 'Salary × 15 ÷ 26 × years' : 'Salary × 15 ÷ 30 × years'}</b></div>
+      ${months < 60 ? '<div class="warn">Permanent employees usually need 5 years of continuous service to get gratuity. Fixed-term employees, and cases of death or disability, have different rules.</div>' : ''}
+      <p class="note">${act ? 'A final part-year of 6 months or more counts as a full year.' : 'Only completed years count.'} An estimate only: India's new labour codes change how wages are defined, and part of a large gratuity can be taxable. Check with your employer or a tax adviser.</p>`; }
+  if (id === 'hra') { const basic = tv('x-basic'), hra = tv('x-hra'), rent = tv('x-rent'), metro = tv('x-metro');
+    const l1 = hra, l2 = basic * (metro ? .5 : .4), l3 = Math.max(0, rent - basic * .1), ex = Math.max(0, Math.min(l1, l2, l3));
+    return `<h2>Estimate</h2><div><span class="note">Tax-free HRA this year</span><div class="big">${money('₹', ex)}</div></div>
+      <div class="row2"><span>Taxable HRA</span><b>${money('₹', Math.max(0, hra - ex))}</b></div>
+      <div class="row2"><span>Limit 1: HRA received</span><b>${money('₹', l1)}</b></div><div class="row2"><span>Limit 2: ${metro ? '50%' : '40%'} of basic</span><b>${money('₹', l2)}</b></div><div class="row2"><span>Limit 3: rent minus 10% of basic</span><b>${money('₹', l3)}</b></div>
+      <p class="note">The lowest of the three limits is tax-free. This applies only under the old tax regime; under the new regime HRA is fully taxable. Landlord PAN is usually needed when rent is above ₹1 lakh a year. Check current rules with a tax adviser.</p>`; }
+  return '';
+}
+
+function cmpOut() {
+  const pick = id => { const v = (document.getElementById(id) || {}).value || ''; return COS.find(c => c.name.toLowerCase() === v.trim().toLowerCase()); };
+  const a = pick('c-a'), b = pick('c-b');
+  if (!a || !b) return '<p class="meta">Choose two companies from the list to compare them.</p>';
+  S.cmpA = a.name; S.cmpB = b.name;
+  const row = (label, f) => `<tr><th scope="row">${label}</th><td>${f(a)}</td><td>${f(b)}</td></tr>`;
+  const cr = c => { const l = reviewsFor(c.id); return l.length ? `<b>${avgOf(l).toFixed(1)}</b> ★ · ${l.length} reviews` : '<span class="meta">No reviews yet</span>'; };
+  const er = c => { const l = empData(c.id).reviews; return l.length ? `<b>${avgOf(l).toFixed(1)}</b> ★ · ${l.length} reviews` : '<span class="meta">No reviews yet</span>'; };
+  const rec = c => { const l = empData(c.id).reviews; return l.length ? `${recPct(l)}%` : '<span class="meta">—</span>'; };
+  return `<div style="overflow-x:auto;margin-top:6px"><table class="cmp"><thead><tr><th></th><td><a href="#${a.id}"><b>${esc(a.name)}</b></a></td><td><a href="#${b.id}"><b>${esc(b.name)}</b></a></td></tr></thead><tbody>
+    ${row('Category', c => esc(c.cat))}${row('Country', c => esc(c.country))}${row('Website', c => esc(c.web))}
+    ${row('Customer rating', cr)}${row('Employee rating', er)}${row('Would recommend working here', rec)}
+    ${row('Profile', c => c.added === 2 ? 'Listed by the owner' : 'Unclaimed')}</tbody></table></div>
+    <p class="meta" style="margin-top:10px">Ratings come only from reviews. Know a company well? <a href="#${a.id}">Review ${esc(a.name)}</a> or <a href="#${b.id}">${esc(b.name)}</a>.</p>`;
+}
+function runTool() {
+  const x = TOOLBYID[(location.hash || '').slice(1)]; if (!x) return;
+  if (x.id === 'compare') { const o = document.getElementById('cmp-out'); if (o) o.innerHTML = cmpOut(); return; }
+  const r = document.getElementById('tool-res'); if (r) r.innerHTML = toolResult(x.id);
+}
+function vTools() {
+  return `<section class="band"><div class="wrap" style="padding-block:44px 32px;display:flex;flex-direction:column;gap:10px">${crumbs([['Home','#home'],['Tools']])}<h1 style="font-size:clamp(32px,4vw,44px)">Free career and company tools</h1><p style="font-size:18px;color:var(--muted);max-width:640px">Compare companies and offers, check a hike, price your freelance work, and estimate Indian gratuity and HRA. No sign-up needed.</p></div></section>
+    <section class="wrap sec" style="padding-top:32px"><div class="toolgrid">${TOOLS.map(toolCard).join('')}</div></section>`;
+}
+function vTool(x) {
+  const others = TOOLS.filter(o => o.id !== x.id && !o.soon).slice(0, 3);
+  return `<section class="band"><div class="wrap" style="padding-block:40px 28px;display:flex;flex-direction:column;gap:10px">${crumbs([['Home','#home'],['Tools','#tools'],[x.name]])}
+      <div style="display:flex;gap:14px;align-items:center" class="tooltitle">${toolIcon(x, 24)}<h1 style="font-size:clamp(28px,3.6vw,40px)">${esc(x.name)}</h1></div><p style="font-size:17px;color:var(--muted);max-width:680px">${esc(x.d)}</p></div></section>
+    <section class="wrap sec" style="padding-top:28px">${x.id === 'compare' ? toolForm('compare') : `<div class="tool">${toolForm(x.id)}<aside class="res" id="tool-res" aria-live="polite"></aside></div>`}</section>
+    <section class="wrap sec"><div class="sechead"><div><h2 style="font-size:24px">More tools</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid">${others.map(toolCard).join('')}</div></section>`;
+}
+
+const REASONS = [
+  ['A complete online presence', 'One verified page with what you do, your website, team, photos and contact details, kept accurate by you.', true],
+  ['Visible in AI search (GEO)', 'When people ask ChatGPT, Gemini or Perplexity about a company, the answers lean heavily on independent sources like review sites. Real reviews give them accurate information about you.', true],
+  ['Found when people search your name', 'A company page can show up when people search for your name plus “reviews”, with your replies right there.', false],
+  ['More customers, through proof', 'Independent reviews persuade more than your own claims. Share your rating, badge and review cards wherever people find you.', false],
+  ['Better hires', 'Your employer page sits next to what employees say. Job seekers see the real culture, and the right people apply.', false],
+  ['Easier due diligence', 'Investors, partners and enterprise clients check a company before they sign. A verified page with honest reviews and replies answers their questions early.', false],
+  ['Proof you are real', 'Your Verified badge shows we confirmed you control the company’s email or website, or checked official documents. That matters when fake job offers and copycat sites are everywhere.', false],
+  ['Your side of every story', 'Reply publicly to customers and employees. Calm, factual replies build more trust than a perfect score.', false],
+  ['Know what to fix', 'See ratings for pay, management, service and value, and get an email for every new review.', false],
+  ['Stand out in your category', 'Most startups and growing companies have no independent reviews yet. The first ones to collect them stand out.', false],
+  ['Proof you can reuse', 'Put your rating on your website, careers page, LinkedIn, proposals, pitch decks and email signature.', false],
+  ['Fair and low-cost', 'Basic is free for your first year. Paying never changes a rating, so your rating actually means something.', false]
+];
+const reasonCard = ([h, p, hot], i) => `<div class="reason${hot ? ' hot' : ''}"><span class="n">${String(i + 1).padStart(2, '0')}</span><h3>${h}</h3><p>${p}</p></div>`;
+function vWhy() {
+  const aud = [['user', 'Customers and clients'], ['invite', 'Job seekers'], ['plans', 'Investors'], ['claim', 'Partners and enterprise clients'], ['search', 'AI assistants and search engines']];
+  return `<section class="lbhero"><div class="wrap"><div style="flex:1 1 560px;display:flex;flex-direction:column;gap:18px">${crumbs([['Home','#home'],['For employers','#list'],['Why list your company']]).replace('class="crumbs"', 'class="crumbs" style="color:var(--deep-muted)"')}
+      <p class="eyebrow" style="color:var(--gold)">Why list your company</p>
+      <h1>Be found, and trusted, everywhere people check you.</h1>
+      <p class="lede">Customers, job seekers, investors and AI assistants all look at what others say about a company before they decide. A verified page with real reviews puts your true story in front of them.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn gold lg" href="#list" data-act="to-form">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Who checks you</p><h2>People look you up before they decide</h2></div></div>
+      <div class="why-aud">${aud.map(([k, l]) => `<span>${nI(k, 18)}${l}</span>`).join('')}</div></section>
+
+    <section class="wrap sec"><div class="geo">
+      <div class="tx"><p class="eyebrow" style="color:var(--gold)">GEO · generative engine optimisation</p><h2>Show up when people ask AI about you</h2>
+        <p>More people now ask AI assistants “Is this a good company to work with?” instead of searching. These tools rely heavily on independent sources, like review sites, rather than a company's own website.</p>
+        <div class="stat"><b>72.7%</b><span>of sources cited by ChatGPT for US software queries were independent, third-party sites. Only 26.7% were the companies' own sites.</span></div>
+        <p style="font-size:13px">Source: <a href="https://arxiv.org/abs/2509.08919" target="_blank" rel="noopener">Chen et al., “Generative Engine Optimization: How to Dominate AI Search”, University of Toronto, 2025</a>. No one can guarantee what an AI tool says; real reviews and a complete, verified page give it accurate information to work with.</p></div>
+      <div class="aichat" aria-label="Example of an AI assistant answer"><span class="ex">Example</span>
+        <div class="q">Is Example Company good for board exam coaching?</div>
+        <div class="a">Parents describe Example Company's weekly mock tests and same-day doubt solving as helpful, rating it 4.0 out of 5. One reviewer said a refund took six weeks, and the company replied that refunds now go out within 7 working days.<br><span class="src">${nI('search', 13)} Source: Know The Company</span></div></div>
+    </div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">12 reasons</p><h2>What a company page does for you</h2></div></div>
+      <div class="reasons">${REASONS.map(reasonCard).join('')}</div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Getting started</p><h2>Three steps, about ten minutes</h2></div></div><div class="steps">
+      <div class="step"><span>1</span><h3>Claim your page</h3><p>Add your details and story. ${LAUNCH ? 'Free for your first year.' : 'Plans from ₹499 a year.'}</p></div>
+      <div class="step"><span>2</span><h3>Invite people</h3><p>Send your review links to customers and your team. Employee reviews can stay anonymous.</p></div>
+      <div class="step"><span>3</span><h3>Share the proof</h3><p>Add your badge and review cards to your website, careers page and LinkedIn.</p></div></div></section>
+
+    <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Straight answers</p><h2>Before you sign up</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${[
+      ['Will this guarantee we appear in Google or AI answers?', 'No one can guarantee that, and you should be wary of anyone who does. What we do is give search engines and AI tools a complete, verified page with independent reviews, which is the kind of source they tend to rely on.'],
+      ['Does the link on our page help our SEO?', 'Links from company pages follow Google’s rules for paid and user-generated links, so they don’t pass ranking. They do send real visitors to your site, and your page itself can show up for searches about your company.'],
+      ['We have no reviews yet. Is it still worth it?', 'Yes. Your verified page, description and employer page work from day one, and your review links help you collect the first reviews quickly.'],
+      ['Can we pay to improve our rating?', 'Never. Plans add tools, not stars. That rule is the reason customers, job seekers and AI tools can trust your rating.']
+    ].map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>
+
+    <section class="wrap sec"><div class="cta"><div style="display:flex;flex-direction:column;gap:14px;max-width:640px"><p class="eyebrow" style="color:var(--gold)">Free first year</p><h2>${LAUNCH ? 'Claim your company page free for a year.' : 'Get your company page today.'}</h2><p style="color:var(--deep-muted)">Join before ${LAUNCH_END} and Basic is free for your first year.</p><a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>`;
+}
+
+function vHome() {
+  const mix = w => { let h = 7; for (const ch of w) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+  const pool = COS.slice().sort((x, y) => mix(x.wid) - mix(y.wid));
+  const rowA = pool.filter((_, i) => i % 2 === 0).slice(0, 40), rowB = pool.filter((_, i) => i % 2 === 1).slice(0, 40);
+  const band = (list, cls) => `<div class="nb ${cls}"><div class="nbt">${list.concat(list).map(c => `<a href="#${c.id}" tabindex="-1">${esc(c.name)}</a>`).join('')}</div></div>`;
+  return `<section class="hero3" aria-labelledby="hero-h">
+      <div class="wrap">
+        <h1 id="hero-h" class="sr">Know the company before you deal with it.</h1>
+        <form class="hs3" role="search" id="hero-search-form" autocomplete="off">
+          <div class="hl hl1"><span class="w" aria-hidden="true">Know</span><span class="blank"><label class="sr" for="hero-search">Search companies or websites</label><input id="hero-search" type="search" placeholder="the company" data-suggest="hero" spellcheck="false"><div class="sugg" id="sugg-hero" hidden></div></span></div>
+          <button class="go" type="submit">Search</button>
+          <div class="hl hl2"><span class="w" aria-hidden="true">before you deal with&nbsp;it.</span></div>
+        </form>
+        <p class="hsub">Customers and employees review the same company, on one page.</p>
+      </div>
+      <div class="nbands" id="nbands" aria-hidden="true">${band(rowA, 'a')}${band(rowB, 'b')}</div>
+      <div class="wrap hfoot"><p>${COS.length} companies across ${CATS.length} categories so far. <a href="#categories">Browse them</a> or <a href="#add">add one that’s missing</a>.</p></div>
+    </section>
+
+    <section class="wrap promises" aria-label="Our promises">
+      <div class="pcard"><span class="pi" style="background:var(--t1);color:var(--t1i)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9.5L5 20v-4H4z"/><path d="M8 10.5h8"/></svg></span><div><b>Free for everyone</b><p>Reading and writing reviews costs nothing, and you never need a paid account.</p></div></div>
+      <div class="pcard"><span class="pi" style="background:var(--gold-soft);color:var(--gold-ink)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><div><b>Zero ratings bought</b><p>Companies can pay for tools, never for stars. Paying never changes, hides or delays a review.</p></div></div>
+      <div class="pcard"><span class="pi" style="background:var(--t3);color:var(--t3i)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg></span><div><b>Your call on your name</b><p>Post employee reviews anonymously or with your name. Your email is never shown.</p></div></div>
+    </section>
+
+    <section class="wrap sec" aria-labelledby="both-h"><div class="sechead"><div style="max-width:720px"><p class="eyebrow">Two sides, one page</p><h2 id="both-h">What customers and employees say, together</h2><p>Review sites usually cover one side: customers or employees. Every company page here has both, so you see how a company treats the people it works for and the people who work for it.</p></div></div>
+      <div class="both">
+        <div class="bside c"><div class="who2"><span class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v13H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><div><h3>Customers and clients</h3><p class="sub">How the company delivers</p></div></div>
+          <ul>${['Quality of the work, product or service','Communication and support','Value for money','Whether it kept its promises'].map(x => `<li>${TICK('#1E293B')}${x}</li>`).join('')}</ul>
+          <button class="btn o" type="button" data-act="open-picker" data-as="customers">Review as a customer</button></div>
+        <div class="bjoin" aria-hidden="true"><span>One<br>page</span></div>
+        <div class="bside e"><div class="who2"><span class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></span><div><h3>Employees</h3><p class="sub">How the company treats its people</p></div></div>
+          <ul>${['Culture and management','Pay and benefits','Career growth and work-life balance','Anonymous, or with your name if you prefer'].map(x => `<li>${TICK('var(--accent-soft-ink)')}${x}</li>`).join('')}</ul>
+          <button class="btn o" type="button" data-act="open-picker" data-as="employees">Review as an employee</button></div>
+      </div>
+      <div class="whyboth">
+        <div><b>Choosing a company to work with?</b><p>See whether its team is looked after, not just what past clients say. A team that's treated well is more likely to treat you well.</p></div>
+        <div><b>Thinking of joining?</b><p>See how the company treats its customers, not only what it tells you in interviews.</p></div>
+        <div><b>Running a company?</b><p>One page for your reputation with clients and candidates, and one place to reply to both.</p></div>
+      </div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Explore</p><h2>Browse by category</h2><p>Find a company by what it does, or add one that's missing and write the first review.</p></div><a href="#categories" style="font-weight:700">All ${CATS.length} categories</a></div>
+      <div class="grid">${CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 8).map(catTile).join('')}</div></section>
+
+    ${recentReviews()}
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>Why companies list here</h2><p>Customers, job seekers, investors and AI assistants check what others say about a company. Here's what a verified page does for you.</p></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
+      <div class="reasons">${REASONS.slice(0, 6).map(reasonCard).join('')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px"><a class="btn p lg" href="#why-list">See why it matters</a><a class="btn o lg" href="#list">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Free tools</p><h2>Make better career and company decisions</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid">${TOOLS.filter(x => !x.soon).slice(0, 6).map(toolCard).join('')}</div></section>
+
+    
+
+    ${!JOBS_ON ? '' : (() => { const js = JOBS.filter(isLive).sort((a, b) => dayNum(b.posted) - dayNum(a.posted)).slice(0, 3); return js.length ? `<section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Hiring now</p><h2>Latest jobs at verified companies</h2><p>Read what employees say before you apply.</p></div><a href="#jobs" style="font-weight:700">All jobs</a></div>
+      <div class="jgrid">${js.map(jobTile).join('')}</div></section>` : ''; })()}
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Simple and fair</p><h2>How it works</h2></div></div>
+      <div class="steps">
+        <div class="step"><span>1</span><h3>Search the company</h3><p>Type a name or website. Each page shows its reviews and whether the company is verified.</p></div>
+        <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews and interview experiences. Reviews backed by proof carry a badge.</p></div>
+        <div class="step"><span>3</span><h3>Share your own</h3><p>Good or bad, every review is published the same way, and the company can reply.</p></div>
+      </div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>From our blog for companies</h2><p>Practical advice on reviews, reputation and growth.</p></div><a href="#blog" style="font-weight:700">All articles</a></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${POSTS.slice(0, 3).map(postCard).join('')}</div></section>
+
+    <section class="wrap sec"><div class="cta">
+      <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px"><p class="eyebrow" style="color:var(--deep-muted)">For employers</p>
+        <h2>${LAUNCH ? 'List your company free for a year.' : 'Get a verified listing for ₹499 a year.'}</h2>
+        <p>Show up in your category, reply to clients and employees, and share proof of your reputation.${LAUNCH ? ` Businesses that join before ${LAUNCH_END} get their first year free.` : ''}</p></div>
+      <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:16px">
+        <ul class="ticks">${['Verified company badge','Reply to every review','Employer branding page','Website link and photos'].map(t => `<li>${TICK('var(--deep-muted)')}${t}</li>`).join('')}</ul>
+        <a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'List your company free' : 'List your company – ₹499'}</a></div>
+    </div></section>
+
+    <section class="wrap"><div class="promise">
+      <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:8px"><h2 style="font-size:24px">Our promise on reviews</h2><p style="color:var(--muted)">Paying for a listing buys tools and visibility, never stars.</p></div>
+      <ul><li>Negative reviews are never hidden or delayed.</li><li>Companies can't edit or remove reviews.</li><li><a href="#removals" style="color:inherit">Every removal is listed in a public report.</a></li><li>Companies caught buying reviews get a public warning.</li></ul>
+    </div></section>`;
+}
+
+function vCategories() {
+  return `<div class="wrap">${crumbs([['Home','#home'],['Categories']])}
+    <div class="pagehead"><h1>All categories</h1><p>${CATS.length} categories · ${COS.length} companies. Pick one to compare companies.</p></div>
+    <div class="grid">${CATS.map(catTile).join('')}</div></div>`;
+}
+
+function filteredCat(k) {
+  const f = S.catFilter; const t = f.text.trim().toLowerCase();
+  let list = k.items.filter(c => (!f.country || c.cc === f.country) && (!t || c.name.toLowerCase().includes(t) || c.web.includes(t)));
+  if (f.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+  if (f.sort === 'za') list.sort((a, b) => b.name.localeCompare(a.name));
+  if (f.sort === 'reviews') list.sort((a, b) => reviewsFor(b.id).length - reviewsFor(a.id).length || a.name.localeCompare(b.name));
+  return list;
+}
+function catResults(k) {
+  const list = filteredCat(k);
+  return `<div class="toolbar"><p class="count" aria-live="polite">Showing ${list.length} of ${k.items.length}</p></div>` +
+    (list.length ? list.map(listRow).join('') : `<div class="empty"><b>No companies match</b><p>Clear the filters, or list a company in this category.</p><button class="btn g" type="button" data-act="clear-filters">Clear filters</button></div>`);
+}
+function vCategory(k) {
+  const countries = [...new Set(k.items.map(c => c.cc))].sort((a, b) => (COUNTRY[a] || a).localeCompare(COUNTRY[b] || b));
+  const f = S.catFilter;
+  return `<div class="wrap">${crumbs([['Home','#home'],['Categories','#categories'],[k.name]])}
+    <div class="pagehead"><h1>${esc(k.name)}</h1><p>${k.items.length} companies · compare them by real customer experiences</p></div>
+    <div class="layout">
+      <aside class="side" aria-label="Filters"><div class="box">
+        <div class="field"><label class="l" for="f-country">Country</label><select id="f-country" data-filter="country"><option value="">All countries</option>${countries.map(cc => `<option value="${cc}" ${f.country === cc ? 'selected' : ''}>${esc(COUNTRY[cc] || cc)}</option>`).join('')}</select></div>
+        <div class="field"><label class="l" for="f-text">Name or website</label><input id="f-text" type="text" data-filter="text" value="${esc(f.text)}" placeholder="Filter this list"></div>
+        <div class="field"><label class="l" for="f-sort">Sort by</label><select id="f-sort" data-filter="sort"><option value="name" ${f.sort === 'name' ? 'selected' : ''}>Name A–Z</option><option value="za" ${f.sort === 'za' ? 'selected' : ''}>Name Z–A</option><option value="reviews" ${f.sort === 'reviews' ? 'selected' : ''}>Most reviewed</option></select></div>
+      </div>
+      <div class="box soft"><h2>Run a company in this category?</h2><p>Get a verified listing here, ${LAUNCH ? 'free for your first year' : 'for ₹499 a year'}.</p><a class="btn p" href="#list">List your company</a></div></aside>
+      <div class="mainc" id="cat-results">${catResults(k)}</div>
+    </div></div>`;
+}
+
+const webs2 = () => Object.fromEntries(Object.keys(CLAIMS).filter(id => BYID[id]).map(id => [id, domOf(cprof(BYID[id]).web2 || '')]).filter(x => x[1]));
+function searchCos(q) {
+  const t = q.trim().toLowerCase(); if (!t) return [];
+  const score = c => { const n = c.name.toLowerCase(), w2 = webs2()[c.id] || ''; if (n === t || c.web === t || w2 === t) return 0; if (n.startsWith(t)) return 1; if (n.includes(t) || c.web.includes(t) || (w2 && w2.includes(t))) return 2; if (c.cat.toLowerCase().includes(t)) return 3; if (t.length > 2 && (c.bio || '').toLowerCase().includes(t)) return 4; return 9; };
+  return COS.map(c => [score(c), c]).filter(x => x[0] < 9).sort((a, b) => a[0] - b[0] || a[1].name.localeCompare(b[1].name)).map(x => x[1]);
+}
+function vSearch() {
+  const res = searchCos(S.q);
+  const cats = S.q.trim() ? CATS.filter(k => k.name.toLowerCase().includes(S.q.trim().toLowerCase())) : [];
+  return `<div class="wrap">${crumbs([['Home','#home'],['Search']])}
+    <div class="pagehead"><h1>${S.q.trim() ? `Results for “${esc(S.q.trim())}”` : 'Search companies'}</h1>
+    <form role="search" id="page-search-form" style="display:flex;flex-wrap:wrap;gap:12px;max-width:640px;margin-top:6px" autocomplete="off"><label class="sr" for="page-search">Search</label><input id="page-search" type="search" value="${esc(S.q)}" placeholder="Company, website or category" style="flex:1 1 300px"><button class="btn p" type="submit">Search</button></form></div>
+    ${cats.length ? `<div class="sechead" style="margin-bottom:12px"><h2 style="font-size:20px">Categories</h2></div><div class="grid" style="margin-bottom:28px">${cats.map(catTile).join('')}</div>` : ''}
+    ${S.q.trim() ? (res.length ? `<div class="mainc" style="max-width:900px">${res.map(listRow).join('')}</div>`
+      : `<div class="empty" style="max-width:900px"><b>No company called “${esc(S.q.trim())}” yet</b><p>Been a customer or worked there? Add it in under a minute and be the first to review. Or try another spelling.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn p" href="#add" data-act="add-prefill" data-name="${esc(S.q.trim())}">Add it and write the first review</a><a class="btn o" href="#list" data-act="claim" data-name="${esc(S.q.trim())}">It's my company</a><a class="btn g" href="#categories">Browse categories</a></div></div>`)
+      : `<p class="count">Type a name above, or <a href="#categories">browse all categories</a>.</p>`}
+  </div>`;
+}
+
+function reviewCard(r, idx, cid) {
+  const mine = cid && isMine(r);
+  return `<article class="review">
+    <div class="who"><span class="avatar" aria-hidden="true" style="width:40px;height:40px;font-size:14px;border-radius:999px">${esc(initials(r.name || 'You'))}</span>
+      <div class="t"><b style="font-size:15px">${esc(r.name || 'You')}</b><span class="meta">${esc(r.date)}</span></div>
+      ${r.invited ? '<span class="pill cat">Invited</span>' : ''}${mine ? '<span class="pill ok">Your review</span>' : ''}${r.proof ? '<span class="pill ok">Proof checked</span>' : ''}</div>
+    ${starRow(r.rating, 18)}
+    ${r.title ? `<h3>${esc(r.title)}</h3>` : ''}
+    <p class="body">${esc(r.body)}</p>
+    ${r.reply ? `<div class="reply"><b>Reply from ${esc(r.replyFrom || 'the company')}</b><span>${esc(r.reply)}</span></div>` : ''}
+    ${mine ? `<div><button class="link" type="button" data-act="del-review" data-wid="${esc(r.wid)}">Remove my review</button></div>` : ''}
+    ${cid && !mine ? rvActions(cid, 'c', idx, r) : ''}
+  </article>`;
+}
+const CO_TABS = [['customers', 'Customer reviews'], ['employees', 'Employee reviews'], ['interviews', 'Interviews']]; /* salaries: off until there is traffic */
+const SUBS = [['pay', 'Pay & benefits'], ['culture', 'Culture'], ['mgmt', 'Management'], ['growth', 'Career growth'], ['wlb', 'Work-life balance']];
+const E_STATUS = ['Current employee', 'Former employee', 'Contractor or intern'];
+const E_YEARS = ['Less than 1 year', '1–3 years', '3–5 years', 'More than 5 years'];
+const S_CUR = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'SGD'];
+const S_EXP = ['Less than 1 year', '1–3 years', '3–5 years', '5–10 years', 'More than 10 years'];
+const I_OUTCOME = ['Got an offer', 'No offer', 'Still waiting', 'Declined'];
+const I_DIFF = ['Easy', 'Medium', 'Hard'];
+const I_EXP = ['Positive', 'Neutral', 'Negative'];
+const PERSON = (size = 40) => `<span class="avatar" aria-hidden="true" style="width:${size}px;height:${size}px;border-radius:999px"><svg width="${Math.round(size * .55)}" height="${Math.round(size * .55)}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4.2 4.3-6.5 8-6.5s6.8 2.3 8 6.5"/></svg></span>`;
+const CROSS = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
+const opts = (list, cur) => list.map(o => `<option ${o === cur ? 'selected' : ''}>${esc(o)}</option>`).join('');
+const monthNow = () => new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+const bareHost = s => String(s || '').toLowerCase().trim().replace(/^https?:\/\//, '').replace(/[\/:].*$/, '').replace(/^www\./, '');
+function workVerified(c) {
+  if (!S.user || !S.user.email || !c.web) return false;
+  const d = bareHost(S.user.email.split('@')[1]), w = bareHost(c.web);
+  return !!d && !!w && (d === w || w.endsWith('.' + d) || d.endsWith('.' + w));
+}
+const isMine = r => !!(S.user && S.user.id && r.by && r.by === S.user.id);
+function fmtPay(s) {
+  let amt; try { amt = new Intl.NumberFormat(s.cur === 'INR' ? 'en-IN' : 'en', { style: 'currency', currency: s.cur, maximumFractionDigits: 0 }).format(s.amount); } catch (e) { amt = s.cur + ' ' + s.amount; }
+  return amt + (s.period === 'month' ? ' per month' : ' per year');
+}
+/* keep typed values when a form re-renders */
+const CO_FORMS = ['review-form', 'emp-form', 'sal-form', 'int-form'];
+function snapForm(id) { const f = document.getElementById(id); if (!f) return null; return [...f.querySelectorAll('input,select,textarea')].filter(el => el.id).map(el => [el.id, el.type === 'radio' || el.type === 'checkbox' ? el.checked : el.value]); }
+function restoreForm(snap) { (snap || []).forEach(([id, v]) => { const el = document.getElementById(id); if (!el) return; if (el.type === 'radio' || el.type === 'checkbox') el.checked = v; else el.value = v; }); }
+function renderKeep() { const snaps = CO_FORMS.map(snapForm); render(); snaps.forEach(restoreForm); }
+
+function empGate(c, what) {
+  if (S.user && S.user.type === 'reviewer') return '';
+  if (S.user) return `<div class="box soft" id="emp-gate"><h2>Company accounts can't post here</h2><p>Employee reviews and interviews come from personal reviewer accounts. Log out and log in as a reviewer to share yours.</p></div>`;
+  return `<div class="box soft" id="emp-gate"><h2>Log in to ${what} anonymously</h2><p>A quick login stops fake posts. Your name and email are never shown, and ${esc(c.name)} can't see who wrote it.</p><div><button class="btn p" type="button" id="gate-login" data-act="gate-login">Log in to continue</button></div></div>`;
+}
+function anonNote(c) {
+  return `<div class="democode">You choose below whether to post anonymously or with your name. Your email is never shown. ${workVerified(c) ? `You're logged in with a work email at ${esc(c.web)}, so this will carry a “Work email verified” badge.` : `To get a “Work email verified” badge, log in with your work email at ${esc(c.web)}.`}</div>`;
+}
+function empSummary(list) {
+  if (!list.length) return '';
+  const avg = avgOf(list);
+  const bars = SUBS.map(([k, l]) => { const rated = list.filter(r => r.sub && r.sub[k]); const v = rated.length ? rated.reduce((s, r) => s + r.sub[k], 0) / rated.length : 0;
+    return `<div class="bar"><span style="flex:0 0 132px">${l}</span><span class="tr"><i style="width:${Math.round(v / 5 * 100)}%"></i></span><span style="width:28px;text-align:right">${v ? v.toFixed(1) : '–'}</span></div>`; }).join('');
+  return `<section class="box" aria-labelledby="es-h"><div class="toolbar"><h2 id="es-h">What employees say</h2><span class="pill ok">${recPct(list)}% would recommend</span></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">${starRow(+avg.toFixed(1), 22)}<b>${avg.toFixed(1)}</b><span class="meta" style="font-size:14px">overall from ${list.length} review${list.length > 1 ? 's' : ''}</span></div>
+    <div class="bars">${bars}</div></section>`;
+}
+const displayName = () => S.user ? (S.user.name || S.user.email.split('@')[0]) : 'Your name';
+function empForm(c) {
+  const e = S.emp; const words = ['Tap a star to rate', 'Very poor', 'Poor', 'OK', 'Good', 'Excellent'];
+  return `<form class="box" id="emp-form" style="padding:24px;gap:18px" novalidate>
+    <h2 style="font-size:22px">Review ${esc(c.name)} as an employee</h2>
+    ${anonNote(c)}
+    <div class="row"><div class="field"><label class="l" for="e-status">Employment status</label><select id="e-status">${opts(E_STATUS)}</select></div>
+      <div class="field"><label class="l" for="e-years">Time at ${esc(c.name)}</label><select id="e-years">${opts(E_YEARS)}</select></div></div>
+    <div class="row"><div class="field"><label class="l" for="e-title">Job title</label><input id="e-title" type="text" maxlength="80" placeholder="e.g. Customer support associate" aria-describedby="err-e-title"><p class="err" id="err-e-title" hidden>Enter your job title.</p></div>
+      <div class="field"><label class="l" for="e-loc">Location <span class="meta">(optional)</span></label><input id="e-loc" type="text" maxlength="60" placeholder="City, or Remote"></div></div>
+    <div class="field"><span class="l" id="e-overall-l">Overall rating</span>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px"><div class="starbtns" role="group" aria-labelledby="e-overall-l">${[1, 2, 3, 4, 5].map(n => `<button type="button" id="e-overall-${n}" class="${n <= e.overall ? 'on' : ''}" data-act="erate" data-k="overall" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" aria-pressed="${n <= e.overall}">${STAR(n <= e.overall, 26)}</button>`).join('')}</div>
+        <span style="font-weight:700;color:var(--muted)">${words[e.overall]}</span></div>
+      <p class="err" id="err-e-overall" hidden>Choose an overall star rating.</p></div>
+    <fieldset class="subrates"><legend class="l">Rate each area <span class="meta">(optional, 1 is poor and 5 is excellent)</span></legend>
+      ${SUBS.map(([k, l]) => `<div class="subrate"><span id="e-${k}-l">${l}</span><div class="scale" role="group" aria-labelledby="e-${k}-l">${[1, 2, 3, 4, 5].map(n => `<button type="button" id="e-${k}-${n}" class="${e[k] === n ? 'on' : ''}" data-act="erate" data-k="${k}" data-n="${n}" aria-label="${n} out of 5" aria-pressed="${e[k] === n}">${n}</button>`).join('')}</div></div>`).join('')}</fieldset>
+    <div class="field"><label class="l" for="e-pros">Pros</label><textarea id="e-pros" rows="3" maxlength="1500" placeholder="What is good about working here?" aria-describedby="err-e-pros"></textarea><p class="err" id="err-e-pros" hidden>Write at least 20 characters about the pros.</p></div>
+    <div class="field"><label class="l" for="e-cons">Cons</label><textarea id="e-cons" rows="3" maxlength="1500" placeholder="What could be better?" aria-describedby="err-e-cons"></textarea><p class="err" id="err-e-cons" hidden>Write at least 20 characters about the cons.</p></div>
+    <div class="field"><label class="l" for="e-advice">Advice to management <span class="meta">(optional)</span></label><textarea id="e-advice" rows="2" maxlength="1000"></textarea></div>
+    <fieldset class="radios" aria-describedby="err-e-rec"><legend class="l">Would you recommend working here to a friend?</legend>
+      <div class="opts"><label class="radio" for="e-rec-yes"><input type="radio" id="e-rec-yes" name="e-rec" value="yes">Yes</label><label class="radio" for="e-rec-no"><input type="radio" id="e-rec-no" name="e-rec" value="no">No</label></div>
+      <p class="err" id="err-e-rec" hidden>Choose yes or no.</p></fieldset>
+    <fieldset class="radios"><legend class="l">How should your review appear?</legend>
+      <div class="planpick">
+        <label><input type="radio" name="e-show" value="anon" ${S.empShow !== 'named' ? 'checked' : ''}><span><b>Anonymous</b><small>Shown as “Anonymous employee”. ${esc(c.name)} can't see who wrote it. In a small team, your job title and dates can still hint at who you are, so share only what you're comfortable with.</small></span></label>
+        <label><input type="radio" name="e-show" value="named" ${S.empShow === 'named' ? 'checked' : ''}><span><b>With my name</b><small>Shown as “${esc(displayName())}”. Named reviews often carry more weight with readers.</small></span></label></div></fieldset>
+    <label class="check"><input id="e-first" type="checkbox"><span>I work or worked at this company, and this is my own experience.</span></label><p class="err" id="err-e-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Don't name junior colleagues or share confidential company information. Every review is checked by our team before it appears. <a href="#guidelines">Read the guidelines</a></p>
+    <div><button class="btn p lg" type="submit">Post review</button></div>
+  </form>`;
+}
+function empCard(r, idx, cid) {
+  const mine = isMine(r);
+  const subs = SUBS.filter(([k]) => r.sub && r.sub[k]).map(([k, l]) => `<span class="pill cat">${l} ${r.sub[k]}/5</span>`).join('');
+  return `<article class="review">
+    <div class="who">${PERSON(40)}<div class="t"><span style="font-size:13px;font-weight:700;color:var(--muted)">${r.named && r.name ? esc(r.name) : 'Anonymous employee'}</span><h3 style="font-size:16px">${esc(r.status)} · ${esc(r.title)}</h3><span class="meta">${esc(r.loc || 'Location not shared')} · ${esc(r.years)} · ${esc(r.date)}</span></div>
+      ${r.verified ? `<span class="pill ok">${TICK('var(--accent-soft-ink)')}Work email verified</span>` : ''}${mine ? '<span class="pill cat">Your review</span>' : ''}</div>
+    ${starRow(r.rating, 18)}
+    ${subs ? `<div class="tags">${subs}</div>` : ''}
+    <div class="ersec"><h4>Pros</h4><p>${esc(r.pros)}</p></div>
+    <div class="ersec"><h4>Cons</h4><p>${esc(r.cons)}</p></div>
+    ${r.advice ? `<div class="ersec"><h4>Advice to management</h4><p>${esc(r.advice)}</p></div>` : ''}
+    <p class="recline">${r.rec === 'yes' ? TICK() + 'Would recommend working here' : CROSS() + 'Would not recommend working here'}</p>
+    ${r.reply ? `<div class="reply"><b>Reply from ${esc(r.replyFrom || 'the company')}</b><span>${esc(r.reply)}</span></div>` : ''}
+    ${cid && !mine && location.hash !== '#dashboard' ? rvActions(cid, 'e', idx, r) : ''}
+    ${mine ? `<div><button class="link" type="button" data-act="del-emp" data-wid="${esc(r.wid)}">Remove my review</button></div>` : ''}
+  </article>`;
+}
+function empPanel(c, er) {
+  return `${empSummary(er)}${empGate(c, 'review') || empForm(c)}
+    <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="er-h"><h2 id="er-h" style="font-size:22px">Employee reviews</h2>
+      ${er.length ? `<div class="rvbar"><span class="meta">${er.length} review${er.length === 1 ? '' : 's'}</span>${sortSel('ersort', S.erSort || 'new')}</div>` + rvSorted(er, S.erSort || 'new').map(([r, i]) => empCard(r, i, c.id)).join('') : `<div class="empty">${PERSON(48)}<b>Be the first to review ${esc(c.name)} as an employee</b><p>Worked there? Share what it's like, anonymously.</p></div>`}</section>`;
+}
+function salForm(c) {
+  return `<form class="box" id="sal-form" style="padding:24px;gap:18px" novalidate>
+    <h2 style="font-size:22px">Share your salary at ${esc(c.name)}</h2>
+    ${anonNote(c)}
+    <div class="row"><div class="field"><label class="l" for="s-title">Job title</label><input id="s-title" type="text" maxlength="80" placeholder="e.g. Software engineer" aria-describedby="err-s-title"><p class="err" id="err-s-title" hidden>Enter your job title.</p></div>
+      <div class="field"><label class="l" for="s-loc">Location <span class="meta">(optional)</span></label><input id="s-loc" type="text" maxlength="60" placeholder="City, or Remote"></div></div>
+    <div class="row"><div class="field"><label class="l" for="s-amount">Base pay before tax</label><input id="s-amount" type="number" min="1" step="any" inputmode="decimal" placeholder="e.g. 850000" aria-describedby="err-s-amount"><p class="err" id="err-s-amount" hidden>Enter an amount greater than 0.</p></div>
+      <div class="field" style="flex:0 1 150px"><label class="l" for="s-cur">Currency</label><select id="s-cur">${opts(S_CUR)}</select></div>
+      <div class="field" style="flex:0 1 170px"><label class="l" for="s-period">Paid</label><select id="s-period"><option value="year">Per year</option><option value="month">Per month</option></select></div></div>
+    <div class="row"><div class="field"><label class="l" for="s-exp">Years of experience</label><select id="s-exp">${opts(S_EXP)}</select></div></div>
+    <div><button class="btn p lg" type="submit">Share salary anonymously</button></div>
+  </form>`;
+}
+function salPanel(c, list) {
+  const rows = list.map((s, i) => [s, i]).sort((a, b) => a[0].title.localeCompare(b[0].title));
+  const anyMine = rows.some(([s]) => isMine(s));
+  return `${empGate(c, 'share your salary') || salForm(c)}
+    <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="sl-h"><h2 id="sl-h" style="font-size:22px">Salaries at ${esc(c.name)}</h2>
+      <p class="meta" style="font-size:14px">Salaries are shared anonymously.</p>
+      ${rows.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Job title</th><th scope="col">Location</th><th scope="col" class="num">Pay</th><th scope="col">Experience</th>${anyMine ? '<th scope="col"><span class="sr">Your entries</span></th>' : ''}</tr></thead><tbody>
+        ${rows.map(([s, i]) => `<tr><td><b>${esc(s.title)}</b></td><td>${esc(s.loc || 'Not shared')}</td><td class="num">${esc(fmtPay(s))}</td><td>${esc(s.exp)}</td>${anyMine ? `<td>${isMine(s) ? `<button class="link" type="button" data-act="del-emp" data-kind="salaries" data-id="${c.id}" data-idx="${i}">Remove</button>` : ''}</td>` : ''}</tr>`).join('')}</tbody></table></div>`
+        : `<div class="empty"><b>No salaries shared yet</b><p>Help others negotiate. Share what ${esc(c.name)} pays for your role.</p></div>`}</section>`;
+}
+function salCard(s, idx, cid) {
+  return `<article class="review"><div class="who">${PERSON(40)}<div class="t"><h3 style="font-size:16px">${esc(s.title)}</h3><span class="meta">${esc(s.loc || 'Location not shared')} · ${esc(s.exp)} · ${esc(s.date)}</span></div><span class="pill cat">Your salary</span></div>
+    <p style="font-size:18px;font-weight:800">${esc(fmtPay(s))}</p>
+    <div><button class="link" type="button" data-act="del-emp" data-kind="salaries" data-id="${cid}" data-idx="${idx}">Remove my salary</button></div></article>`;
+}
+function intForm(c) {
+  return `<form class="box" id="int-form" style="padding:24px;gap:18px" novalidate>
+    <h2 style="font-size:22px">Share your interview at ${esc(c.name)}</h2>
+    ${anonNote(c)}
+    <div class="row"><div class="field"><label class="l" for="i-role">Role you applied for</label><input id="i-role" type="text" maxlength="80" placeholder="e.g. Relationship manager" aria-describedby="err-i-role"><p class="err" id="err-i-role" hidden>Enter the role you applied for.</p></div>
+      <div class="field"><label class="l" for="i-outcome">Outcome</label><select id="i-outcome">${opts(I_OUTCOME)}</select></div></div>
+    <div class="row"><div class="field"><label class="l" for="i-diff">Difficulty</label><select id="i-diff">${opts(I_DIFF, 'Medium')}</select></div>
+      <div class="field"><label class="l" for="i-exp">Overall experience</label><select id="i-exp">${opts(I_EXP, 'Neutral')}</select></div></div>
+    <div class="field"><label class="l" for="i-process">How did the process go?</label><textarea id="i-process" rows="4" maxlength="2000" placeholder="Rounds, timeline, who you met, how they treated you" aria-describedby="err-i-process"></textarea><p class="err" id="err-i-process" hidden>Write at least 20 characters about the process.</p></div>
+    <div class="field"><label class="l" for="i-questions">Questions they asked <span class="meta">(optional)</span></label><textarea id="i-questions" rows="3" maxlength="1500"></textarea></div>
+    <label class="check"><input id="i-first" type="checkbox"><span>I interviewed at this company, and this is my own experience.</span></label><p class="err" id="err-i-first" hidden>Tick the box to confirm.</p><div><button class="btn p lg" type="submit">Share interview anonymously</button></div>
+  </form>`;
+}
+function intCard(r, idx, cid) {
+  const mine = isMine(r);
+  return `<article class="review">
+    <div class="who">${PERSON(40)}<div class="t"><h3 style="font-size:16px">Interview for ${esc(r.role)}</h3><span class="meta">Candidate · ${esc(r.date)}</span></div>${r.verified ? `<span class="pill ok">${TICK('var(--accent-soft-ink)')}Work email verified</span>` : ''}${mine ? '<span class="pill cat">Your interview</span>' : ''}</div>
+    <div class="tags"><span class="pill ${r.outcome === 'Got an offer' ? 'ok' : 'cat'}">${esc(r.outcome)}</span><span class="pill cat">${esc(r.diff)} interview</span><span class="pill cat">${esc(r.exp)} experience</span></div>
+    <div class="ersec"><h4>Process</h4><p>${esc(r.process)}</p></div>
+    ${r.questions ? `<div class="ersec"><h4>Questions they asked</h4><p>${esc(r.questions)}</p></div>` : ''}
+    ${mine ? `<div><button class="link" type="button" data-act="del-emp" data-wid="${esc(r.wid)}">Remove my interview</button></div>` : ''}
+  </article>`;
+}
+function intPanel(c, list) {
+  return `${empGate(c, 'share your interview') || intForm(c)}
+    <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="in-h"><h2 id="in-h" style="font-size:22px">Interviews at ${esc(c.name)}</h2>
+      ${list.length ? list.map((r, i) => intCard(r, i, c.id)).join('') : `<div class="empty"><b>No interviews shared yet</b><p>Interviewed at ${esc(c.name)}? Tell the next candidate what to expect.</p></div>`}</section>`;
+}
+
+function vCompany(c) {
+  const list = reviewsFor(c.id); const k = CATBYID[c.catId];
+  const others = k.items.filter(x => x.id !== c.id).slice(0, 5);
+  const words = ['Tap a star to rate','Bad','Poor','Average','Good','Excellent'];
+  const ed = empData(c.id); const er = ed.reviews;
+  const tabsDef = isVerifiedCo(c) ? [['overview', 'Overview']].concat(CO_TABS) : CO_TABS;
+  const tab = tabsDef.some(x => x[0] === S.coTab) ? S.coTab : (isVerifiedCo(c) ? 'overview' : 'customers');
+  const counts = { customers: list.length, employees: er.length, salaries: ed.salaries.length, interviews: ed.interviews.length };
+  const nRev = n => `${n} review${n === 1 ? '' : 's'}`;
+  let panel;
+  if (tab === 'overview') panel = overviewPanel(c, list, er);
+  else if (tab === 'customers') panel = `
+      <form class="box" id="review-form" style="padding:24px;gap:18px" novalidate>
+        <h2 style="font-size:22px">Rate your experience with ${esc(c.name)}</h2>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px">
+          <div class="starbtns" role="group" aria-label="Star rating">${[1,2,3,4,5].map(n => `<button type="button" class="${n <= S.rating ? 'on' : ''}" data-act="rate" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" aria-pressed="${n <= S.rating}">${STAR(n <= S.rating, 26)}</button>`).join('')}</div>
+          <span style="font-weight:700;color:var(--muted)" id="rate-word">${words[S.rating]}</span></div>
+        <p class="err" id="err-rating" hidden>Choose a star rating.</p>
+        <div class="field"><label class="l" for="r-title">Title</label><input id="r-title" type="text" maxlength="90" placeholder="Sum up your experience in a line"></div>
+        <div class="field"><label class="l" for="r-body">Your review</label><textarea id="r-body" rows="5" maxlength="2000" placeholder="What happened? What went well or badly?"></textarea><p class="err" id="err-body" hidden>Write at least 20 characters so others understand what happened.</p></div>
+        <div class="row"><div class="field"><label class="l" for="r-date">Date of experience</label><input id="r-date" type="month"></div>
+          <div class="field" style="justify-content:flex-end"><p class="meta" style="font-size:14px;padding-bottom:12px">${S.user && S.user.type === 'reviewer' ? `Posting as <b style="color:var(--fg)">${esc(S.user.name)}</b>` : 'You’ll log in as a reviewer before posting.'}</p></div></div>
+        <label class="check"><input id="r-first" type="checkbox"><span>This is my own experience. I don’t work for this company or a competitor, and nobody paid me or gave me anything to write it.</span></label><p class="err" id="err-r-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Every review is checked by our team before it appears.</p>
+        <div><button class="btn p lg" type="submit">Post review</button></div>
+      </form>
+      <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
+        ${list.length ? rvBreakdown(list) + rvList(list, c.id) : `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg><b>Be the first to review ${esc(c.name)}</b><p>Share how they treated you. Good or bad, every review is published the same way.</p></div>`}
+      </section>`;
+  else if (tab === 'employees') panel = (isVerifiedCo(c) ? workBox(c) : '') + empPanel(c, er);
+  else if (tab === 'salaries') panel = salPanel(c, ed.salaries);
+  else panel = intPanel(c, ed.interviews);
+  const P = cprof(c); const ver = isVerifiedCo(c), plus = ver && coPlan(c) === 'plus';
+  const rTile = (cls, label, l, extra) => `<div class="r ${cls}"><small>${label}</small>${l.length ? `<b>${avgOf(l).toFixed(1)}</b>${starRow(+avgOf(l).toFixed(1), 15)}<span>${nRev(l.length)}${extra ? ' · ' + extra : ''}</span>` : `<b class="none">–</b><span>No reviews yet</span>`}</div>`;
+  return `<section class="cohdr"><div class="wrap">${crumbs([['Home','#home'],[c.cat,'#' + c.catId],[c.name]])}
+    <div class="cocover${plus && P.cover ? '' : ' def'}"${plus && P.cover ? ` style="background-image:url('${P.cover}')"` : ''} aria-hidden="true"></div>
+    <div class="cogrid">
+      <div class="coid">${coLogo(c, 112)}
+        <div class="coname"><h1>${esc(c.name)}</h1>${ownerPill(c)}</div>
+        <div class="cometa"><span>${icn(CATICON[c.cat] || 'layers')}${esc(c.cat)}</span><span>${icn('pin')}${esc(ver && P.hq ? P.hq : c.country)}</span><span>${icn('globe')}${ver ? [c.web].concat(P.web2 ? [P.web2] : []).map(w => `<a href="https://${esc(w)}" target="_blank" rel="nofollow sponsored noopener">${esc(w)}</a>`).join('<span class="sep">·</span>') : esc(c.web)}</span>${ver && P.size ? `<span>${icn('person')}${esc(P.size)}</span>` : ''}</div>
+        <p class="cobio">${esc(c.bio)}</p>
+        ${coLinks(c)}
+      </div>
+      <aside class="corate" aria-label="Ratings for ${esc(c.name)}">
+        <div class="rr">${rTile('c', 'Customers', list, '')}${rTile('e', 'Employees', er, er.length ? recPct(er) + '% recommend' : '')}</div>
+        <a class="btn p lg" href="#${c.id}" data-act="jump-write">Write a customer review</a>
+        <a class="btn o lg" href="#${c.id}" data-act="jump-emp">Review as an employee</a>
+        ${ver && (list.length + er.length) ? (n => `<p class="rrate">${icn('chat')}<span>Replies to <b>${n}%</b> of reviews</span></p>`)(Math.round(list.concat(er).filter(r => r.reply).length / (list.length + er.length) * 100)) : ''}
+        <button class="btn g" type="button" data-act="share-co" data-id="${c.id}">${svgI('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>', 16)}Share this page</button>
+        <p class="meta" style="text-align:center">Ratings come only from reviews. Paying never changes them.</p>
+      </aside>
+    </div></div></section>
+  ${WARNINGS[c.id] ? warnBan(c, WARNINGS[c.id]) : ''}
+  <div class="cotabbar"><div class="wrap"><div class="cotabs" role="tablist" aria-label="Reviews of ${esc(c.name)}">${tabsDef.map(([key, label]) => `<button type="button" role="tab" id="tab-${key}" aria-controls="co-panel" aria-selected="${tab === key}" tabindex="${tab === key ? 0 : -1}" data-act="cotab" data-tab="${key}">${label}${counts[key] ? `<span class="n">${counts[key]}</span>` : ''}</button>`).join('')}</div></div></div>
+
+  <div class="wrap" style="padding-top:32px"><div class="layout">
+    <div class="mainc" style="gap:24px" role="tabpanel" id="co-panel" aria-labelledby="tab-${tab}">${panel}</div>
+    <aside class="side">
+      ${tab === 'employees' || tab === 'interviews' ? `<div class="box soft"><h2>Your identity stays private</h2><p>Employees choose whether to post anonymously or with their name. Emails are never shown, and ${esc(c.name)} can't see who wrote an anonymous review. We share a reviewer's identity only when a valid court order requires it.</p></div>` : ''}
+      ${coSide(c)}
+      ${isVerifiedCo(c) ? '' : `<div class="box"><h2>About ${esc(c.name)}</h2><p>${esc(c.bio)}</p></div>
+      <div class="box"><h2>Company details</h2><div class="kv"><span>Website</span><span>${esc(c.web)}</span></div><div class="kv"><span>Category</span><span>${esc(c.cat)}</span></div><div class="kv"><span>Country</span><span>${esc(c.country)}</span></div></div>`}
+      ${isVerifiedCo(c) && coPlan(c) === 'plus' ? '' : `<div class="box"><h2>More in ${esc(c.cat)}</h2>${others.map(o => `<a href="#${o.id}" style="font-weight:600;text-decoration:none">${esc(o.name)}</a>`).join('')}<a href="#${c.catId}" style="font-size:14px">See all ${k.items.length}</a></div>`}
+    </aside>
+  </div></div>`;
+}
+
+const SAMPLE = {
+  name: 'Brightline Studio', reviews: [
+    { name: 'Sample reviewer A', date: 'Oct 2026', rating: 5, proof: true, title: 'Launched our app on time', body: 'Example review. They designed and built our booking app in ten weeks. Weekly demos, clear scope and no surprise invoices.', reply: 'Example reply. Thank you, it was a great project to work on.', replyFrom: 'Brightline Studio' },
+    { name: 'Sample reviewer B', date: 'Sep 2026', rating: 5, proof: false, title: 'Clear communication', body: 'Example review. Weekly updates, quick answers on Slack, and the website went live on the agreed date.' },
+    { name: 'Sample reviewer C', date: 'Aug 2026', rating: 4, proof: true, title: 'Great design, tight budget', body: 'Example review. The design work was excellent, though extra revisions pushed the final bill above the first estimate.', reply: 'Example reply. Thanks for the feedback. We now agree the number of revision rounds before every project.', replyFrom: 'Brightline Studio' }
+  ],
+  emp: [
+    { status: 'Current employee', title: 'Product designer', loc: 'London', years: '1–3 years', date: 'Oct 2026', rating: 4, verified: true, headline: 'A real mentor from week one', sub: { pay: 3, culture: 5, mgmt: 4, growth: 4, wlb: 4 }, pros: 'Example review. Senior people take time to review your work, and every new hire gets a real mentor from week one.', cons: 'Example review. Pay is a little below larger companies, and client deadlines tend to bunch up at the end of a project.', advice: 'Example review. Publish a clear pay scale so people know how to move up.', rec: 'yes' },
+    { status: 'Former employee', title: 'Frontend developer', loc: 'Remote', years: 'Less than 1 year', date: 'Sep 2026', rating: 4, verified: true, sub: { pay: 4, culture: 4, mgmt: 3, growth: 4, wlb: 5 }, pros: 'Example review. Remote-friendly, few meetings and modern tools. Focus time is protected.', cons: 'Example review. Priorities sometimes changed mid-sprint when a client pushed back.', advice: '', rec: 'yes' },
+    { status: 'Current employee', title: 'Project manager', loc: 'London', years: '3–5 years', date: 'Aug 2026', rating: 3, verified: false, sub: { pay: 3, culture: 4, mgmt: 3, growth: 2, wlb: 3 }, pros: 'Example review. Friendly team and interesting clients from many industries.', cons: 'Example review. Few senior roles to grow into, and project estimates are often too optimistic.', advice: 'Example review. Plan time for revisions in every estimate.', rec: 'no' }
+  ]
+};
+const EMP_BENEFITS = ['Health insurance','Paid time off','Flexible hours','Remote or hybrid work','Training and courses','Performance bonus','Retirement or provident fund','Parental leave','Travel allowance','Meals at work'];
+const EMP_SIZES = ['1–10 people','11–50 people','51–200 people','201–1,000 people','More than 1,000 people'];
+let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We are a small, senior team that pairs every new hire with a mentor, keeps meetings light and protects focus time.', benefits: ['Health insurance','Paid time off','Training and courses','Remote or hybrid work'], size: '11–50 people', hiring: true, roles: 'Product designer, Frontend developer' });
+
+/* ---------- jobs ---------- */
+/* Launch switch: true = free listings and free extra job posts. Set to false to start charging ₹499 and ₹99. */
+const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '₹499 a year';
+const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
+const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees','Email alert for every new review'];
+const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Profile views and website clicks','Workplace insights by role, location and current or former staff','Up to 3 team members on your dashboard','Printable QR poster to collect reviews','Priority support'];
+const planOf = () => (S.user && S.user.plan) || 'basic';
+const JOBS_ON = false; /* job posts: coming soon. Set to true to switch the whole jobs feature back on. */
+const FREE_JOBS = 5, EXTRA_JOB = 99, JOB_DAYS = 60;
+const JOB_TYPES = ['Full-time','Part-time','Contract','Internship'];
+const JOB_MODES = ['On-site','Hybrid','Remote'];
+const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const dayNum = iso => Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) / 864e5;
+const addDays = (iso, n) => new Date((dayNum(iso) + n) * 864e5).toISOString().slice(0, 10);
+const fmtDay = iso => new Date(dayNum(iso) * 864e5).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const monthLabel = () => new Date().toLocaleDateString('en-GB', { month: 'long' });
+const daysLeft = j => j.closed ? 0 : Math.max(0, dayNum(j.posted) + JOB_DAYS - dayNum(todayISO()));
+const isLive = j => !j.closed && daysLeft(j) > 0;
+const oneYearOn = iso => (+iso.slice(0, 4) + 1) + iso.slice(4);
+let JOBS = store.get('tn_jobs', [
+  { id: 'js1', sample: true, biz: 'Brightline Studio', title: 'Junior product designer', loc: 'London, UK', type: 'Full-time', mode: 'Hybrid', pay: '£28,000–34,000 a year', desc: 'Example post. Design screens and prototypes for startup clients with a senior designer as your mentor. A portfolio matters more than a degree.', apply: 'jobs@brightline.example', posted: addDays(todayISO(), -3), closed: false, paid: false },
+  { id: 'js2', sample: true, biz: 'Brightline Studio', title: 'Frontend developer', loc: 'Remote (UK)', type: 'Full-time', mode: 'Remote', pay: '£45,000–55,000 a year', desc: 'Example post. Build fast, accessible websites and web apps for startup clients. At least 2 years of experience with modern JavaScript frameworks.', apply: 'jobs@brightline.example', posted: addDays(todayISO(), -24), closed: false, paid: false },
+  { id: 'js3', sample: true, biz: 'Brightline Studio', title: 'Project coordinator', loc: 'London, UK', type: 'Part-time', mode: 'Hybrid', pay: '', desc: 'Example post. Plan sprints, keep clients updated and make sure projects ship on time.', apply: 'jobs@brightline.example', posted: addDays(todayISO(), -75), closed: false, paid: false }
+]);
+const postsThisMonth = biz => JOBS.filter(j => j.biz === biz && j.posted.slice(0, 7) === todayISO().slice(0, 7)).length;
+const liveJobsFor = biz => JOBS.filter(j => j.biz === biz && isLive(j)).sort((a, b) => dayNum(b.posted) - dayNum(a.posted));
+function addJob(d, paid) {
+  JOBS.unshift({ ...d, id: 'j' + Date.now().toString(36), biz: S.user.name, posted: todayISO(), closed: false, paid });
+  store.set('tn_jobs', JOBS);
+}
+function jobCard(j) {
+  const isEmail = j.apply.includes('@');
+  const href = /^https?:\/\//i.test(j.apply) ? j.apply : 'https://' + j.apply;
+  const apply = isEmail
+    ? `<span class="meta" style="font-size:14px">Apply by email: <b style="color:var(--fg);user-select:all;overflow-wrap:anywhere">${esc(j.apply)}</b></span><button class="btn g" type="button" data-act="copy-text" data-text="${esc(j.apply)}" style="min-height:40px">Copy email</button>`
+    : `<a class="btn p" href="${esc(href)}" target="_blank" rel="nofollow noopener">Apply on company site</a>`;
+  const biz = j.biz === 'Brightline Studio' ? `<a href="#co-future-topper" style="text-decoration:none">${esc(j.biz)}</a>` : esc(j.biz);
+  const age = dayNum(todayISO()) - dayNum(j.posted);
+  return `<article class="review jobcard">
+    <div class="jhead">${avatar({ name: j.biz }, 52, 17)}<div><div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><h3>${esc(j.title)}</h3>${age <= 3 ? '<span class="newtag">New</span>' : ''}</div>
+      <span style="font-weight:600;display:flex;flex-wrap:wrap;gap:8px;align-items:center">${biz}<span class="pill ver">${TICK('var(--accent-ink)')}Verified</span>${j.sample ? '<span class="pill cat">Sample</span>' : ''}</span></div>
+      <span class="pill ok">${daysLeft(j)} days left</span></div>
+    <div class="jtags"><span class="jtag">${ic('pin', 14)}${esc(j.loc)}</span><span class="jtag">${ic('clock', 14)}${esc(j.type)}</span><span class="jtag">${ic('home', 14)}${esc(j.mode)}</span>${j.pay ? `<span class="jtag pay">${ic('cash', 14)}${esc(j.pay)}</span>` : ''}</div>
+    <details><summary>Job details</summary><p style="white-space:pre-wrap">${esc(j.desc)}</p></details>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">${apply}</div>
+    <p class="meta">Posted ${age <= 0 ? 'today' : age === 1 ? 'yesterday' : age + ' days ago'} · No fee to apply</p></article>`;
+}
+function filteredJobs() {
+  const f = S.jobFilter; const q = f.q.trim().toLowerCase();
+  return JOBS.filter(isLive).filter(j => (!q || q.split(/\s+/).every(w => (j.title + ' ' + j.biz + ' ' + j.loc + ' ' + j.type + ' ' + j.mode).toLowerCase().includes(w))) && (!f.type || j.type === f.type) && (!f.mode || j.mode === f.mode)).sort((a, b) => dayNum(b.posted) - dayNum(a.posted));
+}
+function jobResults() {
+  const list = filteredJobs();
+  return `<p class="count" aria-live="polite">${list.length} live job${list.length === 1 ? '' : 's'}</p>` + (list.length ? list.map(jobCard).join('') : `<div class="empty"><b>No jobs match</b><p>Try a different search, or clear the filters.</p></div>`);
+}
+function vJobsSoon() {
+  return `<section class="band hero-band"><div class="wrap" style="padding-block:72px;display:flex;flex-direction:column;gap:16px;max-width:860px;margin:0 auto">
+      <p class="eyebrow" style="color:var(--gold)">Jobs · coming soon</p>
+      <h1 style="font-size:clamp(34px,5vw,54px);line-height:1.05">Jobs at companies you can check first</h1>
+      <p style="color:var(--deep-muted);font-size:18px;line-height:1.6;max-width:640px">Know The Company focuses on customer and employee reviews for now. Once companies have enough reviews, verified businesses will post jobs here, right next to what their employees say.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px"><a class="btn gold lg" href="#search">Review a company you worked at</a><a class="btn w lg" href="#list">List your company</a></div></div></section>
+    <section class="wrap sec"><div class="steps">
+      <div class="step"><span>1</span><h3>Verified employers only</h3><p>Only verified companies will be able to post jobs.</p></div>
+      <div class="step"><span>2</span><h3>Reviews beside every job</h3><p>See the company's employee reviews and interview experiences before you apply.</p></div>
+      <div class="step"><span>3</span><h3>Never pay to apply</h3><p>Any post that asks applicants for money will be removed.</p></div></div></section>`;
+}
+function vJobs() {
+  if (!JOBS_ON) return vJobsSoon();
+  const f = S.jobFilter;
+  return `<section class="band"><div class="wrap" style="padding-block:44px 36px;display:flex;flex-direction:column;gap:12px">
+      <p class="eyebrow">Jobs</p><h1 style="font-size:clamp(32px,4.5vw,46px);font-weight:800">Jobs at verified companies</h1>
+      <p style="color:var(--muted);font-size:18px;max-width:640px">Only verified companies can post jobs. Read a company's employee reviews before you apply.</p></div></section>
+    <div class="wrap" style="padding-top:28px"><div class="layout">
+      <aside class="side" aria-label="Job filters"><div class="box">
+        <div class="field"><label class="l" for="jf-q">Job title, company or city</label><input id="jf-q" type="search" data-jfilter="q" value="${esc(f.q)}"></div>
+        <div class="field"><label class="l" for="jf-type">Job type</label><select id="jf-type" data-jfilter="type"><option value="">Any type</option>${JOB_TYPES.map(x => `<option ${f.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+        <div class="field"><label class="l" for="jf-mode">Work mode</label><select id="jf-mode" data-jfilter="mode"><option value="">Any</option>${JOB_MODES.map(x => `<option ${f.mode === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>
+        <div class="box soft"><h2>Stay safe</h2><p>Real employers never ask you to pay to apply, train or get an offer. Report any post that asks for money.</p><a href="#contact" style="font-weight:700;font-size:14px">Report a job post</a></div>
+        <div class="box"><h2>Hiring?</h2><p>A verified listing includes ${FREE_JOBS} job posts every month, each live for ${JOB_DAYS} days.</p><a class="btn p" href="#list">List your company</a></div></aside>
+      <div class="mainc" id="job-results">${jobResults()}</div></div></div>`;
+}
+
+function vSample() {
+  const rv = SAMPLE.reviews; const avg = avgOf(rv); const er = SAMPLE.emp; const eavg = avgOf(er); const E = EMPLOYER; const live = JOBS_ON ? liveJobsFor('Brightline Studio') : [];
+  const bars = [5,4,3,2,1].map(n => { const k = rv.filter(r => r.rating === n).length; return `<div class="bar"><span style="width:52px">${n} star</span><span class="tr"><i style="width:${Math.round(k / rv.length * 100)}%"></i></span><span style="width:20px;text-align:right">${k}</span></div>`; }).join('');
+  const work = `<section class="box" id="work" style="gap:14px"><div class="toolbar"><h2 style="font-size:20px">Work at Brightline Studio</h2>${E.hiring || live.length ? '<span class="pill ok">Hiring now</span>' : ''}</div>
+      <p style="color:var(--fg);font-size:15px;line-height:1.6">${esc(E.why)}</p>
+      ${E.benefits.length ? `<div style="display:flex;flex-direction:column;gap:8px"><h3 style="font-size:15px">Benefits</h3><ul class="benefits">${E.benefits.map(b => `<li>${TICK()}${esc(b)}</li>`).join('')}</ul></div>` : ''}
+      <div class="kv"><span>Team size</span><span>${esc(E.size)}</span></div>
+      ${JOBS_ON ? `<div style="display:flex;flex-direction:column;gap:8px"><h3 style="font-size:15px">Open jobs (${live.length})</h3>${live.length ? live.map(j => `<div class="kv" style="align-items:baseline"><span style="color:var(--fg);font-weight:600">${esc(j.title)}</span><span style="text-align:right">${esc(j.loc)} · ${esc(j.type)}</span></div>`).join('') + `<a href="#jobs" style="font-weight:700;font-size:14px">View jobs and apply</a>` : '<p class="meta">No open jobs right now.</p>'}</div>` : ''}
+      <div class="photos">${['Team photo','Studio','Workshop day'].map(p => `<div class="ph">${p}<small>Photo placeholder</small></div>`).join('')}</div>
+      <p class="meta">This section is written by the company${E.sample ? ' (example content)' : ''} and never changes its ratings.</p></section>`;
+  const emps = `<section style="display:flex;flex-direction:column;gap:12px" id="er-sample"><h2 style="font-size:22px">Employee reviews</h2>${empSummary(er)}${er.map((r, i) => empCard(r, i, 'sample')).join('')}</section>`;
+  return `<div class="demo" style="border-bottom:1px solid var(--line)"><div class="wrap">Sample profile with example data, showing a verified listing on the Plus plan.</div></div>
+  <section class="band"><div class="wrap">${crumbs([['Home','#home'],['Companies','#categories'],['Brightline Studio']])}
+    <div class="phero"><span class="avatar" aria-hidden="true" style="width:88px;height:88px;font-size:28px;background:var(--t1);color:var(--t1i);border-color:transparent">BS</span>
+      <div class="t"><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><h1>Brightline Studio</h1><span class="pill ver" style="font-size:13px">${TICK('var(--accent-ink)')}Verified company</span></div>
+        <p style="font-size:17px;line-height:1.55;max-width:640px">Product design and web development agency that helps startups launch apps and websites, from first sketch to launch day. (Sample bio)</p>
+        <p style="color:var(--muted)">Design and development agency · London, UK · <a href="https://example.com" target="_blank" rel="nofollow sponsored noopener" style="font-weight:600">brightline.example</a></p>
+        <div style="display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="meta" style="font-weight:700">Customers</span>${starRow(avg, 20)}<b>${avg.toFixed(1)}</b><span style="color:var(--muted)">${rv.length} reviews</span></span><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="meta" style="font-weight:700">Employees</span>${starRow(+eavg.toFixed(1), 20)}<b>${eavg.toFixed(1)}</b><span style="color:var(--muted)">${er.length} reviews</span></span></div></div>
+      <div class="acts"><a class="btn p" href="#home">Write a review</a><a class="btn g" href="#co-future-topper" data-act="demo-contact" data-what="call">Call</a><a class="btn g" href="#co-future-topper" data-act="demo-contact" data-what="WhatsApp">WhatsApp</a></div></div></div></section>
+  <div class="wrap" style="padding-top:28px"><div class="layout">
+    <div class="mainc" style="gap:18px">
+      <div class="chips" aria-label="On this page"><button type="button" class="chip" data-act="jump" data-to="rv-sample">Customer reviews (${rv.length})</button><button type="button" class="chip" data-act="jump" data-to="er-sample">Employee reviews (${er.length})</button><button type="button" class="chip" data-act="jump" data-to="work">Work here${live.length ? ` · ${live.length} jobs` : ''}</button></div>
+      <section class="box"><h2>Rating breakdown</h2><div class="bars">${bars}</div></section>
+      <h2 id="rv-sample" style="font-size:22px">Customer reviews</h2>${rv.map(r => reviewCard(r)).join('')}
+      ${emps}
+      ${work}
+    </div>
+    <aside class="side">
+      <div class="box"><h2>Contact and location</h2><div class="kv"><span>Address</span><span>Example Street, London</span></div><div class="kv"><span>Phone</span><span>+44 0000 000000 (example)</span></div><div class="kv"><span>Hours</span><span>Mon–Fri, 9 am–6 pm</span></div></div>
+      <div class="box"><div class="toolbar"><h2>Latest update</h2><span class="meta">Oct 2026</span></div><p style="color:var(--fg)">Example update. We just launched a fixed-price design sprint for early-stage startups.</p><p class="meta">Posted by the company. Updates never change ratings.</p></div>
+      <div class="box"><h2>Photos</h2><div class="photos" style="grid-template-columns:1fr 1fr">${['Studio','Team','Client work','Offsite'].map(p => `<div class="ph">${p}<small>Photo placeholder</small></div>`).join('')}</div></div>
+      <div class="box soft"><h2>What “Verified” means</h2><p>We confirmed this company controls its email domain or website, or checked its registration documents. Verification never changes its rating.</p></div>
+      <div class="box"><h2>Want a profile like this?</h2><p>This profile uses Plus: website and contact buttons, photos and updates for ₹${PLUS_PRICE} a year. ${LAUNCH ? 'Basic is free for your first year.' : 'Basic costs ₹499 a year.'}</p><a class="btn p" href="#list">List your company</a></div>
+    </aside></div></div>`;
+}
+
+const PERKS = ['Verified company badge','A link to your website on your profile','Employer branding page: why work here, benefits, team size and photos','Job posts (coming soon)','Your own page in your city and category','Reply publicly to customer and employee reviews','Review links for customers and employees','Logo, photos, hours and contact details','Profile view stats'];
+const FAQS = [
+  ['Can we see who wrote an employee review?', 'No, not when it is anonymous. Each employee chooses to post anonymously or with their name. We share an anonymous reviewer’s identity only when a valid court order requires it.'],
+  ['Can we ask our employees to write reviews?', 'Yes. Share your employee review link with the whole team, not only people you expect to be positive. Don’t offer rewards for reviews or ask to see them first. Invited reviews are labelled.'],
+  ['How do the Employees’ Choice awards work?', 'Winners are chosen only from employee ratings. You can’t apply or pay. A company needs at least 10 employee reviews in the year and no sign of review manipulation. The first awards are planned for 2027.'],
+  ['We already have Google reviews. Why add this?', 'Keep both. Google is great for maps and directions. Know The Company adds employee reviews next to customer reviews, proof-backed customer reviews, and a badge and review cards built to share on your website, Instagram and WhatsApp.'],
+  ['What if someone posts a bad review?', 'Reply publicly with your side, calmly and with facts. If it breaks our guidelines, report it and we check it. We never remove reviews just because they are negative, and an honest reply often wins more trust than a perfect score.'],
+  ['Does this help if the site is new?', 'Yes. The badge, review cards, QR poster and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
+
+  ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates, visit stats and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
+  LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs ₹499 a year. We remind you before your free year ends, and it continues only if you choose to renew.`] : ['How much does it cost?','₹499 a year. We remind you before each renewal, and you can stop at any time.'],
+  ['Will a verified listing improve my rating?','No. Ratings come only from reviews. Verified and unverified companies are reviewed and moderated the same way.'],
+  ['Can I remove a bad review?','No, but you can reply publicly, and report a review that breaks our guidelines so our team can check it.'],
+  ['How does the website link help me?','Customers reading your reviews can visit your site in one click from your verified profile. Links on profiles are marked nofollow or sponsored, as search engines require, so the value is real visitors rather than search ranking.'],
+  ['What is the employer branding page?','A “Work at” section on your profile where you show why people should join you: benefits, team size, open roles and photos. It sits beside your employee reviews and never changes your ratings.'],
+  ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
+  ['Can I switch plans?', `Yes. Upgrade to Plus at any time from your dashboard${LAUNCH ? `, with ${PLUS_TRIAL_DAYS} days free` : ''}. If you don’t renew Plus, your profile moves to Basic and keeps all its reviews.`],
+  LAUNCH ? ['Can companies in any country join?','Yes. Companies anywhere can list, and Basic is free for the first year.'] : ['Can I pay from any country?','Yes. Cards from any country are accepted.']
+];
+const cprof = c => { const r = (c && c.raw) || {};
+  return { logo: r.logo, cover: r.cover, about: r.about, founded: r.founded, size: r.teamSize, hq: r.headquarters, web2: r.website2, services: r.services || [], hours: r.hours, phone: r.phone, email: r.publicEmail, address: r.address, socials: r.socials || [],
+    photos: (r.photos || []).map(x => typeof x === 'string' ? { src: x } : x).filter(x => x && x.src), updates: (r.updates || []).filter(u => u && u.text) }; };
+const saveProf = () => false;
+const icn = (k, s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k] || ICONS.layers}</svg>`;
+const MAIL_I = '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/>';
+function coLogo(c, size) { const P = CLAIMS[c.id] ? cprof(c) : {}; const k = toneOf(c.name);
+  return P.logo ? `<span class="cologo" style="width:${size}px;height:${size}px"><img src="${P.logo}" alt="${esc(c.name)} logo"></span>` : `<span class="cologo" aria-hidden="true" style="width:${size}px;height:${size}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; }
+function overviewPanel(c, list, er) {
+  const P = cprof(c); const plus = coPlan(c) === 'plus'; const nm = esc(c.name);
+  const facts = [['Founded', P.founded], ['Team size', P.size], ['Headquarters', P.hq], ['Opening hours', P.hours]].filter(x => x[1]);
+  const photos = plus ? P.photos : [];
+  const E = coEmployer(c.id);
+  const has = P.about || facts.length || P.services.length || photos.length || (plus && P.updates.length) || (E && E.why);
+  if (!has) return `<section class="box soft"><h2>${nm} hasn't added details yet</h2><p>This tab shows only what the company writes about itself: its story, key facts, photos and updates. Reviews are on the other tabs.</p></section>`;
+  return `${P.about || facts.length || P.services.length ? `<section class="box ovabout" style="gap:18px"><h2 style="font-size:22px">About ${nm}</h2>${P.about ? `<p class="abouttx">${esc(P.about)}</p>` : ''}
+      ${facts.length ? `<div class="facts">${facts.map(([k, v]) => `<div><small>${k}</small><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
+      ${P.services.length ? `<div style="display:flex;flex-direction:column;gap:10px"><h3 style="font-size:16px">What ${nm} offers</h3><div class="offer-tags">${P.services.map(s => `<span>${esc(s)}</span>`).join('')}</div></div>` : ''}<p class="meta">Written by ${nm}.</p></section>` : ''}
+    ${photos.length ? `<section class="box"><div class="toolbar"><h2 style="font-size:20px">Photos</h2><span class="meta">${photos.length} photo${photos.length === 1 ? '' : 's'} from ${nm}</span></div><div class="gallery">${photos.map(x => x.src ? `<figure><img src="${x.src}" alt="${esc(x.cap || 'Photo from ' + c.name)}" loading="lazy"></figure>` : `<div class="ph">${esc(x.cap || 'Photo')}<small>Photo placeholder</small></div>`).join('')}</div></section>` : ''}
+    ${plus && P.updates.length ? `<section class="box" style="gap:16px"><h2 style="font-size:20px">Updates from ${nm}</h2>${P.updates.slice(0, 3).map(u => `<div class="upd"><span class="meta">${esc(u.date)}</span><p style="color:var(--fg)">${esc(u.text)}</p></div>`).join('')}<p class="meta">Posted by the company. Updates never change ratings.</p></section>` : ''}
+    ${E && E.why ? `<section class="box"><div class="toolbar"><h2 style="font-size:20px">Work at ${nm}</h2>${E.hiring ? '<span class="pill ok">Hiring now</span>' : ''}</div><p style="color:var(--fg)">${esc(E.why)}</p><div><button class="btn o" type="button" data-act="cotab" data-tab="employees">See employee reviews and benefits</button></div></section>` : ''}`;
+}
+function companyPagePanel() {
+  const id = S.user.coId, c = BYID[id], P = cprof(c), plus = planOf() === 'plus';
+  const f = (fid, label, v, extra = '') => `<div class="field"><label class="l" for="${fid}">${label}</label><input id="${fid}" type="text" value="${esc(v || '')}" ${extra}></div>`;
+  const real = P.photos.filter(x => x.src).length;
+  const thisMonth = P.updates.filter(u => u.date === monthNow()).length;
+  return `<form class="box" id="cprof-form" style="gap:18px" novalidate><div class="toolbar"><h2 style="font-size:19px">Company page</h2><a class="btn g" href="#${id}">View public page</a></div>
+      <p>This is what customers and job seekers see on your Overview tab. Nothing here changes your ratings.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">${coLogo(c, 84)}<div style="display:flex;flex-direction:column;gap:8px"><b>Logo</b><div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn g upload">Upload logo<input type="file" accept="image/*" data-up="logo"></label>${P.logo ? '<button class="btn g" type="button" data-act="cp-del" data-k="logo">Remove</button>' : ''}</div><span class="meta">Square image, at least 200 × 200 pixels.</span></div></div>
+      ${plus ? `<div style="display:flex;flex-direction:column;gap:8px"><b>Cover banner</b><div class="coverprev${P.cover ? '' : ' cocover def'}" ${P.cover ? `style="background-image:url('${P.cover}')"` : ''}></div><div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn g upload">Upload cover<input type="file" accept="image/*" data-up="cover"></label>${P.cover ? '<button class="btn g" type="button" data-act="cp-del" data-k="cover">Remove</button>' : ''}</div><span class="meta">Wide image, at least 1600 × 400 pixels.</span></div>` : ''}
+      <div class="field"><label class="l" for="cp-about">About your company</label><textarea id="cp-about" rows="6" maxlength="1500" placeholder="What you do, who you help and what makes you different">${esc(P.about || '')}</textarea><p class="err" id="err-cp-about" hidden>Write at least 60 characters about your company.</p></div>
+      <div class="row">${f('cp-founded', 'Founded (year)', P.founded, 'inputmode="numeric" maxlength="4" placeholder="2019"')}<div class="field"><label class="l" for="cp-size">Team size</label><select id="cp-size">${EMP_SIZES.map(s => `<option ${P.size === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>${f('cp-hq', 'Headquarters', P.hq, 'placeholder="City, country"')}</div>
+      <p class="err" id="err-cp-founded" hidden>Enter a year between 1900 and this year, or leave it empty.</p>
+      ${f('cp-services', 'What you offer <span class="meta">(separate with commas, up to 8)</span>', P.services.join(', '), 'placeholder="Web design, App development, SEO"')}
+      <div class="field"><label class="l">Main website</label><p style="font-weight:600">${esc(c.web)} <span class="meta" style="font-weight:400">· verified, can't be changed here</span></p></div>
+      <div class="field"><label class="l" for="cp-web2">Second website <span class="meta">(optional, only if your company runs another site, such as a country site)</span></label><input id="cp-web2" type="text" value="${esc(P.web2 || '')}" placeholder="yourcompany.in" autocapitalize="off" spellcheck="false"><p class="err" id="err-cp-web2" hidden></p><p class="meta">It must belong to ${esc(c.name)}. On the live site we check it the same way as your main website before it shows.</p></div>
+      ${f('cp-hours', 'Opening hours', P.hours, 'placeholder="Mon–Fri, 9 am–6 pm"')}
+      ${plus ? `<div class="row">${f('cp-phone', 'Phone', P.phone)}${f('cp-email', 'Public email', P.email)}</div>${f('cp-address', 'Address', P.address)}${f('cp-socials', 'Social profiles <span class="meta">(separate with commas)</span>', (P.socials || []).join(', '))}` : ''}
+      <div><button class="btn p lg" type="submit">Save company page</button></div></form>
+    ${plus ? `<section class="box" style="gap:14px"><div class="toolbar"><h2 style="font-size:19px">Photos</h2><span class="pill ${real >= 10 ? 'un' : 'ok'}">${real} of 10 uploaded</span></div>
+      <p>Show your team, office, work and events. The first photo appears largest on your page.</p>
+      ${P.photos.length ? `<div class="gallery edit">${P.photos.map((x, i) => `<figure>${x.src ? `<img src="${x.src}" alt="Photo ${i + 1}">` : `<div class="ph" style="height:100%">${esc(x.cap || 'Photo')}<small>Placeholder</small></div>`}<button class="del" type="button" data-act="cp-del-photo" data-i="${i}">Remove</button></figure>`).join('')}</div>` : ''}
+      <div>${real < 10 ? '<label class="btn o upload">Add photos<input type="file" accept="image/*" multiple data-up="photos"></label>' : '<span class="meta">Remove a photo to add another.</span>'}</div>
+      <p class="meta">JPG or PNG. Photos are resized automatically. In this prototype they're saved only in your browser.</p></section>
+    <form class="box" id="cp-upd-form" style="gap:14px" novalidate><div class="toolbar"><h2 style="font-size:19px">Post an update</h2><span class="pill ${thisMonth >= 2 ? 'un' : 'ok'}">${thisMonth} of 2 this month</span></div>
+      <p>Share news, offers or new services. Your latest updates show on your Overview tab.</p>
+      <div class="field"><label class="l" for="cp-upd">Update</label><textarea id="cp-upd" rows="3" maxlength="400" placeholder="A new batch starts on 1 December…"></textarea><p class="err" id="err-cp-upd" hidden></p></div>
+      <div><button class="btn p" type="submit" ${thisMonth >= 2 ? 'disabled' : ''}>Post update</button></div>
+      ${P.updates.length ? `<div style="display:flex;flex-direction:column;gap:12px">${P.updates.map((u, i) => `<div class="upd"><span class="meta">${esc(u.date)}</span><p style="color:var(--fg)">${esc(u.text)}</p><div><button class="link" type="button" data-act="cp-del-upd" data-i="${i}">Delete</button></div></div>`).join('')}</div>` : ''}</form>`
+    : `<section class="box soft"><h2>Photos, cover banner, contact buttons and updates</h2><p>These come with Plus. Your logo, about text, key facts and opening hours are included in Basic.</p><div><button class="btn p" type="button" data-act="go-plus">See Plus</button></div></section>`}`;
+}
+function shrinkImg(file, max) {
+  return new Promise((res, rej) => { const fr = new FileReader(); fr.onerror = rej; fr.onload = () => { const im = new Image(); im.onerror = rej; im.onload = () => {
+    const k = Math.min(1, max / Math.max(im.width, im.height)); const cv = document.createElement('canvas'); cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
+    const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height); res(cv.toDataURL('image/jpeg', 0.8)); }; im.src = fr.result; }; fr.readAsDataURL(file); });
+}
+const isVerifiedCo = c => !!(c && c.raw && c.raw.claimStatus === 'verified');
+const ICO_THUMB = '<path d="M7 11v9H4v-9z"/><path d="M7 11l4-7a2 2 0 0 1 3 2l-1 4h5.5a2 2 0 0 1 2 2.4l-1.3 6A2 2 0 0 1 17.2 20H7"/>';
+const ICO_FLAG = '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>';
+const svgI = (d, s = 15) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+function openModal(html) { closeModals(); const m = document.getElementById('gmodal'); m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${html}</div>`; m.hidden = false; document.body.style.overflow = 'hidden'; setTimeout(() => { const f = m.querySelector('input,select,textarea,button:not([data-act="close-modal"])'); if (f) f.focus(); }, 30); }
+const mHead = title => `<div class="toolbar"><h2 style="font-size:20px">${title}</h2><button class="iconbtn" type="button" data-act="close-modal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
+function rvActions(cid, kind, idx, r, owner) {
+  if (owner || !r || !r.wid) return '';
+  const R = store.get('ktc_reported', {});
+  return `<div class="rvacts">${R[r.wid] ? '<span class="meta">Reported. Our team will review it.</span>' : `<button type="button" class="rvbtn" data-act="rv-report" data-key="${esc(r.wid)}">${svgI(ICO_FLAG)}Report</button>`}</div>`;
+}
+const RPT_REASONS = ['It isn’t a real experience, or looks fake', 'It’s hateful, abusive or threatening', 'It shares personal information', 'It’s by a competitor, owner or someone paid to write it', 'Something else'];
+function rvBreakdown(list) {
+  return `<section class="box" style="gap:12px"><div class="toolbar"><h2 style="font-size:18px">Rating breakdown</h2>${S.rvStar ? '<button class="link" type="button" data-act="rv-clear">Show all</button>' : '<span class="meta">Tap a row to filter</span>'}</div><div class="bdown">${[5, 4, 3, 2, 1].map(n => { const k = list.filter(r => r.rating === n).length; return `<button type="button" data-act="rv-star" data-n="${n}" aria-pressed="${S.rvStar === n}"><span>${n} star</span><span class="tr"><i style="width:${list.length ? Math.round(k / list.length * 100) : 0}%"></i></span><span style="text-align:right">${k}</span></button>`; }).join('')}</div></section>`;
+}
+function rvSorted(list, sort) { const items = list.map((r, i) => [r, i]); if (sort === 'high') items.sort((a, b) => b[0].rating - a[0].rating || a[1] - b[1]); else if (sort === 'low') items.sort((a, b) => a[0].rating - b[0].rating || a[1] - b[1]); return items; }
+const sortSel = (attr, v) => `<label class="sr" for="${attr}">Sort reviews</label><select id="${attr}" data-${attr}><option value="new" ${v === 'new' ? 'selected' : ''}>Newest first</option><option value="high" ${v === 'high' ? 'selected' : ''}>Highest rated</option><option value="low" ${v === 'low' ? 'selected' : ''}>Lowest rated</option></select>`;
+function rvList(list, cid) {
+  const items = rvSorted(list, S.rvSort || 'new').filter(([r]) => (!S.rvStar || r.rating === S.rvStar) && (!S.rvProof || r.proof));
+  const bar = `<div class="rvbar"><div class="grp"><button type="button" class="chip" data-act="rv-proof" aria-pressed="${!!S.rvProof}">${S.rvProof ? TICK('var(--accent-soft-ink)') : ''}Proof checked only</button>${S.rvStar ? `<button type="button" class="chip" data-act="rv-clear" aria-pressed="true">${S.rvStar} star ✕</button>` : ''}</div><div class="grp"><span class="meta">${items.length} of ${list.length}</span>${sortSel('rvsort', S.rvSort || 'new')}</div></div>`;
+  return bar + (items.length ? items.map(([r, i]) => reviewCard(r, i, cid)).join('') : `<div class="empty"><b>No reviews match these filters</b><button class="btn g" type="button" data-act="rv-clear">Clear filters</button></div>`);
+}
+const WARNINGS = {};
+const warnBan = (c, w) => `<div class="wrap"><div class="warnban" role="note">${svgI('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>', 22)}<div><b>Warning: review manipulation</b>On ${esc(w.date)}, we found evidence that ${esc(c.name)} ${esc(w.text)} We removed the affected reviews. <a href="#removals">How we handle this</a></div></div></div>`;
+function vInvite(c, k) {
+  const list = reviewsFor(c.id), er = empData(c.id).reviews; const team = k === 'e';
+  return `<div class="wrap"><div class="invite">${coLogo(c, 84)}
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center"><h1 style="font-size:28px">${esc(c.name)}</h1>${ownerPill(c)}</div>
+    ${team ? `<h2 style="font-size:22px">What is it like to work at ${esc(c.name)}?</h2><p style="color:var(--muted)">${esc(c.name)} asked its team for honest reviews. You can post anonymously, and ${esc(c.name)} can't see who wrote an anonymous review.</p><a class="btn p lg" href="#${c.id}" data-act="inv-go" data-id="${c.id}" data-tab="employees">Write an employee review</a>`
+      : `<h2 style="font-size:22px">How was your experience with ${esc(c.name)}?</h2><p style="color:var(--muted)">${esc(c.name)} invited you to share honest feedback. Tap a star to start.</p><div class="stars" role="group" aria-label="Star rating">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-act="inv-rate" data-id="${c.id}" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}">${STAR(true, 26)}</button>`).join('')}</div>`}
+    <p class="meta" style="max-width:460px">Your review is published whether it's good or bad. ${esc(c.name)} can reply, but can't edit or hide it. Reviews from invitations are labelled “Invited”.</p>
+    ${list.length || er.length ? `<a href="#${c.id}" style="font-size:14px;font-weight:700">Read what others say</a>` : ''}</div></div>`;
+}
+function vRemovals() {
+  const cats = RPT_REASONS.slice(0, 4).concat(['Removed by court or government order']); const R = {};
+  return `<div class="wrap" style="max-width:860px">${crumbs([['Home', '#home'], ['Removals report']])}
+    <div class="pagehead"><h1>Removals report</h1><p>Every review we take down is counted here, so you can see we don't hide reviews for anyone.</p></div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <section class="box"><h2>When we remove a review</h2><p>Only when it breaks our <a href="#guidelines">review guidelines</a>, or when a court or government order requires it. Companies can't remove reviews, and paying never changes a rating. Negative reviews are never removed for being negative.</p></section>
+      <section class="box"><div class="toolbar"><h2>This quarter</h2><span class="meta">Updated monthly</span></div>
+        <table class="rtable"><thead><tr><th>Reason</th><th>Reviews removed</th></tr></thead><tbody>${cats.map(x => `<tr><td>${esc(x)}</td><td>${R[x] || 0}</td></tr>`).join('')}</tbody></table>
+        <p class="meta">Counts include customer reviews, employee reviews and interview experiences. Reviews that were reported but stayed up aren't counted.</p></section>
+      <section class="box"><h2>Companies caught manipulating reviews</h2><p>If we find that a company bought reviews, wrote its own or pressured people to remove them, we remove the affected reviews and show a warning on its page for at least 90 days. It looks like this:</p>
+        ${warnBan({ name: 'Example Company' }, { date: '1 October', text: 'offered discounts in exchange for 5-star reviews.' }).replace('<div class="wrap">', '<div>')}</section>
+    </div></div>`;
+}
+const coPlan = c => (CLAIMS[c.id] && CLAIMS[c.id].plan) || 'basic';
+const coEmployer = id => (BYID[id] && BYID[id].raw && BYID[id].raw.employerPage) || null;
+const curEmp = () => S.user && S.user.coId ? (coEmployer(S.user.coId) || { why: '', benefits: [], size: EMP_SIZES[0], hiring: false }) : EMPLOYER;
+function workBox(c) {
+  const E = coEmployer(c.id); if (!E || !E.why) return '';
+  return `<section class="box" style="gap:14px"><div class="toolbar"><h2 style="font-size:20px">Work at ${esc(c.name)}</h2>${E.hiring ? '<span class="pill ok">Hiring now</span>' : ''}</div>
+    <p style="color:var(--fg);font-size:15px;line-height:1.6">${esc(E.why)}</p>
+    ${E.benefits && E.benefits.length ? `<div style="display:flex;flex-direction:column;gap:8px"><h3 style="font-size:15px">Benefits</h3><ul class="benefits">${E.benefits.map(b => `<li>${TICK()}${esc(b)}</li>`).join('')}</ul></div>` : ''}
+    <div class="kv"><span>Team size</span><span>${esc(E.size)}</span></div>
+    <p class="meta">Written by ${esc(c.name)}. It never changes its ratings.</p></section>`;
+}
+function coLinks(c) {
+  if (!isVerifiedCo(c) || coPlan(c) !== 'plus') return '';
+  const P = cprof(c);
+  if (!P.phone && !P.email) return '';
+  const tel = String(P.phone || '').replace(/[^+\d]/g, ''), wa = tel.replace(/^\+/, '');
+  return `<div class="colinks">${tel ? `<a href="tel:${tel}">${icn('phone')}Call</a><a href="https://wa.me/${wa}" target="_blank" rel="noopener">${icn('chat')}WhatsApp</a>` : ''}${P.email ? `<a href="mailto:${esc(P.email)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MAIL_I}</svg>Email</a>` : ''}</div>`;
+}
+function coSide(c) {
+  const cl = CLAIMS[c.id];
+  if (!cl) return `<div class="box"><h2>Is this your company?</h2><p>Claim this profile to verify it, reply to reviews and set up an employer page.</p><a class="btn p" href="#list" data-act="claim" data-id="${c.id}" data-name="${esc(c.name)}" data-web="${esc(c.web)}">${LAUNCH ? 'Claim free' : 'Claim for ₹499 a year'}</a></div>
+      <div class="box soft"><h2>About this listing</h2><p>This profile was created from public information so customers and employees can share reviews. ${esc(c.name)} has not claimed it and is not affiliated with Know The Company.</p><div style="display:flex;flex-wrap:wrap;gap:14px"><a href="#guidelines" style="font-size:14px;font-weight:700">How we list companies</a><button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:14px">Suggest an edit</button></div></div>`;
+  if (!isVerifiedCo(c)) return `<div class="box soft"><h2>Claimed by the company</h2><p>${esc(c.name)} has claimed this profile. We're checking its documents, and the Verified badge appears once that's done. Verification never changes ratings.</p></div>`;
+  const P = cprof(c); const plus = coPlan(c) === 'plus';
+  return (plus && P.phone ? `<div class="box"><h2>Contact and location</h2>${P.address ? `<div class="kv"><span>Address</span><span>${esc(P.address)}</span></div>` : ''}<div class="kv"><span>Phone</span><span>${esc(P.phone)}</span></div>${P.email ? `<div class="kv"><span>Email</span><span>${esc(P.email)}</span></div>` : ''}${P.hours ? `<div class="kv"><span>Hours</span><span>${esc(P.hours)}</span></div>` : ''}${P.socials && P.socials.length ? `<div class="kv"><span>Social</span><span>${P.socials.map(esc).join(' · ')}</span></div>` : ''}</div>` : '')
+    + (!plus && P.hours ? `<div class="box"><h2>Opening hours</h2><p>${esc(P.hours)}</p></div>` : '')
+    + `<div class="box soft"><h2>What “Verified” means</h2><p>${cl.verified === 'documents' ? `We checked official documents for ${esc(c.name)}.` : `${esc(c.name)} proved it controls ${cl.verified === 'website' ? 'the website' : 'an email address on'} ${esc(c.web)}.`} Verification never changes its rating, and the company can't edit or hide reviews.</p></div>
+      <div class="box"><h2>Do you manage ${esc(c.name)}?</h2><p>Log in to reply to reviews and keep this page up to date.</p><a class="btn o" href="#business-login" style="align-self:flex-start">Company login</a></div>`;
+}
+function ownReviews(co, rv, er) {
+  const form = (k, i) => `<form class="oreply" data-kind="${k}" data-idx="${i}" novalidate style="display:flex;flex-direction:column;gap:8px"><label class="l" for="or-${k}-${i}">Reply publicly</label><textarea id="or-${k}-${i}" rows="2" maxlength="800" placeholder="Thank them, or respond to their point"></textarea><p class="err" hidden>Write a reply before posting.</p><div><button class="btn p" type="submit">Post reply</button></div></form>`;
+  const wrap = (card, f) => `<div style="display:flex;flex-direction:column;gap:10px">${card}${f}</div>`;
+  const ra = (k, i, r) => rvActions(co.id, k, i, r, true);
+  const waiting = rv.filter(r => !r.reply).length + er.filter(r => !r.reply).length;
+  return `<section class="box soft"><h2>${waiting ? `${waiting} review${waiting === 1 ? '' : 's'} waiting for your reply` : 'You have replied to every review'}</h2><p>Replies are public. You can't edit or remove reviews, and replying never changes your rating.</p></section>
+    <h2 style="font-size:20px">Customer reviews (${rv.length})</h2>${rv.length ? rv.map((r, i) => wrap(reviewCard(r) + ra('c', i, r), r.reply ? '' : form('c', i))).join('') : '<p class="meta">No customer reviews yet.</p>'}
+    <h2 style="font-size:20px">Employee reviews (${er.length})</h2>${er.length ? er.map((r, i) => wrap(empCard(r, i, co.id) + ra('e', i, r), r.reply ? '' : form('e', i))).join('') : '<p class="meta">No employee reviews yet.</p>'}`;
+}
+const domOf = w => (w || '').toLowerCase().trim().replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[\/?#]/)[0];
+const emailDom = e => ((e || '').split('@')[1] || '').toLowerCase().trim();
+const FREE_MAIL = ['gmail.com','googlemail.com','yahoo.com','yahoo.co.in','outlook.com','hotmail.com','live.com','msn.com','icloud.com','me.com','proton.me','protonmail.com','aol.com','rediffmail.com','zoho.com','yandex.com','gmx.com','mail.com'];
+const domainMatch = (email, web) => { const e = emailDom(email), d = domOf(web); return !!e && !!d && !FREE_MAIL.includes(e) && (e === d || e.endsWith('.' + d)); };
+const isClaimed = c => !!CLAIMS[c.id] || c.added === 2;
+const vToken = s => { let h = 2166136261; for (const ch of String(s)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return 'ktc-' + h.toString(36) + (h % 997).toString(36); };
+const ownerPill = c => { const cl = CLAIMS[c.id]; if (cl || c.added === 2) { const v = isVerifiedCo(c); return v ? `<span class="pill ver" style="font-size:13px">${TICK('var(--accent-ink)')}Verified company</span>` : '<span class="pill cat" style="font-size:13px">Claimed · verification in progress</span>'; } return `<span class="pill un" style="font-size:13px">Unclaimed profile</span>${c.added ? '<span class="pill cat" style="font-size:13px">Added by a reviewer</span>' : ''}`; };
+const ROLES = ['Founder or owner', 'HR or people team', 'Marketing or communications', 'Recruiting', 'Other role'];
+function cfResults(q) {
+  q = (q || '').trim().toLowerCase();
+  if (!q) return '<p class="meta">Start typing your company’s name or website.</p>';
+  const dq = domOf(q);
+  const list = COS.filter(c => c.name.toLowerCase().includes(q) || (dq && c.web.includes(dq))).slice(0, 6);
+  return `<div class="cfres">${list.map(c => `<div class="cfrow">${avatar(c, 40, 14)}<div class="t"><b>${esc(c.name)}</b><small>${esc(c.web)} · ${esc(c.country)}${isClaimed(c) ? ' · already managed' : ''}</small></div>${isClaimed(c) ? `<button class="btn g" type="button" data-act="cf-request" data-id="${c.id}">Request access</button>` : `<button class="btn p" type="button" data-act="cf-claim" data-id="${c.id}">Claim</button>`}</div>`).join('') || `<p class="meta">No company called “${esc(q)}” yet.</p>`}
+    <div class="cfnew"><span><b>Not listed?</b> <span class="meta">Add your company in a couple of minutes.</span></span><button class="btn o" type="button" data-act="cf-new">Add your company</button></div></div>`;
+}
+function cfRefresh(scroll = true) { const p = document.getElementById('claim-panel'); if (p) { p.innerHTML = claimPanel(); if (scroll) document.getElementById('list-form-area').scrollIntoView({ block: 'start' }); } }
+function claimPanel() {
+  const d = S.listData, st = S.listStep, cf = S.cf || (S.cf = { method: 'email' });
+  const labels = ['Find your company', 'Your details', 'Verify and plan'];
+  const steps = typeof st === 'number' && st < 4 ? `<div class="progress" aria-label="Progress">${labels.map((l, i) => `<span class="${st === i ? 'on' : ''}">${i + 1} · ${l}</span>`).join('')}</div>` : '';
+  const co = d.coId ? BYID[d.coId] : null;
+  if (!S.user) return `<div class="formcard"><h2>Log in to claim or add your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Use your work email if you have one: it's the fastest way to get verified.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
+  if (st === 'req') { const c = BYID[S.reqCo]; return `<form class="formcard" id="req-form" novalidate><h2>Request access to ${esc(c.name)}</h2>
+      <div class="cosum">${avatar(c, 44, 15)}<div style="flex:1"><b>${esc(c.name)}</b><span class="meta">${esc(c.web)} · already managed</span></div></div>
+      <p style="color:var(--muted)">Someone at ${esc(c.name)} already manages this page. We’ll ask them to add you. If they don’t reply within 7 days, our team reviews your request and may ask for documents.</p>
+      <div class="row"><div class="field"><label class="l" for="r-person">Your name</label><input id="r-person" type="text"><p class="err" id="err-r-person" hidden>Enter your name.</p></div>
+        <div class="field"><label class="l" for="r-role">Your role</label><select id="r-role">${ROLES.map(r => `<option>${r}</option>`).join('')}</select></div></div>
+      <div class="field"><label class="l" for="r-email">Work email</label><input id="r-email" type="email" placeholder="you@${esc(c.web)}"><p class="err" id="err-r-email" hidden>Enter a valid email address.</p></div>
+      <div class="field"><label class="l" for="r-msg">Message to the current admin <span class="meta">(optional)</span></label><textarea id="r-msg" rows="3" maxlength="500"></textarea></div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="submit">Send request</button><button class="btn g lg" type="button" data-act="cf-restart">Back to search</button></div></form>`; }
+  if (st === 'req-done') { const c = BYID[S.reqCo]; return `<div class="formcard"><div class="vstate ok">${TICK('var(--accent-soft-ink)')}<span>Request sent for ${esc(c.name)}.</span></div><p style="color:var(--muted)">We’ll contact the current admin and email you when they respond. If they don’t within 7 days, our team reviews your request.</p><div><button class="btn g lg" type="button" data-act="cf-restart">Back to search</button></div></div>`; }
+  if (st === 0) return `<div class="formcard">${steps}<h2>Find your company</h2><p style="color:var(--muted)">Search first. If your company is already listed, claim it and keep its reviews.</p>
+      <div class="field"><label class="l" for="cf-q">Company name or website</label><input id="cf-q" type="search" autocomplete="off" value="${esc(S.cfQ || '')}" placeholder="Your company name or website"></div>
+      <div id="cf-res">${cfResults(S.cfQ || '')}</div></div>`;
+  if (st === 1) { const claim = d.mode === 'claim' && co;
+    return `<form class="formcard" id="list-form" novalidate>${steps}<h2>${claim ? `Claim ${esc(co.name)}` : 'Add your company'}</h2>
+      ${claim ? `<div class="cosum">${avatar(co, 44, 15)}<div style="flex:1;min-width:0"><b>${esc(co.name)}</b><span class="meta">${esc(co.web)} · ${esc(co.cat)}</span></div><button class="link" type="button" data-act="cf-restart">Not your company?</button></div>`
+      : `<div class="row"><div class="field"><label class="l" for="b-name">Company name</label><input id="b-name" type="text" value="${esc(d.name || '')}"><p class="err" id="err-b-name" hidden>Enter your company name.</p></div>
+         <div class="field"><label class="l" for="b-web">Company website</label><input id="b-web" type="text" inputmode="url" value="${esc(d.web || '')}" placeholder="yourcompany.com"><p class="err" id="err-b-web" hidden>Enter your website, like yourcompany.com.</p></div></div>
+       <div class="row"><div class="field"><label class="l" for="b-cat">Category</label><select id="b-cat"><option value="">Choose a category</option>${FORM_CATS.map(n => `<option ${d.cat === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select><p class="err" id="err-b-cat" hidden>Choose a category.</p></div>
+         <div class="field"><label class="l" for="b-country">Country</label><select id="b-country">${['United States','United Kingdom','Canada','Australia','Germany','India','Singapore','United Arab Emirates','Other country'].map(n => `<option ${d.country === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div></div>
+       <div class="row"><div class="field"><label class="l" for="b-city">Head office city</label><input id="b-city" type="text" value="${esc(d.city || '')}"><p class="err" id="err-b-city" hidden>Enter your head office city.</p></div>
+         <div class="field"><label class="l" for="b-type">Way of working</label><select id="b-type">${['Remote-first','Office-based','Hybrid'].map(n => `<option ${d.type === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div></div>`}
+      <h3 style="font-size:17px">About you</h3>
+      <div class="row"><div class="field"><label class="l" for="b-person">Your name</label><input id="b-person" type="text" value="${esc(d.person || '')}"><p class="err" id="err-b-person" hidden>Enter your name.</p></div>
+        <div class="field"><label class="l" for="b-role">Your role</label><select id="b-role">${ROLES.map(r => `<option ${d.role === r ? 'selected' : ''}>${r}</option>`).join('')}</select></div></div>
+      <div class="row"><div class="field"><label class="l" for="b-email">Work email</label><input id="b-email" type="email" value="${esc(d.email || '')}" placeholder="you@${esc(domOf(d.web) || 'yourcompany.com')}" aria-describedby="hint-b-email"><p class="meta" id="hint-b-email">An email at your company’s website is the fastest way to get verified.</p><p class="err" id="err-b-email" hidden>Enter an email address like name@company.com.</p></div>
+        <div class="field"><label class="l" for="b-phone">Phone</label><input id="b-phone" type="tel" value="${esc(d.phone || '')}"><p class="err" id="err-b-phone" hidden>Enter a phone number with at least 8 digits.</p></div></div>
+      <label class="check"><input id="b-agree" type="checkbox" ${d.agree ? 'checked' : ''}><span>I work for this company and can manage its page. I understand paying never affects reviews or ratings.</span></label>
+      <p class="err" id="err-b-agree" hidden>Tick the box to continue.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="submit">Continue</button><button class="btn g lg" type="button" data-act="cf-restart">Back</button></div></form>`; }
+  if (st === 2) { const match = domainMatch(d.email, d.web), m = cf.method, dom = domOf(d.web), tok = vToken(dom || d.name);
+    const opt = (k, title, desc, rec) => `<button type="button" class="vopt" data-act="cf-method" data-m="${k}" aria-pressed="${m === k}">${rec ? '<span class="rec">Fastest</span>' : ''}<b>${title}</b><small>${desc}</small></button>`;
+    let body = '';
+    if (m === 'email') body = !match
+      ? `<div class="vstate warn"><span><b>${esc(d.email)}</b> isn’t an email at <b>${esc(dom || 'your company website')}</b>, so we can’t use it to verify. <button class="link" type="button" data-act="cf-edit">Change email</button> or choose another way above.</span></div>`
+      : `<p>We’ll send a 6-digit code to <b>${esc(d.email)}</b> to confirm you can receive email at ${esc(dom)}. Reply with it and your badge goes live.</p>`;
+    if (m === 'website') body = `<p>Add <b>one</b> of these to ${esc(dom || 'your website')}. You can remove it after you’re verified.</p>
+      <div class="field"><span class="l">Option 1 · DNS TXT record</span><div class="codebox">knowthecompany-verification=${tok}</div></div>
+      <div class="field"><span class="l">Option 2 · Tag in your homepage’s &lt;head&gt;</span><div class="codebox">&lt;meta name="knowthecompany-verification" content="${tok}"&gt;</div></div>
+      <p class="meta">After you send your claim, we check your DNS record or homepage and email you the result.</p>`;
+    if (m === 'docs') body = `<p>We’ll email you to ask for one official document that shows the company name, like a registration certificate or a recent invoice. Only our team sees it.</p>
+      <div class="field"><label class="l" for="cf-doctype">Document you’ll send</label><select id="cf-doctype">${['Company registration certificate','Tax or VAT/GST registration','Recent invoice in the company’s name','Other official document'].map(x => `<option>${x}</option>`).join('')}</select></div>`;
+    const ready = m !== 'email' || match;
+    return `<div class="formcard">${steps}<h2>Verify you work at ${esc(d.name)}</h2><p style="color:var(--muted)">Choose one way. Most companies use their work email.</p>
+      <div class="vopts">${opt('email', 'Work email', match ? `Code to ${esc(d.email)}` : 'Needs an email at your website', match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
+      <div class="vbody">${body}</div>
+      <h3 style="font-size:17px">Choose a plan</h3>
+      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then ₹499 a year' : '₹499 a year'}</small></span></label>
+        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} a year` : `₹${PLUS_PRICE} a year`}. Contact buttons, photos, up to 3 team members</small></span></label></div>
+      <p class="meta">${LAUNCH ? 'No payment now. We remind you before any free period ends, and nothing renews unless you choose to.' : 'We remind you before each renewal.'}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
+  const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '';
+  return `<div class="formcard"><div style="display:flex;align-items:center;gap:12px">${TICK()}<h2>Claim received for ${esc(d.name)}</h2></div>
+    <div class="vstate ok"><span>We check every claim by hand, usually within 2 business days, and email <b>${esc(d.email)}</b> with the next step. Your Verified badge goes live once the check passes.</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn p lg" href="#dashboard">See your claims</a>${pageId ? `<a class="btn g lg" href="#${pageId}">View your page</a>` : ''}</div>
+    <p class="meta">${d.plan === 'plus' ? (LAUNCH ? `Plus starts with ${PLUS_TRIAL_DAYS} days free once you’re verified.` : 'Plus starts once you’re verified.') : (LAUNCH ? `Basic is free for your first year, counted from the day you’re verified.` : 'Basic starts once you’re verified.')}</p></div>`;
+}
+
+function calcOut(sale) {
+  const n = p => Math.max(1, Math.ceil(p / Math.max(1, sale)));
+  const c = p => `${n(p)} new ${n(p) === 1 ? 'customer' : 'customers'} a year`;
+  return `<div><small>Basic, ₹499 a year</small><b>${n(499)}</b><em>${c(499)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
+    <div><small>Plus, ₹${PLUS_PRICE} a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
+}
+function vList() {
+  const d = S.listData;
+  const panel = `<div id="claim-panel">${claimPanel()}</div>`;
+  const ic2 = (path, tone) => `<span class="bi" style="background:var(--t${tone});color:var(--t${tone}i)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg></span>`;
+  return `<section class="lbhero"><div class="wrap">
+      <div style="flex:1 1 460px;display:flex;flex-direction:column;gap:18px"><p class="eyebrow" style="color:var(--gold)">For employers</p>
+        <h1>Be the company customers trust and people want to work for.</h1>
+        <p class="lede">Claim your free company page. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn gold lg" href="#list" data-act="to-form">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div>
+        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Join before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
+      <div class="lbvis" aria-label="Example of a shareable review card and badges"><span class="tagex">Example</span>
+        <div class="rc">${starRow(4, 18)}<p class="q">“Students are motivated, and the academic team listens to teachers about the syllabus.”</p><span class="by">Anonymous employee · Maths teacher · Example Company</span><span class="brand">${TICK('var(--accent)')}Reviewed on Know The Company</span></div>
+        <div class="chipline"><span>${TICK('var(--accent)')}Verified company</span><span>${STAR(true, 16)} 4.0 from customers</span><span>67% of employees recommend</span></div></div>
+    </div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Why it matters</p><h2>People check before they choose you, or join you</h2><p>Customers read reviews before choosing a company, and job seekers read them before applying. Both notice whether you reply.</p></div></div>
+      <div class="statband"><div class="s"><b>88%</b><span>of consumers are likely to use a business that replies to all its reviews, good and bad.</span></div><div class="s"><b>42%</b><span>would still use a business that replies to none.</span></div></div>
+      <p class="meta" style="margin-top:12px">Source: <a href="https://www.brightlocal.com/research/local-consumer-review-survey/" target="_blank" rel="noopener">BrightLocal Local Consumer Review Survey 2023</a>.</p></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">What you get</p><h2>Six ways your company page works for you</h2></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
+      <div class="bens">
+        <div class="ben">${ic2('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>', 1)}<h3>Tell your story to job seekers</h3><p>Your employer page shows why people should work for you: your mission, benefits, team photos and company updates, right next to what employees say.</p>
+          <div class="prev"><b style="font-size:14px">Work at your company</b><span class="meta">Why work here · benefits · photos · updates</span></div></div>
+        <div class="ben">${ic2('<path d="M4 5h16v11H9.5L5 20v-4H4z"/>', 2)}<h3>Reply to employees and customers</h3><p>Answer every review publicly, from your team and your customers. Thank people, explain what changed, and show you listen.</p>
+          <div class="prev"><span>${starRow(3, 13)} <b>Anonymous employee · Sales</b></span><span>“Good team, but no clear path to promotion.”</span><span class="rep"><b>Employer reply:</b> Thanks for this. We now run reviews every 6 months with a clear growth plan.</span></div></div>
+        <div class="ben">${ic2('<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M7 8l5-5 5 5"/>', 3)}<h3>Ask for reviews, the fair way</h3><p>Share one link with your team and another with customers. Employee reviews stay anonymous unless the writer chooses otherwise, and invited reviews are labelled.</p>
+          <div class="prev"><span class="mini">${TICK('var(--accent)')}Employee review link</span><span class="mini">${TICK('var(--accent)')}Customer review link</span></div></div>
+        <div class="ben">${ic2('<path d="M4 19h16"/><path d="M7 15v-4M12 15V7M17 15v-7"/>', 4)}<h3>Workplace insights</h3><p>See how people rate pay, management, growth and work-life balance. With Plus, filter by role, location, and current or former staff.</p>
+          <div class="prev">${[['Work-life balance', '82%', '4.1'], ['Pay and benefits', '72%', '3.6'], ['Management', '64%', '3.2']].map(([l, w, v]) => `<div class="bar"><span>${l}</span><i style="--w:${w}"></i><b>${v}</b></div>`).join('')}<span class="meta">Example data</span></div></div>
+        <div class="ben">${ic2('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>', 5)}<h3>Proof you can share anywhere</h3><p>Put your rating on your website and careers page, share review cards on LinkedIn, Instagram and WhatsApp, and print a QR poster. Independent reviews persuade more than your own words.</p>
+          <div class="prev"><span class="mini">${TICK('var(--accent)')}4.7 on Know The Company</span><span class="meta">Website badge · review cards · QR poster</span></div></div>
+        <div class="ben">${ic2('<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', 6)}<h3>Proof you're a real company</h3><p>Your Verified badge tells job seekers and customers your company checked out. That matters when fake job offers and copycat shops are everywhere.</p>
+          <div class="prev"><span class="mini">${TICK('var(--accent)')}Verified company</span><span class="meta">Work email, website or documents checked</span></div></div>
+      </div></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Your first week</p><h2>Value from day one, not one day</h2></div></div>
+      <ol class="week" style="padding:0;margin:0">
+        <li><b>Day 1</b><span>Company page live</span><small>Claim or add your company and get your review links.</small></li>
+        <li><b>Day 2</b><span>Tell your story</span><small>Add why people should work for you, your benefits and team photos.</small></li>
+        <li><b>Day 3</b><span>Invite your team and customers</span><small>Share the links. Employee reviews stay anonymous unless the writer chooses otherwise.</small></li>
+        <li><b>Day 5</b><span>Reply to your first reviews</span><small>Thank people, answer questions, and share the best ones as review cards.</small></li>
+        <li><b>Day 7</b><span>Verified badge on</span><small>We usually finish checks within 2 working days.</small></li>
+      </ol></section>
+
+    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Awards</p><h2>Employees’ Choice: Best Workplaces</h2><p>Every year we recognise the best places to work, chosen only from employee ratings. You can't apply, nominate yourself or pay to win.</p></div></div>
+      <div class="bens" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">${[['Startups, up to 50 people', 'For young teams where every person shapes the culture.'], ['Growing companies, 51–250', 'For companies building their first managers and processes.'], ['Mid-sized companies, 251–1,000', 'For established employers that still move fast.'], ['Best startup to work for', 'For young companies of any size that look after their people.']].map(([h, p], k) => `<div class="ben">${ic2('<circle cx="12" cy="9" r="6"/><path d="M8.5 14l-1.5 7 5-3 5 3-1.5-7"/>', (k % 6) + 1)}<h3>${h}</h3><p>${p}</p></div>`).join('')}</div>
+      <p class="meta" style="margin-top:14px">Winners are announced once a year; the next list comes out in 2027. To qualify, a company needs at least 10 employee reviews in the year and no sign of review manipulation. Winners get a badge for their website and careers page.</p></section>
+
+    <section class="wrap sec"><div class="calc">
+      <div class="in"><p class="eyebrow" style="color:var(--gold)">Is it worth it?</p><h2>See when it pays for itself</h2><p>Enter what one customer usually spends with you.</p>
+        <label for="calc-sale">Average sale</label><div class="money"><span>₹</span><input id="calc-sale" type="number" inputmode="numeric" min="1" step="1" value="${S.calcSale || 1500}"></div></div>
+      <div class="out" aria-live="polite">${calcOut(S.calcSale || 1500)}</div>
+    </div></section>
+
+    <section class="wrap sec" id="plans"><div class="sechead" style="justify-content:center;text-align:center"><div><p class="eyebrow">Plans</p><h2>Pick a plan</h2><p>Both plans are reviewed and rated exactly the same way.</p></div></div>
+      <div class="plans">
+        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>₹499</b><span style="color:var(--muted)">a year</span>'}</div>
+          <p class="meta" style="font-size:14px">${LAUNCH ? `Then ₹499 a year. For companies that join before ${LAUNCH_END}.` : 'Renewed only if you choose.'}</p><span class="daily">About ₹1.4 a day</span>
+          <ul>${BASIC_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
+          <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="basic">${LAUNCH ? 'Start free' : 'Choose Basic'}</a></div>
+        <div class="price plus"><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>₹${PLUS_PRICE}</b><span style="color:var(--muted)">a year</span></div>
+          <p class="meta" style="font-size:14px">${LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} a year. Or stay on Basic.` : 'Renewed only if you choose.'}</p><span class="daily">About ₹2.7 a day</span>
+          <p class="sub">Everything in Basic, plus:</p>
+          <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
+          <a class="btn p lg" href="#list" data-act="pick-plan" data-plan="plus">${LAUNCH ? `Try Plus free for ${PLUS_TRIAL_DAYS} days` : 'Choose Plus'}</a></div>
+      </div>
+      <p class="meta" style="text-align:center;margin-top:16px">Job posts are coming soon. Prices in Indian rupees; cards from any country accepted.</p></section>
+    <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
+    <section class="wrap sec"><div class="steps">
+      <div class="step"><span>1 · Add details</span><p>Company name, website, category, city and contact. About two minutes.</p></div>
+      <div class="step">${LAUNCH ? '<span>2 · Confirm your details</span><p>No payment for your first year. We send a code to your work email.</p>' : '<span>2 · Pay ₹499 for the year</span><p>Pay securely online. We remind you before each renewal.</p>'}</div>
+      <div class="step"><span>3 · Get verified</span><p>We confirm your work email, website or documents, then your Verified badge goes live.</p></div></div></section>
+    <section class="wrap sec" id="list-form-area"><div class="layout">
+      <div class="mainc">${panel}</div>
+      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: with a code sent to your work email, a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
+        <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
+    </div></section>
+    <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
+}
+
+function employerPanel() {
+  const E = curEmp();
+  return `<form class="box" id="employer-form" style="gap:16px" novalidate><div class="toolbar"><h2 style="font-size:19px">Employer branding page</h2><span class="pill ok">Included in every plan</span></div>
+    <p>Show job seekers why they should work for you. It appears as “Work at ${esc(S.user.name)}” on your profile, next to your employee reviews, and never changes your ratings.</p>
+    <div class="field"><label class="l" for="ep-why">Why work here?</label><textarea id="ep-why" rows="4" maxlength="800" placeholder="e.g. We train every new hire on the job, pay overtime fairly and keep most weekends free.">${esc(E.sample && !S.user.sample ? '' : E.why)}</textarea><p class="err" id="err-ep-why" hidden>Write at least 40 characters about working with you.</p></div>
+    <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend class="l" style="margin-bottom:8px">Benefits you offer</legend><div class="benefits">${EMP_BENEFITS.map((b, i) => `<label class="check" style="font-size:14px"><input type="checkbox" id="ep-b${i}" value="${esc(b)}" ${E.benefits.includes(b) ? 'checked' : ''}><span>${esc(b)}</span></label>`).join('')}</div></fieldset>
+    <div class="row"><div class="field"><label class="l" for="ep-size">Team size</label><select id="ep-size">${EMP_SIZES.map(s => `<option ${E.size === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+      <div class="field" style="justify-content:flex-end"><p class="meta" style="font-size:14px;padding-bottom:12px">${JOBS_ON ? 'Open jobs on your profile come from the <button class="link" type="button" data-act="tab" data-tab="jobs" style="font-size:14px">Jobs tab</button>.' : 'Job posts are coming soon.'}</p></div></div>
+    <label class="check"><input id="ep-hiring" type="checkbox" ${E.hiring ? 'checked' : ''}><span>Show a “Hiring now” label on my profile.${JOBS_ON ? ' It also shows automatically while you have live jobs.' : ''}</span></label>
+    <div class="photos">${[1, 2, 3].map(() => `<div class="ph">Add photo<small>Uploads on the live site</small></div>`).join('')}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn p" type="submit">Save employer page</button><a class="btn g" href="${S.user.coId ? '#' + S.user.coId : '#sample'}">View on profile</a></div></form>`;
+}
+
+function jobsPanel() {
+  const biz = S.user.name; const used = postsThisMonth(biz); const freeUsed = Math.min(used, FREE_JOBS); const freeLeft = FREE_JOBS - freeUsed;
+  const mine = JOBS.filter(j => j.biz === biz).sort((a, b) => dayNum(b.posted) - dayNum(a.posted));
+  const P = S.jobPending;
+  const quota = `<section class="box" style="gap:10px"><div class="toolbar"><h2 style="font-size:19px">Job posts</h2><span class="pill ${freeLeft || LAUNCH ? 'ok' : 'un'}">${freeUsed} of ${FREE_JOBS} included posts used in ${monthLabel()}</span></div>
+      <div class="bar"><span class="tr"><i style="width:${freeUsed / FREE_JOBS * 100}%"></i></span></div>
+      <p>Your verified listing includes ${FREE_JOBS} job posts every month. ${LAUNCH ? `Extra posts are free in your first year (normally ₹${EXTRA_JOB} each).` : `After that, each extra post costs ₹${EXTRA_JOB}.`} Every post stays live for ${JOB_DAYS} days.</p>
+      <p class="meta">Included posts reset on the 1st of each month. Unused posts don't carry over, and closing a post early doesn't give one back.</p></section>`;
+  const form = P
+    ? `<section class="box" style="gap:14px"><h2 style="font-size:19px">Confirm extra job post</h2><p>You've used all ${FREE_JOBS} free posts for ${monthLabel()}. This post costs ₹${EXTRA_JOB} and stays live for ${JOB_DAYS} days.</p>
+      <div class="summary"><div class="kv"><span>Job</span><span style="text-align:right">${esc(P.title)}</span></div><div class="kv"><span>Location</span><span style="text-align:right">${esc(P.loc)}</span></div><div class="kv" style="border-top:1px solid var(--line);padding-top:10px"><span style="color:var(--fg);font-weight:700">Extra job post, ${JOB_DAYS} days</span><b>₹${EXTRA_JOB}</b></div></div>
+      
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn p" type="button" data-act="job-pay">Pay ₹${EXTRA_JOB} and post (demo)</button><button class="btn g" type="button" data-act="job-cancel">Cancel</button></div></section>`
+    : `<form class="box" id="job-form" style="gap:14px" novalidate><h2 style="font-size:19px">Post a job</h2>
+      <div class="row"><div class="field"><label class="l" for="j-title">Job title</label><input id="j-title" type="text" maxlength="80"><p class="err" id="err-j-title" hidden>Enter the job title.</p></div>
+        <div class="field"><label class="l" for="j-loc">Location</label><input id="j-loc" type="text" maxlength="80" placeholder="e.g. London, or Remote"><p class="err" id="err-j-loc" hidden>Enter where the job is based.</p></div></div>
+      <div class="row"><div class="field"><label class="l" for="j-type">Job type</label><select id="j-type">${JOB_TYPES.map(x => `<option>${x}</option>`).join('')}</select></div>
+        <div class="field"><label class="l" for="j-mode">Work mode</label><select id="j-mode">${JOB_MODES.map(x => `<option>${x}</option>`).join('')}</select></div></div>
+      <div class="field"><label class="l" for="j-pay">Salary <span class="meta">(optional)</span></label><input id="j-pay" type="text" maxlength="60" placeholder="e.g. ₹25,000–35,000 a month"></div>
+      <div class="field"><label class="l" for="j-desc">Job description</label><textarea id="j-desc" rows="5" maxlength="3000" placeholder="What the job involves, who you're looking for and what you offer"></textarea><p class="err" id="err-j-desc" hidden>Write at least 50 characters so applicants understand the job.</p></div>
+      <div class="field"><label class="l" for="j-apply">How to apply</label><input id="j-apply" type="text" maxlength="200" placeholder="Email address or link to your careers page"><p class="err" id="err-j-apply" hidden>Enter an email address or a website link.</p></div>
+      <label class="check"><input id="j-agree" type="checkbox"><span>This is a real vacancy, and applicants won't be asked to pay any fee.</span></label><p class="err" id="err-j-agree" hidden>Tick the box to confirm.</p>
+      <div><button class="btn p" type="submit">${freeLeft ? `Post job (free, ${freeLeft} left this month)` : LAUNCH ? 'Post job (free in your first year)' : `Continue to pay ₹${EXTRA_JOB}`}</button></div></form>`;
+  const list = mine.length ? mine.map(j => {
+      const live = isLive(j); const status = j.closed ? 'Closed' : live ? `Live · ${daysLeft(j)} days left` : 'Expired';
+      const when = live ? `Expires ${fmtDay(addDays(j.posted, JOB_DAYS))}` : j.closed ? 'Closed early' : `Expired ${fmtDay(addDays(j.posted, JOB_DAYS))}`;
+      return `<article class="review"><div class="toolbar"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><b style="font-size:16px">${esc(j.title)}</b><span class="meta">${esc(j.loc)} · ${esc(j.type)} · ${esc(j.mode)}</span></div><div style="display:flex;gap:6px;flex-wrap:wrap">${j.sample ? '<span class="pill cat">Sample</span>' : ''}<span class="pill cat">${j.paid ? '₹' + EXTRA_JOB : 'Free'}</span><span class="pill ${live ? 'ok' : 'un'}">${status}</span></div></div>
+        <p class="meta">Posted ${fmtDay(j.posted)} · ${when}</p>
+        ${live ? `<div><button class="btn g" type="button" data-act="job-close" data-id="${j.id}" style="min-height:40px">Close post</button></div>` : ''}</article>`; }).join('')
+    : `<div class="empty"><b>No job posts yet</b><p>Post your first job with the form above.</p></div>`;
+  return quota + form + `<div class="toolbar"><h2 style="font-size:20px">Your job posts</h2><a href="#jobs" style="font-weight:700;font-size:14px">See how applicants see them</a></div>` + list;
+}
+
+function vDashboard() {
+  if (!S.user) return vLogin('business', S.memberLoading ? '' : 'Log in to see your company pages and claims.');
+  if (S.myClaims === undefined) loadMyClaims();
+  const mine = COS.filter(c => (c.raw.ownerMemberIds || []).includes(S.user.id));
+  const base = location.origin + location.pathname;
+  const linkRow = (label, id, url) => `<div class="field"><label class="l" for="${id}">${label}</label><div style="display:flex;gap:8px"><input id="${id}" type="text" readonly value="${esc(url)}" class="mono" style="flex:1;min-width:0;background:var(--surface)"><button class="btn g" type="button" data-act="copy-text" data-text="${esc(url)}">Copy</button></div></div>`;
+  const coCard = c => { const rv = reviewsFor(c.id), er = empData(c.id).reviews, all = rv.concat(er);
+    const stats = [[rv.length ? avgOf(rv).toFixed(1) : '–', 'Customer rating', rv.length + ' review' + (rv.length === 1 ? '' : 's')], [er.length ? avgOf(er).toFixed(1) : '–', 'Employee rating', er.length + ' review' + (er.length === 1 ? '' : 's')], [all.length ? all.filter(r => r.reply).length + ' of ' + all.length : '–', 'Replied', 'Reply to every review']];
+    return `<section class="box" style="gap:16px"><div class="cohead">${coLogo(c, 56)}<div style="flex:1;min-width:0"><a href="#${c.id}" style="font-size:20px;font-weight:800;text-decoration:none;color:var(--fg)">${esc(c.name)}</a><div class="meta">${esc(c.web)} · ${coPlan(c) === 'plus' ? 'Plus' : 'Basic'} plan</div></div>${ownerPill(c)}</div>
+      <div class="stats">${stats.map(([v, l, n]) => `<div class="stat"><span>${l}</span><b>${v}</b><small>${n}</small></div>`).join('')}</div>
+      ${linkRow('Customer review link', 'cl-' + c.id, base + '#invite-' + c.id)}
+      ${linkRow('Employee review link', 'el-' + c.id, base + '#invite-team-' + c.id)}
+      <p class="meta">Send each link to everyone, not only happy customers or staff. To reply to a review, or to update your page details, logo, photos or employer page, email <b>business@knowthecompany.com</b> from your verified address and we’ll post it exactly as you write it.</p></section>`; };
+  const KIND = { claim: 'Claim', new: 'New company and claim', access: 'Access request' };
+  const STATUS = { pending: ['un', 'Being checked'], verified: ['ok', 'Verified'], rejected: ['cat', 'Not approved'] };
+  const claims = S.myClaims;
+  const claimList = claims === null || claims === undefined ? '<p class="meta">Loading your claims…</p>'
+    : claims.length ? claims.map(cl => { const c = BYWID[cl.company]; const [k, t] = STATUS[cl.status] || STATUS.pending;
+        return `<div class="cfrow">${c ? avatar(c, 40, 14) : ''}<div class="t"><b>${esc(c ? c.name : 'Company')}</b><small>${esc(KIND[cl.kind] || 'Claim')}${cl.method ? ' · ' + esc(cl.method === 'documents' ? 'documents' : cl.method === 'website' ? 'website check' : 'work email') : ''}${cl._createdDate ? ' · sent ' + esc(fmtDay(String(cl._createdDate).slice(0, 10))) : ''}</small></div><span class="pill ${k}">${t}</span></div>`; }).join('')
+    : '';
+  const empty = !mine.length && claims && !claims.length;
+  return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
+    <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><a class="btn o" href="#list">Claim or add a company</a></div>
+    ${mine.map(coCard).join('')}
+    ${empty ? `<div class="empty"><b>You haven’t claimed a company yet</b><p>Claim your company page free, verify it, and get links to collect reviews from customers and your team.</p><a class="btn p" href="#list">Claim your company page</a></div>`
+      : `<section class="box" style="gap:10px"><h2>Your claims and requests</h2>${claimList || '<p class="meta">None yet.</p>'}${S.claimsErr ? `<p class="err">${esc(S.claimsErr)}</p>` : ''}</section>`}
+  </div></div></div>`;
+}
+
+function vGuidelines() {
+  return `<div class="wrap" style="max-width:860px">${crumbs([['Home','#home'],['Guidelines']])}
+    <div class="pagehead"><h1>How Know The Company works</h1><p>The rules that keep reviews useful for everyone.</p></div>
+    <div style="display:flex;flex-direction:column;gap:22px;line-height:1.65">
+      <section class="box"><h2>How we list companies</h2><p>Well-known startups are added from public information (name, website, category, country) so people can review them. Other companies are added by their owners, or by reviewers who have worked with them. These profiles are marked “Unclaimed” and show no rating until real customers review them. A listed company is never presented as a partner or customer of Know The Company.</p></section>
+      <section class="box"><h2>Writing a review</h2><p>Write about your own experience in the last 12 months. No hate speech, personal data about staff, or claims of crime without evidence. Reviews in exchange for money, discounts or gifts are not allowed.</p></section>
+      <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern, or your own interview as a candidate. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews, or interview experiences. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
+      <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
+      <section class="box"><h2>When we remove a review</h2><p>Only when it breaks these guidelines or we receive a valid legal order. Every removal is counted in our public <a href="#removals">removals report</a>.</p></section>
+    </div></div>`;
+}
+
+function vLogin(type, why) {
+  const biz = type === 'business'; const a = S.auth || { mode: 'signin' }; const note = why || S.notice;
+  const seg = `<div class="seg" aria-label="Account type"><a href="#login" class="${biz ? '' : 'on'}" ${biz ? '' : 'aria-current="page"'}>I write reviews</a><a href="#business-login" class="${biz ? 'on' : ''}" ${biz ? 'aria-current="page"' : ''}>I manage a company</a></div>`;
+  const err = a.error ? `<p class="err" role="alert">${esc(a.error)}</p>` : '';
+  const emailF = `<div class="field"><label class="l" for="l-email">${biz ? 'Work email' : 'Email'}</label><input id="l-email" type="email" autocomplete="email" value="${esc(a.email || '')}" placeholder="${biz ? 'you@yourcompany.com' : 'you@example.com'}"><p class="err" id="err-l-email" hidden>Enter an email address like name@example.com.</p></div>`;
+  let card;
+  if (S.memberLoading) card = `<div class="authcard" aria-busy="true"><p class="meta">Checking your session…</p></div>`;
+  else if (S.user) card = `<div class="authcard"><h1 style="font-size:26px">You're logged in</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn p" href="#${biz ? 'dashboard' : 'my-reviews'}">${biz ? 'Open dashboard' : 'My reviews'}</a><button class="btn g" type="button" data-act="logout">Log out</button></div></div>`;
+  else if (a.mode === 'verify') card = `<form class="authcard" id="verify-form" novalidate>
+      <h1 style="font-size:26px">Confirm your email</h1>
+      <p style="color:var(--muted)">We sent a code to <b style="color:var(--fg)">${esc(a.email || 'your email')}</b>. Enter it to finish creating your account.</p>
+      <div class="field"><label class="l" for="l-code">Code</label><input id="l-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" class="mono" style="font-size:20px;letter-spacing:.3em"><p class="err" id="err-l-code" hidden>Enter the code from the email.</p></div>
+      ${err}<button class="btn p lg" type="submit">Confirm</button>
+      <button class="link" type="button" data-act="auth-mode" data-mode="signin" style="align-self:flex-start">Back to log in</button></form>`;
+  else if (a.mode === 'approval') card = `<div class="authcard"><h1 style="font-size:26px">Thanks, you're signed up</h1><p style="color:var(--muted)">Your account is waiting for approval. We'll email you when it's ready, and then you can log in.</p><button class="link" type="button" data-act="auth-mode" data-mode="signin" style="align-self:flex-start">Back to log in</button></div>`;
+  else if (a.mode === 'signup') card = `<form class="authcard" id="signup-form" novalidate>
+      <h1 style="font-size:26px">Create your account</h1>
+      <p style="color:var(--muted)">${biz ? 'Claim your company page, collect reviews and keep your details up to date.' : 'Post reviews and see everything you have written in one place.'}</p>
+      <div class="row"><div class="field"><label class="l" for="l-first">First name</label><input id="l-first" type="text" autocomplete="given-name" maxlength="40"><p class="err" id="err-l-first" hidden>Enter your first name.</p></div>
+        <div class="field"><label class="l" for="l-last">Last name <span class="meta">(optional)</span></label><input id="l-last" type="text" autocomplete="family-name" maxlength="40"></div></div>
+      ${emailF}
+      <div class="field"><label class="l" for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="new-password" minlength="8"><p class="err" id="err-l-pass" hidden>Use at least 8 characters.</p></div>
+      ${err}<button class="btn p lg" type="submit">Create account</button>
+      <p class="meta" style="font-size:13px">On customer reviews we show your first name and last initial, never your email. Employee reviews can be anonymous.</p>
+      <p style="font-size:14px">Already have an account? <button class="link" type="button" data-act="auth-mode" data-mode="signin">Log in</button></p></form>`;
+  else card = `<form class="authcard" id="login-form" novalidate>
+      <h1 style="font-size:26px">${biz ? 'Company login' : 'Log in to write reviews'}</h1>
+      <p style="color:var(--muted)">${biz ? 'See your company pages, review links and claims.' : 'Post reviews and see everything you have written in one place.'}</p>
+      ${emailF}
+      <div class="field"><label class="l" for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="current-password" minlength="8"><p class="err" id="err-l-pass" hidden>Enter your password (at least 8 characters).</p></div>
+      ${err}<button class="btn p lg" type="submit">Log in</button>
+      <p style="font-size:14px">New here? <button class="link" type="button" data-act="auth-mode" data-mode="signup">Create an account</button></p>
+      <p class="meta" style="font-size:13px">Forgot your password? <a href="#contact">Contact us</a> and we’ll help you reset it.</p></form>`;
+  return `<div class="wrap"><div class="authwrap">${seg}${note ? `<p class="notice">${esc(note)}</p>` : ''}${card}
+    <p class="meta" style="text-align:center;font-size:14px">${biz ? 'Not listed yet? <a href="#list">' + (LAUNCH ? 'List your company free' : 'List your company for ₹499') + '</a>' : 'Manage a company? <a href="#business-login">Use company login</a>'}</p></div></div>`;
+}
+
+function vMyReviews() {
+  if (!S.user) return vLogin('reviewer', S.memberLoading ? '' : 'Log in to see the reviews you have written.');
+  const uid = S.user.id;
+  const mine = [];
+  Object.entries(REVIEWS).forEach(([cid, list]) => list.forEach((r, i) => { if (r.by === uid && BYID[cid]) mine.push([cid, r, i]); }));
+  const emp = { reviews: [], interviews: [] };
+  Object.entries(EMP).forEach(([cid, d]) => { if (!BYID[cid]) return; Object.keys(emp).forEach(kind => (d[kind] || []).forEach((r, i) => { if (r.by === uid) emp[kind].push([cid, r, i]); })); });
+  const publishedTypes = new Set(mine.map(([cid]) => cid + '|customer').concat(emp.reviews.map(([cid]) => cid + '|employee'), emp.interviews.map(([cid]) => cid + '|interview')));
+  const pend = PENDING.filter(p => p.member === uid && BYID[p.cid] && !publishedTypes.has(p.cid + '|' + p.type));
+  const LABEL = { customer: 'Customer review', employee: 'Employee review', interview: 'Interview' };
+  const total = mine.length + emp.reviews.length + emp.interviews.length + pend.length;
+  const item = (cid, card) => `<div style="display:flex;flex-direction:column;gap:8px"><a href="#${cid}" style="font-weight:700;text-decoration:none">${esc(BYID[cid].name)}</a>${card}</div>`;
+  const group = (title, items) => items.length ? `<section style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:22px">${title} <span class="count">(${items.length})</span></h2>${items.join('')}</section>` : '';
+  const pendCard = p => `<article class="review"><div class="toolbar"><a href="#${p.cid}" style="font-weight:700;text-decoration:none">${esc(BYID[p.cid].name)}</a><span class="pill un">Waiting for approval</span></div><p class="meta">${esc(LABEL[p.type] || 'Review')} · sent ${esc(fmtDay(p.at))}</p>${p.title ? `<p>${esc(p.title)}</p>` : ''}</article>`;
+  return `<div class="wrap">${crumbs([['Home','#home'],['My reviews']])}
+    <div class="pagehead"><h1>My reviews</h1><p>${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div>
+    <div class="mainc" style="max-width:860px;gap:30px">${total ? group('Waiting for approval', pend.map(pendCard))
+        + group('Customer reviews', mine.map(([cid, r, i]) => item(cid, reviewCard(r, i, cid))))
+        + group('Employee reviews', emp.reviews.map(([cid, r, i]) => item(cid, empCard(r, i, cid))))
+        + group('Interviews', emp.interviews.map(([cid, r, i]) => item(cid, intCard(r, i, cid))))
+        + (pend.length ? '<p class="meta">Reviews waiting for approval are listed on this device only.</p>' : '')
+      : `<div class="empty"><b>You haven't written any reviews yet</b><p>Search for a company you've used or worked for and share how it went.</p><a class="btn p" href="#search">Find a company</a></div>`}</div></div>`;
+}
+
+const NAVI = {
+  claim: '<path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-5h6v5"/><path d="M17 3v4M15 5h4"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  reply: '<path d="M4 5h16v11H9.5L5 20v-4H4z"/><path d="M8 10.5h8"/>',
+  invite: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/>',
+  plans: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  sample: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  login: '<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  home: '<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+  pen: '<path d="M12 5v14M5 12h14"/>',
+  tools: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
+  star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.8z"/>'
+};
+const nI = (k, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NAVI[k]}</svg>`;
+function empLinks() {
+  return [['star', 'Why list your company', 'Online presence, AI search and more', '#why-list', ''],
+    ['claim', 'Claim your company page', 'Free for your first year', '#list', ''],
+    ['grid', 'Company dashboard', 'Your pages, review links and claims', S.user ? '#dashboard' : '#business-login', ''],
+    ['plans', 'Plans and pricing', 'Basic and Plus', '#list', 'data-act="goto-plans"']];
+}
+function notifs() {
+  const u = S.user; if (!u) return [];
+  const out = [];
+  Object.entries(REVIEWS).forEach(([cid, l]) => l.forEach(r => { if (r.by === u.id && r.reply && BYID[cid]) out.push([`#${cid}`, `${BYID[cid].name} replied to your review`, esc(r.title)]); }));
+  Object.entries(EMP).forEach(([cid, d]) => (d.reviews || []).forEach(r => { if (r.by === u.id && r.reply && BYID[cid]) out.push([`#${cid}`, `${BYID[cid].name} replied to your review`, esc(r.title)]); }));
+  return out;
+}
+function renderNav(active) {
+  const u = S.user; const nav = document.getElementById('nav-links'), right = document.getElementById('nav-right'), bbar = document.getElementById('bbar');
+  const toolsMenu = TOOLS.filter(x => !x.soon).map(x => `<a href="#tool-${x.id}">${toolIcon(x, 18)}<span><b>${esc(x.name)}</b><small>${esc(x.d)}</small></span></a>`).join('') + '<a href="#tools" class="all">All tools</a>';
+  const empMenu = empLinks().map(([k, l, d, href, extra]) => `<a href="${href}" ${extra}><span class="mi">${nI(k, 18)}</span><span><b>${l}</b><small>${d}</small></span></a>`).join('');
+  nav.innerHTML = `<a href="#categories" data-nav="categories">Companies</a>
+    <details class="dd${active === 'tools' ? ' on' : ''}"><summary class="car">Tools</summary><div class="ddmenu wide">${toolsMenu}</div></details>
+
+    <a href="#blog" data-nav="blog">Blog</a>
+    <details class="dd${active === 'list' || active === 'dashboard' ? ' on' : ''}"><summary class="car">For employers</summary><div class="ddmenu">${empMenu}</div></details>`;
+  nav.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === active) a.setAttribute('aria-current', 'page'); });
+  const ns = notifs(), unseen = Math.max(0, ns.length - (store.get('tn_seen', 0) || 0));
+  const bell = u ? `<details class="dd bell"><summary class="iconbtn" aria-label="Notifications${unseen ? `, ${unseen} new` : ''}">${nI('bell')}${unseen ? `<span class="badge">${unseen}</span>` : ''}</summary><div class="ddmenu right" style="min-width:320px"><div class="mh">Notifications</div>${ns.length ? ns.map(([href, h, d]) => `<a class="notif" href="${href}"><span class="dot"></span><span><b>${esc(h)}</b><small>${d}</small></span></a>`).join('') : '<p class="meta" style="padding:10px">Nothing new yet. Replies to your reviews and updates about your company page appear here.</p>'}</div></details>` : '';
+  const acct = S.memberLoading ? '<span class="loginlink" aria-hidden="true" style="min-width:64px"></span>' : u ? `<details class="dd um"><summary class="usum"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">${esc(initials(u.name))}</span>${esc(u.name.split(' ')[0])}</summary><div class="ddmenu right" style="min-width:240px"><div class="mh">Your account</div><a href="#my-reviews"><span class="mi">${nI('reply', 18)}</span><b>My reviews</b></a><a href="#dashboard"><span class="mi">${nI('grid', 18)}</span><b>Company dashboard</b></a><button class="mrow" type="button" data-act="logout"><span class="mi">${nI('login', 18)}</span><b>Log out</b></button></div></details>` : '<a class="loginlink" href="#login" data-nav="login">Log in</a>';
+  right.innerHTML = `<button class="iconbtn" type="button" data-act="open-search" aria-label="Search companies">${nI('search')}</button>${bell}${acct}<button class="btn p wr" type="button" data-act="open-picker">Write a review</button><button class="iconbtn burger" type="button" data-act="open-menu" aria-label="Menu">${nI('menu')}</button>`;
+  const acctHref = !u ? '#login' : u.type === 'reviewer' ? '#my-reviews' : '#dashboard';
+  bbar.innerHTML = `<a href="#home" ${['', '#', '#home'].includes(location.hash) ? 'aria-current="page"' : ''}>${nI('home', 22)}Home</a><a href="#categories" ${active === 'categories' ? 'aria-current="page"' : ''}>${nI('grid', 22)}Companies</a><button type="button" class="rv" data-act="open-picker"><span class="c">${nI('pen', 24)}</span>Review</button><a href="#tools" ${active === 'tools' ? 'aria-current="page"' : ''}>${nI('tools', 22)}Tools</a><a href="${acctHref}" ${['login', 'my-reviews', 'dashboard'].includes(active) ? 'aria-current="page"' : ''}>${nI('user', 22)}${u ? 'Account' : 'Log in'}</a>`;
+}
+function pickList(q) {
+  q = (q || '').trim().toLowerCase();
+  const list = q ? COS.filter(c => c.name.toLowerCase().includes(q) || c.web.includes(q)).sort((a, b) => a.name.toLowerCase().indexOf(q) - b.name.toLowerCase().indexOf(q)).slice(0, 7) : FEATURED.slice(0, 5);
+  return list.length ? list.map(c => `<button type="button" data-act="pick-co" data-id="${c.id}">${avatar(c, 40, 14)}<span><b>${esc(c.name)}</b><small>${esc(c.cat)} · ${esc(c.country)}</small></span></button>`).join('')
+    : `<p class="meta" style="padding:10px">No company called “${esc(q)}” yet.</p>`;
+}
+function openPicker(as) {
+  const m = document.getElementById('picker');
+  m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true" aria-labelledby="pk-h"><div class="toolbar"><h2 id="pk-h">Write a review</h2><button class="iconbtn" type="button" data-act="close-modal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <fieldset style="border:0;padding:0;margin:0"><legend class="l" style="margin-bottom:8px">I'm reviewing it as</legend><div class="planpick">
+      <label><input type="radio" name="pk-as" value="customers" ${as !== 'employees' ? 'checked' : ''}><span><b>A customer or client</b><small>You used its product or service</small></span></label>
+      <label><input type="radio" name="pk-as" value="employees" ${as === 'employees' ? 'checked' : ''}><span><b>An employee</b><small>You work or worked there</small></span></label></div></fieldset>
+    <div class="field"><label class="l" for="pk-q">Company</label><input id="pk-q" type="search" autocomplete="off" placeholder="Search a company"></div>
+    <div class="pklist" id="pk-list">${pickList('')}</div>
+    <p class="meta">Can't find it? <a href="#add" data-act="close-modal-go">Add the company</a> and be the first to review it.</p></div>`;
+  m.hidden = false; document.body.style.overflow = 'hidden'; setTimeout(() => { const i = document.getElementById('pk-q'); if (i) i.focus(); }, 30);
+}
+function openMenu() {
+  const u = S.user, m = document.getElementById('msheet');
+  m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true" aria-label="Menu"><div class="toolbar"><b style="font-size:18px">Menu</b><button class="iconbtn" type="button" data-act="close-modal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="mlinks"><a href="#categories" data-act="close-modal-go">${nI('grid')}Companies</a><a href="#tools" data-act="close-modal-go">${nI('tools')}Tools</a><a href="#jobs" data-act="close-modal-go">${nI('claim')}Jobs <span class="soon">Soon</span></a><a href="#blog" data-act="close-modal-go">${nI('edit')}Blog</a>
+      <div class="mh">For employers</div>${empLinks().map(([k, l, d, href, extra]) => `<a href="${href}" ${extra ? extra.replace('data-act="', 'data-sheet="') : ''} data-act="close-modal-go">${nI(k)}${l}</a>`).join('')}
+      <div class="mh">Account</div>${u ? `<a href="#my-reviews" data-act="close-modal-go">${nI('reply')}My reviews</a><a href="#dashboard" data-act="close-modal-go">${nI('grid')}Company dashboard</a><button type="button" data-act="logout">${nI('login')}Log out</button>` : `<a href="#login" data-act="close-modal-go">${nI('login')}Log in or create an account</a>`}</div></div>`;
+  m.hidden = false; document.body.style.overflow = 'hidden';
+}
+function closeModals() { document.querySelectorAll('.modal').forEach(m => { m.hidden = true; m.innerHTML = ''; }); document.body.style.overflow = ''; }
+function go(h) { if (location.hash === '#' + h) render(); else location.hash = h; }
+
+const BLOG_CATS = ['Reviews & reputation', 'Customer experience', 'Startup growth', 'Rules & compliance'];
+const POSTS = [
+  { slug: 'get-your-first-customer-reviews', cat: 'Reviews & reputation', date: '2026-11-02', title: 'How to get your first 10 customer reviews', tone: 1,
+    excerpt: 'A new profile with no reviews looks empty. Here is a simple routine for collecting honest reviews from the customers you already have.',
+    body: [
+      ['p', 'Most customers will happily leave a review. They just need to be asked at the right moment, with as little effort as possible. The goal is a steady flow of honest reviews, not a burst of five-star praise.'],
+      ['h', 'Ask when the job is done'],
+      ['p', 'The best moment to ask is right after a good outcome: the delivery arrived, the repair worked, the class ended. Waiting a week means the customer has moved on.'],
+      ['h', 'Make it one tap'],
+      ['p', 'Send your review link directly by WhatsApp, SMS or email, or print it as a QR code on your receipt. Every extra step, such as searching for your business, loses people.'],
+      ['h', 'Ask everyone, not only happy customers'],
+      ['p', 'Choosing who to ask based on whether they seem satisfied is called review gating. It skews your rating and is against the rules on most platforms, including ours. Ask every customer the same way.'],
+      ['h', 'Never pay or reward reviews'],
+      ['p', 'Discounts, gifts or cashback in return for a review make it a paid endorsement. Many countries now treat this as an unfair trade practice. A thank-you message is fine; a reward is not.'],
+      ['h', 'A simple message to copy'],
+      ['p', '“Thanks for choosing us today. If you have a minute, we would value an honest review: knowthecompany.com/review/your-business. It helps other customers and helps us improve.”']
+    ] },
+  { slug: 'reply-to-negative-reviews', cat: 'Customer experience', date: '2026-10-28', title: 'How to reply to a negative review', tone: 3,
+    excerpt: 'A calm, specific reply to a bad review often does more for your reputation than another five-star rating. Here is how to write one.',
+    body: [
+      ['p', 'People reading reviews look closely at how a business handles problems. A thoughtful reply shows that someone is listening, and it is written as much for future customers as for the reviewer.'],
+      ['h', 'Reply within two days'],
+      ['p', 'A quick response shows you take feedback seriously. Set a reminder to check new reviews every working day.'],
+      ['h', 'Thank them and name the issue'],
+      ['p', 'Start by thanking the customer and restating the problem in plain words. This shows you read the review rather than pasting a template.'],
+      ['h', 'Explain and fix, without arguing'],
+      ['p', 'If something went wrong, say so and explain what you are doing about it. If the facts are different from what was written, state them politely once. Avoid blaming the customer.'],
+      ['h', 'Move details offline'],
+      ['p', 'Offer a direct way to resolve it, such as a phone number or email, and never post the customer\'s personal details or order data in public.'],
+      ['h', 'Report only what breaks the rules'],
+      ['p', 'Reviews that contain abuse, personal data, or are clearly not from a customer can be reported for moderation. A review that is simply negative stays up, and your reply is your chance to answer it.']
+    ] },
+  { slug: 'fake-review-rules-for-businesses', cat: 'Rules & compliance', date: '2026-10-21', title: 'Fake reviews: what businesses need to know about the rules', tone: 5,
+    excerpt: 'Regulators in many countries now treat fake and incentivised reviews as illegal. A plain-language overview for business owners.',
+    body: [
+      ['p', 'Fake reviews used to be a reputation risk. In many markets they are now a legal risk as well. This overview is general information, not legal advice; check the rules in each country where you sell.'],
+      ['h', 'What counts as a fake review'],
+      ['ul', ['Reviews written by owners, staff or their family posing as customers', 'Reviews bought from agencies or freelancers', 'Reviews given in exchange for discounts, gifts or cashback without clear disclosure', 'Hiding or suppressing negative reviews while showing positive ones']],
+      ['h', 'Where the rules have tightened'],
+      ['p', 'In the United States, the Federal Trade Commission introduced a rule banning fake reviews and testimonials, which took effect in October 2024. In the United Kingdom, the Digital Markets, Competition and Consumers Act made fake reviews a banned practice from April 2025. In the European Union, sites that show reviews must explain whether and how they check that reviews come from real customers. India has a national standard for online reviews, IS 19000:2022, covering how reviews are collected, moderated and published.'],
+      ['h', 'What to do instead'],
+      ['ul', ['Ask every customer for a review, the same way', 'Disclose any review you invited or incentivised', 'Reply to criticism publicly and fix the cause', 'Keep records of how you collect reviews']]
+    ] },
+  { slug: 'build-trust-young-startup', cat: 'Startup growth', date: '2026-10-07', title: 'Seven ways a young startup can earn trust', tone: 4,
+    excerpt: 'Customers and candidates are careful with companies they have never heard of. These signals help them choose you the first time.',
+    body: [
+      ['p', 'A first-time visitor, client or job applicant has a few seconds to decide whether your company is real and reliable. These signals answer the questions they are silently asking.'],
+      ['ul', ['Show your registered company name, address and a real contact on your website', 'Explain clearly what you offer, what it costs and what happens after someone signs up', 'Collect reviews from customers and employees, including the less positive ones, and reply to them', 'Introduce the team behind the company, with names and roles', 'Answer messages quickly and say how long replies usually take', 'Keep your website, social profiles and company listings consistent', 'Put your rating and reviews where people decide: your website, proposals and careers page']],
+      ['h', 'Avoid the things that scare people away'],
+      ['p', 'Vague claims, stock photos of people who do not work there, and offers that seem too good to be true make people suspicious. Specific details and honest reviews do the opposite.']
+    ] },
+  { slug: 'turn-feedback-into-improvements', cat: 'Customer experience', date: '2026-09-30', title: 'Turning customer feedback into real improvements', tone: 6,
+    excerpt: 'Reviews are free research. A monthly routine for finding patterns in what customers say and acting on them.',
+    body: [
+      ['p', 'One review is an opinion. Ten reviews that mention the same problem are a pattern worth fixing. A short monthly routine turns feedback into decisions.'],
+      ['h', 'Tag every review'],
+      ['p', 'Give each review one or two tags such as delivery, price, staff, quality or communication. A simple spreadsheet is enough.'],
+      ['h', 'Count and compare'],
+      ['p', 'At the end of the month, count the tags in negative and positive reviews. The tag that appears most in complaints is usually your best place to start.'],
+      ['h', 'Fix one thing at a time'],
+      ['p', 'Choose one change, make it, and tell customers about it in your replies. Then watch whether that complaint becomes less common over the next few months.'],
+      ['h', 'Share wins with your team'],
+      ['p', 'Positive reviews that mention staff by name are worth sharing internally. Recognition helps the behaviour customers liked happen more often.']
+    ] }
+];
+POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
+const POSTBYID = Object.fromEntries(POSTS.map(p => [p.id, p]));
+const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const postCard = p => `<a class="postcard" href="#${p.id}"><span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>
+  <div class="postmeta"><span>${fmtDate(p.date)}</span><span>${p.read} min read</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></a>`;
+
+function vBlog() {
+  const list = POSTS.filter(p => S.blogCat === 'All' || p.cat === S.blogCat);
+  return `<section class="band"><div class="wrap" style="padding-block:44px 40px;display:flex;flex-direction:column;gap:14px">
+      <p class="eyebrow">Blog for companies</p><h1 style="font-size:clamp(32px,4.5vw,48px);font-weight:800">Practical advice on reviews, reputation and growing a business</h1>
+      <p style="color:var(--muted);font-size:18px;max-width:640px">Articles for business owners and teams. Every post is about running and growing a business.</p>
+      <div class="chips" style="margin-top:6px">${['All', ...BLOG_CATS].map(c => `<button type="button" class="chip" data-act="blogcat" data-cat="${esc(c)}" aria-pressed="${S.blogCat === c}" style="${S.blogCat === c ? 'background:var(--accent);color:var(--accent-ink);border-color:var(--accent)' : ''}">${esc(c)}</button>`).join('')}</div>
+    </div></section>
+    <section class="wrap sec"><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(postCard).join('')}</div>
+      <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
+}
+function vPost(p) {
+  const body = p.body.map(([k, v]) => k === 'h' ? `<h2>${esc(v)}</h2>` : k === 'ul' ? `<ul>${v.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : `<p>${esc(v)}</p>`).join('');
+  const more = POSTS.filter(x => x.id !== p.id).slice(0, 3);
+  return `<div class="wrap">${crumbs([['Home','#home'],['Blog','#blog'],[p.title]])}
+    <article class="article" style="padding-top:22px">
+      <p class="eyebrow">${esc(p.cat)}</p>
+      <h1 style="font-size:clamp(30px,4.2vw,44px);font-weight:800;line-height:1.12;margin-top:10px">${esc(p.title)}</h1>
+      <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span></div>
+      <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
+      ${body}
+      <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From ₹499 a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>
+    </article>
+    <section class="sec"><div class="sechead"><h2 style="font-size:24px">More from the blog</h2><a href="#blog" style="font-weight:700">All articles</a></div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${more.map(postCard).join('')}</div></section></div>`;
+}
+
+const WFU_TOPICS = ['Reviews & reputation', 'Customer experience', 'Startup growth', 'E-commerce', 'Marketing for businesses', 'Hiring & teams', 'Business finance & payments', 'Rules & compliance'];
+function vWriteForUs() {
+  const form = S.pitchSent ? `<div class="formcard"><div style="display:flex;gap:12px;align-items:center">${TICK()}<h2>Pitch received</h2></div>
+      <p style="color:var(--muted);line-height:1.6">Thanks. Our editors reply to pitches within 7 working days if the topic is a fit. You can send another pitch any time.</p>
+      <p class="meta">We opened your email app with your pitch. Press send there to reach our editors.</p><button class="btn g" type="button" data-act="pitch-again" style="align-self:flex-start">Send another pitch</button></div>`
+    : `<form class="formcard" id="pitch-form" novalidate><h2>Pitch an article</h2>
+      <div class="row"><div class="field"><label class="l" for="w-name">Your name</label><input id="w-name" type="text" autocomplete="name"><p class="err" id="err-w-name" hidden>Enter your name.</p></div>
+        <div class="field"><label class="l" for="w-email">Email</label><input id="w-email" type="email" autocomplete="email"><p class="err" id="err-w-email" hidden>Enter an email address like name@example.com.</p></div></div>
+      <div class="row"><div class="field"><label class="l" for="w-company">Company and your role</label><input id="w-company" type="text" placeholder="e.g. Founder, Acme Labs"><p class="err" id="err-w-company" hidden>Tell us where you work and your role.</p></div>
+        <div class="field"><label class="l" for="w-topic">Topic area</label><select id="w-topic"><option value="">Choose a business topic</option>${WFU_TOPICS.map(x => `<option>${esc(x)}</option>`).join('')}</select><p class="err" id="err-w-topic" hidden>Choose the business topic your article fits.</p></div></div>
+      <div class="field"><label class="l" for="w-title">Proposed title</label><input id="w-title" type="text" maxlength="120"><p class="err" id="err-w-title" hidden>Add a working title.</p></div>
+      <div class="field"><label class="l" for="w-outline">Outline</label><textarea id="w-outline" rows="5" maxlength="2000" placeholder="Main points, who it is for, and what readers will be able to do after reading"></textarea><p class="err" id="err-w-outline" hidden>Write at least 80 characters so we understand your idea.</p></div>
+      <div class="field"><label class="l" for="w-sample">Link to something you've written <span class="meta">(optional)</span></label><input id="w-sample" type="text" inputmode="url" placeholder="yourblog.com/article"></div>
+      <label class="check"><input id="w-agree" type="checkbox"><span>The article will be original, unpublished elsewhere, and about business. I won't include paid or affiliate links.</span></label>
+      <p class="err" id="err-w-agree" hidden>Tick the box to confirm.</p>
+      <button class="btn p lg" type="submit">Send pitch</button></form>`;
+  return `<section class="band"><div class="wrap" style="padding-block:44px 40px;display:flex;flex-direction:column;gap:14px;max-width:1200px">
+      <p class="eyebrow">Write for us</p><h1 style="font-size:clamp(32px,4.5vw,48px);font-weight:800;max-width:820px">Share what you've learned running a business</h1>
+      <p style="color:var(--muted);font-size:18px;max-width:680px">We publish practical guest articles for business owners and teams. We only accept business and company topics.</p></div></section>
+    <section class="wrap sec"><div class="layout">
+      <div class="mainc">${form}</div>
+      <aside class="side">
+        <div class="box"><h2>Topics we accept</h2><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)">${WFU_TOPICS.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+        <div class="box"><h2>We don't accept</h2><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)"><li>Personal, lifestyle, travel or health topics</li><li>Gambling, betting, adult or CBD content</li><li>Crypto or investment tips and promotions</li><li>Product ads, press releases or link-only posts</li><li>AI-generated articles without real experience</li></ul></div>
+        <div class="box soft"><h2>Guidelines</h2><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)"><li>1,000–2,000 words, written from your own experience</li><li>Original and not published anywhere else</li><li>One author bio with a link to your company; links in guest posts are marked nofollow</li><li>Our editors may edit for clarity and length</li><li>We don't charge for, or pay for, guest posts</li></ul></div>
+      </aside></div></section>`;
+}
+
+function vAbout() {
+  return `<section class="band"><div class="wrap" style="padding-block:48px 44px;display:flex;flex-direction:column;gap:14px">
+      <p class="eyebrow">About Know The Company</p><h1 style="font-size:clamp(32px,4.8vw,52px);font-weight:800;max-width:820px">Helping people choose companies they can trust</h1>
+      <p style="color:var(--muted);font-size:18px;max-width:680px">Know The Company is an open review platform for startups and growing companies, everywhere. Big brands already have thousands of reviews; the companies people actually hire, work with and work for often have none. Anyone can read and write reviews for free. We show how a company treats both its customers and its employees.</p></div></section>
+    <section class="wrap sec"><div class="steps">
+      <div class="step"><p class="lbl">Our mission</p><h3>Honest information before you pay</h3><p>Customers deserve to know how a company treats people before they hand over money or personal data.</p></div>
+      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then ₹499 a year. Plus costs ₹${PLUS_PRICE} a year.` : `Businesses can buy a Basic listing for ₹499 a year or Plus for ₹${PLUS_PRICE} a year.`} A listing gives a business tools, and never changes its rating.</p></div>
+      <div class="step"><p class="lbl">Who we serve</p><h3>Startups and growing companies worldwide</h3><p>From a two-person studio to a 500-person scale-up, every company can be listed and reviewed.</p></div></div></section>
+    <section class="wrap sec" style="max-width:900px"><div class="sechead"><h2>What we stand for</h2></div>
+      <div style="display:flex;flex-direction:column;gap:12px">${[['Neutral','Paid and unpaid companies are reviewed and moderated the same way.'],['Transparent','We publish how many reviews we remove and why.'],['Real people','Reviewers confirm their email, and reviews backed by proof are marked.'],['Fair to companies','Every company can reply publicly and report reviews that break our rules.']].map(([a, b]) => `<div class="box" style="flex-direction:row;gap:16px;align-items:baseline;flex-wrap:wrap"><b style="min-width:150px">${a}</b><span style="color:var(--muted);flex:1 1 300px">${b}</span></div>`).join('')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:28px"><a class="btn p" href="#search">Find a company</a><a class="btn g" href="#contact">Contact us</a></div></section>`;
+}
+
+function vContact() {
+  const form = S.contactSent ? `<div class="formcard"><div style="display:flex;gap:12px;align-items:center">${TICK()}<h2>Your email is ready to send</h2></div><p style="color:var(--muted)">We opened your email app with your message. Press send there, and we usually reply within 2 working days.</p><button class="btn g" type="button" data-act="contact-again" style="align-self:flex-start">Send another message</button></div>`
+    : `<form class="formcard" id="contact-form" novalidate><h2>Send us a message</h2>
+      <div class="row"><div class="field"><label class="l" for="c-name">Name</label><input id="c-name" type="text" autocomplete="name"><p class="err" id="err-c-name" hidden>Enter your name.</p></div>
+        <div class="field"><label class="l" for="c-email">Email</label><input id="c-email" type="email" autocomplete="email"><p class="err" id="err-c-email" hidden>Enter an email address like name@example.com.</p></div></div>
+      <div class="field"><label class="l" for="c-topic">What is it about?</label><select id="c-topic"><option>A review I wrote</option><option>My company listing or payment</option><option>Reporting a fake review</option><option>Press and partnerships</option><option>Legal notice or takedown request</option><option>Something else</option></select></div>
+      <div class="field"><label class="l" for="c-msg">Message</label><textarea id="c-msg" rows="6" maxlength="3000"></textarea><p class="err" id="err-c-msg" hidden>Write a message of at least 20 characters.</p></div>
+      <button class="btn p lg" type="submit" style="align-self:flex-start">Write the email</button><p class="meta">This opens your email app with your message filled in.</p></form>`;
+  return `<div class="wrap">${crumbs([['Home','#home'],['Contact']])}
+    <div class="pagehead"><h1>Contact us</h1><p>Questions about reviews, listings or anything else. We usually reply within 2 working days.</p></div>
+    <div class="layout"><div class="mainc">${form}</div>
+      <aside class="side">
+        <div class="box"><h2>Email</h2><p>General: <span style="user-select:all;color:var(--fg)">hello@knowthecompany.com</span></p><p>Businesses: <span style="user-select:all;color:var(--fg)">business@knowthecompany.com</span></p><p>Legal and takedowns: <span style="user-select:all;color:var(--fg)">legal@knowthecompany.com</span></p></div>
+        <div class="box"><h2>Grievance officer</h2><p>Grievance Officer, Know The Company<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours.</p></div>
+        <div class="box soft"><h2>Quick answers</h2><p>Many questions are answered in our help centre.</p><a href="#help" style="font-weight:700;font-size:14px">Open help centre</a></div>
+      </aside></div></div>`;
+}
+
+const HELP = [
+  ['For reviewers', [
+    ['Is Know The Company free for reviewers?', 'Yes. Reading and writing reviews is always free.'],
+    ['Why do I need to log in to post?', 'Logging in with a one-time code confirms you are a real person and lets you see and manage your reviews.'],
+    ['Can I edit or remove my review?', 'Yes. Open My reviews after logging in and remove a review you wrote.'],
+    ['Why was my review removed?', 'Only reviews that break our review guidelines, or that we must remove by law, are taken down. We email you the reason.']]],
+  ['For employees', [
+    ['Can I post an employee review anonymously?', 'Yes. You choose for each review: anonymous, or with your name. Your email is never shown, and your employer can\'t see who wrote an anonymous review.'],
+    ['How do you verify employees?', 'Log in with your work email at the company\'s website domain to get a “Work email verified” badge. On the live site you can also upload a payslip or offer letter instead. We delete it after checking.'],
+    ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
+    ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
+  ['For employers', [
+    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews, a review link and email alerts. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then ₹499 a year. ` : 'It costs ₹499 a year. ') + `Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, photos, offers and updates, and visit stats.`],
+    LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost ₹499 a year. We remind you before your free year ends, and the listing continues only if you choose to renew.`] : ['How much does it cost?', '₹499 a year. We remind you before each renewal, and you can stop at any time.'],
+    ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
+    ['Can paying remove bad reviews?', 'No. Payment never changes ratings or hides reviews. You can reply publicly or report reviews that break the rules.'],
+    ['My company is already listed. What now?', 'Open your profile and press Claim. You keep the existing reviews.']]],
+  ['Trust and safety', [
+    ['How do you stop fake reviews?', 'We confirm reviewers by email, check for patterns such as many reviews from one device, and review flagged content by hand.'],
+    ['How do I report a review?', 'Use Report on the review, or contact us with a link to it. Companies can also report from their dashboard.']]]
+];
+function vHelp() {
+  return `<div class="wrap" style="max-width:900px">${crumbs([['Home','#home'],['Help centre']])}
+    <div class="pagehead"><h1>Help centre</h1><p>Answers for reviewers, employees and companies.</p></div>
+    <div style="display:flex;flex-direction:column;gap:30px">${HELP.map(([g, qs]) => `<section style="display:flex;flex-direction:column;gap:10px"><h2 style="font-size:22px">${g}</h2>${qs.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</section>`).join('')}
+    <div class="box soft" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><p style="color:var(--fg)">Still need help?</p><a class="btn p" href="#contact">Contact us</a></div></div></div>`;
+}
+
+const legalPage = (title, crumb, intro, sections) => `<div class="wrap" style="max-width:860px">${crumbs([['Home','#home'],[crumb]])}
+  <div class="pagehead"><h1>${title}</h1><p>Last updated: 8 November 2026</p></div>
+  <p class="draftnote">Draft. A lawyer is reviewing this page, and it may change.</p>
+  <div class="legal"><p>${intro}</p>${sections.map(([h, items]) => `<h2>${h}</h2>${Array.isArray(items) ? `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>` : `<p>${items}</p>`}`).join('')}</div></div>`;
+function vTerms() {
+  return legalPage('Terms of use', 'Terms of use', 'These terms apply to everyone who uses Know The Company, operated by Know The Company. By using the site you agree to them.', [
+    ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.']],
+    ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
+    ['3. Employee reviews and interviews', ['Post only your own experience as an employee, contractor, intern or job candidate.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews, or interview experiences. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
+    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year.` : 'Basic costs ₹499 a year.', `Plus costs ₹${PLUS_PRICE} a year${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is not renewed, the profile moves to Basic.`, 'We remind you by email at least 7 days before a free year or paid year ends. Your listing renews only if you choose to pay. If you don’t renew, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires.']],
+    ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
+    ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
+    ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
+    ['8. Contact', 'Questions about these terms: legal@knowthecompany.com.']]);
+}
+function vPrivacy() {
+  return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
+    ['What we collect', ['Account details: your name and email address.', 'Content you post: reviews, replies, reports and messages.', 'Proof files you upload to verify a review. We delete these after checking them.', 'Work email addresses used to verify employee reviews. We never show them to employers or the public.', 'Business listing details and payment confirmations. Payment details are handled by our payment provider, not stored by us.', 'Basic technical data such as device type and pages visited, to keep the site secure.']],
+    ['How we use it', ['To run your account and show your reviews with your chosen name.', 'To detect fake reviews and abuse.', 'To verify businesses and process listing payments.', 'To reply to your messages and send login codes.']],
+    ['What we never do', 'We never sell your personal data or show reviewers\' email addresses to businesses.'],
+    ['Sharing', 'We share data only with service providers who help us run Know The Company (hosting, email, payments), and when required by law, such as a valid court order.'],
+    ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to privacy@knowthecompany.com and we will reply within the time the law requires.'],
+    ['Cookies and storage', 'We use essential storage to keep you logged in and remember preferences. We use privacy-friendly analytics that count visits without following you across other sites.'],
+    ['Contact', 'Privacy questions: privacy@knowthecompany.com. Grievance officer: grievance@knowthecompany.com.']]);
+}
+
+/* ---------- live actions: everything a visitor saves goes to Wix ---------- */
+const CC_BY_NAME = Object.fromEntries(Object.entries(COUNTRY).map(([k, v]) => [v, k]));
+const errMsg = e => {
+  const m = e && e.message ? e.message : '';
+  if (e && e.status === 403) return 'Please log in again, then try once more.';
+  return m && m.length < 160 ? m : 'Something went wrong. Please try again.';
+};
+const needLogin = (msg, tab) => { S.returnTo = (location.hash || '#home').slice(1); if (tab) S.returnTab = tab; S.notice = msg; go('login'); window.scrollTo(0, 0); };
+let PENDING = store.get('ktc_pending', []);
+const addPending = p => { PENDING.unshift({ ...p, member: S.user ? S.user.id : '', at: todayISO() }); PENDING = PENDING.slice(0, 60); store.set('ktc_pending', PENDING); };
+async function insertCompany(data) {
+  const res = await wixRequest('/wix-data/v2/items', { body: { dataCollectionId: 'Companies', dataItem: { id: data._id, data } } });
+  return (res && res.dataItem && res.dataItem.data) || data;
+}
+async function loadMyClaims() {
+  if (!S.user) { S.myClaims = []; return; }
+  S.myClaims = null;
+  try { const p = await queryItems('Claims', { limit: 50 }); S.myClaims = p.items; }
+  catch (e) { S.myClaims = []; S.claimsErr = errMsg(e); }
+  if (location.hash === '#dashboard') render();
+}
+const busy = (f, on) => { const b = f && f.querySelector('button[type=submit]'); if (b) b.disabled = on; };
+const checkFirst = (f, id) => { const el = f.querySelector('#' + id); const ok = !el || el.checked; const er = document.getElementById('err-' + id); if (er) er.hidden = ok; if (!ok) el.focus(); return ok; };
+const AUTH_ERRORS = {
+  invalidPassword: 'That email and password don’t match. Check them and try again.',
+  invalidEmail: 'We couldn’t find an account with that email. Create one below.',
+  emailAlreadyExists: 'There’s already an account with this email. Log in instead.',
+  resetPassword: 'This account needs a new password. Contact us and we’ll help you reset it.'
+};
+function afterLogin() {
+  const back = S.returnTo; S.returnTo = ''; S.notice = '';
+  S.auth = { mode: 'signin', error: '' };
+  toast(back ? (S.returnTab ? 'Logged in. You can post your review now.' : 'Logged in.') : 'Logged in.');
+  go(back || (location.hash === '#business-login' ? 'dashboard' : 'my-reviews')); window.scrollTo(0, 0);
+}
+function onAuthResult(r) {
+  if (r.state === 'SUCCESS') { afterLogin(); return; }
+  if (r.state === 'EMAIL_VERIFICATION_REQUIRED') { S.auth = { ...S.auth, mode: 'verify', error: '' }; render(); return; }
+  if (r.state === 'OWNER_APPROVAL_REQUIRED') { S.auth = { ...S.auth, mode: 'approval', error: '' }; render(); return; }
+  S.auth = { ...S.auth, error: AUTH_ERRORS[r.errorCode] || r.error || 'That didn’t work. Check the details and try again.' }; render();
+}
+async function submitClaim() {
+  const d = S.listData, cf = S.cf || {};
+  if (!S.user) { needLogin('Log in or create an account to claim or add your company.'); return; }
+  const plan = (document.querySelector('input[name=plan]:checked') || {}).value || d.plan || 'basic'; d.plan = plan;
+  const dom = domOf(d.web); const method = cf.method === 'docs' ? 'documents' : (cf.method || 'email');
+  if (method === 'email' && !domainMatch(d.email, d.web)) { toast('Choose another way to verify, or change your email.'); return; }
+  const btn = document.querySelector('[data-act="cf-submit"]'); if (btn) btn.disabled = true;
+  try {
+    let wid = d.coId && BYID[d.coId] ? BYID[d.coId].wid : '';
+    if (d.mode !== 'claim') {
+      const cid = companyIdFor(d.web);
+      if (BYWID[cid]) wid = cid;
+      else {
+        const it = await insertCompany({ _id: cid, title: d.name, slug: uniqueSlug(d.name), website: cid, category: d.cat, country: CC_BY_NAME[d.country] || 'WW', bio: '', headquarters: d.city || '', addedBy: 'owner', claimStatus: 'none', plan: 'none', countCustomer: 0, countEmployee: 0, countInterview: 0 });
+        wid = it._id || cid; addCompanyLocal({ ...it, _id: wid, title: d.name, slug: it.slug || slug(d.name), website: cid, category: d.cat, addedBy: 'owner' });
+      }
+    }
+    const docType = (document.getElementById('cf-doctype') || {}).value || '';
+    await insertItem('Claims', { company: wid, kind: d.mode === 'claim' ? 'claim' : 'new', person: d.person, role: d.role, email: d.email, phone: d.phone, method, token: method === 'website' ? vToken(dom || d.name) : '', plan, message: docType ? 'Document offered: ' + docType : '', status: 'pending' });
+    d.listedAt = todayISO(); d.coWid = wid; S.listStep = 4; S.myClaims = undefined; cfRefresh();
+  } catch (err) { if (btn) btn.disabled = false; toast(errMsg(err), 5000); }
+}
+
+document.addEventListener('submit', async e => {
+  const f = e.target; const id = f.id;
+  const HANDLED = ['review-form', 'emp-form', 'int-form', 'add-form', 'req-form', 'report-form', 'suggest-form', 'login-form', 'signup-form', 'verify-form', 'contact-form', 'pitch-form'];
+  if (!HANDLED.includes(id)) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const v = k => { const el = f.querySelector('#' + k); return el ? el.value.trim() : ''; };
+
+  if (id === 'login-form' || id === 'signup-form' || id === 'verify-form') {
+    const email = v('l-email'), pw = (f.querySelector('#l-pass') || {}).value || '';
+    let bad = null;
+    if (id !== 'verify-form') {
+      const eE = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), eP = pw.length < 8;
+      document.getElementById('err-l-email').hidden = !eE; document.getElementById('err-l-pass').hidden = !eP;
+      if (id === 'signup-form') { const eN = !v('l-first'); document.getElementById('err-l-first').hidden = !eN; if (eN) bad = 'l-first'; }
+      if (eP) bad = bad || 'l-pass'; if (eE) bad = 'l-email';
+    } else { const eC = !/^\d{4,8}$/.test(v('l-code')); document.getElementById('err-l-code').hidden = !eC; if (eC) bad = 'l-code'; }
+    if (bad) { f.querySelector('#' + bad).focus(); return; }
+    S.auth = { ...S.auth, email: email || S.auth.email, error: '' };
+    busy(f, true);
+    try {
+      const r = id === 'login-form' ? await memberLogin(email, pw)
+        : id === 'signup-form' ? await memberRegister(email, pw, { firstName: v('l-first'), lastName: v('l-last') })
+        : await memberVerify(v('l-code'));
+      onAuthResult(r);
+    } catch (err) { S.auth = { ...S.auth, error: errMsg(err) }; render(); }
+    return;
+  }
+
+  if (id === 'review-form') {
+    const c = BYID[location.hash.slice(1)]; if (!c) return;
+    const body = f['r-body'].value.trim();
+    const eR = !S.rating, eB = body.length < 20;
+    document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
+    if (eR) { f.querySelector('[data-n="1"]').focus(); return; } if (eB) { f['r-body'].focus(); return; }
+    const m = f['r-date'].value;
+    if (!S.user) {
+      S.draft = { cid: c.id, rating: S.rating, title: f['r-title'].value, body: f['r-body'].value, date: m };
+      S.returnTo = c.id; S.notice = 'Log in to post your review. Your draft is saved.';
+      go('login'); window.scrollTo(0, 0); return;
+    }
+    if (!checkFirst(f, 'r-first')) return;
+    busy(f, true);
+    try {
+      await insertItem('Reviews', { company: c.wid, companySlug: c.id.slice(3), type: 'customer', displayName: S.user.name, anonymous: false, rating: S.rating, title: f['r-title'].value.trim(), body, experienceDate: m || '', firstHand: true, invited: S.invitedFor === c.id });
+    } catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
+    addPending({ cid: c.id, type: 'customer', title: f['r-title'].value.trim() || body.slice(0, 80) });
+    S.invitedFor = ''; S.rating = 0; S.draft = null; S.sentFor = c.id; render();
+    toast('Thanks. Your review appears once our team has checked it.', 5000);
+    return;
+  }
+
+  if (id === 'emp-form' || id === 'int-form') {
+    const c = BYID[location.hash.slice(1)]; if (!c || !S.user) return;
+    const check = list => { let first = null; list.forEach(([k, bad, foc]) => { document.getElementById('err-' + k).hidden = !bad; const el = document.getElementById(k); if (el) el.setAttribute('aria-invalid', bad ? 'true' : 'false'); if (bad && !first) first = foc || k; }); if (first) document.getElementById(first).focus(); return !first; };
+    let data;
+    if (id === 'emp-form') {
+      const rec = f.querySelector('input[name="e-rec"]:checked');
+      if (!check([['e-title', !v('e-title')], ['e-overall', !S.emp.overall, 'e-overall-1'], ['e-pros', v('e-pros').length < 20], ['e-cons', v('e-cons').length < 20], ['e-rec', !rec, 'e-rec-yes']])) return;
+      if (!checkFirst(f, 'e-first')) return;
+      const sub = {}; SUBS.forEach(([k]) => { if (S.emp[k]) sub[k] = S.emp[k]; });
+      const show = (f.querySelector('input[name="e-show"]:checked') || {}).value || 'anon'; S.empShow = show;
+      data = { type: 'employee', displayName: show === 'named' ? displayName() : '', anonymous: show !== 'named', rating: S.emp.overall, subRatings: sub, pros: v('e-pros'), cons: v('e-cons'), advice: v('e-advice'), recommend: rec.value, employmentStatus: v('e-status'), jobTitle: v('e-title'), location: v('e-loc'), tenure: v('e-years') };
+    } else {
+      if (!check([['i-role', !v('i-role')], ['i-process', v('i-process').length < 20]])) return;
+      if (!checkFirst(f, 'i-first')) return;
+      data = { type: 'interview', anonymous: true, jobTitle: v('i-role'), interviewOutcome: v('i-outcome'), interviewDifficulty: v('i-diff'), interviewExperience: v('i-exp'), body: v('i-process'), interviewQuestions: v('i-questions') };
+    }
+    busy(f, true);
+    try { await insertItem('Reviews', { ...data, company: c.wid, companySlug: c.id.slice(3), firstHand: true, workEmailVerified: workVerified(c), invited: S.invitedFor === c.id }); }
+    catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
+    addPending({ cid: c.id, type: data.type, title: data.jobTitle });
+    S.emp = EMP_ZERO(); S.invitedFor = ''; delete S.formCache[id]; render();
+    toast(id === 'emp-form' ? 'Thanks. Your review appears once our team has checked it.' : 'Thanks. Your interview appears once our team has checked it.', 5000);
+    return;
+  }
+
+  if (id === 'add-form') {
+    const name = f['a-name'].value.trim().replace(/\s+/g, ' ');
+    const web = f['a-web'].value.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
+    const eN = name.length < 2 || !slug(name), eW = !/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/.test(web);
+    document.getElementById('err-a-name').hidden = !eN; document.getElementById('err-a-web').hidden = !eW;
+    if (eN) { f['a-name'].focus(); return; } if (eW) { f['a-web'].focus(); return; }
+    const cid = companyIdFor(web), W2 = webs2();
+    const dup = BYWID[cid] || COS.find(c => W2[c.id] && W2[c.id] === domOf(web));
+    if (dup) { toast(`${dup.name} is already listed`); location.hash = dup.id; return; }
+    if (!S.user) { S.addPrefill = name; needLogin('Log in to add a company. It keeps fake listings out.'); return; }
+    busy(f, true);
+    try {
+      const it = await insertCompany({ _id: cid, title: name, slug: uniqueSlug(name), website: cid, category: f['a-cat'].value, country: f['a-cc'].value, bio: '', addedBy: 'reviewer', claimStatus: 'none', plan: 'none', countCustomer: 0, countEmployee: 0, countInterview: 0 });
+      const c = addCompanyLocal({ ...it, _id: it._id || cid });
+      S.addPrefill = ''; toast(`${name} added. Now share your experience.`); location.hash = c.id;
+    } catch (err) {
+      busy(f, false);
+      if (err && err.status === 409) { await loadData(); const ex = BYWID[cid]; toast('That website is already listed'); if (ex) location.hash = ex.id; return; }
+      toast(errMsg(err), 5000);
+    }
+    return;
+  }
+
+  if (id === 'req-form') {
+    const bad = { 'r-person': !v('r-person'), 'r-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('r-email')) };
+    let first = null; Object.entries(bad).forEach(([k, b]) => { document.getElementById('err-' + k).hidden = !b; if (b && !first) first = k; });
+    if (first) { f.querySelector('#' + first).focus(); return; }
+    if (!S.user) { needLogin('Log in or create an account to request access.'); return; }
+    const c = BYID[S.reqCo]; busy(f, true);
+    try { await insertItem('Claims', { company: c.wid, kind: 'access', person: v('r-person'), role: f['r-role'].value, email: v('r-email'), message: v('r-msg'), status: 'pending' }); }
+    catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
+    S.listStep = 'req-done'; S.myClaims = undefined; cfRefresh();
+    return;
+  }
+
+  if (id === 'report-form') {
+    const r = f.querySelector('input[name="rp-reason"]:checked'); document.getElementById('err-rp').hidden = !!r; if (!r) return;
+    const c = BYID[location.hash.slice(1)]; busy(f, true);
+    try { await insertItem('Reports', { kind: 'report', review: f.dataset.key, company: c ? c.wid : undefined, reason: r.value, note: f.querySelector('#rp-note').value.trim(), status: 'open' }); }
+    catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
+    const R = store.get('ktc_reported', {}); R[f.dataset.key] = todayISO(); store.set('ktc_reported', R);
+    closeModals(); renderKeep(); toast('Report sent. Our team will review it.');
+    return;
+  }
+
+  if (id === 'suggest-form') {
+    const note = f.querySelector('#sg-note').value.trim(); document.getElementById('err-sg').hidden = note.length >= 10;
+    if (note.length < 10) { f.querySelector('#sg-note').focus(); return; }
+    const c = BYID[f.dataset.id]; busy(f, true);
+    try { await insertItem('Reports', { kind: 'edit', company: c ? c.wid : undefined, reason: f.querySelector('#sg-what').value, note, status: 'open' }); }
+    catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
+    closeModals(); toast('Thanks. We check suggestions within a few days.');
+    return;
+  }
+
+  if (id === 'contact-form') {
+    const errs = { 'c-name': !v('c-name'), 'c-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('c-email')), 'c-msg': v('c-msg').length < 20 };
+    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
+    if (first) { f.querySelector('#' + first).focus(); return; }
+    const topic = v('c-topic');
+    const to = /legal|takedown/i.test(topic) ? 'legal@knowthecompany.com' : /listing|payment/i.test(topic) ? 'business@knowthecompany.com' : 'hello@knowthecompany.com';
+    location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(topic) + '&body=' + encodeURIComponent(v('c-msg') + '\n\n' + v('c-name') + '\n' + v('c-email'));
+    S.contactSent = true; render(); window.scrollTo(0, 0);
+    return;
+  }
+
+  if (id === 'pitch-form') {
+    const d = { name: v('w-name'), email: v('w-email'), company: v('w-company'), topic: v('w-topic'), title: v('w-title'), outline: v('w-outline'), sample: v('w-sample') };
+    const errs = { 'w-name': !d.name, 'w-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email), 'w-company': !d.company, 'w-topic': !d.topic, 'w-title': !d.title, 'w-outline': d.outline.length < 80, 'w-agree': !f.querySelector('#w-agree').checked };
+    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
+    if (first) { f.querySelector('#' + first).focus(); return; }
+    const body = `Title: ${d.title}\nTopic: ${d.topic}\n\n${d.outline}\n\nSample: ${d.sample || '-'}\n\n${d.name}, ${d.company}\n${d.email}`;
+    location.href = 'mailto:hello@knowthecompany.com?subject=' + encodeURIComponent('Guest article pitch: ' + d.title) + '&body=' + encodeURIComponent(body);
+    S.pitchSent = true; render(); window.scrollTo(0, 0);
+    return;
+  }
+});
+
+document.addEventListener('click', async e => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  const act = a.dataset.act;
+  const stop = () => { e.preventDefault(); e.stopImmediatePropagation(); };
+  if (act === 'logout') { stop(); memberLogout('/').catch(() => { toast('Couldn’t log out. Please try again.'); }); return; }
+  if (act === 'auth-mode') { stop(); S.auth = { mode: a.dataset.mode, error: '', email: S.auth.email || '' }; render(); const i = document.getElementById('l-email') || document.getElementById('l-code'); if (i) i.focus(); return; }
+  if (act === 'reload') { stop(); location.reload(); return; }
+  if (act === 'rv-report' && !S.user) { stop(); needLogin('Log in to report a review. It keeps the report button from being misused.'); return; }
+  if (act === 'suggest' && !S.user) { stop(); needLogin('Log in to suggest an edit.'); return; }
+  if (act === 'gate-list-login') { stop(); S.returnTo = 'list'; S.scrollTo = 'list-form-area'; S.notice = 'Log in or create an account to claim or add your company.'; go('login'); window.scrollTo(0, 0); return; }
+  if (act === 'del-review' || act === 'del-emp') {
+    stop(); const wid = a.dataset.wid; if (!wid) return;
+    if (!window.confirm('Remove this review? This can’t be undone.')) return;
+    a.disabled = true;
+    try { await removeItem('Reviews', wid); await loadData(); render(); toast('Review removed'); }
+    catch (err) { a.disabled = false; toast(errMsg(err), 5000); }
+    return;
+  }
+  if (act === 'cf-submit') { stop(); submitClaim(); return; }
+  if (['rv-helpful', 'go-plus', 'demo-card', 'demo-poster', 'google-login', 'forgot', 'pay', 'cf-send', 'cf-verify', 'cf-check', 'cf-docs', 'report'].includes(act)) { stop(); return; }
+});
+
+document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.jfilter === 'q') { S.jobFilter.q = t.value; const r = document.getElementById('job-results'); if (r) r.innerHTML = jobResults(); } });
+document.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.jfilter && t.dataset.jfilter !== 'q') { S.jobFilter[t.dataset.jfilter] = t.value; const r = document.getElementById('job-results'); if (r) r.innerHTML = jobResults(); } });
+
+/* ---------- router ---------- */
+const app = document.getElementById('app');
+/* ---------- scroll animations ----------
+   Sections and cards fade up as they come into view, with a short stagger between siblings.
+   They play once per page visit: re-renders on the same page (star picks, tabs, filters) show content straight away. */
+const REVEAL = [
+  ['.promises > *', ''], ['.sechead', ''],
+  ['.both > .bside.c', 'rv-l'], ['.both > .bjoin', 'rv-z'], ['.both > .bside.e', 'rv-r'], ['.whyboth > *', ''],
+  ['.grid > *', ''], ['.reasons > *', ''], ['.toolgrid > *', ''], ['.steps > *', ''], ['.jgrid > *', ''], ['.plans > *', ''],
+  ['.pagehead', ''], ['.lbhero .wrap > *', ''], ['.band > .wrap > *', ''], ['.cohead', ''],
+  ['.review', ''], ['.box', ''], ['.formcard', ''], ['.authcard', ''], ['.cocard', ''], ['.postcard', ''], ['.empty', '']
+];
+let revealHash = null, revealIO = null;
+function setupReveal(h) {
+  const root = app.firstElementChild; if (!root) return;
+  const fresh = h !== revealHash; revealHash = h;
+  if (revealIO) { revealIO.disconnect(); revealIO = null; }
+  let reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (fresh && !reduce) { const hero = root.querySelector('.hero3'); if (hero) hero.classList.add('play'); }
+  if (!fresh || reduce || !('IntersectionObserver' in window)) return;
+  const done = el => { el.classList.remove('rv', 'in', 'rv-l', 'rv-r', 'rv-z'); el.style.removeProperty('--rv-d'); };
+  const show = el => {
+    el.classList.add('in');
+    const d = parseInt(el.style.getPropertyValue('--rv-d')) || 0;
+    setTimeout(() => done(el), d + 900);
+  };
+  const seen = new Set(), perParent = new Map();
+  for (const [sel, dir] of REVEAL) {
+    root.querySelectorAll(sel).forEach(el => {
+      if (seen.has(el)) return;
+      for (let p = el.parentElement; p && p !== root; p = p.parentElement) if (seen.has(p)) return;
+      seen.add(el);
+      const n = perParent.get(el.parentElement) || 0; perParent.set(el.parentElement, n + 1);
+      el.classList.add('rv'); if (dir) el.classList.add(dir);
+      el.style.setProperty('--rv-d', Math.min(n, 6) * 80 + 'ms');
+    });
+  }
+  revealIO = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting || e.boundingClientRect.top < 0) { revealIO && revealIO.unobserve(e.target); show(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
+  seen.forEach(el => revealIO.observe(el));
+}
+/* the two rows of company names under the homepage headline slide in opposite directions as the page scrolls */
+let bandsReduce = false; try { bandsReduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+function moveBands() {
+  const nb = document.getElementById('nbands'); if (!nb || bandsReduce) return;
+  const y = window.scrollY * 0.45;
+  const [a, b] = nb.querySelectorAll('.nbt');
+  if (a) a.style.transform = `translate3d(${-y}px,0,0)`;
+  if (b) b.style.transform = `translate3d(${y - b.scrollWidth / 2}px,0,0)`;
+}
+/* the blank in the headline types out real company names until someone clicks into it */
+let typer = null;
+function startTyper() {
+  clearTimeout(typer);
+  const inp = document.getElementById('hero-search'); if (!inp) return;
+  let reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (reduce) return;
+  const want = ['Razorpay', 'Zepto', 'CRED', 'Darwinbox', 'Cars24', 'boAt', 'Cuemath', 'Acko', 'Deel', 'Notion'];
+  const names = ['the company'].concat(want.filter(n => COS.some(c => c.name === n))); if (names.length < 4) COS.slice(0, 8).forEach(c => names.push(c.name));
+  /* "the company" stays up for about three seconds first, and again each time the list comes round */
+  let i = 0, j = names[0].length, del = true, hold = 0;
+  const tick = () => {
+    if (!inp.isConnected) return;
+    if (document.activeElement === inp || inp.value) { inp.placeholder = 'the company'; typer = setTimeout(tick, 600); return; }
+    const word = names[i % names.length];
+    if (hold) { hold--; typer = setTimeout(tick, 100); return; }
+    if (!del) { j++; if (j >= word.length) { del = true; hold = i % names.length === 0 ? 28 : 16; } }
+    else { j--; if (j <= 0) { del = false; i++; hold = 3; } }
+    inp.placeholder = word.slice(0, j) || '\u200b';
+    typer = setTimeout(tick, del ? 45 : 95);
+  };
+  typer = setTimeout(tick, 3000);
+}
+/* thin progress bar under the header, and a shadow on the header once the page has scrolled */
+(() => {
+  const bar = document.createElement('div'); bar.className = 'scrollbar'; bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+  const top = document.querySelector('header.top');
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+    if (top) top.classList.toggle('scrolled', window.scrollY > 8);
+    moveBands();
+  };
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+function render() {
+  const h = (location.hash || '#home').slice(1);
+  if (!LOADED) {
+    app.innerHTML = LOAD_ERR ? `<div class="wrap"><div class="empty" style="margin-top:40px"><b>We couldn't load the companies</b><p>Check your connection and try again.</p><button class="btn p" type="button" data-act="reload">Try again</button></div></div>`
+      : `<div class="wrap"><div class="empty" style="margin-top:40px;border:0" aria-busy="true"><b>Loading…</b></div></div>`;
+    renderNav(''); return;
+  }
+  let html, nav = '';
+  if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) S.rating = S.draft.rating;
+  if (h === 'home' || h === '') html = vHome();
+  else if (h === 'categories') { html = vCategories(); nav = 'categories'; }
+  else if (h === 'search') html = vSearch();
+  else if (h === 'tools') { html = vTools(); nav = 'tools'; }
+  else if (h === 'why-list') { html = vWhy(); nav = 'list'; }
+  else if (TOOLBYID[h]) { html = vTool(TOOLBYID[h]); nav = 'tools'; }
+  else if (h === 'add') html = vAdd();
+  else if (h === 'sample') { location.replace('#list'); return; }
+  else if (h === 'list') { html = vList(); nav = 'list'; }
+  else if (h === 'dashboard') { html = vDashboard(); nav = 'dashboard'; }
+  else if (h === 'login') { html = vLogin('reviewer'); nav = 'login'; }
+  else if (h === 'business-login') { html = vLogin('business'); nav = 'login'; }
+  else if (h === 'my-reviews') { html = vMyReviews(); nav = 'my-reviews'; }
+  else if (h === 'jobs') { html = vJobs(); nav = 'jobs'; }
+  else if (h === 'guidelines') html = vGuidelines();
+  else if (h === 'blog') { html = vBlog(); nav = 'blog'; }
+  else if (POSTBYID[h]) { html = vPost(POSTBYID[h]); nav = 'blog'; }
+  else if (h === 'write-for-us') html = vWriteForUs();
+  else if (h === 'about') html = vAbout();
+  else if (h === 'contact') html = vContact();
+  else if (h === 'help') html = vHelp();
+  else if (h === 'terms') html = vTerms();
+  else if (h === 'privacy') html = vPrivacy();
+  else if (CATBYID[h]) { html = vCategory(CATBYID[h]); nav = 'categories'; }
+  else if (h === 'removals') html = vRemovals();
+  else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
+  else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
+  else if (BYID[h]) html = vCompany(BYID[h]);
+  else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
+  app.innerHTML = `<div class="view">${html}</div>`;
+  renderNav(nav);
+  setupReveal(h);
+  if (h === 'home' || h === '') { startTyper(); moveBands(); }
+  if (TOOLBYID[h]) runTool();
+  if (S.scrollTo) { const id = S.scrollTo; S.scrollTo = ''; setTimeout(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 60); }
+  const sp = document.getElementById('searchpanel'); if (sp) sp.hidden = true;
+  if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) { const g = document.getElementById('review-form'); if (g) { g['r-title'].value = S.draft.title; g['r-body'].value = S.draft.body; g['r-date'].value = S.draft.date || ''; S.draft.applied = true; } }
+  setMeta(h);
+  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : 'Know The Company';
+}
+function setMeta(h) {
+  const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
+  if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = `Compare ${k.items.length} ${k.name} companies by honest customer and employee reviews.`; else if (POSTBYID[h]) d = POSTBYID[h].excerpt;
+  let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
+  let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
+  const noindex = ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
+  rb.content = noindex ? 'noindex, follow' : 'index, follow';
+  let s = document.getElementById('ldjson'); if (s) s.remove();
+  if (c) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
+    if (l.length) o.aggregateRating = { '@type': 'AggregateRating', ratingValue: +avgOf(l).toFixed(1), reviewCount: l.length, bestRating: 5, worstRating: 1 };
+    s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'ldjson'; s.textContent = JSON.stringify(o); document.head.appendChild(s); }
+}
+(() => { if (store.get('ktc_consent', null)) return; const el = document.getElementById('cookie'); el.innerHTML = '<p><b>Your privacy choices</b><br>We use essential storage to keep you logged in. With your OK, we also use analytics to improve the site. <a href="#privacy">Privacy policy</a></p><div class="row"><button class="btn p" type="button" data-act="cookie" data-v="all">Accept analytics</button><button class="btn g" type="button" data-act="cookie" data-v="essential">Essential only</button></div>'; el.hidden = false; })();
+let lastHash = location.hash;
+window.addEventListener('hashchange', () => {
+  const h = location.hash.slice(1);
+  if (CATBYID[h] && lastHash !== location.hash) S.catFilter = { country: '', text: '', sort: 'name' };
+  if (BYID[h] && lastHash !== location.hash) { S.rating = 0; S.coTab = S.returnTab || (isVerifiedCo(BYID[h]) ? 'overview' : 'customers'); S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
+  if (!BYID[h] && h !== 'login' && h !== 'business-login') S.returnTab = '';
+  if (h === 'list' && !lastHash.startsWith('#list')) { if (S.listStep === 4 || S.listStep === 'req-done') { S.listStep = 0; S.listData = { plan: S.listData.plan }; } }
+  if (h !== 'login' && h !== 'business-login') S.notice = '';
+  lastHash = location.hash;
+  render(); window.scrollTo(0, 0);
+});
+
+/* ---------- toast ---------- */
+let tt; function toast(msg, ms = 2600) { const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, ms); }
+
+/* ---------- search suggestions ---------- */
+function suggestFor(input) {
+  const box = document.getElementById('sugg-' + input.dataset.suggest); if (!box) return;
+  const res = searchCos(input.value).slice(0, 6);
+  if (!input.value.trim() || !res.length) { box.hidden = true; box.innerHTML = ''; return; }
+  box.innerHTML = res.map(c => `<button type="button" data-go="${c.id}">${avatar(c, 36, 13)}<span><b style="font-size:15px">${esc(c.name)}</b><small>${esc(c.web)} · ${esc(c.cat)}</small></span></button>`).join('') +
+    `<button type="button" data-searchall="1"><span style="padding-left:2px;font-weight:700;color:var(--accent)">See all results for “${esc(input.value.trim())}”</span></button>`;
+  box.hidden = false;
+}
+function runSearch(q) { S.q = q; if (location.hash === '#search') render(); else location.hash = 'search'; }
+document.addEventListener('click', e => { document.querySelectorAll('details.dd[open]').forEach(d => { if (!d.contains(e.target)) d.open = false; }); if (e.target.classList && e.target.classList.contains('modal')) closeModals(); }, true);
+document.addEventListener('toggle', e => { const d = e.target; if (!d.classList || !d.classList.contains('dd') || !d.open) return; document.querySelectorAll('details.dd[open]').forEach(o => { if (o !== d) o.open = false; }); if (d.classList.contains('bell')) { store.set('tn_seen', notifs().length); const b = d.querySelector('.badge'); if (b) b.remove(); } }, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModals(); document.getElementById('searchpanel').hidden = true; document.querySelectorAll('details.dd[open]').forEach(d => d.open = false); } });
+document.addEventListener('input', e => {
+  if (e.target.id === 'cf-q') { S.cfQ = e.target.value; document.getElementById('cf-res').innerHTML = cfResults(e.target.value); return; }
+  if (e.target.id === 'pk-q') { document.getElementById('pk-list').innerHTML = pickList(e.target.value); return; }
+  if (e.target.closest && e.target.closest('[data-tool]')) { if (e.target.id === 'c-a' || e.target.id === 'c-b' || TOOLBYID[(location.hash || '').slice(1)]) runTool(); return; }
+  if (e.target.id === 'calc-sale') { const v = parseFloat(e.target.value); if (v > 0) { S.calcSale = v; const o = document.querySelector('.calc .out'); if (o) o.innerHTML = calcOut(v); } return; }
+  const t = e.target;
+  if (t.dataset.suggest) suggestFor(t);
+  if (t.dataset.filter === 'text') { S.catFilter.text = t.value; const k = CATBYID[location.hash.slice(1)]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.filter && t.dataset.filter !== 'text') { S.catFilter[t.dataset.filter] = t.value; const k = CATBYID[location.hash.slice(1)]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
+  const tb = e.target.closest && e.target.closest('[role="tab"][data-act="cotab"]');
+  if (tb && ['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) { e.preventDefault(); const all = [...tb.parentElement.querySelectorAll('[role="tab"]')]; const i = all.indexOf(tb), n = all.length; all[e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : n - 1].click(); }
+});
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]'); if (go) { if (go.closest('#sugg-hero') && S.heroTab === 'salaries') S.returnTab = 'salaries'; document.querySelectorAll('.sugg').forEach(b => b.hidden = true); document.querySelectorAll('[data-suggest]').forEach(i => i.value = ''); location.hash = go.dataset.go; return; }
+  const all = e.target.closest('[data-searchall]'); if (all) { const box = all.closest('.sugg'); const inp = box.parentElement.querySelector('input'); box.hidden = true; runSearch(inp.value); return; }
+  if (!e.target.closest('.hsearch')) document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  const act = a.dataset.act;
+  if (act === 'open-search') { const p = document.getElementById('searchpanel'); p.hidden = !p.hidden; if (!p.hidden) setTimeout(() => document.getElementById('top-search').focus(), 20); return; }
+  if (act === 'close-search') { document.getElementById('searchpanel').hidden = true; return; }
+  if (act === 'rv-helpful') { const H = store.get('tn_helpful', {}); if (H[a.dataset.key]) delete H[a.dataset.key]; else H[a.dataset.key] = 1; store.set('tn_helpful', H); renderKeep(); return; }
+  if (act === 'rv-report') { openModal(`<form id="report-form" data-key="${a.dataset.key}" novalidate style="display:flex;flex-direction:column;gap:14px">${mHead('Report this review')}<p>Reports are checked by our team. We remove reviews only if they break our <a href="#guidelines" data-act="close-modal-go">guidelines</a>, not for being negative.</p><fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px"><legend class="l" style="margin-bottom:6px">What's wrong with it?</legend>${RPT_REASONS.map((x, i) => `<label class="radio"><input type="radio" name="rp-reason" value="${esc(x)}" ${i ? '' : ''}>${esc(x)}</label>`).join('')}</fieldset><p class="err" id="err-rp" hidden>Choose a reason.</p><div class="field"><label class="l" for="rp-note">Details <span class="meta">(optional)</span></label><textarea id="rp-note" rows="3" maxlength="600"></textarea></div><div><button class="btn p" type="submit">Send report</button></div></form>`); return; }
+  if (act === 'rv-star') { const n = +a.dataset.n; S.rvStar = S.rvStar === n ? 0 : n; renderKeep(); return; }
+  if (act === 'rv-proof') { S.rvProof = !S.rvProof; renderKeep(); return; }
+  if (act === 'rv-clear') { S.rvStar = 0; S.rvProof = false; renderKeep(); return; }
+  if (act === 'share-co') { const c = BYID[a.dataset.id]; const u = location.origin + location.pathname + '#' + c.id; const tx = encodeURIComponent(`${c.name} reviews from customers and employees: ${u}`);
+    openModal(`${mHead('Share ' + esc(c.name) + "'s page")}<div class="field"><label class="l" for="sh-url">Link</label><div style="display:flex;gap:8px"><input id="sh-url" type="text" readonly value="${u}" class="mono" style="flex:1;min-width:0;background:var(--surface)"><button class="btn p" type="button" data-act="copy-text" data-text="${u}">Copy</button></div></div><div class="sharegrid"><a href="https://wa.me/?text=${tx}" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}" target="_blank" rel="noopener">LinkedIn</a><a href="https://twitter.com/intent/tweet?text=${tx}" target="_blank" rel="noopener">X</a><a href="mailto:?subject=${encodeURIComponent(c.name + ' reviews')}&body=${tx}">Email</a></div>`); return; }
+  if (act === 'suggest') { const c = BYID[a.dataset.id]; openModal(`<form id="suggest-form" data-id="${c.id}" novalidate style="display:flex;flex-direction:column;gap:14px">${mHead('Suggest an edit')}<p>Tell us what's wrong on ${esc(c.name)}'s page. We check every suggestion before changing anything.</p><div class="field"><label class="l" for="sg-what">What needs fixing?</label><select id="sg-what">${['Website', 'Name', 'Category', 'Country', 'Description', 'The company has closed', 'This is a duplicate page', 'Something else'].map(x => `<option>${x}</option>`).join('')}</select></div><div class="field"><label class="l" for="sg-note">What should it say?</label><textarea id="sg-note" rows="3" maxlength="600" placeholder="For example, the correct website or the page this duplicates"></textarea><p class="err" id="err-sg" hidden>Add a short explanation, at least 10 characters.</p></div><div><button class="btn p" type="submit">Send suggestion</button></div></form>`); return; }
+  if (act === 'inv-rate') { const id = a.dataset.id; S.draft = { cid: id, rating: +a.dataset.n, title: '', body: '', date: '' }; S.invitedFor = id; S.returnTab = 'customers'; S.scrollTo = 'review-form'; location.hash = id; return; }
+  if (act === 'inv-go') { e.preventDefault(); S.invitedFor = a.dataset.id; S.returnTab = a.dataset.tab; S.scrollTo = 'emp-form'; location.hash = a.dataset.id; return; }
+  if (act === 'cookie') { store.set('ktc_consent', { analytics: a.dataset.v === 'all', at: todayISO() }); document.getElementById('cookie').hidden = true; toast(a.dataset.v === 'all' ? 'Thanks. Analytics is on.' : 'Only essential storage is used.'); return; }
+  if (act === 'cp-del' && S.user && S.user.coId) { const own = store.get('tn_cprof_' + S.user.coId, {}); own[a.dataset.k] = ''; saveProf(S.user.coId, own); render(); toast('Removed'); return; }
+  if (act === 'cp-del-photo' && S.user && S.user.coId) { const id = S.user.coId, own = store.get('tn_cprof_' + id, {}); own.photos = cprof(BYID[id]).photos.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Photo removed'); return; }
+  if (act === 'cp-del-upd' && S.user && S.user.coId) { const id = S.user.coId, own = store.get('tn_cprof_' + id, {}); own.updates = cprof(BYID[id]).updates.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Update deleted'); return; }
+  if (act === 'open-picker') { closeModals(); openPicker(a.dataset.as); return; }
+  if (act === 'open-menu') { openMenu(); return; }
+  if (act === 'close-modal') { closeModals(); return; }
+  if (act === 'close-modal-go') { if (a.dataset.sheet === 'dash-tab') S.dashTab = a.dataset.tab; if (a.dataset.sheet === 'goto-plans') S.scrollTo = 'plans'; closeModals(); if (a.getAttribute('href') === location.hash) { e.preventDefault(); render(); } return; }
+  if (act === 'pick-co') { const as = (document.querySelector('input[name="pk-as"]:checked') || {}).value || 'customers'; closeModals(); if (location.hash === '#' + a.dataset.id) { S.coTab = as; render(); } else { S.returnTab = as; location.hash = a.dataset.id; } return; }
+  if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (location.hash === '#dashboard') { e.preventDefault(); render(); } return; }
+  if (act === 'goto-plans') { S.scrollTo = 'plans'; if (location.hash === '#list') { e.preventDefault(); render(); } return; }
+  if (act === 'add-cat') { S.addCat = a.dataset.cat; return; }
+  if (act === 'add-prefill') { S.addPrefill = a.dataset.name || ''; return; }
+  if (act === 'cotab-link') { S.returnTab = a.dataset.tab; return; }
+  if (act === 'htab') { S.heroTab = a.dataset.tab; document.querySelectorAll('.htabs button').forEach(b => b.setAttribute('aria-pressed', b === a)); const box = document.getElementById('hero-form-box'); if (box) { box.innerHTML = heroForm(); const i = box.querySelector('input'); if (i) i.focus(); } return; }
+  if (act === 'rate') { S.rating = +a.dataset.n; const f = document.getElementById('review-form'); const keep = { t: f['r-title'].value, b: f['r-body'].value, d: f['r-date'].value }; render(); const g = document.getElementById('review-form'); g['r-title'].value = keep.t; g['r-body'].value = keep.b; g['r-date'].value = keep.d; g.querySelector(`[data-n="${S.rating}"]`).focus(); }
+  if (act === 'jump') { e.preventDefault(); const el = document.getElementById(a.dataset.to); if (el) { el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); const fo = a.dataset.focus && document.getElementById(a.dataset.focus); if (fo) fo.focus({ preventScroll: true }); } }
+  if (act === 'job-pay') { if (S.jobPending) { addJob(S.jobPending, true); S.jobPending = null; render(); toast(`Paid ₹${EXTRA_JOB} (demo). Job posted for ${JOB_DAYS} days.`); } }
+  if (act === 'job-cancel') { S.jobPending = null; render(); }
+  if (act === 'job-close') { const j = JOBS.find(x => x.id === a.dataset.id); if (j) { j.closed = true; store.set('tn_jobs', JOBS); render(); toast('Job post closed'); } }
+  if (act === 'copy-text') { const txt = a.dataset.text; try { navigator.clipboard.writeText(txt).then(() => toast('Copied'), () => toast('Select the email and copy it')); } catch (err) { toast('Select the email and copy it'); } }
+  if (act === 'blogcat') { S.blogCat = a.dataset.cat; render(); }
+  if (act === 'pitch-again') { S.pitchSent = false; render(); }
+  if (act === 'contact-again') { S.contactSent = false; render(); }
+  if (act === 'logout') { S.user = null; store.set('tn_user', null); toast('Logged out'); go('home'); }
+  if (act === 'auth-back') { S.auth[a.dataset.type].step = 1; render(); document.getElementById('l-email').focus(); }
+  if (act === 'jump-write') { e.preventDefault(); if (S.coTab !== 'customers') { CO_FORMS.forEach(id => { const s = snapForm(id); if (s) S.formCache[id] = s; }); S.coTab = 'customers'; render(); restoreForm(S.formCache['review-form']); } const f = document.getElementById('review-form'); f.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); f.querySelector('[data-n="1"]').focus({ preventScroll: true }); }
+  if (act === 'cotab') {
+    CO_FORMS.forEach(id => { const s = snapForm(id); if (s) S.formCache[id] = s; });
+    S.coTab = a.dataset.tab; render(); CO_FORMS.forEach(id => restoreForm(S.formCache[id]));
+    const b = document.getElementById('tab-' + S.coTab); if (b) b.focus();
+  }
+  if (act === 'jump-emp') {
+    e.preventDefault();
+    if (S.coTab !== 'employees') { CO_FORMS.forEach(id => { const s = snapForm(id); if (s) S.formCache[id] = s; }); S.coTab = 'employees'; render(); CO_FORMS.forEach(id => restoreForm(S.formCache[id])); }
+    const f = document.getElementById('emp-form') || document.getElementById('emp-gate');
+    if (f) { f.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); const t = f.querySelector('select,input,button'); if (t) t.focus({ preventScroll: true }); }
+  }
+  if (act === 'erate') {
+    S.emp[a.dataset.k] = +a.dataset.n; renderKeep();
+    const b = document.getElementById(`e-${a.dataset.k}-${a.dataset.n}`); if (b) b.focus();
+  }
+  if (act === 'gate-login') {
+    const c = BYID[location.hash.slice(1)]; if (!c) return;
+    S.returnTo = c.id; S.returnTab = S.coTab;
+    S.notice = 'Log in to post. You can stay anonymous or use your name, and your email is never shown.';
+    go('login'); window.scrollTo(0, 0);
+  }
+  if (act === 'del-emp') {
+    const d = EMP[a.dataset.id]; const kind = a.dataset.kind; const i = +a.dataset.idx;
+    if (d && d[kind] && d[kind][i] && isMine(d[kind][i])) { d[kind].splice(i, 1); store.set('tn_emp', EMP); renderKeep(); toast(kind === 'salaries' ? 'Salary removed' : kind === 'interviews' ? 'Interview removed' : 'Review removed'); }
+  }
+  if (act === 'del-review') { const id = a.dataset.id; (REVIEWS[id] || []).splice(+a.dataset.idx, 1); store.set('tn_reviews', REVIEWS); render(); toast('Review removed'); }
+  if (act === 'claim') { const c = BYID[a.dataset.id] || COS.find(x => x.name === a.dataset.name); S.cf = { method: 'email' };
+    if (c && isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else if (c) { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } else { S.listData = { mode: 'new', name: a.dataset.name || '', plan: S.listData.plan }; S.listStep = 1; }
+    S.scrollTo = 'list-form-area'; if (location.hash === '#list') { e.preventDefault(); render(); } }
+  if (act === 'cf-claim') { const c = BYID[a.dataset.id]; S.cf = { method: 'email' }; if (isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } cfRefresh(); return; }
+  if (act === 'cf-request') { S.reqCo = a.dataset.id; S.listStep = 'req'; cfRefresh(); return; }
+  if (act === 'cf-new') { const q = (S.cfQ || '').trim(); S.listData = { mode: 'new', name: q.includes('.') ? '' : q, web: q.includes('.') ? q : '', plan: S.listData.plan }; S.cf = { method: 'email' }; S.listStep = 1; cfRefresh(); return; }
+  if (act === 'cf-restart') { S.listStep = 0; S.listData = { plan: S.listData.plan }; cfRefresh(); return; }
+  if (act === 'cf-edit') { S.listStep = 1; S.cf.codeSent = false; cfRefresh(); return; }
+  if (act === 'cf-back-verify') { S.listStep = 2; cfRefresh(); return; }
+  if (act === 'cf-method') { S.cf.method = a.dataset.m; cfRefresh(false); return; }
+  if (act === 'cf-send') { S.cf.codeSent = true; S.cf.code = String(100000 + Math.floor(Math.random() * 900000)); cfRefresh(false); toast(`Code sent to ${S.listData.email} (demo)`); const i = document.getElementById('cf-code'); if (i) i.focus(); return; }
+  if (act === 'cf-verify') { const i = document.getElementById('cf-code'); const ok = i && i.value.trim() === S.cf.code; document.getElementById('err-cf-code').hidden = ok; if (!ok) { i.focus(); return; } S.listData.verified = 'email'; S.listStep = 3; cfRefresh(); toast('Work email verified'); return; }
+  if (act === 'cf-check') { S.listData.verified = 'website'; S.listStep = 3; cfRefresh(); toast('Website check passed (demo)'); return; }
+  if (act === 'cf-docs') { const fl = document.getElementById('cf-file'); const ok = fl && fl.files && fl.files.length; document.getElementById('err-cf-file').hidden = !!ok; if (!ok) { fl.focus(); return; } S.listData.verified = 'docs'; S.listData.docType = document.getElementById('cf-doctype').value; S.listStep = 3; cfRefresh(); toast('Document sent for review (demo)'); return; }
+  if (act === 'pick-plan') { e.preventDefault(); S.listData = { ...S.listData, plan: a.dataset.plan }; render(); const el = document.getElementById('list-form-area'); el.scrollIntoView({ behavior: 'smooth' }); const r = document.querySelector(`input[name=plan][value=${a.dataset.plan}]`); if (r) r.checked = true; return; }
+  if (act === 'go-plus') { S.user.plan = 'plus'; S.listData.plusFrom = todayISO(); store.set('tn_user', S.user); store.set('tn_listing', S.listData); render(); toast(LAUNCH ? `Plus trial started for ${PLUS_TRIAL_DAYS} days (demo)` : `Upgraded to Plus (demo)`); return; }
+  if (act === 'demo-card') { toast('On the live site this downloads a square image of the review.'); return; }
+  if (act === 'google-login') { const type = a.dataset.type; finishLogin(type, type === 'business' ? (S.listData.email || 'owner@brightline.example') : 'priya.s@gmail.com', type === 'business' ? '' : 'Priya S.'); toast('Signed in with Google (demo)'); return; }
+  if (act === 'forgot') { toast('On the live site we email you a link to reset your password.'); return; }
+  if (act === 'demo-poster') { toast('On the live site this downloads a printable A4 poster.'); return; }
+  if (act === 'demo-contact') { e.preventDefault(); toast(`On the live site this opens ${a.dataset.what === 'call' ? 'a phone call' : a.dataset.what === 'email' ? 'an email' : 'a WhatsApp chat'} with the company.`); return; }
+  if (act === 'to-form') { e.preventDefault(); document.getElementById('list-form-area').scrollIntoView({ behavior: 'smooth' }); const f = document.getElementById('b-name'); if (f) f.focus({ preventScroll: true }); }
+  if (act === 'list-back') { S.listStep = 1; render(); document.getElementById('list-form-area').scrollIntoView(); }
+  if (act === 'pay') { const pr = document.querySelector('input[name=plan]:checked'); if (pr) S.listData.plan = pr.value; S.listStep = 4; S.listData.listedAt = todayISO();
+    { const d = S.listData, id = 'co-' + slug(d.name); if (!BYID[id]) { const ccOf = Object.entries(COUNTRY).find(([k, n]) => n === d.country); const row = [d.name, (d.web || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, ''), d.cat, ccOf ? ccOf[0] : 'WW', 'No description yet. The owner can add one from the dashboard.', 2]; const c = mkCo(row); ADDED.push(row); store.set('tn_added', ADDED); COS.push(c); BYID[c.id] = c; ensureCat(c.cat, c.catId).items.push(c); } CLAIMS[id] = { by: d.email, person: d.person, role: d.role, verified: d.verified || 'docs', at: todayISO() }; store.set('tn_claims', CLAIMS); } S.user = { type: 'business', email: S.listData.email, name: S.listData.name, plan: S.listData.plan || 'basic' }; store.set('tn_user', S.user); store.set('tn_listing', S.listData); render(); document.getElementById('list-form-area').scrollIntoView(); toast(LAUNCH ? 'Free listing created' : 'Demo payment complete'); }
+  if (act === 'clear-filters') { S.catFilter = { country: '', text: '', sort: 'name' }; render(); }
+  if (act === 'tab') { S.dashTab = a.dataset.tab; render(); }
+  if (act === 'report') toast('Report sent to moderators (demo)');
+  if (act === 'copy') {
+    const inp = document.getElementById('share-link');
+    const done = () => { S.copied = true; a.textContent = 'Copied'; toast('Link copied'); };
+    try { navigator.clipboard.writeText(inp.value).then(done, () => { inp.select(); toast('Press Ctrl+C or ⌘C to copy'); }); } catch (err) { inp.select(); toast('Press Ctrl+C or ⌘C to copy'); }
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.matches && e.target.matches('[data-rvsort]')) { S.rvSort = e.target.value; renderKeep(); return; }
+  if (e.target.matches && e.target.matches('[data-ersort]')) { S.erSort = e.target.value; renderKeep(); return; }
+  const inp = e.target; if (!inp.matches || !inp.matches('input[type=file][data-up]') || !S.user || !S.user.coId) return;
+  const kind = inp.dataset.up, id = S.user.coId; const P = cprof(BYID[id]); const room = 10 - P.photos.filter(x => x.src).length;
+  const files = [...inp.files].filter(f => /^image\//.test(f.type)).slice(0, kind === 'photos' ? Math.max(0, room) : 1); if (!files.length) { toast('Choose a JPG or PNG image.'); return; }
+  Promise.all(files.map(f => shrinkImg(f, kind === 'logo' ? 320 : kind === 'cover' ? 1600 : 1100))).then(urls => {
+    const own = store.get('tn_cprof_' + id, {});
+    if (kind === 'photos') own.photos = P.photos.filter(x => x.src).concat(urls.map(src => ({ src }))).slice(0, 10); else own[kind] = urls[0];
+    if (!saveProf(id, own)) { toast('That image is too large for this prototype. Try a smaller one.'); return; }
+    render(); toast(kind === 'photos' ? `${urls.length} photo${urls.length === 1 ? '' : 's'} added` : kind === 'logo' ? 'Logo updated' : 'Cover updated');
+  }).catch(() => toast('Could not read that image. Try a JPG or PNG.'));
+});
+document.addEventListener('submit', e => {
+  const f = e.target; e.preventDefault();
+  if (f.id === 'add-form') {
+    const name = f['a-name'].value.trim().replace(/\s+/g, ' ');
+    const web = f['a-web'].value.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
+    const eN = name.length < 2 || !slug(name), eW = !/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/.test(web);
+    document.getElementById('err-a-name').hidden = !eN; document.getElementById('err-a-web').hidden = !eW;
+    if (eN) { f['a-name'].focus(); return; } if (eW) { f['a-web'].focus(); return; }
+    const W2 = webs2(); const dup = COS.find(c => c.id === 'co-' + slug(name) || c.web === web || W2[c.id] === domOf(web));
+    if (dup) { toast(`${dup.name} is already listed`); location.hash = dup.id; return; }
+    const row = [name, web, f['a-cat'].value, f['a-cc'].value, 'No description yet. The owner can add one by claiming this profile.', 1];
+    const c = mkCo(row); ADDED.push(row); store.set('tn_added', ADDED);
+    COS.push(c); BYID[c.id] = c; ensureCat(c.cat, c.catId).items.push(c);
+    S.addPrefill = ''; toast(`${name} added. Now share your experience.`); location.hash = c.id; return;
+  }
+  if (f.id === 'hero-jobs-form') { const what = f['hj-what'].value.trim(), where = f['hj-where'].value.trim(); S.jobFilter = { q: [what, where].filter(Boolean).join(' '), type: '', mode: '' }; location.hash = 'jobs'; return; }
+  if (f.id === 'hero-search-form' && S.heroTab === 'salaries') { const q = f.querySelector('input').value.trim().toLowerCase(); document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
+    const m = q && (COS.find(c => c.name.toLowerCase() === q || c.web === q) || COS.find(c => c.name.toLowerCase().startsWith(q)));
+    if (m) { S.returnTab = 'salaries'; location.hash = m.id; } else runSearch(q); return; }
+  if (f.id === 'top-search-form' || f.id === 'hero-search-form' || f.id === 'page-search-form') { const inp = f.querySelector('input'); document.querySelectorAll('.sugg').forEach(b => b.hidden = true); runSearch(inp.value); return; }
+  if (f.id === 'review-form') {
+    const c = BYID[location.hash.slice(1)]; const body = f['r-body'].value.trim();
+    const eR = !S.rating, eB = body.length < 20;
+    document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
+    if (eR) { f.querySelector('[data-n="1"]').focus(); return; } if (eB) { f['r-body'].focus(); return; }
+    const m = f['r-date'].value;
+    if (!S.user || S.user.type !== 'reviewer') {
+      S.draft = { cid: c.id, rating: S.rating, title: f['r-title'].value, body: f['r-body'].value, date: m };
+      S.returnTo = c.id;
+      S.notice = S.user ? 'Business accounts can’t post reviews. Log in with a reviewer account to post this one.' : 'Log in to post your review. Your draft is saved.';
+      go('login'); window.scrollTo(0, 0); return;
+    }
+    const date = m ? new Date(m + '-01T00:00:00').toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Just now';
+    (REVIEWS[c.id] = REVIEWS[c.id] || []).unshift({ name: S.user.name, by: S.user.email, date, rating: S.rating, title: f['r-title'].value.trim(), body, invited: S.invitedFor === c.id || undefined }); S.invitedFor = '';
+    store.set('tn_reviews', REVIEWS); S.rating = 0; S.draft = null; render(); toast('Review posted');
+    const h = document.getElementById('rv-h'); if (h) h.scrollIntoView({ block: 'start' });
+  }
+  if (f.id === 'emp-form' || f.id === 'sal-form' || f.id === 'int-form') {
+    const c = BYID[location.hash.slice(1)]; if (!c || !S.user || S.user.type !== 'reviewer') return;
+    const v = id => document.getElementById(id).value.trim();
+    const check = list => { let first = null; list.forEach(([k, bad, foc]) => { document.getElementById('err-' + k).hidden = !bad; const el = document.getElementById(k); if (el) el.setAttribute('aria-invalid', bad ? 'true' : 'false'); if (bad && !first) first = foc || k; }); if (first) document.getElementById(first).focus(); return !first; };
+    const done = (kind, item, msg, headId) => { empBucket(c.id)[kind].unshift({ by: S.user.email, ...item, verified: workVerified(c), date: monthNow() }); store.set('tn_emp', EMP); delete S.formCache[f.id]; render(); toast(msg); const h = document.getElementById(headId); if (h) h.scrollIntoView({ block: 'start' }); };
+    if (f.id === 'emp-form') {
+      const rec = f.querySelector('input[name="e-rec"]:checked');
+      if (!check([['e-title', !v('e-title')], ['e-overall', !S.emp.overall, 'e-overall-1'], ['e-pros', v('e-pros').length < 20], ['e-cons', v('e-cons').length < 20], ['e-rec', !rec, 'e-rec-yes']])) return;
+      const sub = {}; SUBS.forEach(([k]) => { sub[k] = S.emp[k]; });
+      const show = (f.querySelector('input[name="e-show"]:checked') || {}).value || 'anon';
+      const item = { status: v('e-status'), title: v('e-title'), loc: v('e-loc'), years: v('e-years'), rating: S.emp.overall, sub, pros: v('e-pros'), cons: v('e-cons'), advice: v('e-advice'), rec: rec.value, named: show === 'named', name: show === 'named' ? displayName() : '' };
+      S.empShow = show;
+      S.emp = EMP_ZERO(); done('reviews', item, 'Review posted', 'er-h');
+    }
+    if (f.id === 'sal-form') {
+      const amt = parseFloat(v('s-amount'));
+      if (!check([['s-title', !v('s-title')], ['s-amount', !(amt > 0)]])) return;
+      done('salaries', { title: v('s-title'), loc: v('s-loc'), amount: amt, cur: v('s-cur'), period: v('s-period'), exp: v('s-exp') }, 'Salary shared', 'sl-h');
+    }
+    if (f.id === 'int-form') {
+      if (!check([['i-role', !v('i-role')], ['i-process', v('i-process').length < 20]])) return;
+      done('interviews', { role: v('i-role'), outcome: v('i-outcome'), diff: v('i-diff'), exp: v('i-exp'), process: v('i-process'), questions: v('i-questions') }, 'Interview shared', 'in-h');
+    }
+  }
+  if (f.id === 'pitch-form') {
+    const v = id => f.querySelector('#' + id).value.trim();
+    const d = { name: v('w-name'), email: v('w-email'), company: v('w-company'), topic: v('w-topic'), title: v('w-title'), outline: v('w-outline'), sample: v('w-sample') };
+    const errs = { 'w-name': !d.name, 'w-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email), 'w-company': !d.company, 'w-topic': !d.topic, 'w-title': !d.title, 'w-outline': d.outline.length < 80, 'w-agree': !f.querySelector('#w-agree').checked };
+    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
+    if (first) { f.querySelector('#' + first).focus(); return; }
+    PITCHES.push({ ...d, at: new Date().toISOString() }); store.set('tn_pitches', PITCHES); S.pitchSent = true; render(); toast('Pitch sent'); window.scrollTo(0, 0);
+  }
+  if (f.id === 'contact-form') {
+    const v = id => f.querySelector('#' + id).value.trim();
+    const errs = { 'c-name': !v('c-name'), 'c-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('c-email')), 'c-msg': v('c-msg').length < 20 };
+    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
+    if (first) { f.querySelector('#' + first).focus(); return; }
+    S.contactSent = true; render(); toast('Message sent'); window.scrollTo(0, 0);
+  }
+  if (f.id === 'job-form') {
+    const v = id => f.querySelector('#' + id).value.trim();
+    const d = { title: v('j-title'), loc: v('j-loc'), type: v('j-type'), mode: v('j-mode'), pay: v('j-pay'), desc: v('j-desc'), apply: v('j-apply') };
+    const okApply = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.apply) || /^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(d.apply);
+    const errs = { 'j-title': !d.title, 'j-loc': !d.loc, 'j-desc': d.desc.length < 50, 'j-apply': !okApply, 'j-agree': !f.querySelector('#j-agree').checked };
+    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
+    if (first) { f.querySelector('#' + first).focus(); return; }
+    if (!LAUNCH && postsThisMonth(S.user.name) >= FREE_JOBS) { S.jobPending = d; render(); return; }
+    addJob(d, false); render(); toast(`Job posted. It stays live for ${JOB_DAYS} days.`);
+  }
+  if (f.id === 'employer-form') {
+    const why = f.querySelector('#ep-why').value.trim();
+    const bad = why.length < 40; document.getElementById('err-ep-why').hidden = !bad; if (bad) { f.querySelector('#ep-why').focus(); return; }
+    const NE = { sample: false, why, benefits: [...f.querySelectorAll('input[id^="ep-b"]:checked')].map(i => i.value), size: f.querySelector('#ep-size').value, hiring: f.querySelector('#ep-hiring').checked, roles: '' };
+    if (S.user && S.user.coId) store.set('tn_employer_' + S.user.coId, NE); else { EMPLOYER = NE; store.set('tn_employer', EMPLOYER); } render(); toast('Employer page saved');
+  }
+  if (f.id === 'login-form') {
+    const type = f.dataset.type; const email = f['l-email'].value.trim(); const nameEl = f.querySelector('#l-name'); const name = nameEl ? nameEl.value.trim() : '';
+    const eE = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); const eN = nameEl && !name;
+    document.getElementById('err-l-email').hidden = !eE; if (nameEl) document.getElementById('err-l-name').hidden = !eN;
+    if (eN) { nameEl.focus(); return; } if (eE) { f['l-email'].focus(); return; }
+    const pw = f['l-pass'].value; const eP = pw.length < 8; document.getElementById('err-l-pass').hidden = !eP; if (eP) { f['l-pass'].focus(); return; }
+    finishLogin(type, email, name);
+  }
+  if (f.id === 'code-form') {
+    const type = f.dataset.type; const a = S.auth[type]; const v = f['l-code'].value.replace(/\D/g, '');
+    const bad = v !== a.code; document.getElementById('err-l-code').hidden = !bad; if (bad) { f['l-code'].focus(); return; }
+    finishLogin(type, a.email, a.name);
+  }
+  if (false) { const type = '', a = {}; const biz = type === 'business';
+    const ownListing = biz && S.listData.email && S.listData.email.toLowerCase() === a.email.toLowerCase();
+    S.user = biz ? (ownListing ? { type, email: a.email, name: S.listData.name } : { type, email: a.email, name: '' }) : { type, email: a.email, name: a.name };
+    store.set('tn_user', S.user); S.auth[type] = { step: 1 }; S.notice = '';
+    const back = S.returnTo; S.returnTo = '';
+    toast(back ? (S.returnTab ? 'Logged in. You can post anonymously now.' : 'Logged in. Your draft is ready to post.') : 'Logged in');
+    go(back || (biz ? 'dashboard' : 'my-reviews')); window.scrollTo(0, 0);
+  }
+  if (f.id === 'list-form') {
+    const v = id => (f[id] ? f[id].value.trim() : '');
+    const claim = S.listData.mode === 'claim';
+    const d = { ...S.listData, person: v('b-person'), role: f['b-role'].value, email: v('b-email'), phone: v('b-phone'), agree: f['b-agree'].checked };
+    if (!claim) Object.assign(d, { mode: 'new', name: v('b-name'), web: v('b-web'), cat: f['b-cat'].value, country: f['b-country'].value, city: v('b-city'), type: f['b-type'].value });
+    const errs = { 'b-person': !d.person, 'b-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email), 'b-phone': d.phone.replace(/\D/g, '').length < 8, 'b-agree': !d.agree };
+    if (!claim) Object.assign(errs, { 'b-name': !d.name, 'b-web': !/^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(d.web), 'b-cat': !d.cat, 'b-city': !d.city });
+    const errEl = k => document.getElementById('err-' + k);
+    if (!claim && !errs['b-web']) { const W2 = webs2(); const dup = COS.find(c => domOf(c.web) === domOf(d.web) || W2[c.id] === domOf(d.web) || c.id === 'co-' + slug(d.name)); if (dup) { errs['b-web'] = true; errEl('b-web').innerHTML = `${esc(dup.name)} already has a page. <button class="link" type="button" data-act="cf-claim" data-id="${dup.id}">${isClaimed(dup) ? 'Request access' : 'Claim it instead'}</button>`; } else errEl('b-web').textContent = 'Enter your website, like yourcompany.com.'; }
+    let first = null; Object.entries(errs).forEach(([k, bad]) => { const el = errEl(k); if (el) el.hidden = !bad; if (bad && !first) first = k; });
+    S.listData = d;
+    if (first) { f[first].focus(); return; }
+    S.cf = { method: domainMatch(d.email, d.web) ? 'email' : 'website' }; S.listStep = 2; cfRefresh();
+  }
+  if (f.id === 'req-form') {
+    const v = id => f[id].value.trim(); const bad = { 'r-person': !v('r-person'), 'r-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('r-email')) };
+    let first = null; Object.entries(bad).forEach(([k, b]) => { document.getElementById('err-' + k).hidden = !b; if (b && !first) first = k; });
+    if (first) { f[first].focus(); return; }
+    REQS.push({ co: S.reqCo, person: v('r-person'), role: f['r-role'].value, email: v('r-email'), msg: v('r-msg'), at: todayISO() }); store.set('tn_requests', REQS);
+    S.listStep = 'req-done'; cfRefresh(); toast('Request sent (demo)');
+  }
+  if (f.id === 'report-form') {
+    const r = f.querySelector('input[name="rp-reason"]:checked'); document.getElementById('err-rp').hidden = !!r; if (!r) return;
+    const R = store.get('tn_reported', {}); R[f.dataset.key] = { reason: r.value, note: f.querySelector('#rp-note').value.trim(), at: todayISO() }; store.set('tn_reported', R);
+    closeModals(); renderKeep(); toast('Report sent. Our team will review it.'); return;
+  }
+  if (f.id === 'suggest-form') {
+    const note = f.querySelector('#sg-note').value.trim(); document.getElementById('err-sg').hidden = note.length >= 10; if (note.length < 10) { f.querySelector('#sg-note').focus(); return; }
+    const E = store.get('tn_edits', []); E.push({ co: f.dataset.id, what: f.querySelector('#sg-what').value, note, at: todayISO() }); store.set('tn_edits', E);
+    closeModals(); toast('Thanks. We check suggestions within a few days.'); return;
+  }
+  if (f.id === 'cprof-form' && S.user && S.user.coId) {
+    const g = id => f.querySelector('#' + id); const val = id => g(id) ? g(id).value.trim() : '';
+    const about = val('cp-about'), yr = val('cp-founded'), y = +yr, now = new Date().getFullYear();
+    const eA = about.length < 60, eY = !!yr && (!/^\d{4}$/.test(yr) || y < 1900 || y > now);
+    document.getElementById('err-cp-about').hidden = !eA; document.getElementById('err-cp-founded').hidden = !eY;
+    if (eA) { g('cp-about').focus(); return; } if (eY) { g('cp-founded').focus(); return; }
+    const w2 = val('cp-web2').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, ''); const e2 = document.getElementById('err-cp-web2');
+    const main = domOf(BYID[S.user.coId].web), other = w2 && COS.find(x => x.id !== S.user.coId && domOf(x.web) === domOf(w2));
+    const m2 = !w2 ? '' : !/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/.test(w2) ? 'Enter a website like yourcompany.in' : domOf(w2) === main ? 'That is already your main website.' : other ? `That website belongs to ${other.name} on Know The Company. Contact us if it's yours.` : '';
+    e2.textContent = m2; e2.hidden = !m2; if (m2) { g('cp-web2').focus(); return; }
+    const id = S.user.coId, own = store.get('tn_cprof_' + id, {}); const list = s => s.split(',').map(x => x.trim()).filter(Boolean);
+    Object.assign(own, { about, founded: yr, size: val('cp-size') || own.size, hq: val('cp-hq'), services: list(val('cp-services')).slice(0, 8), hours: val('cp-hours'), web2: w2 });
+    if (g('cp-phone')) Object.assign(own, { phone: val('cp-phone'), email: val('cp-email'), address: val('cp-address'), socials: list(val('cp-socials')) });
+    if (!saveProf(id, own)) { toast('Could not save. Your browser storage is full.'); return; }
+    render(); toast('Company page saved'); return;
+  }
+  if (f.id === 'cp-upd-form' && S.user && S.user.coId) {
+    const ta = f.querySelector('#cp-upd'), txt = ta.value.trim(), err = document.getElementById('err-cp-upd');
+    const id = S.user.coId, P = cprof(BYID[id]);
+    const msg = txt.length < 20 ? 'Write at least 20 characters.' : P.updates.filter(u => u.date === monthNow()).length >= 2 ? 'You can post 2 updates a month on Plus.' : '';
+    err.textContent = msg; err.hidden = !msg; if (msg) { ta.focus(); return; }
+    const own = store.get('tn_cprof_' + id, {}); own.updates = [{ date: monthNow(), text: txt }].concat(P.updates).slice(0, 6);
+    saveProf(id, own); render(); toast('Update posted'); return;
+  }
+  if (f.classList.contains('oreply') && S.user && S.user.coId) {
+    const ta = f.querySelector('textarea'), txt = ta.value.trim(), er = f.querySelector('.err'); er.hidden = !!txt;
+    if (!txt) { ta.focus(); return; }
+    const id = S.user.coId, i = +f.dataset.idx;
+    if (f.dataset.kind === 'c') { REVIEWS[id][i].reply = txt; REVIEWS[id][i].replyFrom = S.user.name; store.set('tn_reviews', REVIEWS); }
+    else { EMP[id].reviews[i].reply = txt; EMP[id].reviews[i].replyFrom = S.user.name; store.set('tn_emp', EMP); }
+    render(); toast('Reply posted'); return;
+  }
+  if (f.id === 'reply-form') {
+    const t = f['reply-text'].value.trim(); document.getElementById('err-reply').hidden = !!t;
+    if (!t) { f['reply-text'].focus(); return; }
+    S.dashReplied = true; S.dashReply = t; render(); toast('Reply posted');
+  }
+});
+
+/* ---------- boot ---------- */
+syncUser(getMemberState());
+render();
+subscribeMember(s => { syncUser(s); render(); });
+loadData().then(() => render());
