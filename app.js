@@ -1312,8 +1312,9 @@ function vGuidelines() {
     <div style="display:flex;flex-direction:column;gap:22px;line-height:1.65">
       <section class="box"><h2>How we list companies</h2><p>Well-known startups are added from public information (name, website, category, country) so people can review them. Other companies are added by their owners, or by reviewers who have worked with them. These profiles are marked “Unclaimed” and show no rating until real customers review them. A listed company is never presented as a partner or customer of Know The Company.</p></section>
       <section class="box"><h2>Writing a review</h2><p>Write about your own experience in the last 12 months. No hate speech, personal data about staff, or claims of crime without evidence. Reviews in exchange for money, discounts or gifts are not allowed.</p></section>
+      <section class="box"><h2>Before a review goes live</h2><p>A person reads every review before it is published. We aim to decide within 48 hours. If a review breaks these guidelines we don't publish it.</p></section>
       <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern, or your own interview as a candidate. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews, or interview experiences. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
-      <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
+      <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. When they invite reviews, they must invite all their customers, not only the happy ones. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
       <section class="box"><h2>When we remove a review</h2><p>Only when it breaks these guidelines or we receive a valid legal order. Every removal is counted in our public <a href="#removals">removals report</a>.</p></section>
     </div></div>`;
 }
@@ -1341,6 +1342,8 @@ function vLogin(type, why) {
         <div class="field"><label class="l" for="l-last">Last name <span class="meta">(optional)</span></label><input id="l-last" type="text" autocomplete="family-name" maxlength="40"></div></div>
       ${emailF}
       <div class="field"><label class="l" for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="new-password" minlength="8"><p class="err" id="err-l-pass" hidden>Use at least 8 characters.</p></div>
+      <label class="check"><input id="l-adult" type="checkbox"><span>I am 18 or older and I agree to the <a href="#terms">terms of use</a> and <a href="#privacy">privacy policy</a>.</span></label>
+      <p class="err" id="err-l-adult" hidden>You need to be 18 or older and accept the terms to create an account.</p>
       ${err}<button class="btn p lg" type="submit">Create account</button>
       <p class="meta" style="font-size:13px">On customer reviews we show your first name and last initial, never your email. Employee reviews can be anonymous.</p>
       <p style="font-size:14px">Already have an account? <button class="link" type="button" data-act="auth-mode" data-mode="signin">Log in</button></p></form>`;
@@ -1377,7 +1380,8 @@ function vMyReviews() {
         + group('Employee reviews', emp.reviews.map(([cid, r, i]) => item(cid, empCard(r, i, cid))))
         + group('Interviews', emp.interviews.map(([cid, r, i]) => item(cid, intCard(r, i, cid))))
         + (pend.length ? '<p class="meta">Reviews waiting for approval are listed on this device only.</p>' : '')
-      : `<div class="empty"><b>You haven't written any reviews yet</b><p>Search for a company you've used or worked for and share how it went.</p><a class="btn p" href="#search">Find a company</a></div>`}</div></div>`;
+      : `<div class="empty"><b>You haven't written any reviews yet</b><p>Search for a company you've used or worked for and share how it went.</p><a class="btn p" href="#search">Find a company</a></div>`}
+      <section class="box" style="margin-top:12px"><h2>Delete your account</h2><p>We remove your account and everything you have posted, then confirm by email.</p><button class="btn g" type="button" data-act="del-account" style="align-self:flex-start">Ask us to delete my account</button></section></div></div>`;
 }
 
 const NAVI = {
@@ -1607,7 +1611,7 @@ function vContact() {
     <div class="layout"><div class="mainc">${form}</div>
       <aside class="side">
         <div class="box"><h2>Email</h2><p>General: <span style="user-select:all;color:var(--fg)">hello@knowthecompany.com</span></p><p>Businesses: <span style="user-select:all;color:var(--fg)">business@knowthecompany.com</span></p><p>Legal and takedowns: <span style="user-select:all;color:var(--fg)">legal@knowthecompany.com</span></p></div>
-        <div class="box"><h2>Grievance officer</h2><p>Grievance Officer, Know The Company<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours.</p></div>
+        <div class="box"><h2>Grievance officer</h2><p>Grievance Officer, Know The Company<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours and resolve them within 7 days.</p></div>
         <div class="box soft"><h2>Quick answers</h2><p>Many questions are answered in our help centre.</p><a href="#help" style="font-weight:700;font-size:14px">Open help centre</a></div>
       </aside></div></div>`;
 }
@@ -1653,7 +1657,7 @@ function vTerms() {
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
-    ['8. Contact', 'Questions about these terms: legal@knowthecompany.com.']]);
+    ['8. Contact', ['Questions about these terms: legal@knowthecompany.com.', 'Complaints about content on the site go to our grievance officer at grievance@knowthecompany.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
 }
 function vPrivacy() {
   return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
@@ -1661,7 +1665,7 @@ function vPrivacy() {
     ['How we use it', ['To run your account and show your reviews with your chosen name.', 'To detect fake reviews and abuse.', 'To verify businesses and process listing payments.', 'To reply to your messages and send login codes.']],
     ['What we never do', 'We never sell your personal data or show reviewers\' email addresses to businesses.'],
     ['Sharing', 'We share data only with service providers who help us run Know The Company (hosting, email, payments), and when required by law, such as a valid court order.'],
-    ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to privacy@knowthecompany.com and we will reply within the time the law requires.'],
+    ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to privacy@knowthecompany.com and we will reply within the time the law requires. You can also ask us to delete your account from the My reviews page.'],
     ['Cookies and storage', 'We use essential storage to keep you logged in and remember preferences. We use privacy-friendly analytics that count visits without following you across other sites.'],
     ['Contact', 'Privacy questions: privacy@knowthecompany.com. Grievance officer: grievance@knowthecompany.com.']]);
 }
@@ -1744,6 +1748,7 @@ document.addEventListener('submit', async e => {
       const eE = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), eP = pw.length < 8;
       document.getElementById('err-l-email').hidden = !eE; document.getElementById('err-l-pass').hidden = !eP;
       if (id === 'signup-form') { const eN = !v('l-first'); document.getElementById('err-l-first').hidden = !eN; if (eN) bad = 'l-first'; }
+      if (id === 'signup-form') { const eA = !(f.querySelector('#l-adult') || {}).checked; document.getElementById('err-l-adult').hidden = !eA; if (eA) bad = bad || 'l-adult'; }
       if (eP) bad = bad || 'l-pass'; if (eE) bad = 'l-email';
     } else { const eC = !/^\d{4,8}$/.test(v('l-code')); document.getElementById('err-l-code').hidden = !eC; if (eC) bad = 'l-code'; }
     if (bad) { f.querySelector('#' + bad).focus(); return; }
@@ -1900,6 +1905,16 @@ document.addEventListener('click', async e => {
     a.disabled = true;
     try { await removeItem('Reviews', wid); await loadData(); render(); toast('Review removed'); }
     catch (err) { a.disabled = false; toast(errMsg(err), 5000); }
+    return;
+  }
+  if (act === 'del-account') {
+    stop(); if (!S.user) return;
+    if (!window.confirm('Ask us to delete your account and everything you have posted? This can’t be undone.')) return;
+    a.disabled = true;
+    try {
+      await insertItem('Reports', { kind: 'account-deletion', reason: 'Delete my account', note: `Member ${S.user.id} (${S.user.email}) asked for their account and everything they posted to be deleted.`, status: 'open' });
+      toast('Request sent. We’ll confirm by email once your account is deleted.', 6000);
+    } catch (err) { a.disabled = false; toast(errMsg(err), 5000); }
     return;
   }
   if (act === 'cf-submit') { stop(); submitClaim(); return; }
