@@ -2040,6 +2040,7 @@ function render() {
   else if (BYID[h]) html = vCompany(BYID[h]);
   else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
   app.innerHTML = `<div class="view">${html}</div>`;
+  document.body.classList.add('ready');
   renderNav(nav);
   setupReveal(h);
   if (h === 'home' || h === '') { startTyper(); moveBands(); }
