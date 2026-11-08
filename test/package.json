@@ -1,0 +1,11 @@
+{
+  "name": "ktc-render-test",
+  "private": true,
+  "description": "Renders every route of the site in jsdom against mocked Wix modules",
+  "scripts": {
+    "test": "node run.mjs"
+  },
+  "dependencies": {
+    "jsdom": "^24.1.3"
+  }
+}
