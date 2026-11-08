@@ -1611,7 +1611,7 @@ function vContact() {
     <div class="layout"><div class="mainc">${form}</div>
       <aside class="side">
         <div class="box"><h2>Email</h2><p>General: <span style="user-select:all;color:var(--fg)">hello@knowthecompany.com</span></p><p>Businesses: <span style="user-select:all;color:var(--fg)">business@knowthecompany.com</span></p><p>Legal and takedowns: <span style="user-select:all;color:var(--fg)">legal@knowthecompany.com</span></p></div>
-        <div class="box"><h2>Grievance officer</h2><p>Grievance Officer, Know The Company<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours and resolve them within 7 days.</p></div>
+        <div class="box"><h2>Grievance officer</h2><p>Nimish Chhabra, Grievance Officer<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours and resolve them within 7 days.</p></div>
         <div class="box soft"><h2>Quick answers</h2><p>Many questions are answered in our help centre.</p><a href="#help" style="font-weight:700;font-size:14px">Open help centre</a></div>
       </aside></div></div>`;
 }
@@ -1657,7 +1657,7 @@ function vTerms() {
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
-    ['8. Contact', ['Questions about these terms: legal@knowthecompany.com.', 'Complaints about content on the site go to our grievance officer at grievance@knowthecompany.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
+    ['8. Contact', ['Questions about these terms: legal@knowthecompany.com.', 'Complaints about content on the site go to our grievance officer, Nimish Chhabra, at grievance@knowthecompany.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
 }
 function vPrivacy() {
   return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
@@ -1667,7 +1667,7 @@ function vPrivacy() {
     ['Sharing', 'We share data only with service providers who help us run Know The Company (hosting, email, payments), and when required by law, such as a valid court order.'],
     ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to privacy@knowthecompany.com and we will reply within the time the law requires. You can also ask us to delete your account from the My reviews page.'],
     ['Cookies and storage', 'We use essential storage to keep you logged in and remember preferences. We use privacy-friendly analytics that count visits without following you across other sites.'],
-    ['Contact', 'Privacy questions: privacy@knowthecompany.com. Grievance officer: grievance@knowthecompany.com.']]);
+    ['Contact', 'Privacy questions: privacy@knowthecompany.com. Grievance officer: Nimish Chhabra, grievance@knowthecompany.com.']]);
 }
 
 /* ---------- live actions: everything a visitor saves goes to Wix ---------- */
