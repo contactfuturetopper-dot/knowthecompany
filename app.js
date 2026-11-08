@@ -65,8 +65,8 @@ function indexReviews(items) {
 }
 async function fetchAll(collectionId) {
   const out = []; let skip = 0;
-  for (let i = 0; i < 60; i++) {
-    const page = await queryItems(collectionId, { limit: 100, skip });
+  for (let i = 0; i < 20; i++) {
+    const page = await queryItems(collectionId, { limit: 1000, skip });
     out.push(...page.items);
     if (!page.hasNext || !page.items.length) break;
     skip += page.items.length;
@@ -74,14 +74,31 @@ async function fetchAll(collectionId) {
   return out;
 }
 let LOADED = false, LOAD_ERR = '';
+/* Companies and reviews load together, up to 1000 a request. A copy of the last load is kept in this
+   browser so a repeat visit draws straight away while fresh data loads behind it. */
+const DATA_KEY = 'ktc_data_v1';
+let DATA_SIG = '';
+const sigOf = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) >>> 0; return h.toString(36) + ':' + str.length; };
+function applyData(cos, rvs) { indexCompanies(cos); indexReviews(rvs); LOADED = true; LOAD_ERR = ''; }
+function loadCached() {
+  const c = store.get(DATA_KEY, null);
+  if (!c || !Array.isArray(c.cos) || !Array.isArray(c.rvs) || Date.now() - (c.t || 0) > 7 * 864e5) return false;
+  try { applyData(c.cos, c.rvs); DATA_SIG = c.sig || ''; return true; } catch (e) { return false; }
+}
+/* Resolves to true when what is on screen should be redrawn. */
 async function loadData() {
   try {
-    const cos = await fetchAll('Companies');
-    indexCompanies(cos);
-    const rvs = await fetchAll('Reviews');
-    indexReviews(rvs);
-    LOADED = true; LOAD_ERR = '';
-  } catch (e) { LOAD_ERR = e && e.message ? e.message : String(e); }
+    const [cos, rvs] = await Promise.all([fetchAll('Companies'), fetchAll('Reviews')]);
+    const json = JSON.stringify({ cos, rvs }), sig = sigOf(json);
+    const changed = sig !== DATA_SIG || !LOADED;
+    if (changed) applyData(cos, rvs);
+    DATA_SIG = sig;
+    try { localStorage.setItem(DATA_KEY, '{"t":' + Date.now() + ',"sig":"' + sig + '",' + json.slice(1)); } catch (e) {}
+    return changed;
+  } catch (e) {
+    if (!LOADED) { LOAD_ERR = e && e.message ? e.message : String(e); return true; }
+    return false;
+  }
 }
 
 /* ---------- page state ---------- */
@@ -2394,7 +2411,14 @@ document.addEventListener('submit', e => {
 });
 
 /* ---------- boot ---------- */
+const fromCache = loadCached();
 syncUser(getMemberState());
 render();
 subscribeMember(s => { syncUser(s); render(); });
-loadData().then(() => render());
+loadData().then(changed => {
+  if (!changed) return;
+  /* fresh data arrived after a cached draw: redraw, unless someone is typing in a form right now */
+  const a = document.activeElement;
+  if (fromCache && a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+  render();
+});
