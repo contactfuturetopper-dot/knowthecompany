@@ -67,10 +67,10 @@ async function run() {
     return;
   }
   const avg = list.reduce((s, r) => s + Number(r.rating), 0) / list.length;
-  const n = list.length, label = type === 'employee' ? 'employee' : 'customer';
+  const label = type === 'employee' ? 'employee' : 'customer';
   el.innerHTML = `<span class="row"><span class="score">${avg.toFixed(1)}</span>${stars(avg)}${verified}</span>
-    <span class="meta">${n} ${label} review${n === 1 ? '' : 's'} on ${brand}</span>`;
-  link.title = `${name}: ${avg.toFixed(1)} out of 5 from ${n} ${label} review${n === 1 ? '' : 's'}`;
+    <span class="meta">${label === 'employee' ? 'Employee' : 'Customer'} rating on ${brand}</span>`;
+  link.title = `${name}: ${avg.toFixed(1)} out of 5 from ${label}s on Know The Company`;
 }
 run().catch(() => { el.innerHTML = `<span class="msg">Rating unavailable right now</span>${brand}`; link.href = site; });
 </script>
