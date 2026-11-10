@@ -862,8 +862,7 @@ function vCompany(c) {
     <aside class="side">
       ${tab === 'employees' || tab === 'interviews' ? `<div class="box soft"><h2>Your identity stays private</h2><p>Employees choose whether to post anonymously or with their name. Emails are never shown, and ${esc(c.name)} can't see who wrote an anonymous review. We share a reviewer's identity only when a valid court order requires it.</p></div>` : ''}
       ${coSide(c)}
-      ${isVerifiedCo(c) ? '' : `<div class="box"><h2>About ${esc(c.name)}</h2><p>${esc(c.bio)}</p></div>
-      <div class="box"><h2>Company details</h2><div class="kv"><span>Website</span><span>${esc(c.web)}</span></div><div class="kv"><span>Category</span><span>${esc(c.cat)}</span></div><div class="kv"><span>Country</span><span>${esc(c.country)}</span></div></div>`}
+      ${isVerifiedCo(c) ? '' : `<div class="box"><h2>Company details</h2><div class="kv"><span>Website</span><span>${esc(c.web)}</span></div><div class="kv"><span>Category</span><span>${esc(c.cat)}</span></div><div class="kv"><span>Country</span><span>${esc(c.country)}</span></div></div>`}
       ${isVerifiedCo(c) && coPlan(c) === 'plus' ? '' : `<div class="box"><h2>More in ${esc(c.cat)}</h2>${others.map(o => `<a href="#${o.id}" style="font-weight:600;text-decoration:none">${esc(o.name)}</a>`).join('')}<a href="#${c.catId}" style="font-size:14px">See all ${k.items.length}</a></div>`}
     </aside>
   </div></div>`;
