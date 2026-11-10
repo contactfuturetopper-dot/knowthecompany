@@ -459,7 +459,7 @@ function vWhy() {
       <div class="reasons">${REASONS.map(reasonCard).join('')}</div></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Getting started</p><h2>Three steps, about ten minutes</h2></div></div><div class="steps">
-      <div class="step"><span>1</span><h3>Claim your page</h3><p>Add your details and story. ${LAUNCH ? 'Free for your first year.' : 'Plans from ₹499 ($9) a year.'}</p></div>
+      <div class="step"><span>1</span><h3>Claim your page</h3><p>Add your details and story. ${LAUNCH ? 'Free for your first year.' : 'Plans from [[PB]] a year.'}</p></div>
       <div class="step"><span>2</span><h3>Invite people</h3><p>Send your review links to customers and your team. Employee reviews can stay anonymous.</p></div>
       <div class="step"><span>3</span><h3>Share your page</h3><p>Link to your page from your website, careers page and LinkedIn.</p></div></div></section>
 
@@ -542,11 +542,11 @@ function vHome() {
 
     <section class="wrap sec"><div class="cta">
       <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px"><p class="eyebrow" style="color:var(--deep-muted)">For employers</p>
-        <h2>${LAUNCH ? 'List your company free for a year.' : 'Get a verified listing for ₹499 ($9) a year.'}</h2>
+        <h2>${LAUNCH ? 'List your company free for a year.' : 'Get a verified listing for [[PB]] a year.'}</h2>
         <p>Show up in your category, reply to clients and employees, and share proof of your reputation.${LAUNCH ? ` Businesses that join before ${LAUNCH_END} get their first year free.` : ''}</p></div>
       <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:16px">
         <ul class="ticks">${['Verified company badge','Reply to every review','Employer branding page','Website link and photos'].map(t => `<li>${TICK('var(--deep-muted)')}${t}</li>`).join('')}</ul>
-        <a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'List your company free' : 'List your company – ₹499 ($9)'}</a></div>
+        <a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'List your company free' : 'List your company – [[PB]]'}</a></div>
     </div></section>
 
     <section class="wrap"><div class="promise">
@@ -585,7 +585,7 @@ function vCategory(k) {
         <div class="field"><label class="l" for="f-text">Name or website</label><input id="f-text" type="text" data-filter="text" value="${esc(f.text)}" placeholder="Filter this list"></div>
         <div class="field"><label class="l" for="f-sort">Sort by</label><select id="f-sort" data-filter="sort"><option value="name" ${f.sort === 'name' ? 'selected' : ''}>Name A–Z</option><option value="za" ${f.sort === 'za' ? 'selected' : ''}>Name Z–A</option><option value="reviews" ${f.sort === 'reviews' ? 'selected' : ''}>Most reviewed</option></select></div>
       </div>
-      <div class="box soft"><h2>Run a company in this category?</h2><p>Get a verified listing here, ${LAUNCH ? 'free for your first year' : 'for ₹499 ($9) a year'}.</p><a class="btn p" href="#list">List your company</a></div></aside>
+      <div class="box soft"><h2>Run a company in this category?</h2><p>Get a verified listing here, ${LAUNCH ? 'free for your first year' : 'for [[PB]] a year'}.</p><a class="btn p" href="#list">List your company</a></div></aside>
       <div class="mainc" id="cat-results">${catResults(k)}</div>
     </div></div>`;
 }
@@ -863,7 +863,7 @@ let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We a
 
 /* ---------- jobs ---------- */
 /* Launch switch: true = free listings and free extra job posts. Set to false to start charging ₹499 and ₹99. */
-const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '₹499 ($9) a year';
+const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '[[PB]] a year';
 const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
 const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
 const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Priority support'];
@@ -975,7 +975,7 @@ function vSample() {
       <div class="box"><div class="toolbar"><h2>Latest update</h2><span class="meta">Oct 2026</span></div><p style="color:var(--fg)">Example update. We just launched a fixed-price design sprint for early-stage startups.</p><p class="meta">Posted by the company. Updates never change ratings.</p></div>
       <div class="box"><h2>Photos</h2><div class="photos" style="grid-template-columns:1fr 1fr">${['Studio','Team','Client work','Offsite'].map(p => `<div class="ph">${p}<small>Photo placeholder</small></div>`).join('')}</div></div>
       <div class="box soft"><h2>What “Verified” means</h2><p>We confirmed this company controls its email domain or website, or checked its registration documents. Verification never changes its rating.</p></div>
-      <div class="box"><h2>Want a profile like this?</h2><p>This profile uses Plus: website and contact buttons, photos and updates for ₹${PLUS_PRICE} ($19) a year. ${LAUNCH ? 'Basic is free for your first year.' : 'Basic costs ₹499 ($9) a year.'}</p><a class="btn p" href="#list">List your company</a></div>
+      <div class="box"><h2>Want a profile like this?</h2><p>This profile uses Plus: website and contact buttons, photos and updates for [[PP]] a year. ${LAUNCH ? 'Basic is free for your first year.' : 'Basic costs [[PB]] a year.'}</p><a class="btn p" href="#list">List your company</a></div>
     </aside></div></div>`;
 }
 
@@ -988,8 +988,8 @@ const FAQS = [
   ['What if someone posts a bad review?', 'Reply publicly with your side, calmly and with facts. If it breaks our guidelines, report it and we check it. We never remove reviews just because they are negative, and an honest reply often wins more trust than a perfect score.'],
   ['Does this help if the site is new?', 'Yes. Your page link and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
 
-  ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus (₹${PLUS_PRICE} ($19) a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
-  LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs ₹499 ($9) a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?','₹499 ($9) a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
+  ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus ([[PP]] a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
+  LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs [[PB]] a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?','[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
   ['Will a verified listing improve my rating?','No. Ratings come only from reviews. Verified and unverified companies are reviewed and moderated the same way.'],
   ['Can I remove a bad review?','No, but you can reply publicly, and report a review that breaks our guidelines so our team can check it.'],
   ['How does the website link help me?','Customers reading your reviews can visit your site in one click from your verified profile. Links on profiles are marked nofollow or sponsored, as search engines require, so the value is real visitors rather than search ranking.'],
@@ -1058,7 +1058,7 @@ const isVerifiedCo = c => !!(c && c.raw && c.raw.claimStatus === 'verified');
 const ICO_THUMB = '<path d="M7 11v9H4v-9z"/><path d="M7 11l4-7a2 2 0 0 1 3 2l-1 4h5.5a2 2 0 0 1 2 2.4l-1.3 6A2 2 0 0 1 17.2 20H7"/>';
 const ICO_FLAG = '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>';
 const svgI = (d, s = 15) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-function openModal(html) { closeModals(); const m = document.getElementById('gmodal'); m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${html}</div>`; m.hidden = false; document.body.style.overflow = 'hidden'; setTimeout(() => { const f = m.querySelector('input,select,textarea,button:not([data-act="close-modal"])'); if (f) f.focus(); }, 30); }
+function openModal(html) { closeModals(); const m = document.getElementById('gmodal'); m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${curText(html)}</div>`; m.hidden = false; document.body.style.overflow = 'hidden'; setTimeout(() => { const f = m.querySelector('input,select,textarea,button:not([data-act="close-modal"])'); if (f) f.focus(); }, 30); }
 const mHead = title => `<div class="toolbar"><h2 style="font-size:20px">${title}</h2><button class="iconbtn" type="button" data-act="close-modal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
 function rvActions(cid, kind, idx, r, owner) {
   if (owner || !r || !r.wid) return '';
@@ -1120,7 +1120,7 @@ function coLinks(c) {
 }
 function coSide(c) {
   const cl = CLAIMS[c.id];
-  if (!cl) return `<div class="box"><h2>Is this your company?</h2><p>Claim this profile to verify it, reply to reviews and set up an employer page.</p><a class="btn p" href="#list" data-act="claim" data-id="${c.id}" data-name="${esc(c.name)}" data-web="${esc(c.web)}">${LAUNCH ? 'Claim free' : 'Claim for ₹499 ($9) a year'}</a></div>
+  if (!cl) return `<div class="box"><h2>Is this your company?</h2><p>Claim this profile to verify it, reply to reviews and set up an employer page.</p><a class="btn p" href="#list" data-act="claim" data-id="${c.id}" data-name="${esc(c.name)}" data-web="${esc(c.web)}">${LAUNCH ? 'Claim free' : 'Claim for [[PB]] a year'}</a></div>
       <div class="box soft"><h2>About this listing</h2><p>This profile was created from public information so customers and employees can share reviews. ${esc(c.name)} has not claimed it and is not affiliated with Know The Company.</p><div style="display:flex;flex-wrap:wrap;gap:14px"><a href="#guidelines" style="font-size:14px;font-weight:700">How we list companies</a><button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:14px">Suggest an edit</button></div></div>`;
   if (!isVerifiedCo(c)) return `<div class="box soft"><h2>Claimed by the company</h2><p>${esc(c.name)} has claimed this profile. We're checking its documents, and the Verified badge appears once that's done. Verification never changes ratings.</p></div>`;
   const P = cprof(c); const plus = coPlan(c) === 'plus';
@@ -1207,8 +1207,8 @@ function claimPanel() {
       <div class="vopts">${opt('email', 'Work email', match ? `Code to ${esc(d.email)}` : 'Needs an email at your website', match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
-      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then ₹499 ($9) a year' : '₹499 ($9) a year'}</small></span></label>
-        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} ($19) a year` : `₹${PLUS_PRICE} ($19) a year`}. Contact buttons, photos, offers and updates</small></span></label></div>
+      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
+        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then [[PP]] a year` : `[[PP]] a year`}. Contact buttons, photos, offers and updates</small></span></label></div>
       <p class="meta">${LAUNCH ? 'No payment now. Nothing is charged when a free period ends unless you set up autopay.' : 'Plans renew every year by autopay. You can cancel at any time.'}</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
   const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '';
@@ -1221,8 +1221,8 @@ function claimPanel() {
 function calcOut(sale) {
   const n = p => Math.max(1, Math.ceil(p / Math.max(1, sale)));
   const c = p => `${n(p)} new ${n(p) === 1 ? 'customer' : 'customers'} a year`;
-  return `<div><small>Basic, ₹499 ($9) a year</small><b>${n(499)}</b><em>${c(499)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
-    <div><small>Plus, ₹${PLUS_PRICE} ($19) a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
+  return `<div><small>Basic, ₹499 a year</small><b>${n(499)}</b><em>${c(499)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
+    <div><small>Plus, ₹${PLUS_PRICE} a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
 }
 function vList() {
   const d = S.listData;
@@ -1278,14 +1278,14 @@ function vList() {
       <div class="out" aria-live="polite">${calcOut(S.calcSale || 1500)}</div>
     </div></section>
 
-    <section class="wrap sec" id="plans"><div class="sechead" style="justify-content:center;text-align:center"><div><p class="eyebrow">Plans</p><h2>Pick a plan</h2><p>Both plans are reviewed and rated exactly the same way.</p></div></div>
+    <section class="wrap sec" id="plans"><div class="sechead" style="justify-content:center;text-align:center"><div><p class="eyebrow">Plans</p><h2>Pick a plan</h2><p>Both plans are reviewed and rated exactly the same way.</p><div style="display:flex;justify-content:center;margin-top:14px">${curSwitch()}</div></div></div>
       <div class="plans">
-        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>₹499</b><span style="color:var(--muted)">a year · $9 outside India</span>'}</div>
-          <p class="meta" style="font-size:14px">${LAUNCH ? `Then ₹499 ($9) a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">About ₹1.4 a day</span>
+        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>[[PB]]</b><span style="color:var(--muted)">a year</span>'}</div>
+          <p class="meta" style="font-size:14px">${LAUNCH ? `Then [[PB]] a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DB]]</span>
           <ul>${BASIC_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
           <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="basic">${LAUNCH ? 'Start free' : 'Choose Basic'}</a></div>
-        <div class="price plus"><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>₹${PLUS_PRICE}</b><span style="color:var(--muted)">a year · $19 outside India</span></div>
-          <p class="meta" style="font-size:14px">${LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} ($19) a year by autopay. Or stay on Basic.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">About ₹2.7 a day</span>
+        <div class="price plus"><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>[[PP]]</b><span style="color:var(--muted)">a year</span></div>
+          <p class="meta" style="font-size:14px">${LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. Or stay on Basic.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DP]]</span>
           <p class="sub">Everything in Basic, plus:</p>
           <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
           <a class="btn p lg" href="#list" data-act="pick-plan" data-plan="plus">${LAUNCH ? `Try Plus free for ${PLUS_TRIAL_DAYS} days` : 'Choose Plus'}</a></div>
@@ -1294,7 +1294,7 @@ function vList() {
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
     <section class="wrap sec"><div class="steps">
       <div class="step"><span>1 · Add details</span><p>Company name, website, category, city and contact. About two minutes.</p></div>
-      <div class="step">${LAUNCH ? '<span>2 · Confirm your details</span><p>No payment for your first year. We send a code to your work email.</p>' : '<span>2 · Pay ₹499 ($9) for the year</span><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
+      <div class="step">${LAUNCH ? '<span>2 · Confirm your details</span><p>No payment for your first year. We send a code to your work email.</p>' : '<span>2 · Pay [[PB]] for the year</span><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
       <div class="step"><span>3 · Get verified</span><p>We confirm your work email, website or documents, then your Verified badge goes live.</p></div></div></section>
     <section class="wrap sec" id="list-form-area"><div class="layout">
       <div class="mainc">${panel}</div>
@@ -1436,7 +1436,7 @@ function vLogin(type, why) {
       <p style="font-size:14px">New here? <button class="link" type="button" data-act="auth-mode" data-mode="signup">Create an account</button></p>
       <p class="meta" style="font-size:13px">Forgot your password? <a href="#contact">Contact us</a> and we’ll help you reset it.</p></form>`;
   return `<div class="wrap"><div class="authwrap">${seg}${note ? `<p class="notice">${esc(note)}</p>` : ''}${card}
-    <p class="meta" style="text-align:center;font-size:14px">${biz ? 'Not listed yet? <a href="#list">' + (LAUNCH ? 'List your company free' : 'List your company for ₹499 ($9)') + '</a>' : 'Manage a company? <a href="#business-login">Use company login</a>'}</p></div></div>`;
+    <p class="meta" style="text-align:center;font-size:14px">${biz ? 'Not listed yet? <a href="#list">' + (LAUNCH ? 'List your company free' : 'List your company for [[PB]]') + '</a>' : 'Manage a company? <a href="#business-login">Use company login</a>'}</p></div></div>`;
 }
 
 function vMyReviews() {
@@ -1632,7 +1632,7 @@ function vPost(p) {
       <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span></div>
       <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
       ${body}
-      <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From ₹499 ($9) a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>
+      <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From [[PB]] a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>
     </article>
     <section class="sec"><div class="sechead"><h2 style="font-size:24px">More from the blog</h2><a href="#blog" style="font-weight:700">All articles</a></div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${more.map(postCard).join('')}</div></section></div>`;
 }
@@ -1671,7 +1671,7 @@ function vAbout() {
       <p style="color:var(--muted);font-size:18px;max-width:680px">Know The Company is an open review platform for startups and growing companies, everywhere. Big brands already have thousands of reviews; the companies people actually hire, work with and work for often have none. Anyone can read and write reviews for free. We show how a company treats both its customers and its employees.</p></div></section>
     <section class="wrap sec"><div class="steps">
       <div class="step"><p class="lbl">Our mission</p><h3>Honest information before you pay</h3><p>Customers deserve to know how a company treats people before they hand over money or personal data.</p></div>
-      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then ₹499 ($9) a year. Plus costs ₹${PLUS_PRICE} ($19) a year.` : `Businesses can buy a Basic listing for ₹499 ($9) a year or Plus for ₹${PLUS_PRICE} ($19) a year.`} A listing gives a business tools, and never changes its rating.</p></div>
+      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year. Plus costs [[PP]] a year.` : `Businesses can buy a Basic listing for [[PB]] a year or Plus for [[PP]] a year.`} A listing gives a business tools, and never changes its rating.</p></div>
       <div class="step"><p class="lbl">Who we serve</p><h3>Startups and growing companies worldwide</h3><p>From a two-person studio to a 500-person scale-up, every company can be listed and reviewed.</p></div></div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><h2>What we stand for</h2></div>
       <div style="display:flex;flex-direction:column;gap:12px">${[['Neutral','Paid and unpaid companies are reviewed and moderated the same way.'],['Transparent','We publish how many reviews we remove and why.'],['Real people','Reviewers confirm their email before they can post.'],['Fair to companies','Every company can reply publicly and report reviews that break our rules.']].map(([a, b]) => `<div class="box" style="flex-direction:row;gap:16px;align-items:baseline;flex-wrap:wrap"><b style="min-width:150px">${a}</b><span style="color:var(--muted);flex:1 1 300px">${b}</span></div>`).join('')}</div>
@@ -1709,8 +1709,8 @@ const HELP = [
     ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
     ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
   ['For employers', [
-    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then ₹499 ($9) a year. ` : 'It costs ₹499 ($9) a year. ') + `Plus (₹${PLUS_PRICE} ($19) a year) adds call, WhatsApp and email buttons, photos, and offers and updates.`],
-    LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost ₹499 ($9) a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?', '₹499 ($9) a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
+    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then [[PB]] a year. ` : 'It costs [[PB]] a year. ') + `Plus ([[PP]] a year) adds call, WhatsApp and email buttons, photos, and offers and updates.`],
+    LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost [[PB]] a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?', '[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
     ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to knowthecompanysupport@gmail.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
     ['Can paying remove bad reviews?', 'No. Payment never changes ratings or hides reviews. You can reply publicly or report reviews that break the rules.'],
@@ -1733,6 +1733,15 @@ const OPERATOR = { legalName: '', address: '', phone: '', taxNote: '' };
 const opName = () => OPERATOR.legalName || 'Know The Company';
 const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this site</h2><p>Know The Company is run by <b style="color:var(--fg)">${esc(OPERATOR.legalName)}</b>.${OPERATOR.address ? `<br>Registered office: ${esc(OPERATOR.address)}` : ''}${OPERATOR.phone ? `<br>Phone: <span style="user-select:all;color:var(--fg)">${esc(OPERATOR.phone)}</span>` : ''}</p></div>` : '';
 
+/* ---------- currency switch ----------
+   Plan prices show in rupees or US dollars. Visitors outside India's time zone start in dollars, and the
+   choice is remembered in this browser. Legal pages always state both. */
+const CUR_PRICES = { INR: { PB: '₹499', PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), DB: 'About ₹1.4 a day', DP: 'About ₹2.7 a day' }, USD: { PB: '$9', PP: '$19', DB: 'About 2 cents a day', DP: 'About 5 cents a day' } };
+const curDefault = () => { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; return /Asia\/(Kolkata|Calcutta)/.test(z) || !z ? 'INR' : 'USD'; } catch (e) { return 'INR'; } };
+const curNow = () => { const v = store.get('ktc_cur', ''); return v === 'USD' || v === 'INR' ? v : curDefault(); };
+const curText = html => { const P = CUR_PRICES[curNow()]; return String(html).replace(/\[\[(PB|PP|DB|DP)\]\]/g, (m, k) => P[k]); };
+const curSwitch = () => { const c = curNow(); return `<div class="curswitch" role="group" aria-label="Show prices in">${[['INR', '₹ INR'], ['USD', '$ USD']].map(([k, l]) => `<button type="button" data-act="cur" data-cur="${k}" aria-pressed="${c === k}">${l}</button>`).join('')}</div>`; };
+
 const legalPage = (title, crumb, intro, sections) => `<div class="wrap" style="max-width:860px">${crumbs([['Home','#home'],[crumb]])}
   <div class="pagehead"><h1>${title}</h1><p>Last updated: 10 November 2026</p></div>
   <div class="legal"><p>${intro}</p>${sections.map(([h, items]) => `<h2>${h}</h2>${Array.isArray(items) ? `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>` : `<p>${items}</p>`}`).join('')}</div></div>`;
@@ -1741,7 +1750,7 @@ function vTerms() {
     ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.']],
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
     ['3. Employee reviews and interviews', ['Post only your own experience as an employee, contractor, intern or job candidate.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews, or interview experiences. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
-    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 ($9) a year.` : 'Basic costs ₹499 ($9) a year.', `Plus costs ₹${PLUS_PRICE} ($19) a year${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is cancelled, the profile moves to Basic when the year you paid for ends.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
+    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is cancelled, the profile moves to Basic when the year you paid for ends.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
@@ -1761,18 +1770,18 @@ function vPrivacy() {
 function vPricing() {
   const plan = (name, price, note, perks) => `<div class="box" style="gap:12px"><div class="toolbar"><h2 style="font-size:21px">${name}</h2><b style="font-size:21px">${price}</b></div><p class="meta" style="font-size:14px">${note}</p><ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">${perks.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`;
   return `<div class="wrap" style="max-width:900px">${crumbs([['Home','#home'],['Pricing']])}
-    <div class="pagehead"><h1>Pricing</h1><p>Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating.</p></div>
+    <div class="pagehead"><h1>Pricing</h1><p>Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating.</p><div style="margin-top:6px">${curSwitch()}</div></div>
     <div style="display:flex;flex-direction:column;gap:16px">
       ${plan('For reviewers', 'Free', 'Always free. No payment is ever asked for.', ['Read every review', 'Write customer, employee and interview reviews', 'Use all free career and company tools'])}
-      ${plan('Basic listing', '₹499 ($9) a year', LAUNCH ? `Free for the first year for companies that join before ${LAUNCH_END}, then ₹499 ($9) a year by autopay. Cancel any time.` : 'Billed yearly by autopay. Cancel any time.', BASIC_PERKS)}
-      ${plan('Plus listing', `₹${PLUS_PRICE.toLocaleString('en-IN')} ($19) a year`, LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} ($19) a year by autopay. You are charged only if you set up autopay, and you can cancel any time.` : 'Billed yearly by autopay. Cancel any time.', ['Everything in Basic', ...PLUS_PERKS])}
+      ${plan('Basic listing', '[[PB]] a year', LAUNCH ? `Free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year by autopay. Cancel any time.` : 'Billed yearly by autopay. Cancel any time.', BASIC_PERKS)}
+      ${plan('Plus listing', '[[PP]] a year', LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. You are charged only if you set up autopay, and you can cancel any time.` : 'Billed yearly by autopay. Cancel any time.', ['Everything in Basic', ...PLUS_PERKS])}
       ${JOBS_ON ? plan('Extra job post', `₹${EXTRA_JOB} a post`, `${FREE_JOBS} posts a month are included with every listing. Each post stays live for ${JOB_DAYS} days.`, ['For real vacancies only', 'Employers must never charge applicants a fee']) : ''}
-      <div class="box soft"><p style="color:var(--fg)">Prices are in Indian rupees for companies in India, and in US dollars ($9 for Basic, $19 for Plus) for companies outside India.${OPERATOR.taxNote ? ' ' + esc(OPERATOR.taxNote) : ''} A listing is a digital service that starts once your company is verified; nothing is shipped. Read our <a href="#refunds">refunds and cancellations policy</a> and <a href="#terms">terms of use</a> before you pay.</p>
+      <div class="box soft"><p style="color:var(--fg)">Companies in India pay in Indian rupees, and companies outside India pay in US dollars. Use the switch at the top to see either.${OPERATOR.taxNote ? ' ' + esc(OPERATOR.taxNote) : ''} A listing is a digital service that starts once your company is verified; nothing is shipped. Read our <a href="#refunds">refunds and cancellations policy</a> and <a href="#terms">terms of use</a> before you pay.</p>
         <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn p" href="#list">List your company</a><a class="btn g" href="#contact">Ask a question</a></div></div></div></div>`;
 }
 function vRefunds() {
   return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
-    ['1. What you pay for', [`Basic listing: ₹499 ($9) a year. Plus listing: ₹${PLUS_PRICE} ($19) a year.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
+    ['1. What you pay for', [`Basic listing: ₹499 a year in India, or $9 a year outside India. Plus listing: ₹${PLUS_PRICE} a year in India, or $19 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
     ['2. How the service is delivered', ['Your listing tools switch on as soon as we verify that you represent the company. We email you when the listing is live.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
     ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you set up autopay. We email you before it ends.']],
     ['4. Autopay and cancelling', ['Paid plans renew every year by autopay on the card, UPI or bank mandate you used. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time, by writing to knowthecompanysupport@gmail.com from the email address on your listing, or by cancelling the mandate in your UPI app or with your bank.', 'When you cancel, no further charges are made and your tools stay active until the end of the year you paid for.', 'If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.']],
@@ -2168,7 +2177,7 @@ function render() {
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
   else if (BYID[h]) { loadMedia(BYID[h]); html = vCompany(BYID[h]); }
   else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
-  app.innerHTML = `<div class="view">${html}</div>`;
+  app.innerHTML = `<div class="view">${curText(html)}</div>`;
   document.body.classList.add('ready');
   { const fo = document.getElementById('footer-op'); if (fo) fo.textContent = OPERATOR.legalName ? ` Know The Company is run by ${OPERATOR.legalName}.` : ''; }
   renderNav(nav);
@@ -2267,6 +2276,7 @@ document.addEventListener('click', e => {
   if (act === 'close-modal') { closeModals(); return; }
   if (act === 'close-modal-go') { if (a.dataset.sheet === 'dash-tab') S.dashTab = a.dataset.tab; if (a.dataset.sheet === 'goto-plans') S.scrollTo = 'plans'; closeModals(); if (a.getAttribute('href') === location.hash) { e.preventDefault(); render(); } return; }
   if (act === 'pick-co') { const as = (document.querySelector('input[name="pk-as"]:checked') || {}).value || 'customers'; closeModals(); if (location.hash === '#' + a.dataset.id) { S.coTab = as; render(); } else { S.returnTab = as; location.hash = a.dataset.id; } return; }
+  if (act === 'cur') { store.set('ktc_cur', a.dataset.cur); renderKeep(); return; }
   if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (location.hash === '#dashboard') { e.preventDefault(); render(); } return; }
   if (act === 'goto-plans') { S.scrollTo = 'plans'; if (location.hash === '#list') { e.preventDefault(); render(); } return; }
   if (act === 'add-cat') { S.addCat = a.dataset.cat; return; }

@@ -75,7 +75,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]'].filter(w => text.includes(w));
+  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[['].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
 }
 // a few interactions: company tabs and a customer review submission
@@ -116,6 +116,14 @@ if (ef) { ef.querySelector('#ep-why').value = 'Small senior team, real ownership
 click('[data-act="dash-tab"][data-tab="reviews"]'); await new Promise(r => setTimeout(r, 40));
 const rf = app.querySelector('form.oreply'); report.push('reply forms: ' + app.querySelectorAll('form.oreply').length);
 if (rf) { rf.querySelector('textarea').value = 'Thank you, we have shared this with the team.'; rf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
+// currency switch on the pricing page
+await go('pricing');
+const before = app.textContent.includes('₹499');
+click('[data-act="cur"][data-cur="USD"]'); await new Promise(r => setTimeout(r, 40));
+const usd = app.textContent;
+report.push('pricing INR first: ' + before + ', after USD: ' + (usd.includes('$9') && usd.includes('$19') && !usd.includes('₹499')));
+click('[data-act="cur"][data-cur="INR"]'); await new Promise(r => setTimeout(r, 40));
+await go('list'); report.push('list in INR: ' + app.textContent.includes('₹999') + ', switch shown: ' + !!app.querySelector('.curswitch'));
 console.log(report.join('\n'));
 console.log('\nWRITES:'); inserted.forEach(([c, d]) => console.log(' ', c, JSON.stringify(d).slice(0, 220)));
 console.log('\nERRORS:', errors.length ? errors.join('\n') : 'none');
