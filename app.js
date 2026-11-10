@@ -1289,7 +1289,7 @@ function vDashboard() {
       <div class="stats">${stats.map(([v, l, n]) => `<div class="stat"><span>${l}</span><b>${v}</b><small>${n}</small></div>`).join('')}</div>
       ${linkRow('Customer review link', 'cl-' + c.id, base + '#invite-' + c.id)}
       ${linkRow('Employee review link', 'el-' + c.id, base + '#invite-team-' + c.id)}
-      <p class="meta">Send each link to everyone, not only happy customers or staff. To reply to a review, or to update your page details, logo, photos or employer page, email <b>business@knowthecompany.com</b> from your verified address and we’ll post it exactly as you write it.</p></section>`; };
+      <p class="meta">Send each link to everyone, not only happy customers or staff. To reply to a review, or to update your page details, logo, photos or employer page, email <b>knowthecompanysupport@gmail.com</b> from your verified address and we’ll post it exactly as you write it.</p></section>`; };
   const KIND = { claim: 'Claim', new: 'New company and claim', access: 'Access request' };
   const STATUS = { pending: ['un', 'Being checked'], verified: ['ok', 'Verified'], rejected: ['cat', 'Not approved'] };
   const claims = S.myClaims;
@@ -1610,8 +1610,8 @@ function vContact() {
     <div class="pagehead"><h1>Contact us</h1><p>Questions about reviews, listings or anything else. We usually reply within 2 working days.</p></div>
     <div class="layout"><div class="mainc">${form}</div>
       <aside class="side">
-        <div class="box"><h2>Email</h2><p>General: <span style="user-select:all;color:var(--fg)">hello@knowthecompany.com</span></p><p>Businesses: <span style="user-select:all;color:var(--fg)">business@knowthecompany.com</span></p><p>Legal and takedowns: <span style="user-select:all;color:var(--fg)">legal@knowthecompany.com</span></p></div>
-        <div class="box"><h2>Grievance officer</h2><p>Nimish Chhabra, Grievance Officer<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours and resolve them within 7 days.</p></div>
+        <div class="box"><h2>Email</h2><p>For reviews, listings, payments, refunds, legal notices and takedowns: <span style="user-select:all;color:var(--fg)">knowthecompanysupport@gmail.com</span></p></div>
+        <div class="box"><h2>Grievance officer</h2><p>Nimish Chhabra, Grievance Officer<br><span style="user-select:all;color:var(--fg)">knowthecompanysupport@gmail.com</span><br>We acknowledge complaints within 24 hours and resolve them within 7 days.</p></div>
         ${opBox()}
         <div class="box soft"><h2>Quick answers</h2><p>Many questions are answered in our help centre.</p><a href="#help" style="font-weight:700;font-size:14px">Open help centre</a></div>
       </aside></div></div>`;
@@ -1632,7 +1632,7 @@ const HELP = [
     ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews, a review link and email alerts. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then ₹499 a year. ` : 'It costs ₹499 a year. ') + `Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, photos, offers and updates, and visit stats.`],
     LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost ₹499 a year. We remind you before your free year ends, and the listing continues only if you choose to renew.`] : ['How much does it cost?', '₹499 a year. We remind you before each renewal, and you can stop at any time.'],
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
-    ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to business@knowthecompany.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
+    ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to knowthecompanysupport@gmail.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
     ['Can paying remove bad reviews?', 'No. Payment never changes ratings or hides reviews. You can reply publicly or report reviews that break the rules.'],
     ['My company is already listed. What now?', 'Open your profile and press Claim. You keep the existing reviews.']]],
   ['Trust and safety', [
@@ -1665,7 +1665,7 @@ function vTerms() {
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
-    ['8. Contact', [...(OPERATOR.legalName ? [`Know The Company is run by ${esc(OPERATOR.legalName)}${OPERATOR.address ? `, ${esc(OPERATOR.address)}` : ''}.`] : []), 'Questions about these terms: legal@knowthecompany.com.', 'Complaints about content on the site go to our grievance officer, Nimish Chhabra, at grievance@knowthecompany.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
+    ['8. Contact', [...(OPERATOR.legalName ? [`Know The Company is run by ${esc(OPERATOR.legalName)}${OPERATOR.address ? `, ${esc(OPERATOR.address)}` : ''}.`] : []), 'Questions about these terms: knowthecompanysupport@gmail.com.', 'Complaints about content on the site go to our grievance officer, Nimish Chhabra, at knowthecompanysupport@gmail.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
 }
 function vPrivacy() {
   return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
@@ -1673,9 +1673,9 @@ function vPrivacy() {
     ['How we use it', ['To run your account and show your reviews with your chosen name.', 'To detect fake reviews and abuse.', 'To verify businesses and process listing payments.', 'To reply to your messages and send login codes.']],
     ['What we never do', 'We never sell your personal data or show reviewers\' email addresses to businesses.'],
     ['Sharing', 'We share data only with service providers who help us run Know The Company (hosting, email, payments), and when required by law, such as a valid court order.'],
-    ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to privacy@knowthecompany.com and we will reply within the time the law requires. You can also ask us to delete your account from the My reviews page.'],
+    ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to knowthecompanysupport@gmail.com and we will reply within the time the law requires. You can also ask us to delete your account from the My reviews page.'],
     ['Cookies and storage', 'We use essential storage to keep you logged in and remember preferences. We use privacy-friendly analytics that count visits without following you across other sites.'],
-    ['Contact', 'Privacy questions: privacy@knowthecompany.com. Grievance officer: Nimish Chhabra, grievance@knowthecompany.com.']]);
+    ['Contact', 'Privacy questions: knowthecompanysupport@gmail.com. Grievance officer: Nimish Chhabra, knowthecompanysupport@gmail.com.']]);
 }
 
 function vPricing() {
@@ -1695,11 +1695,11 @@ function vRefunds() {
     ['1. What you pay for', [`Basic listing: ₹499 a year. Plus listing: ₹${PLUS_PRICE} a year.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
     ['2. How the service is delivered', ['Your listing tools switch on as soon as we verify that you represent the company. We email you when the listing is live.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
     ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you choose to pay. We email you at least 7 days before it ends.']],
-    ['4. Cancelling', ['You can cancel at any time by writing to business@knowthecompany.com from the email address on your listing.', 'Plans do not renew automatically. If you don’t pay for the next year, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'If you cancel a paid plan after the 14-day refund window, your tools stay active until the end of the year you paid for.']],
+    ['4. Cancelling', ['You can cancel at any time by writing to knowthecompanysupport@gmail.com from the email address on your listing.', 'Plans do not renew automatically. If you don’t pay for the next year, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'If you cancel a paid plan after the 14-day refund window, your tools stay active until the end of the year you paid for.']],
     ['5. Refunds', ['Change your mind within 14 days of paying, and we refund the full amount. No reason is needed.', 'After 14 days, fees for the current year are not refundable, except where the law requires a refund.', 'If you were charged twice, or charged for an order that failed, we refund the extra amount in full.', 'If we suspend a listing because it broke our terms, for example by trying to manipulate reviews, the fee is not refunded.']],
     ['6. How refunds are paid', ['Refunds go back to the payment method you used. We start the refund within 5 working days of approving it.', 'Your bank or card provider may take another 5 to 7 working days to show it in your account.']],
     ['7. Refunds never affect reviews', 'Paying, cancelling or getting a refund never changes a company’s ratings, review order or moderation, and cancelling never removes reviews.'],
-    ['8. Contact', [`Refund and cancellation requests: business@knowthecompany.com. Include your company name and the date you paid.${OPERATOR.phone ? ` Phone: ${esc(OPERATOR.phone)}.` : ''}`, ...(OPERATOR.address ? [`Registered office: ${esc(OPERATOR.address)}.`] : []), 'If you are not happy with how we handled your request, write to our grievance officer, Nimish Chhabra, at grievance@knowthecompany.com.']]]);
+    ['8. Contact', [`Refund and cancellation requests: knowthecompanysupport@gmail.com. Include your company name and the date you paid.${OPERATOR.phone ? ` Phone: ${esc(OPERATOR.phone)}.` : ''}`, ...(OPERATOR.address ? [`Registered office: ${esc(OPERATOR.address)}.`] : []), 'If you are not happy with how we handled your request, write to our grievance officer, Nimish Chhabra, at knowthecompanysupport@gmail.com.']]]);
 }
 
 /* ---------- live actions: everything a visitor saves goes to Wix ---------- */
@@ -1903,7 +1903,7 @@ document.addEventListener('submit', async e => {
     let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
     if (first) { f.querySelector('#' + first).focus(); return; }
     const topic = v('c-topic');
-    const to = /legal|takedown/i.test(topic) ? 'legal@knowthecompany.com' : /listing|payment/i.test(topic) ? 'business@knowthecompany.com' : 'hello@knowthecompany.com';
+    const to = 'knowthecompanysupport@gmail.com';
     location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(topic) + '&body=' + encodeURIComponent(v('c-msg') + '\n\n' + v('c-name') + '\n' + v('c-email'));
     S.contactSent = true; render(); window.scrollTo(0, 0);
     return;
@@ -1915,7 +1915,7 @@ document.addEventListener('submit', async e => {
     let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
     if (first) { f.querySelector('#' + first).focus(); return; }
     const body = `Title: ${d.title}\nTopic: ${d.topic}\n\n${d.outline}\n\nSample: ${d.sample || '-'}\n\n${d.name}, ${d.company}\n${d.email}`;
-    location.href = 'mailto:hello@knowthecompany.com?subject=' + encodeURIComponent('Guest article pitch: ' + d.title) + '&body=' + encodeURIComponent(body);
+    location.href = 'mailto:knowthecompanysupport@gmail.com?subject=' + encodeURIComponent('Guest article pitch: ' + d.title) + '&body=' + encodeURIComponent(body);
     S.pitchSent = true; render(); window.scrollTo(0, 0);
     return;
   }
