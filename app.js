@@ -791,8 +791,8 @@ let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We a
 /* Launch switch: true = free listings and free extra job posts. Set to false to start charging ₹499 and ₹99. */
 const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '₹499 a year';
 const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
-const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees','Email alert for every new review'];
-const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Profile views and website clicks','Workplace insights by role, location and current or former staff','Up to 3 team members on your dashboard','Printable QR poster to collect reviews','Priority support'];
+const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
+const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Workplace insights by role, location and current or former staff','Printable QR poster to collect reviews','Priority support'];
 const planOf = () => (S.user && S.user.plan) || 'basic';
 const JOBS_ON = false; /* job posts: coming soon. Set to true to switch the whole jobs feature back on. */
 const FREE_JOBS = 5, EXTRA_JOB = 99, JOB_DAYS = 60;
@@ -914,7 +914,7 @@ const FAQS = [
   ['What if someone posts a bad review?', 'Reply publicly with your side, calmly and with facts. If it breaks our guidelines, report it and we check it. We never remove reviews just because they are negative, and an honest reply often wins more trust than a perfect score.'],
   ['Does this help if the site is new?', 'Yes. The badge, review cards, QR poster and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
 
-  ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates, visit stats and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
+  ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
   LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs ₹499 a year. We remind you before your free year ends, and it continues only if you choose to renew.`] : ['How much does it cost?','₹499 a year. We remind you before each renewal, and you can stop at any time.'],
   ['Will a verified listing improve my rating?','No. Ratings come only from reviews. Verified and unverified companies are reviewed and moderated the same way.'],
   ['Can I remove a bad review?','No, but you can reply publicly, and report a review that breaks our guidelines so our team can check it.'],
@@ -1135,7 +1135,7 @@ function claimPanel() {
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
       <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then ₹499 a year' : '₹499 a year'}</small></span></label>
-        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} a year` : `₹${PLUS_PRICE} a year`}. Contact buttons, photos, up to 3 team members</small></span></label></div>
+        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} a year` : `₹${PLUS_PRICE} a year`}. Contact buttons, photos, offers and updates</small></span></label></div>
       <p class="meta">${LAUNCH ? 'No payment now. We remind you before any free period ends, and nothing renews unless you choose to.' : 'We remind you before each renewal.'}</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
   const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '';
@@ -1629,7 +1629,7 @@ const HELP = [
     ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
     ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
   ['For employers', [
-    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews, a review link and email alerts. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then ₹499 a year. ` : 'It costs ₹499 a year. ') + `Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, photos, offers and updates, and visit stats.`],
+    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then ₹499 a year. ` : 'It costs ₹499 a year. ') + `Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, photos, and offers and updates.`],
     LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost ₹499 a year. We remind you before your free year ends, and the listing continues only if you choose to renew.`] : ['How much does it cost?', '₹499 a year. We remind you before each renewal, and you can stop at any time.'],
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
     ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to knowthecompanysupport@gmail.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
