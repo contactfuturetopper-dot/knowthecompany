@@ -16,6 +16,9 @@ const mkCo = it => ({
   added: it.addedBy === 'reviewer' ? 1 : it.addedBy === 'owner' ? 2 : 0, country: COUNTRY[it.country] || it.country || COUNTRY.WW,
   id: 'co-' + (it.slug || slug(it.title || it._id)), catId: 'cat-' + slug(it.category || 'Other'), raw: it
 });
+/* Keeps the whole site out of search engines until launch. Set to false to let pages be indexed
+   (and remove the robots meta tag in index.html). */
+const SITE_NOINDEX = true;
 let COS = [], CATS = [], BYID = {}, BYWID = {}, CATBYID = {}, FORM_CATS = [];
 /* Every category a company can pick when it's listed or added. Categories already in use are merged in,
    and "Other" always comes last. */
@@ -2264,7 +2267,7 @@ function setMeta(h) {
   let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
   const noindex = ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
-  rb.content = noindex ? 'noindex, follow' : 'index, follow';
+  rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
   let s = document.getElementById('ldjson'); if (s) s.remove();
   if (c) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
     if (l.length) o.aggregateRating = { '@type': 'AggregateRating', ratingValue: +avgOf(l).toFixed(1), reviewCount: l.length, bestRating: 5, worstRating: 1 };
