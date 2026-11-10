@@ -1,3 +1,4 @@
 node_modules/
 test/app.test.mjs
 .DS_Store
+test/package-lock.json
