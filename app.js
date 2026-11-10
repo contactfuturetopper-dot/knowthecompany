@@ -1354,7 +1354,7 @@ function jobsPanel() {
 function badgePanel(c, base) {
   if (coPlan(c) !== 'plus') return `<div class="box soft" style="gap:8px"><h3 style="font-size:17px">Website badge</h3><p>Show your live rating on your own website and careers page. It comes with Plus.</p><a href="#pricing" style="font-weight:700;font-size:14px">See Plus</a></div>`;
   const dir = base.replace(/[^/]*$/, '');
-  const snip = t => `<iframe src="${dir}badge.html?c=${encodeURIComponent(c.wid)}${t === 'employee' ? '&t=employee' : ''}" width="300" height="72" style="border:0;overflow:hidden" title="${esc(c.name)} ${t} reviews on Know The Company" loading="lazy"></iframe>`;
+  const snip = t => `<iframe src="${dir}badge.html?c=${encodeURIComponent(c.wid)}${t === 'employee' ? '&t=employee' : ''}" width="300" height="124" style="border:0;overflow:hidden" title="${esc(c.name)} ${t} reviews on Know The Company" loading="lazy"></iframe>`;
   const row = (label, t) => `<div class="field"><label class="l">${label}</label><div>${snip(t)}</div><div style="display:flex;gap:8px"><textarea readonly rows="3" class="mono" style="flex:1;min-width:0;background:var(--surface);font-size:12px">${esc(snip(t))}</textarea><button class="btn g" type="button" data-act="copy-text" data-text="${esc(snip(t))}">Copy</button></div></div>`;
   return `<div class="box" style="gap:12px"><h3 style="font-size:17px">Website badge</h3><p class="meta">Paste the code into your website. The badge shows your live rating from published reviews and links to your page here. You can't change the number it shows, which is why visitors trust it.</p>
     ${row('Customer rating badge', 'customer')}${row('Employee rating badge, for your careers page', 'employee')}</div>`;
