@@ -1,5 +1,6 @@
 import { queryItems, insertItem, updateItem, removeItem } from "/js/wix/items.js";
 import { wixRequest } from "/js/wix/client.js";
+import { WIX_CLIENT_ID } from "/js/wix/config.js";
 import { subscribeMember, getMemberState, login as memberLogin, register as memberRegister, verifyEmail as memberVerify, logout as memberLogout } from "/js/wix/member-store.js";
 
 const COUNTRY = {"AE": "United Arab Emirates", "AR": "Argentina", "AT": "Austria", "AU": "Australia", "BD": "Bangladesh", "BE": "Belgium", "BG": "Bulgaria", "BM": "Bermuda", "BR": "Brazil", "CA": "Canada", "CH": "Switzerland", "CL": "Chile", "CN": "China", "CO": "Colombia", "CY": "Cyprus", "CZ": "Czechia", "DE": "Germany", "DK": "Denmark", "EE": "Estonia", "EG": "Egypt", "ES": "Spain", "ET": "Ethiopia", "FI": "Finland", "FR": "France", "GB": "United Kingdom", "Global": "Global", "HK": "Hong Kong", "HU": "Hungary", "ID": "Indonesia", "IE": "Ireland", "IL": "Israel", "IN": "India", "IS": "Iceland", "IT": "Italy", "JP": "Japan", "KE": "Kenya", "KR": "South Korea", "KW": "Kuwait", "LI": "Liechtenstein", "LK": "Sri Lanka", "LT": "Lithuania", "LU": "Luxembourg", "MA": "Morocco", "MX": "Mexico", "MY": "Malaysia", "NG": "Nigeria", "NL": "Netherlands", "NO": "Norway", "NZ": "New Zealand", "PA": "Panama", "PE": "Peru", "PH": "Philippines", "PK": "Pakistan", "PL": "Poland", "PT": "Portugal", "QA": "Qatar", "RO": "Romania", "RU": "Russia", "SA": "Saudi Arabia", "SE": "Sweden", "SG": "Singapore", "SK": "Slovakia", "TG": "Togo", "TH": "Thailand", "TR": "Türkiye", "TW": "Taiwan", "US": "United States", "UY": "Uruguay", "VN": "Vietnam", "ZA": "South Africa"};
@@ -1409,6 +1410,31 @@ function vGuidelines() {
     </div></div>`;
 }
 
+/* ---------- sign in with Google or Facebook ----------
+   Wix runs the provider sign-in. We send the visitor to Wix with a PKCE challenge, Wix sends them back to
+   auth-callback.html with a one-time code, and that page swaps the code for member tokens. */
+const IDPS = { google: { id: '0e6a50f5-b523-4e29-990d-f37fa2ffdd69', name: 'Google' }, facebook: { id: '3ecad13f-52c3-483d-911f-31dbcf2a6d23', name: 'Facebook' } };
+const IDP_ICON = {
+  google: '<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>',
+  facebook: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>'
+};
+const socialBtns = (biz, verb) => `<div style="display:flex;flex-direction:column;gap:10px">${Object.entries(IDPS).map(([k, v]) => `<button class="btn g lg" type="button" data-act="idp" data-idp="${k}" data-biz="${biz ? 1 : ''}" style="justify-content:center;gap:10px">${IDP_ICON[k]}${verb} with ${v.name}</button>`).join('')}</div>
+  <div style="display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px"><span style="flex:1;height:1px;background:var(--line)"></span>or use your email<span style="flex:1;height:1px;background:var(--line)"></span></div>`;
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+async function startIdp(key, biz) {
+  const idp = IDPS[key]; if (!idp) return;
+  const rand = n => b64url(crypto.getRandomValues(new Uint8Array(n)));
+  const verifier = rand(48), state = rand(24);
+  const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+  const redirectUri = new URL('auth-callback.html', location.href.split('#')[0]).href;
+  const returnTo = biz ? 'dashboard' : (S.returnTo || 'my-reviews');
+  try { sessionStorage.setItem('ktc_oauth', JSON.stringify({ verifier, state, redirectUri, returnTo, back: biz ? 'business-login' : 'login' })); } catch (e) { toast('Your browser blocked sign-in storage. Use email instead.'); return; }
+  const authRequest = { redirectUri, clientId: WIX_CLIENT_ID, codeChallenge: challenge, codeChallengeMethod: 'S256', responseMode: 'fragment', responseType: 'code', scope: 'offline_access', state, idp: idp.id };
+  const res = await wixRequest('/_api/redirects-api/v1/redirect-session', { body: { auth: { authRequest } } });
+  const url = res && res.redirectSession && res.redirectSession.fullUrl;
+  if (!url) throw new Error('Wix did not return a sign-in link.');
+  location.assign(url);
+}
 function vLogin(type, why) {
   const biz = type === 'business'; const a = S.auth || { mode: 'signin' }; const note = why || S.notice;
   const seg = `<div class="seg" aria-label="Account type"><a href="#login" class="${biz ? '' : 'on'}" ${biz ? '' : 'aria-current="page"'}>I write reviews</a><a href="#business-login" class="${biz ? 'on' : ''}" ${biz ? 'aria-current="page"' : ''}>I manage a company</a></div>`;
@@ -1428,6 +1454,7 @@ function vLogin(type, why) {
   else if (a.mode === 'signup') card = `<form class="authcard" id="signup-form" novalidate>
       <h1 style="font-size:26px">Create your account</h1>
       <p style="color:var(--muted)">${biz ? 'Claim your company page, collect reviews and keep your details up to date.' : 'Post reviews and see everything you have written in one place.'}</p>
+      ${socialBtns(biz, 'Sign up')}
       <div class="row"><div class="field"><label class="l" for="l-first">First name</label><input id="l-first" type="text" autocomplete="given-name" maxlength="40"><p class="err" id="err-l-first" hidden>Enter your first name.</p></div>
         <div class="field"><label class="l" for="l-last">Last name <span class="meta">(optional)</span></label><input id="l-last" type="text" autocomplete="family-name" maxlength="40"></div></div>
       ${emailF}
@@ -1440,6 +1467,7 @@ function vLogin(type, why) {
   else card = `<form class="authcard" id="login-form" novalidate>
       <h1 style="font-size:26px">${biz ? 'Company login' : 'Log in to write reviews'}</h1>
       <p style="color:var(--muted)">${biz ? 'See your company pages, review links and claims.' : 'Post reviews and see everything you have written in one place.'}</p>
+      ${socialBtns(biz, 'Continue')}
       ${emailF}
       <div class="field"><label class="l" for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="current-password" minlength="8"><p class="err" id="err-l-pass" hidden>Enter your password (at least 8 characters).</p></div>
       ${err}<button class="btn p lg" type="submit">Log in</button>
@@ -2025,6 +2053,7 @@ document.addEventListener('click', async e => {
   const act = a.dataset.act;
   const stop = () => { e.preventDefault(); e.stopImmediatePropagation(); };
   if (act === 'logout') { stop(); memberLogout('/').catch(() => { toast('Couldn’t log out. Please try again.'); }); return; }
+  if (act === 'idp') { stop(); a.disabled = true; startIdp(a.dataset.idp, !!a.dataset.biz).catch(err => { a.disabled = false; toast('Could not start sign-in: ' + errMsg(err)); }); return; }
   if (act === 'auth-mode') { stop(); S.auth = { mode: a.dataset.mode, error: '', email: S.auth.email || '' }; render(); const i = document.getElementById('l-email') || document.getElementById('l-code'); if (i) i.focus(); return; }
   if (act === 'reload') { stop(); location.reload(); return; }
   if (act === 'rv-report' && !S.user) { stop(); needLogin('Log in to report a review. It keeps the report button from being misused.'); return; }
@@ -2566,6 +2595,7 @@ document.addEventListener('submit', e => {
 });
 
 /* ---------- boot ---------- */
+{ let e = ''; try { e = sessionStorage.getItem('ktc_auth_err') || ''; sessionStorage.removeItem('ktc_auth_err'); } catch (x) {} if (e) S.auth = { ...S.auth, error: e }; }
 const fromCache = loadCached();
 syncUser(getMemberState());
 render();

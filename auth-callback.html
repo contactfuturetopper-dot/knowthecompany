@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Signing you in · Know The Company</title>
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#0F172A;background:#F6F7F9}
+  p{font-size:16px;color:#5B6576}
+</style>
+</head>
+<body>
+<p id="msg">Signing you in…</p>
+<script type="module">
+/* Return page for Google and Facebook sign-in. Wix sends the visitor back here with a one-time code in the
+   URL fragment. We check the state, swap the code for member tokens, store them where the site's Wix
+   client reads them, and send the visitor on. */
+import { mintTokens, setTokens } from "/js/wix/client.js";
+
+const fail = (back, text) => {
+  try { sessionStorage.setItem('ktc_auth_err', text); } catch (e) {}
+  location.replace('./#' + (back || 'login'));
+};
+async function run() {
+  const p = new URLSearchParams(location.hash.slice(1) || location.search.slice(1));
+  let saved = null;
+  try { saved = JSON.parse(sessionStorage.getItem('ktc_oauth') || 'null'); sessionStorage.removeItem('ktc_oauth'); } catch (e) {}
+  if (!saved) return fail('login', 'That sign-in link has expired. Please try again.');
+  if (p.get('error')) return fail(saved.back, 'Sign-in was cancelled or refused. You can try again or use your email.');
+  const code = p.get('code');
+  if (!code || p.get('state') !== saved.state) return fail(saved.back, 'We couldn’t confirm that sign-in. Please try again.');
+  const tokens = await mintTokens({ grantType: 'authorization_code', code, codeVerifier: saved.verifier, redirectUri: saved.redirectUri }, 'member');
+  setTokens(tokens);
+  history.replaceState(null, '', location.pathname);
+  location.replace('./#' + (saved.returnTo || 'my-reviews'));
+}
+run().catch(() => fail('login', 'Sign-in didn’t finish. Please try again or use your email.'));
+</script>
+</body>
+</html>

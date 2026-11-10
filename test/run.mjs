@@ -48,12 +48,13 @@ g.__mock = {
   updateItem: async (col, item) => { inserted.push([col + ' update', item]); return item; },
   removeItem: async (col, id) => { inserted.push([col + ' remove', id]); return null; },
   wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); return { dataItem: { data: opts.body.dataItem.data } }; },
+  WIX_CLIENT_ID: 'test-client',
   member: { member: { id: 'm1', loginEmail: 'asha@razorpay.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
 };
 let src = fs.readFileSync('../app.js', 'utf8');
 const MEMBER_MOCK = { subscribeMember: () => () => {}, getMemberState: () => globalThis.__mock.member, login: async () => ({ state: 'SUCCESS' }), register: async () => ({ state: 'EMAIL_VERIFICATION_REQUIRED' }), verifyEmail: async () => ({ state: 'SUCCESS' }), logout: async () => {} };
 globalThis.__memberMock = MEMBER_MOCK;
-src = src.replace(/import\s*\{([^}]+)\}\s*from\s*"\/js\/wix\/(items|client|member-store)\.js";?/g, (m, names, mod) => {
+src = src.replace(/import\s*\{([^}]+)\}\s*from\s*"\/js\/wix\/(items|client|member-store|config)\.js";?/g, (m, names, mod) => {
   const parts = names.split(',').map(x => x.trim()).filter(Boolean).map(x => { const [a, b] = x.split(/\s+as\s+/); return b ? `${a}: ${b}` : a; });
   const from = mod === 'member-store' ? 'globalThis.__memberMock' : 'globalThis.__mock';
   return `const { ${parts.join(', ')} } = ${from};`;
