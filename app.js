@@ -90,6 +90,19 @@ function applyData(cos, rvs, own) { indexCompanies(cos); indexReviews(rvs); appl
 const OWN_KEYS = { about: 'about', founded: 'founded', size: 'teamSize', hq: 'headquarters', web2: 'website2', services: 'services', hours: 'hours', phone: 'phone', email: 'publicEmail', address: 'address', socials: 'socials', updates: 'updates', logo: 'logo', employerPage: 'employerPage' };
 const PROF = {}, MEDIA = {};
 const ownsCo = (c, member) => !!(c && member && (c.raw.ownerMemberIds || []).includes(member));
+/* Reviewer and company accounts are kept apart. A company account (one that owns or has claimed a company)
+   can't post reviews, and an account that has posted reviews can't claim or manage a company until that
+   reviewer account is deleted. */
+const isCompanyAcct = () => !!S.user && (COS.some(c => ownsCo(c, S.user.id)) || (S.myClaims || []).some(cl => cl.status !== 'rejected'));
+const myReviewCount = () => {
+  if (!S.user) return 0;
+  const id = S.user.id; let n = 0;
+  Object.values(REVIEWS).forEach(l => l.forEach(r => { if (r.by === id) n++; }));
+  Object.values(EMP).forEach(d => ['reviews', 'interviews'].forEach(k => (d[k] || []).forEach(r => { if (r.by === id) n++; })));
+  return n + PENDING.filter(p => p.member === id).length;
+};
+const reviewBlock = () => isCompanyAcct() ? `<div class="box soft" style="gap:10px"><h2 style="font-size:20px">Company accounts can’t write reviews</h2><p>You’re signed in with a company account. To keep reviews independent, company accounts can only reply to them. To review a company as a customer or employee, log out and use a separate personal account.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn p" href="#dashboard">Open dashboard</a><button class="btn g" type="button" data-act="logout">Log out</button></div></div>` : '';
+const claimBlock = () => (S.user && !isCompanyAcct() && myReviewCount()) ? `<div class="box soft" style="gap:10px"><h2 style="font-size:20px">This account has written reviews</h2><p>Reviewer and company accounts are kept separate, so nobody can review businesses and run a company page from the same account. To claim or manage a company, first delete this reviewer account from My reviews. Then create a new account with your work email and claim your company.</p><div><a class="btn p" href="#my-reviews">Go to My reviews</a></div></div>` : '';
 const latest = list => list.sort((a, b) => String(b._updatedDate || '').localeCompare(String(a._updatedDate || '')))[0];
 function applyOwner(items) {
   for (const k of Object.keys(PROF)) delete PROF[k];
@@ -181,7 +194,9 @@ const S = { heroTab: 'companies', jobFilter: { q: '', type: '', mode: '' }, jobP
 function syncUser(s) {
   const m = s.member || {};
   S.memberLoading = !!s.loading;
+  const prev = S.user ? S.user.id : '';
   S.user = s.loggedIn ? { type: 'reviewer', id: m.id || '', email: m.loginEmail || '', name: m.displayName || m.firstName || (m.loginEmail ? m.loginEmail.split('@')[0] : 'Member') } : null;
+  if ((S.user ? S.user.id : '') !== prev) S.myClaims = undefined;
 }
 
 /* ---------- icons ---------- */
@@ -673,6 +688,7 @@ function empSummary(list) {
 }
 const displayName = () => S.user ? (S.user.name || S.user.email.split('@')[0]) : 'Your name';
 function empForm(c) {
+  const blk = reviewBlock(); if (blk) return blk;
   const e = S.emp; const words = ['Tap a star to rate', 'Very poor', 'Poor', 'OK', 'Good', 'Excellent'];
   return `<form class="box" id="emp-form" style="padding:24px;gap:18px" novalidate>
     <h2 style="font-size:22px">Review ${esc(c.name)} as an employee</h2>
@@ -752,6 +768,7 @@ function salCard(s, idx, cid) {
     <div><button class="link" type="button" data-act="del-emp" data-kind="salaries" data-id="${cid}" data-idx="${idx}">Remove my salary</button></div></article>`;
 }
 function intForm(c) {
+  const blk = reviewBlock(); if (blk) return blk;
   return `<form class="box" id="int-form" style="padding:24px;gap:18px" novalidate>
     <h2 style="font-size:22px">Share your interview at ${esc(c.name)}</h2>
     ${anonNote(c)}
@@ -792,7 +809,7 @@ function vCompany(c) {
   let panel;
   if (tab === 'overview') panel = overviewPanel(c, list, er);
   else if (tab === 'customers') panel = `
-      <form class="box" id="review-form" style="padding:24px;gap:18px" novalidate>
+      ${reviewBlock() || `<form class="box" id="review-form" style="padding:24px;gap:18px" novalidate>
         <h2 style="font-size:22px">Rate your experience with ${esc(c.name)}</h2>
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px">
           <div class="starbtns" role="group" aria-label="Star rating">${[1,2,3,4,5].map(n => `<button type="button" class="${n <= S.rating ? 'on' : ''}" data-act="rate" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" aria-pressed="${n <= S.rating}">${STAR(n <= S.rating, 26)}</button>`).join('')}</div>
@@ -804,7 +821,7 @@ function vCompany(c) {
           <div class="field" style="justify-content:flex-end"><p class="meta" style="font-size:14px;padding-bottom:12px">${S.user && S.user.type === 'reviewer' ? `Posting as <b style="color:var(--fg)">${esc(S.user.name)}</b>` : 'You’ll log in as a reviewer before posting.'}</p></div></div>
         <label class="check"><input id="r-first" type="checkbox"><span>This is my own experience. I don’t work for this company or a competitor, and nobody paid me or gave me anything to write it.</span></label><p class="err" id="err-r-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Every review is checked by our team before it appears.</p>
         <div><button class="btn p lg" type="submit">Post review</button></div>
-      </form>
+      </form>`}
       <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
         ${list.length ? rvBreakdown(list) + rvList(list, c.id) : `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg><b>Be the first to review ${esc(c.name)}</b><p>Share how they treated you. Good or bad, every review is published the same way.</p></div>`}
       </section>`;
@@ -1157,6 +1174,7 @@ function cfResults(q) {
 }
 function cfRefresh(scroll = true) { const p = document.getElementById('claim-panel'); if (p) { p.innerHTML = claimPanel(); if (scroll) document.getElementById('list-form-area').scrollIntoView({ block: 'start' }); } }
 function claimPanel() {
+  const blk = claimBlock(); if (blk) return blk;
   const d = S.listData, st = S.listStep, cf = S.cf || (S.cf = { method: 'email' });
   const labels = ['Find your company', 'Your details', 'Verify and plan'];
   const steps = typeof st === 'number' && st < 4 ? `<div class="progress" aria-label="Progress">${labels.map((l, i) => `<span class="${st === i ? 'on' : ''}">${i + 1} · ${l}</span>`).join('')}</div>` : '';
@@ -1299,7 +1317,7 @@ function vList() {
       <div class="step"><span>3</span><h3>Get verified</h3><p>We check your claim, then your Verified badge goes live and your dashboard opens.</p></div></div></section>
     <section class="wrap sec" id="list-form-area"><div class="layout">
       <div class="mainc">${panel}</div>
-      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: with a code sent to your work email, a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
+      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: through your work email, a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
         <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
     </div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
@@ -1785,7 +1803,7 @@ const legalPage = (title, crumb, intro, sections) => `<div class="wrap" style="m
   <div class="legal"><p>${intro}</p>${sections.map(([h, items]) => `<h2>${h}</h2>${Array.isArray(items) ? `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>` : `<p>${items}</p>`}`).join('')}</div></div>`;
 function vTerms() {
   return legalPage('Terms of use', 'Terms of use', `These terms apply to everyone who uses Know The Company, operated by ${esc(opName())}. By using the site you agree to them.`, [
-    ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.']],
+    ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.', 'An account that has written reviews cannot claim or manage a company. To manage a company, delete your reviewer account first and use a separate account.']],
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
     ['3. Employee reviews and interviews', ['Post only your own experience as an employee, contractor, intern or job candidate.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews, or interview experiences. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
     ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is cancelled, the profile moves to Basic when the year you paid for ends.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
@@ -1848,7 +1866,7 @@ async function loadMyClaims() {
   S.myClaims = null;
   try { const p = await queryItems('Claims', { limit: 50 }); S.myClaims = p.items; }
   catch (e) { S.myClaims = []; S.claimsErr = errMsg(e); }
-  if (location.hash === '#dashboard') render();
+  renderKeep();
 }
 const busy = (f, on) => { const b = f && f.querySelector('button[type=submit]'); if (b) b.disabled = on; };
 const checkFirst = (f, id) => { const el = f.querySelector('#' + id); const ok = !el || el.checked; const er = document.getElementById('err-' + id); if (er) er.hidden = ok; if (!ok) el.focus(); return ok; };
@@ -1873,6 +1891,7 @@ function onAuthResult(r) {
 async function submitClaim() {
   const d = S.listData, cf = S.cf || {};
   if (!S.user) { needLogin('Log in or create an account to claim or add your company.'); return; }
+  if (claimBlock()) { toast('Delete your reviewer account before claiming a company.'); render(); return; }
   const plan = (document.querySelector('input[name=plan]:checked') || {}).value || d.plan || 'basic'; d.plan = plan;
   const dom = domOf(d.web); const method = cf.method === 'docs' ? 'documents' : (cf.method || 'email');
   if (method === 'email' && !domainMatch(d.email, d.web)) { toast('Choose another way to verify, or change your email.'); return; }
@@ -2216,6 +2235,7 @@ function render() {
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
   else if (BYID[h]) { loadMedia(BYID[h]); html = vCompany(BYID[h]); }
   else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
+  if (S.user && S.myClaims === undefined) loadMyClaims();
   app.innerHTML = `<div class="view">${curText(html)}</div>`;
   document.body.classList.add('ready');
   { const fo = document.getElementById('footer-op'); if (fo) fo.textContent = OPERATOR.legalName ? ` Know The Company is run by ${OPERATOR.legalName}.` : ''; }
@@ -2429,6 +2449,7 @@ document.addEventListener('submit', e => {
     if (m) { S.returnTab = 'salaries'; location.hash = m.id; } else runSearch(q); return; }
   if (f.id === 'top-search-form' || f.id === 'hero-search-form' || f.id === 'page-search-form') { const inp = f.querySelector('input'); document.querySelectorAll('.sugg').forEach(b => b.hidden = true); runSearch(inp.value); return; }
   if (f.id === 'review-form') {
+    if (reviewBlock()) { toast('Company accounts can’t write reviews.'); return; }
     const c = BYID[location.hash.slice(1)]; const body = f['r-body'].value.trim();
     const eR = !S.rating, eB = body.length < 20;
     document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
@@ -2446,6 +2467,7 @@ document.addEventListener('submit', e => {
     const h = document.getElementById('rv-h'); if (h) h.scrollIntoView({ block: 'start' });
   }
   if (f.id === 'emp-form' || f.id === 'sal-form' || f.id === 'int-form') {
+    if (reviewBlock()) { toast('Company accounts can’t write reviews.'); return; }
     const c = BYID[location.hash.slice(1)]; if (!c || !S.user || S.user.type !== 'reviewer') return;
     const v = id => document.getElementById(id).value.trim();
     const check = list => { let first = null; list.forEach(([k, bad, foc]) => { document.getElementById('err-' + k).hidden = !bad; const el = document.getElementById(k); if (el) el.setAttribute('aria-invalid', bad ? 'true' : 'false'); if (bad && !first) first = foc || k; }); if (first) document.getElementById(first).focus(); return !first; };
@@ -2536,6 +2558,7 @@ document.addEventListener('submit', e => {
     S.cf = { method: domainMatch(d.email, d.web) ? 'email' : 'website' }; S.listStep = 2; cfRefresh();
   }
   if (f.id === 'req-form') {
+    if (claimBlock()) { toast('Delete your reviewer account before managing a company.'); return; }
     const v = id => f[id].value.trim(); const bad = { 'r-person': !v('r-person'), 'r-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('r-email')) };
     let first = null; Object.entries(bad).forEach(([k, b]) => { document.getElementById('err-' + k).hidden = !b; if (b && !first) first = k; });
     if (first) { f[first].focus(); return; }

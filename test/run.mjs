@@ -40,7 +40,7 @@ const inserted = [];
 g.__mock = {
   queryItems: async (col, q = {}) => {
     const f = (q.filters || [])[0];
-    const all = col === 'OwnerContent' ? ownerContent.filter(it => !f || it[f.field] === f.value) : col === 'Companies' ? companies : col === 'Reviews' ? reviews : col === 'Claims' ? [{ _id: 'c1', company: 'notion.com', kind: 'claim', method: 'email', status: 'pending', _createdDate: '2026-11-06T00:00:00Z' }] : [];
+    const all = col === 'OwnerContent' ? ownerContent.filter(it => !f || it[f.field] === f.value) : col === 'Companies' ? companies : col === 'Reviews' ? reviews : col === 'Claims' ? (globalThis.__mock.member.member && globalThis.__mock.member.member.id === 'm1' ? [{ _id: 'c1', company: 'notion.com', kind: 'claim', method: 'email', status: 'pending', _createdDate: '2026-11-06T00:00:00Z' }] : []) : [];
     const skip = q.skip || 0, limit = q.limit || 20; const items = all.slice(skip, skip + limit);
     return { items, hasNext: skip + limit < all.length, total: all.length };
   },
@@ -49,10 +49,10 @@ g.__mock = {
   removeItem: async (col, id) => { inserted.push([col + ' remove', id]); return null; },
   wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); return { dataItem: { data: opts.body.dataItem.data } }; },
   WIX_CLIENT_ID: 'test-client',
-  member: { member: { id: 'm1', loginEmail: 'asha@razorpay.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
+  member: { member: { id: 'm5', loginEmail: 'asha@example.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
 };
 let src = fs.readFileSync('../app.js', 'utf8');
-const MEMBER_MOCK = { subscribeMember: () => () => {}, getMemberState: () => globalThis.__mock.member, login: async () => ({ state: 'SUCCESS' }), register: async () => ({ state: 'EMAIL_VERIFICATION_REQUIRED' }), verifyEmail: async () => ({ state: 'SUCCESS' }), logout: async () => {} };
+const MEMBER_MOCK = { subscribeMember: fn => { globalThis.__memberFn = fn; return () => {}; }, getMemberState: () => globalThis.__mock.member, login: async () => ({ state: 'SUCCESS' }), register: async () => ({ state: 'EMAIL_VERIFICATION_REQUIRED' }), verifyEmail: async () => ({ state: 'SUCCESS' }), logout: async () => {} };
 globalThis.__memberMock = MEMBER_MOCK;
 src = src.replace(/import\s*\{([^}]+)\}\s*from\s*"\/js\/wix\/(items|client|member-store|config)\.js";?/g, (m, names, mod) => {
   const parts = names.split(',').map(x => x.trim()).filter(Boolean).map(x => { const [a, b] = x.split(/\s+as\s+/); return b ? `${a}: ${b}` : a; });
@@ -100,8 +100,15 @@ g.location.hash = 'add'; g.window.dispatchEvent(new g.window.HashChangeEvent('ha
 const af2 = app.querySelector('#add-form'); af2['a-name'].value = 'Razor Copy'; af2['a-web'].value = 'razorpay.com';
 af2.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60));
 report.push('after duplicate add, hash=' + g.location.hash);
-// owner dashboard: profile, employer page and replies save to OwnerContent
+// a reviewer account that has written reviews can't claim a company
 const go = async h => { g.location.hash = h; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40)); };
+await go('list');
+report.push('reviewer with reviews sees claim block: ' + app.textContent.includes('This account has written reviews') + ', claim form hidden: ' + !app.querySelector('#claim-panel form'));
+// switch to the company owner m1
+g.__mock.member = { member: { id: 'm1', loginEmail: 'owner@razorpay.com', displayName: 'Owner' }, loggedIn: true, loading: false, error: null };
+globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 60));
+await go('co-1password');
+report.push('company account review form hidden: ' + !app.querySelector('#review-form') + ', block shown: ' + app.textContent.includes('Company accounts can’t write reviews'));
 await go('co-razorpay');
 const coText = app.textContent;
 report.push('owner about shown: ' + coText.includes('Owner written about text') + ', non-owner hidden: ' + !coText.includes('NOT AN OWNER') + ', owner reply shown: ' + coText.includes('Thanks for the review'));
