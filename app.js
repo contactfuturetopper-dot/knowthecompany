@@ -423,14 +423,14 @@ const REASONS = [
   ['A complete online presence', 'One verified page with what you do, your website, team, photos and contact details, kept accurate by you.', true],
   ['Visible in AI search (GEO)', 'When people ask ChatGPT, Gemini or Perplexity about a company, the answers lean heavily on independent sources like review sites. Real reviews give them accurate information about you.', true],
   ['Found when people search your name', 'A company page can show up when people search for your name plus “reviews”, with your replies right there.', false],
-  ['More customers, through proof', 'Independent reviews persuade more than your own claims. Share your rating, badge and review cards wherever people find you.', false],
+  ['More customers, through proof', 'Independent reviews persuade more than your own claims. Share your Know The Company page and review link wherever people find you.', false],
   ['Better hires', 'Your employer page sits next to what employees say. Job seekers see the real culture, and the right people apply.', false],
   ['Easier due diligence', 'Investors, partners and enterprise clients check a company before they sign. A verified page with honest reviews and replies answers their questions early.', false],
   ['Proof you are real', 'Your Verified badge shows we confirmed you control the company’s email or website, or checked official documents. That matters when fake job offers and copycat sites are everywhere.', false],
   ['Your side of every story', 'Reply publicly to customers and employees. Calm, factual replies build more trust than a perfect score.', false],
   ['Know what to fix', 'See ratings for pay, management, service and value, and get an email for every new review.', false],
   ['Stand out in your category', 'Most startups and growing companies have no independent reviews yet. The first ones to collect them stand out.', false],
-  ['Proof you can reuse', 'Put your rating on your website, careers page, LinkedIn, proposals, pitch decks and email signature.', false],
+  ['Proof you can reuse', 'Link to your Know The Company page from your website, careers page, LinkedIn, proposals, pitch decks and email signature.', false],
   ['Fair and low-cost', 'Basic is free for your first year. Paying never changes a rating, so your rating actually means something.', false]
 ];
 const reasonCard = ([h, p, hot], i) => `<div class="reason${hot ? ' hot' : ''}"><span class="n">${String(i + 1).padStart(2, '0')}</span><h3>${h}</h3><p>${p}</p></div>`;
@@ -461,7 +461,7 @@ function vWhy() {
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Getting started</p><h2>Three steps, about ten minutes</h2></div></div><div class="steps">
       <div class="step"><span>1</span><h3>Claim your page</h3><p>Add your details and story. ${LAUNCH ? 'Free for your first year.' : 'Plans from ₹499 a year.'}</p></div>
       <div class="step"><span>2</span><h3>Invite people</h3><p>Send your review links to customers and your team. Employee reviews can stay anonymous.</p></div>
-      <div class="step"><span>3</span><h3>Share the proof</h3><p>Add your badge and review cards to your website, careers page and LinkedIn.</p></div></div></section>
+      <div class="step"><span>3</span><h3>Share your page</h3><p>Link to your page from your website, careers page and LinkedIn.</p></div></div></section>
 
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Straight answers</p><h2>Before you sign up</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${[
       ['Will this guarantee we appear in Google or AI answers?', 'No one can guarantee that, and you should be wary of anyone who does. What we do is give search engines and AI tools a complete, verified page with independent reviews, which is the kind of source they tend to rely on.'],
@@ -533,7 +533,7 @@ function vHome() {
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Simple and fair</p><h2>How it works</h2></div></div>
       <div class="steps">
         <div class="step"><span>1</span><h3>Search the company</h3><p>Type a name or website. Each page shows its reviews and whether the company is verified.</p></div>
-        <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews and interview experiences. Reviews backed by proof carry a badge.</p></div>
+        <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews and interview experiences.</p></div>
         <div class="step"><span>3</span><h3>Share your own</h3><p>Good or bad, every review is published the same way, and the company can reply.</p></div>
       </div></section>
 
@@ -866,7 +866,7 @@ let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We a
 const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '₹499 a year';
 const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
 const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
-const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Workplace insights by role, location and current or former staff','Printable QR poster to collect reviews','Priority support'];
+const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Priority support'];
 const planOf = () => (S.user && S.user.plan) || 'basic';
 const JOBS_ON = false; /* job posts: coming soon. Set to true to switch the whole jobs feature back on. */
 const FREE_JOBS = 5, EXTRA_JOB = 99, JOB_DAYS = 60;
@@ -984,9 +984,9 @@ const FAQS = [
   ['Can we see who wrote an employee review?', 'No, not when it is anonymous. Each employee chooses to post anonymously or with their name. We share an anonymous reviewer’s identity only when a valid court order requires it.'],
   ['Can we ask our employees to write reviews?', 'Yes. Share your employee review link with the whole team, not only people you expect to be positive. Don’t offer rewards for reviews or ask to see them first. Invited reviews are labelled.'],
   ['How do the Employees’ Choice awards work?', 'Winners are chosen only from employee ratings. You can’t apply or pay. A company needs at least 10 employee reviews in the year and no sign of review manipulation. The first awards are planned for 2027.'],
-  ['We already have Google reviews. Why add this?', 'Keep both. Google is great for maps and directions. Know The Company adds employee reviews next to customer reviews, proof-backed customer reviews, and a badge and review cards built to share on your website, Instagram and WhatsApp.'],
+  ['We already have Google reviews. Why add this?', 'Keep both. Google is great for maps and directions. Know The Company adds employee reviews next to customer reviews, and a page you can link to from your website, Instagram and WhatsApp.'],
   ['What if someone posts a bad review?', 'Reply publicly with your side, calmly and with facts. If it breaks our guidelines, report it and we check it. We never remove reviews just because they are negative, and an honest reply often wins more trust than a perfect score.'],
-  ['Does this help if the site is new?', 'Yes. The badge, review cards, QR poster and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
+  ['Does this help if the site is new?', 'Yes. Your page link and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
 
   ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
   LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs ₹499 a year. We remind you before your free year ends, and it continues only if you choose to renew.`] : ['How much does it cost?','₹499 a year. We remind you before each renewal, and you can stop at any time.'],
@@ -1234,7 +1234,7 @@ function vList() {
         <p class="lede">Claim your free company page. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one.</p>
         <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn gold lg" href="#list" data-act="to-form">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div>
         ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Join before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
-      <div class="lbvis" aria-label="Example of a shareable review card and badges"><span class="tagex">Example</span>
+      <div class="lbvis" aria-label="Example of how reviews appear on Know The Company"><span class="tagex">Example</span>
         <div class="rc">${starRow(4, 18)}<p class="q">“Students are motivated, and the academic team listens to teachers about the syllabus.”</p><span class="by">Anonymous employee · Maths teacher · Example Company</span><span class="brand">${TICK('var(--accent)')}Reviewed on Know The Company</span></div>
         <div class="chipline"><span>${TICK('var(--accent)')}Verified company</span><span>${STAR(true, 16)} 4.0 from customers</span><span>67% of employees recommend</span></div></div>
     </div></section>
@@ -1251,10 +1251,10 @@ function vList() {
           <div class="prev"><span>${starRow(3, 13)} <b>Anonymous employee · Sales</b></span><span>“Good team, but no clear path to promotion.”</span><span class="rep"><b>Employer reply:</b> Thanks for this. We now run reviews every 6 months with a clear growth plan.</span></div></div>
         <div class="ben">${ic2('<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M7 8l5-5 5 5"/>', 3)}<h3>Ask for reviews, the fair way</h3><p>Share one link with your team and another with customers. Employee reviews stay anonymous unless the writer chooses otherwise, and invited reviews are labelled.</p>
           <div class="prev"><span class="mini">${TICK('var(--accent)')}Employee review link</span><span class="mini">${TICK('var(--accent)')}Customer review link</span></div></div>
-        <div class="ben">${ic2('<path d="M4 19h16"/><path d="M7 15v-4M12 15V7M17 15v-7"/>', 4)}<h3>Workplace insights</h3><p>See how people rate pay, management, growth and work-life balance. With Plus, filter by role, location, and current or former staff.</p>
+        <div class="ben">${ic2('<path d="M4 19h16"/><path d="M7 15v-4M12 15V7M17 15v-7"/>', 4)}<h3>Workplace insights</h3><p>See how people rate pay, management, growth and work-life balance.</p>
           <div class="prev">${[['Work-life balance', '82%', '4.1'], ['Pay and benefits', '72%', '3.6'], ['Management', '64%', '3.2']].map(([l, w, v]) => `<div class="bar"><span>${l}</span><i style="--w:${w}"></i><b>${v}</b></div>`).join('')}<span class="meta">Example data</span></div></div>
-        <div class="ben">${ic2('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>', 5)}<h3>Proof you can share anywhere</h3><p>Put your rating on your website and careers page, share review cards on LinkedIn, Instagram and WhatsApp, and print a QR poster. Independent reviews persuade more than your own words.</p>
-          <div class="prev"><span class="mini">${TICK('var(--accent)')}4.7 on Know The Company</span><span class="meta">Website badge · review cards · QR poster</span></div></div>
+        <div class="ben">${ic2('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>', 5)}<h3>Proof you can share anywhere</h3><p>Link to your page from your website and careers page, and send your review link on LinkedIn, Instagram and WhatsApp. Independent reviews persuade more than your own words.</p>
+          <div class="prev"><span class="mini">${TICK('var(--accent)')}4.7 on Know The Company</span><span class="meta">Page link · review link</span></div></div>
         <div class="ben">${ic2('<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', 6)}<h3>Proof you're a real company</h3><p>Your Verified badge tells job seekers and customers your company checked out. That matters when fake job offers and copycat shops are everywhere.</p>
           <div class="prev"><span class="mini">${TICK('var(--accent)')}Verified company</span><span class="meta">Work email, website or documents checked</span></div></div>
       </div></section>
@@ -1264,7 +1264,7 @@ function vList() {
         <li><b>Day 1</b><span>Company page live</span><small>Claim or add your company and get your review links.</small></li>
         <li><b>Day 2</b><span>Tell your story</span><small>Add why people should work for you, your benefits and team photos.</small></li>
         <li><b>Day 3</b><span>Invite your team and customers</span><small>Share the links. Employee reviews stay anonymous unless the writer chooses otherwise.</small></li>
-        <li><b>Day 5</b><span>Reply to your first reviews</span><small>Thank people, answer questions, and share the best ones as review cards.</small></li>
+        <li><b>Day 5</b><span>Reply to your first reviews</span><small>Thank people and answer their questions.</small></li>
         <li><b>Day 7</b><span>Verified badge on</span><small>We usually finish checks within 2 working days.</small></li>
       </ol></section>
 
@@ -1674,7 +1674,7 @@ function vAbout() {
       <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then ₹499 a year. Plus costs ₹${PLUS_PRICE} a year.` : `Businesses can buy a Basic listing for ₹499 a year or Plus for ₹${PLUS_PRICE} a year.`} A listing gives a business tools, and never changes its rating.</p></div>
       <div class="step"><p class="lbl">Who we serve</p><h3>Startups and growing companies worldwide</h3><p>From a two-person studio to a 500-person scale-up, every company can be listed and reviewed.</p></div></div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><h2>What we stand for</h2></div>
-      <div style="display:flex;flex-direction:column;gap:12px">${[['Neutral','Paid and unpaid companies are reviewed and moderated the same way.'],['Transparent','We publish how many reviews we remove and why.'],['Real people','Reviewers confirm their email, and reviews backed by proof are marked.'],['Fair to companies','Every company can reply publicly and report reviews that break our rules.']].map(([a, b]) => `<div class="box" style="flex-direction:row;gap:16px;align-items:baseline;flex-wrap:wrap"><b style="min-width:150px">${a}</b><span style="color:var(--muted);flex:1 1 300px">${b}</span></div>`).join('')}</div>
+      <div style="display:flex;flex-direction:column;gap:12px">${[['Neutral','Paid and unpaid companies are reviewed and moderated the same way.'],['Transparent','We publish how many reviews we remove and why.'],['Real people','Reviewers confirm their email before they can post.'],['Fair to companies','Every company can reply publicly and report reviews that break our rules.']].map(([a, b]) => `<div class="box" style="flex-direction:row;gap:16px;align-items:baseline;flex-wrap:wrap"><b style="min-width:150px">${a}</b><span style="color:var(--muted);flex:1 1 300px">${b}</span></div>`).join('')}</div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:28px"><a class="btn p" href="#search">Find a company</a><a class="btn g" href="#contact">Contact us</a></div></section>`;
 }
 
@@ -1705,7 +1705,7 @@ const HELP = [
     ['Why was my review removed?', 'Only reviews that break our review guidelines, or that we must remove by law, are taken down. We email you the reason.']]],
   ['For employees', [
     ['Can I post an employee review anonymously?', 'Yes. You choose for each review: anonymous, or with your name. Your email is never shown, and your employer can\'t see who wrote an anonymous review.'],
-    ['How do you verify employees?', 'Log in with your work email at the company\'s website domain to get a “Work email verified” badge. On the live site you can also upload a payslip or offer letter instead. We delete it after checking.'],
+    ['How do you verify employees?', 'Log in with your work email at the company\'s website domain to get a “Work email verified” badge.'],
     ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
     ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
   ['For employers', [
