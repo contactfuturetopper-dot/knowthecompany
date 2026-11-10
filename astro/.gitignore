@@ -30,3 +30,4 @@ pnpm-debug.log*
 # copied from the repository root by scripts/sync.mjs
 public/
 src/generated/
+.wrangler/
