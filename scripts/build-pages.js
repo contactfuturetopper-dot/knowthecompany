@@ -5,7 +5,9 @@
    scripts/pages-meta.json as a `files` entry named pages-meta.json. It reads the live index.html as the
    template and the Companies and Reviews collections, then writes:
      company/<slug>.html, category/<slug>.html, blog/<slug>.html, tools/<id>.html, <page>.html,
-     pages.json (what was built, read by app.js), sitemap.xml and robots.txt.
+     pages.json (what was built, read by app.js) and ktc-sitemap.xml.
+   Wix serves its own /sitemap.xml and /robots.txt for the domain and ignores files with those names,
+   so the page sitemap is ktc-sitemap.xml: submit that address in Google Search Console at launch.
    Re-run it after companies are added, so their pages get real addresses. Until then app.js links
    them as /#co-<slug>, which still works.
 
@@ -103,7 +105,6 @@ async function buildPages() {
   }
 
   out.push({ path: 'pages.json', content: JSON.stringify(built) });
-  out.push({ path: 'sitemap.xml', content: '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + sitemap.map(p => '  <url><loc>' + ORIGIN + p + '</loc></url>').join('\n') + '\n</urlset>\n' });
-  out.push({ path: 'robots.txt', content: 'User-agent: *\nAllow: /\n\nSitemap: ' + ORIGIN + '/sitemap.xml\n' });
+  out.push({ path: 'ktc-sitemap.xml', content: '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + sitemap.map(p => '  <url><loc>' + ORIGIN + p + '</loc></url>').join('\n') + '\n</urlset>\n' });
   return { out, tpl, counts: { pages: built.page.length, tools: built.tool.length, blog: built.blog.length, companies: built.co.length, categories: built.cat.length, sitemap: sitemap.length } };
 }
