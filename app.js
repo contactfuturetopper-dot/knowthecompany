@@ -1290,12 +1290,12 @@ function vList() {
           <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
           <a class="btn p lg" href="#list" data-act="pick-plan" data-plan="plus">${LAUNCH ? `Try Plus free for ${PLUS_TRIAL_DAYS} days` : 'Choose Plus'}</a></div>
       </div>
-      <p class="meta" style="text-align:center;margin-top:16px">Job posts are coming soon. Prices in Indian rupees; cards from any country accepted.</p></section>
+      <p class="meta" style="text-align:center;margin-top:16px">Job posts are coming soon. Companies in India pay in rupees, and companies outside India pay in US dollars.</p></section>
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
     <section class="wrap sec"><div class="steps">
-      <div class="step"><span>1 · Add details</span><p>Company name, website, category, city and contact. About two minutes.</p></div>
-      <div class="step">${LAUNCH ? '<span>2 · Confirm your details</span><p>No payment for your first year. We send a code to your work email.</p>' : '<span>2 · Pay [[PB]] for the year</span><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
-      <div class="step"><span>3 · Get verified</span><p>We confirm your work email, website or documents, then your Verified badge goes live.</p></div></div></section>
+      <div class="step"><span>1</span><h3>Add details</h3><p>Company name, website, category, city and contact. About two minutes.</p></div>
+      <div class="step">${LAUNCH ? '<span>2</span><h3>Show it’s yours</h3><p>No payment for your first year. Choose how you’ll prove the company is yours: work email, website or documents.</p>' : '<span>2</span><h3>Pay [[PB]] for the year</h3><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
+      <div class="step"><span>3</span><h3>Get verified</h3><p>We check your claim, then your Verified badge goes live and your dashboard opens.</p></div></div></section>
     <section class="wrap sec" id="list-form-area"><div class="layout">
       <div class="mainc">${panel}</div>
       <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: with a code sent to your work email, a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
