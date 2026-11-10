@@ -63,6 +63,7 @@ function indexReviews(items) {
   items.sort((a, b) => String(b._createdDate || '').localeCompare(String(a._createdDate || '')));
   for (const r of items) {
     if (r._owner && owners.has(r._owner)) continue;
+    if (r.type === 'interview') continue; /* interviews section removed */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
     const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', date: monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: r.reply || '', replyFrom: c.name, verified: !!r.workEmailVerified };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
@@ -223,7 +224,7 @@ const IC = {
 const ic = (k, s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const scoreOf = c => { const l = reviewsFor(c.id), er = empData(c.id).reviews; const all = l.length ? l : er; return all.length ? avgOf(all) : 0; };
 const rBadge = c => { const s = scoreOf(c); return s ? `<span class="rbadge" aria-label="Rated ${s.toFixed(1)} out of 5">${s.toFixed(1)}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${IC.star}</svg></span>` : '<span class="rbadge none">Not rated</span>'; };
-const qStats = c => { const ed = empData(c.id); const items = [['customers', reviewsFor(c.id).length + ed.reviews.length, 'Reviews'], ['interviews', ed.interviews.length, 'Interviews']].filter(x => x[1]); if (!items.length) return ''; return `<div class="qstats" style="grid-template-columns:repeat(${items.length},1fr)">${items.map(([k, n, l]) => `<a href="#${c.id}" data-act="cotab-link" data-tab="${k}"><b>${n}</b><span>${l}</span></a>`).join('')}</div>`; };
+const qStats = c => { const ed = empData(c.id); const items = [['customers', reviewsFor(c.id).length + ed.reviews.length, 'Reviews']].filter(x => x[1]); if (!items.length) return ''; return `<div class="qstats" style="grid-template-columns:repeat(${items.length},1fr)">${items.map(([k, n, l]) => `<a href="#${c.id}" data-act="cotab-link" data-tab="${k}"><b>${n}</b><span>${l}</span></a>`).join('')}</div>`; };
 const toneOf = s => { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6 + 1; };
 const avatar = (c, size = 48, fs = 16) => { const k = toneOf(c.name); return `<span class="avatar" aria-hidden="true" style="width:${size}px;height:${size}px;font-size:${fs}px;border-radius:${Math.round(size * .28)}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; };
 function ratingLine(c) {
@@ -555,7 +556,7 @@ function vHome() {
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Simple and fair</p><h2>How it works</h2></div></div>
       <div class="steps">
         <div class="step"><span>1</span><h3>Search the company</h3><p>Type a name or website. Each page shows its reviews and whether the company is verified.</p></div>
-        <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews and interview experiences.</p></div>
+        <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews.</p></div>
         <div class="step"><span>3</span><h3>Share your own</h3><p>Good or bad, every review is published the same way, and the company can reply.</p></div>
       </div></section>
 
@@ -645,7 +646,7 @@ function reviewCard(r, idx, cid) {
     ${cid && !mine ? rvActions(cid, 'c', idx, r) : ''}
   </article>`;
 }
-const CO_TABS = [['customers', 'Customer reviews'], ['employees', 'Employee reviews'], ['interviews', 'Interviews']]; /* salaries: off until there is traffic */
+const CO_TABS = [['customers', 'Customer reviews'], ['employees', 'Employee reviews']]; /* salaries: off until there is traffic */
 const SUBS = [['pay', 'Pay & benefits'], ['culture', 'Culture'], ['mgmt', 'Management'], ['growth', 'Career growth'], ['wlb', 'Work-life balance']];
 const E_STATUS = ['Current employee', 'Former employee', 'Contractor or intern'];
 const E_YEARS = ['Less than 1 year', '1–3 years', '3–5 years', 'More than 5 years'];
@@ -677,7 +678,7 @@ function renderKeep() { const snaps = CO_FORMS.map(snapForm); render(); snaps.fo
 
 function empGate(c, what) {
   if (S.user && S.user.type === 'reviewer') return '';
-  if (S.user) return `<div class="box soft" id="emp-gate"><h2>Company accounts can't post here</h2><p>Employee reviews and interviews come from personal reviewer accounts. Log out and log in as a reviewer to share yours.</p></div>`;
+  if (S.user) return `<div class="box soft" id="emp-gate"><h2>Company accounts can't post here</h2><p>Employee reviews come from personal reviewer accounts. Log out and log in as a reviewer to share yours.</p></div>`;
   return `<div class="box soft" id="emp-gate"><h2>Log in to ${what} anonymously</h2><p>A quick login stops fake posts. Your name and email are never shown, and ${esc(c.name)} can't see who wrote it.</p><div><button class="btn p" type="button" id="gate-login" data-act="gate-login">Log in to continue</button></div></div>`;
 }
 function anonNote(c) {
@@ -833,7 +834,7 @@ function vCompany(c) {
       </section>`;
   else if (tab === 'employees') panel = (isVerifiedCo(c) ? workBox(c) : '') + empPanel(c, er);
   else if (tab === 'salaries') panel = salPanel(c, ed.salaries);
-  else panel = intPanel(c, ed.interviews);
+  else panel = '';
   const P = cprof(c); const ver = isVerifiedCo(c), plus = ver && coPlan(c) === 'plus';
   const rTile = (cls, label, l, extra) => `<div class="r ${cls}"><small>${label}</small>${l.length ? `<b>${avgOf(l).toFixed(1)}</b>${starRow(+avgOf(l).toFixed(1), 15)}<span>${nRev(l.length)}${extra ? ' · ' + extra : ''}</span>` : `<b class="none">–</b><span>No reviews yet</span>`}</div>`;
   return `<section class="cohdr"><div class="wrap">${crumbs([['Home','#home'],[c.cat,'#' + c.catId],[c.name]])}
@@ -860,7 +861,7 @@ function vCompany(c) {
   <div class="wrap" style="padding-top:32px"><div class="layout">
     <div class="mainc" style="gap:24px" role="tabpanel" id="co-panel" aria-labelledby="tab-${tab}">${panel}</div>
     <aside class="side">
-      ${tab === 'employees' || tab === 'interviews' ? `<div class="box soft"><h2>Your identity stays private</h2><p>Employees choose whether to post anonymously or with their name. Emails are never shown, and ${esc(c.name)} can't see who wrote an anonymous review. We share a reviewer's identity only when a valid court order requires it.</p></div>` : ''}
+      ${tab === 'employees' ? `<div class="box soft"><h2>Your identity stays private</h2><p>Employees choose whether to post anonymously or with their name. Emails are never shown, and ${esc(c.name)} can't see who wrote an anonymous review. We share a reviewer's identity only when a valid court order requires it.</p></div>` : ''}
       ${coSide(c)}
       ${isVerifiedCo(c) ? '' : `<div class="box"><h2>Company details</h2><div class="kv"><span>Website</span><span>${esc(c.web)}</span></div><div class="kv"><span>Category</span><span>${esc(c.cat)}</span></div><div class="kv"><span>Country</span><span>${esc(c.country)}</span></div></div>`}
       ${isVerifiedCo(c) && coPlan(c) === 'plus' ? '' : `<div class="box"><h2>More in ${esc(c.cat)}</h2>${others.map(o => `<a href="#${o.id}" style="font-weight:600;text-decoration:none">${esc(o.name)}</a>`).join('')}<a href="#${c.catId}" style="font-size:14px">See all ${k.items.length}</a></div>`}
@@ -947,7 +948,7 @@ function vJobsSoon() {
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px"><a class="btn gold lg" href="#search">Review a company you worked at</a><a class="btn w lg" href="#list">List your company</a></div></div></section>
     <section class="wrap sec"><div class="steps">
       <div class="step"><span>1</span><h3>Verified employers only</h3><p>Only verified companies will be able to post jobs.</p></div>
-      <div class="step"><span>2</span><h3>Reviews beside every job</h3><p>See the company's employee reviews and interview experiences before you apply.</p></div>
+      <div class="step"><span>2</span><h3>Reviews beside every job</h3><p>See the company's employee reviews before you apply.</p></div>
       <div class="step"><span>3</span><h3>Never pay to apply</h3><p>Any post that asks applicants for money will be removed.</p></div></div></section>`;
 }
 function vJobs() {
@@ -1118,7 +1119,7 @@ function vRemovals() {
       <section class="box"><h2>When we remove a review</h2><p>Only when it breaks our <a href="#guidelines">review guidelines</a>, or when a court or government order requires it. Companies can't remove reviews, and paying never changes a rating. Negative reviews are never removed for being negative.</p></section>
       <section class="box"><div class="toolbar"><h2>This quarter</h2><span class="meta">Updated monthly</span></div>
         <table class="rtable"><thead><tr><th>Reason</th><th>Reviews removed</th></tr></thead><tbody>${cats.map(x => `<tr><td>${esc(x)}</td><td>${R[x] || 0}</td></tr>`).join('')}</tbody></table>
-        <p class="meta">Counts include customer reviews, employee reviews and interview experiences. Reviews that were reported but stayed up aren't counted.</p></section>
+        <p class="meta">Counts include customer reviews and employee reviews. Reviews that were reported but stayed up aren't counted.</p></section>
       <section class="box"><h2>Companies caught manipulating reviews</h2><p>If we find that a company bought reviews, wrote its own or pressured people to remove them, we remove the affected reviews and show a warning on its page for at least 90 days. It looks like this:</p>
         ${warnBan({ name: 'Example Company' }, { date: '1 October', text: 'offered discounts in exchange for 5-star reviews.' }).replace('<div class="wrap">', '<div>')}</section>
     </div></div>`;
@@ -1427,7 +1428,7 @@ function vGuidelines() {
       <section class="box"><h2>How we list companies</h2><p>Well-known startups are added from public information (name, website, category, country) so people can review them. Other companies are added by their owners, or by reviewers who have worked with them. These profiles are marked “Unclaimed” and show no rating until real customers review them. A listed company is never presented as a partner or customer of Know The Company.</p></section>
       <section class="box"><h2>Writing a review</h2><p>Write about your own experience in the last 12 months. No hate speech, personal data about staff, or claims of crime without evidence. Reviews in exchange for money, discounts or gifts are not allowed.</p></section>
       <section class="box"><h2>Before a review goes live</h2><p>A person reads every review before it is published. We aim to decide within 48 hours. If a review breaks these guidelines we don't publish it.</p></section>
-      <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern, or your own interview as a candidate. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews, or interview experiences. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
+      <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews, or interview experiences. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
       <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. When they invite reviews, they must invite all their customers, not only the happy ones. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
       <section class="box"><h2>When we remove a review</h2><p>Only when it breaks these guidelines or we receive a valid legal order. Every removal is counted in our public <a href="#removals">removals report</a>.</p></section>
     </div></div>`;
@@ -1810,7 +1811,7 @@ function vTerms() {
   return legalPage('Terms of use', 'Terms of use', `These terms apply to everyone who uses Know The Company, operated by ${esc(opName())}. By using the site you agree to them.`, [
     ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.', 'An account that has written reviews cannot claim or manage a company. To manage a company, delete your reviewer account first and use a separate account.', 'Reviews written by an account that manages a company are not shown and do not count towards any rating, including reviews written before the account became a company account.']],
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
-    ['3. Employee reviews and interviews', ['Post only your own experience as an employee, contractor, intern or job candidate.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews, or interview experiences. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
+    ['3. Employee reviews', ['Post only your own experience as an employee, contractor or intern.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews, or interview experiences. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
     ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is cancelled, the profile moves to Basic when the year you paid for ends.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
@@ -1833,7 +1834,7 @@ function vPricing() {
   return `<div class="wrap" style="max-width:900px">${crumbs([['Home','#home'],['Pricing']])}
     <div class="pagehead"><h1>Pricing</h1><p>Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating.</p><div style="margin-top:6px">${curSwitch()}</div></div>
     <div style="display:flex;flex-direction:column;gap:16px">
-      ${plan('For reviewers', 'Free', 'Always free. No payment is ever asked for.', ['Read every review', 'Write customer, employee and interview reviews', 'Use all free career and company tools'])}
+      ${plan('For reviewers', 'Free', 'Always free. No payment is ever asked for.', ['Read every review', 'Write customer and employee reviews', 'Use all free career and company tools'])}
       ${plan('Basic listing', '[[PB]] a year', LAUNCH ? `Free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year by autopay. Cancel any time.` : 'Billed yearly by autopay. Cancel any time.', BASIC_PERKS)}
       ${plan('Plus listing', '[[PP]] a year', LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. You are charged only if you set up autopay, and you can cancel any time.` : 'Billed yearly by autopay. Cancel any time.', ['Everything in Basic', ...PLUS_PERKS])}
       ${JOBS_ON ? plan('Extra job post', `₹${EXTRA_JOB} a post`, `${FREE_JOBS} posts a month are included with every listing. Each post stays live for ${JOB_DAYS} days.`, ['For real vacancies only', 'Employers must never charge applicants a fee']) : ''}

@@ -77,7 +77,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW'].filter(w => text.includes(w));
+  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
 }
 // a few interactions: company tabs and a customer review submission
