@@ -30,15 +30,23 @@ const reviews = [
   { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
   { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
 ];
+const ownerContent = [
+  { _id: 'oc1', _owner: 'm1', _updatedDate: '2026-11-07T00:00:00Z', company: 'razorpay.com', kind: 'profile', data: { about: 'Owner written about text for the profile page.', hours: 'Mon to Fri' } },
+  { _id: 'oc2', _owner: 'm9', _updatedDate: '2026-11-08T00:00:00Z', company: 'razorpay.com', kind: 'profile', data: { about: 'NOT AN OWNER: this must never show.' } },
+  { _id: 'oc3', _owner: 'm1', company: 'razorpay.com', kind: 'reply', review: 'r1', text: 'Thanks for the review, glad it helped.' },
+  { _id: 'oc4', _owner: 'm1', _createdDate: '2026-11-07T00:00:00Z', company: 'razorpay.com', kind: 'photo', src: 'data:image/jpeg;base64,AAAA' }
+];
 const inserted = [];
 g.__mock = {
   queryItems: async (col, q = {}) => {
-    const all = col === 'Companies' ? companies : col === 'Reviews' ? reviews : col === 'Claims' ? [{ _id: 'c1', company: 'notion.com', kind: 'claim', method: 'email', status: 'pending', _createdDate: '2026-11-06T00:00:00Z' }] : [];
+    const f = (q.filters || [])[0];
+    const all = col === 'OwnerContent' ? ownerContent.filter(it => !f || it[f.field] === f.value) : col === 'Companies' ? companies : col === 'Reviews' ? reviews : col === 'Claims' ? [{ _id: 'c1', company: 'notion.com', kind: 'claim', method: 'email', status: 'pending', _createdDate: '2026-11-06T00:00:00Z' }] : [];
     const skip = q.skip || 0, limit = q.limit || 20; const items = all.slice(skip, skip + limit);
     return { items, hasNext: skip + limit < all.length, total: all.length };
   },
   insertItem: async (col, data) => { inserted.push([col, data]); return { _id: 'new', ...data }; },
-  removeItem: async () => null,
+  updateItem: async (col, item) => { inserted.push([col + ' update', item]); return item; },
+  removeItem: async (col, id) => { inserted.push([col + ' remove', id]); return null; },
   wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); return { dataItem: { data: opts.body.dataItem.data } }; },
   member: { member: { id: 'm1', loginEmail: 'asha@razorpay.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
 };
@@ -91,6 +99,23 @@ g.location.hash = 'add'; g.window.dispatchEvent(new g.window.HashChangeEvent('ha
 const af2 = app.querySelector('#add-form'); af2['a-name'].value = 'Razor Copy'; af2['a-web'].value = 'razorpay.com';
 af2.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60));
 report.push('after duplicate add, hash=' + g.location.hash);
+// owner dashboard: profile, employer page and replies save to OwnerContent
+const go = async h => { g.location.hash = h; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40)); };
+await go('co-razorpay');
+const coText = app.textContent;
+report.push('owner about shown: ' + coText.includes('Owner written about text') + ', non-owner hidden: ' + !coText.includes('NOT AN OWNER') + ', owner reply shown: ' + coText.includes('Thanks for the review'));
+click('[data-act="cotab"][data-tab="customers"]'); await new Promise(r => setTimeout(r, 40)); report.push('reply on customers tab: ' + app.textContent.includes('Thanks for the review'));
+await go('dashboard');
+report.push('dashboard tabs: ' + app.querySelectorAll('[data-act="dash-tab"]').length);
+click('[data-act="dash-tab"][data-tab="page"]'); await new Promise(r => setTimeout(r, 40));
+const pf = app.querySelector('#cprof-form'); report.push('company page form: ' + !!pf + ', photos shown: ' + app.querySelectorAll('.gallery img').length);
+if (pf) { pf.querySelector('#cp-about').value = 'We build payment tools for small and growing businesses across India and abroad.'; pf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
+click('[data-act="dash-tab"][data-tab="employer"]'); await new Promise(r => setTimeout(r, 40));
+const ef = app.querySelector('#employer-form'); report.push('employer form: ' + !!ef);
+if (ef) { ef.querySelector('#ep-why').value = 'Small senior team, real ownership, and fair hours for everyone here.'; ef.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
+click('[data-act="dash-tab"][data-tab="reviews"]'); await new Promise(r => setTimeout(r, 40));
+const rf = app.querySelector('form.oreply'); report.push('reply forms: ' + app.querySelectorAll('form.oreply').length);
+if (rf) { rf.querySelector('textarea').value = 'Thank you, we have shared this with the team.'; rf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
 console.log(report.join('\n'));
 console.log('\nWRITES:'); inserted.forEach(([c, d]) => console.log(' ', c, JSON.stringify(d).slice(0, 220)));
 console.log('\nERRORS:', errors.length ? errors.join('\n') : 'none');

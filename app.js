@@ -1,4 +1,4 @@
-import { queryItems, insertItem, removeItem } from "/js/wix/items.js";
+import { queryItems, insertItem, updateItem, removeItem } from "/js/wix/items.js";
 import { wixRequest } from "/js/wix/client.js";
 import { subscribeMember, getMemberState, login as memberLogin, register as memberRegister, verifyEmail as memberVerify, logout as memberLogout } from "/js/wix/member-store.js";
 
@@ -63,10 +63,10 @@ function indexReviews(items) {
     else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: !!r.proofChecked, invited: !!r.invited });
   }
 }
-async function fetchAll(collectionId) {
+async function fetchAll(collectionId, filters) {
   const out = []; let skip = 0;
   for (let i = 0; i < 20; i++) {
-    const page = await queryItems(collectionId, { limit: 1000, skip });
+    const page = await queryItems(collectionId, filters ? { limit: 1000, skip, filters } : { limit: 1000, skip });
     out.push(...page.items);
     if (!page.hasNext || !page.items.length) break;
     skip += page.items.length;
@@ -79,19 +79,93 @@ let LOADED = false, LOAD_ERR = '';
 const DATA_KEY = 'ktc_data_v1';
 let DATA_SIG = '';
 const sigOf = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) >>> 0; return h.toString(36) + ':' + str.length; };
-function applyData(cos, rvs) { indexCompanies(cos); indexReviews(rvs); LOADED = true; LOAD_ERR = ''; }
+function applyData(cos, rvs, own) { indexCompanies(cos); indexReviews(rvs); applyOwner(own || []); LOADED = true; LOAD_ERR = ''; }
+
+/* ---------- owner-written content (collection "OwnerContent") ----------
+   Verified owners write their own profile, employer page, photos, cover and replies as items in OwnerContent.
+   Any member can add an item there, and only its author can change or remove it. An item counts only when its
+   author is listed in the company's ownerMemberIds, which only the site admin can set, so nobody can edit a
+   company they don't own, and ratings, plans and verification stay admin-only in Companies. */
+const OWN_KEYS = { about: 'about', founded: 'founded', size: 'teamSize', hq: 'headquarters', web2: 'website2', services: 'services', hours: 'hours', phone: 'phone', email: 'publicEmail', address: 'address', socials: 'socials', updates: 'updates', logo: 'logo', employerPage: 'employerPage' };
+const PROF = {}, MEDIA = {};
+const ownsCo = (c, member) => !!(c && member && (c.raw.ownerMemberIds || []).includes(member));
+const latest = list => list.sort((a, b) => String(b._updatedDate || '').localeCompare(String(a._updatedDate || '')))[0];
+function applyOwner(items) {
+  for (const k of Object.keys(PROF)) delete PROF[k];
+  for (const k of Object.keys(MEDIA)) delete MEDIA[k];
+  const prof = {};
+  for (const it of items) {
+    const c = BYWID[it.company]; if (!c || !ownsCo(c, it._owner)) continue;
+    if (it.kind === 'profile') (prof[c.wid] = prof[c.wid] || []).push(it);
+    else if (it.kind === 'reply' && it.text) {
+      const pools = [REVIEWS[c.id] || [], empData(c.id).reviews];
+      for (const pool of pools) { const r = pool.find(x => x.wid === it.review); if (r && !r.reply) { r.reply = it.text; r.replyWid = it._id; } }
+    }
+  }
+  for (const [wid, list] of Object.entries(prof)) {
+    const it = latest(list), c = BYWID[wid], d = it.data || {};
+    PROF[wid] = { id: it._id, owner: it._owner };
+    for (const [k, raw] of Object.entries(OWN_KEYS)) if (d[k] !== undefined) c.raw[raw] = d[k];
+  }
+}
+/* Photos and the cover banner are larger, so they load only when a company page or the dashboard needs them. */
+async function loadMedia(c) {
+  if (!c || MEDIA[c.wid] || !(c.raw.ownerMemberIds || []).length) return;
+  MEDIA[c.wid] = { loading: true };
+  try {
+    const items = (await fetchAll('OwnerContent', [{ field: 'company', op: 'eq', value: c.wid }])).filter(it => ownsCo(c, it._owner));
+    const photos = items.filter(it => it.kind === 'photo' && it.src).sort((a, b) => String(a._createdDate || '').localeCompare(String(b._createdDate || '')));
+    const cover = latest(items.filter(it => it.kind === 'cover' && it.src));
+    c.raw.photos = photos.map(it => ({ src: it.src, wid: it._id, by: it._owner }));
+    c.raw.cover = cover ? cover.src : ''; c.raw._coverWid = cover ? cover._id : '';
+    MEDIA[c.wid] = { loaded: true };
+    renderKeep();
+  } catch (e) { MEDIA[c.wid] = { error: true }; }
+}
+/* Saves an owner's changes: shows them straight away, then writes them to Wix. */
+function saveProf(id, own) {
+  const c = BYID[id]; if (!c || !S.user) return false;
+  const before = { photos: (c.raw.photos || []).slice(), coverWid: c.raw._coverWid || '' };
+  const profChanged = Object.keys(own).some(k => OWN_KEYS[k]);
+  for (const [k, raw] of Object.entries(OWN_KEYS)) if (own[k] !== undefined) c.raw[raw] = own[k];
+  if (own.photos !== undefined) c.raw.photos = own.photos;
+  if (own.cover !== undefined) c.raw.cover = own.cover;
+  persistOwn(c, own, before, profChanged).catch(e => { toast('Could not save to the site: ' + errMsg(e)); });
+  return true;
+}
+async function persistOwn(c, own, before, profChanged) {
+  const me = S.user.id;
+  if (profChanged) {
+    const data = {}; for (const [k, raw] of Object.entries(OWN_KEYS)) if (c.raw[raw] !== undefined && c.raw[raw] !== null) data[k] = c.raw[raw];
+    const p = PROF[c.wid];
+    if (p && p.owner === me) await updateItem('OwnerContent', { _id: p.id, company: c.wid, kind: 'profile', data });
+    else { const it = await insertItem('OwnerContent', { company: c.wid, kind: 'profile', data }); PROF[c.wid] = { id: it._id, owner: me }; }
+  }
+  if (own.photos !== undefined) {
+    const keep = new Set(own.photos.map(x => x.wid).filter(Boolean));
+    for (const x of before.photos) if (x.wid && !keep.has(x.wid)) await removeItem('OwnerContent', x.wid);
+    for (const x of own.photos) if (!x.wid && x.src) { const it = await insertItem('OwnerContent', { company: c.wid, kind: 'photo', src: x.src }); x.wid = it._id; x.by = me; }
+  }
+  if (own.cover !== undefined) {
+    if (before.coverWid) await removeItem('OwnerContent', before.coverWid);
+    c.raw._coverWid = '';
+    if (own.cover) { const it = await insertItem('OwnerContent', { company: c.wid, kind: 'cover', src: own.cover }); c.raw._coverWid = it._id; }
+  }
+}
 function loadCached() {
   const c = store.get(DATA_KEY, null);
   if (!c || !Array.isArray(c.cos) || !Array.isArray(c.rvs) || Date.now() - (c.t || 0) > 7 * 864e5) return false;
-  try { applyData(c.cos, c.rvs); DATA_SIG = c.sig || ''; return true; } catch (e) { return false; }
+  try { applyData(c.cos, c.rvs, c.own); DATA_SIG = c.sig || ''; return true; } catch (e) { return false; }
 }
 /* Resolves to true when what is on screen should be redrawn. */
 async function loadData() {
   try {
-    const [cos, rvs] = await Promise.all([fetchAll('Companies'), fetchAll('Reviews')]);
-    const json = JSON.stringify({ cos, rvs }), sig = sigOf(json);
+    const ownQ = kind => fetchAll('OwnerContent', [{ field: 'kind', op: 'eq', value: kind }]).catch(() => []);
+    const [cos, rvs, profs, replies] = await Promise.all([fetchAll('Companies'), fetchAll('Reviews'), ownQ('profile'), ownQ('reply')]);
+    const own = profs.concat(replies);
+    const json = JSON.stringify({ cos, rvs, own }), sig = sigOf(json);
     const changed = sig !== DATA_SIG || !LOADED;
-    if (changed) applyData(cos, rvs);
+    if (changed) applyData(cos, rvs, own);
     DATA_SIG = sig;
     try { localStorage.setItem(DATA_KEY, '{"t":' + Date.now() + ',"sig":"' + sig + '",' + json.slice(1)); } catch (e) {}
     return changed;
@@ -927,7 +1001,6 @@ const FAQS = [
 const cprof = c => { const r = (c && c.raw) || {};
   return { logo: r.logo, cover: r.cover, about: r.about, founded: r.founded, size: r.teamSize, hq: r.headquarters, web2: r.website2, services: r.services || [], hours: r.hours, phone: r.phone, email: r.publicEmail, address: r.address, socials: r.socials || [],
     photos: (r.photos || []).map(x => typeof x === 'string' ? { src: x } : x).filter(x => x && x.src), updates: (r.updates || []).filter(u => u && u.text) }; };
-const saveProf = () => false;
 const icn = (k, s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k] || ICONS.layers}</svg>`;
 const MAIL_I = '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/>';
 function coLogo(c, size) { const P = CLAIMS[c.id] ? cprof(c) : {}; const k = toneOf(c.name);
@@ -968,18 +1041,18 @@ function companyPagePanel() {
       <p>Show your team, office, work and events. The first photo appears largest on your page.</p>
       ${P.photos.length ? `<div class="gallery edit">${P.photos.map((x, i) => `<figure>${x.src ? `<img src="${x.src}" alt="Photo ${i + 1}">` : `<div class="ph" style="height:100%">${esc(x.cap || 'Photo')}<small>Placeholder</small></div>`}<button class="del" type="button" data-act="cp-del-photo" data-i="${i}">Remove</button></figure>`).join('')}</div>` : ''}
       <div>${real < 10 ? '<label class="btn o upload">Add photos<input type="file" accept="image/*" multiple data-up="photos"></label>' : '<span class="meta">Remove a photo to add another.</span>'}</div>
-      <p class="meta">JPG or PNG. Photos are resized automatically. In this prototype they're saved only in your browser.</p></section>
+      <p class="meta">JPG or PNG. Photos are resized automatically. They go live on your page as soon as you add them.</p></section>
     <form class="box" id="cp-upd-form" style="gap:14px" novalidate><div class="toolbar"><h2 style="font-size:19px">Post an update</h2><span class="pill ${thisMonth >= 2 ? 'un' : 'ok'}">${thisMonth} of 2 this month</span></div>
       <p>Share news, offers or new services. Your latest updates show on your Overview tab.</p>
       <div class="field"><label class="l" for="cp-upd">Update</label><textarea id="cp-upd" rows="3" maxlength="400" placeholder="A new batch starts on 1 December…"></textarea><p class="err" id="err-cp-upd" hidden></p></div>
       <div><button class="btn p" type="submit" ${thisMonth >= 2 ? 'disabled' : ''}>Post update</button></div>
       ${P.updates.length ? `<div style="display:flex;flex-direction:column;gap:12px">${P.updates.map((u, i) => `<div class="upd"><span class="meta">${esc(u.date)}</span><p style="color:var(--fg)">${esc(u.text)}</p><div><button class="link" type="button" data-act="cp-del-upd" data-i="${i}">Delete</button></div></div>`).join('')}</div>` : ''}</form>`
-    : `<section class="box soft"><h2>Photos, cover banner, contact buttons and updates</h2><p>These come with Plus. Your logo, about text, key facts and opening hours are included in Basic.</p><div><button class="btn p" type="button" data-act="go-plus">See Plus</button></div></section>`}`;
+    : `<section class="box soft"><h2>Photos, cover banner, contact buttons and updates</h2><p>These come with Plus. Your logo, about text, key facts and opening hours are included in Basic.</p><div><a class="btn p" href="#pricing">See Plus</a></div></section>`}`;
 }
 function shrinkImg(file, max) {
   return new Promise((res, rej) => { const fr = new FileReader(); fr.onerror = rej; fr.onload = () => { const im = new Image(); im.onerror = rej; im.onload = () => {
     const k = Math.min(1, max / Math.max(im.width, im.height)); const cv = document.createElement('canvas'); cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
-    const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height); res(cv.toDataURL('image/jpeg', 0.8)); }; im.src = fr.result; }; fr.readAsDataURL(file); });
+    const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height); let q = 0.8, url = cv.toDataURL('image/jpeg', q); while (url.length > 420000 && q > 0.35) { q -= 0.1; url = cv.toDataURL('image/jpeg', q); } res(url); }; im.src = fr.result; }; fr.readAsDataURL(file); });
 }
 const isVerifiedCo = c => !!(c && c.raw && c.raw.claimStatus === 'verified');
 const ICO_THUMB = '<path d="M7 11v9H4v-9z"/><path d="M7 11l4-7a2 2 0 0 1 3 2l-1 4h5.5a2 2 0 0 1 2 2.4l-1.3 6A2 2 0 0 1 17.2 20H7"/>';
@@ -1289,7 +1362,7 @@ function vDashboard() {
       <div class="stats">${stats.map(([v, l, n]) => `<div class="stat"><span>${l}</span><b>${v}</b><small>${n}</small></div>`).join('')}</div>
       ${linkRow('Customer review link', 'cl-' + c.id, base + '#invite-' + c.id)}
       ${linkRow('Employee review link', 'el-' + c.id, base + '#invite-team-' + c.id)}
-      <p class="meta">Send each link to everyone, not only happy customers or staff. To reply to a review, or to update your page details, logo, photos or employer page, email <b>knowthecompanysupport@gmail.com</b> from your verified address and we’ll post it exactly as you write it.</p></section>`; };
+      <p class="meta">Send each link to everyone, not only happy customers or staff. Edit your page, photos and employer page, and reply to reviews, from the tabs above. Changes go live straight away.</p></section>`; };
   const KIND = { claim: 'Claim', new: 'New company and claim', access: 'Access request' };
   const STATUS = { pending: ['un', 'Being checked'], verified: ['ok', 'Verified'], rejected: ['cat', 'Not approved'] };
   const claims = S.myClaims;
@@ -1298,9 +1371,16 @@ function vDashboard() {
         return `<div class="cfrow">${c ? avatar(c, 40, 14) : ''}<div class="t"><b>${esc(c ? c.name : 'Company')}</b><small>${esc(KIND[cl.kind] || 'Claim')}${cl.method ? ' · ' + esc(cl.method === 'documents' ? 'documents' : cl.method === 'website' ? 'website check' : 'work email') : ''}${cl._createdDate ? ' · sent ' + esc(fmtDay(String(cl._createdDate).slice(0, 10))) : ''}</small></div><span class="pill ${k}">${t}</span></div>`; }).join('')
     : '';
   const empty = !mine.length && claims && !claims.length;
+  const sel = mine.find(c => c.id === S.dashCo) || mine[0];
+  if (sel) { S.user.coId = sel.id; S.user.plan = coPlan(sel); loadMedia(sel); }
+  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies']];
+  const tab = TABS.some(t => t[0] === S.dashTab) ? S.dashTab : 'overview';
+  const pick = mine.length > 1 ? `<div class="field" style="max-width:360px"><label class="l" for="dash-co">Company</label><select id="dash-co" data-dashco>${mine.map(c => `<option value="${c.id}" ${c === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : '';
+  const tabs = sel ? `<nav style="display:flex;flex-wrap:wrap;gap:8px" aria-label="Dashboard sections">${TABS.map(([k, l]) => `<a class="btn ${k === tab ? 'p' : 'g'}" href="#dashboard" data-act="dash-tab" data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>` : '';
+  const body = !sel ? '' : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
   return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
     <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><a class="btn o" href="#list">Claim or add a company</a></div>
-    ${mine.map(coCard).join('')}
+    ${pick}${tabs}${body}
     ${empty ? `<div class="empty"><b>You haven’t claimed a company yet</b><p>Claim your company page free, verify it, and get links to collect reviews from customers and your team.</p><a class="btn p" href="#list">Claim your company page</a></div>`
       : `<section class="box" style="gap:10px"><h2>Your claims and requests</h2>${claimList || '<p class="meta">None yet.</p>'}${S.claimsErr ? `<p class="err">${esc(S.claimsErr)}</p>` : ''}</section>`}
   </div></div></div>`;
@@ -2086,7 +2166,7 @@ function render() {
   else if (h === 'removals') html = vRemovals();
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
-  else if (BYID[h]) html = vCompany(BYID[h]);
+  else if (BYID[h]) { loadMedia(BYID[h]); html = vCompany(BYID[h]); }
   else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
   app.innerHTML = `<div class="view">${html}</div>`;
   document.body.classList.add('ready');
@@ -2179,9 +2259,9 @@ document.addEventListener('click', e => {
   if (act === 'inv-rate') { const id = a.dataset.id; S.draft = { cid: id, rating: +a.dataset.n, title: '', body: '', date: '' }; S.invitedFor = id; S.returnTab = 'customers'; S.scrollTo = 'review-form'; location.hash = id; return; }
   if (act === 'inv-go') { e.preventDefault(); S.invitedFor = a.dataset.id; S.returnTab = a.dataset.tab; S.scrollTo = 'emp-form'; location.hash = a.dataset.id; return; }
   if (act === 'cookie') { store.set('ktc_consent', { analytics: a.dataset.v === 'all', at: todayISO() }); document.getElementById('cookie').hidden = true; toast(a.dataset.v === 'all' ? 'Thanks. Analytics is on.' : 'Only essential storage is used.'); return; }
-  if (act === 'cp-del' && S.user && S.user.coId) { const own = store.get('tn_cprof_' + S.user.coId, {}); own[a.dataset.k] = ''; saveProf(S.user.coId, own); render(); toast('Removed'); return; }
-  if (act === 'cp-del-photo' && S.user && S.user.coId) { const id = S.user.coId, own = store.get('tn_cprof_' + id, {}); own.photos = cprof(BYID[id]).photos.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Photo removed'); return; }
-  if (act === 'cp-del-upd' && S.user && S.user.coId) { const id = S.user.coId, own = store.get('tn_cprof_' + id, {}); own.updates = cprof(BYID[id]).updates.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Update deleted'); return; }
+  if (act === 'cp-del' && S.user && S.user.coId) { const own = {}; own[a.dataset.k] = ''; saveProf(S.user.coId, own); render(); toast('Removed'); return; }
+  if (act === 'cp-del-photo' && S.user && S.user.coId) { const id = S.user.coId, own = {}; own.photos = cprof(BYID[id]).photos.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Photo removed'); return; }
+  if (act === 'cp-del-upd' && S.user && S.user.coId) { const id = S.user.coId, own = {}; own.updates = cprof(BYID[id]).updates.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Update deleted'); return; }
   if (act === 'open-picker') { closeModals(); openPicker(a.dataset.as); return; }
   if (act === 'open-menu') { openMenu(); return; }
   if (act === 'close-modal') { closeModals(); return; }
@@ -2268,11 +2348,12 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   if (e.target.matches && e.target.matches('[data-rvsort]')) { S.rvSort = e.target.value; renderKeep(); return; }
   if (e.target.matches && e.target.matches('[data-ersort]')) { S.erSort = e.target.value; renderKeep(); return; }
+  if (e.target.matches && e.target.matches('[data-dashco]')) { S.dashCo = e.target.value; render(); return; }
   const inp = e.target; if (!inp.matches || !inp.matches('input[type=file][data-up]') || !S.user || !S.user.coId) return;
   const kind = inp.dataset.up, id = S.user.coId; const P = cprof(BYID[id]); const room = 10 - P.photos.filter(x => x.src).length;
   const files = [...inp.files].filter(f => /^image\//.test(f.type)).slice(0, kind === 'photos' ? Math.max(0, room) : 1); if (!files.length) { toast('Choose a JPG or PNG image.'); return; }
   Promise.all(files.map(f => shrinkImg(f, kind === 'logo' ? 320 : kind === 'cover' ? 1600 : 1100))).then(urls => {
-    const own = store.get('tn_cprof_' + id, {});
+    const own = {};
     if (kind === 'photos') own.photos = P.photos.filter(x => x.src).concat(urls.map(src => ({ src }))).slice(0, 10); else own[kind] = urls[0];
     if (!saveProf(id, own)) { toast('That image is too large for this prototype. Try a smaller one.'); return; }
     render(); toast(kind === 'photos' ? `${urls.length} photo${urls.length === 1 ? '' : 's'} added` : kind === 'logo' ? 'Logo updated' : 'Cover updated');
@@ -2368,7 +2449,7 @@ document.addEventListener('submit', e => {
     const why = f.querySelector('#ep-why').value.trim();
     const bad = why.length < 40; document.getElementById('err-ep-why').hidden = !bad; if (bad) { f.querySelector('#ep-why').focus(); return; }
     const NE = { sample: false, why, benefits: [...f.querySelectorAll('input[id^="ep-b"]:checked')].map(i => i.value), size: f.querySelector('#ep-size').value, hiring: f.querySelector('#ep-hiring').checked, roles: '' };
-    if (S.user && S.user.coId) store.set('tn_employer_' + S.user.coId, NE); else { EMPLOYER = NE; store.set('tn_employer', EMPLOYER); } render(); toast('Employer page saved');
+    if (S.user && S.user.coId) saveProf(S.user.coId, { employerPage: NE }); else { EMPLOYER = NE; store.set('tn_employer', EMPLOYER); } render(); toast('Employer page saved');
   }
   if (f.id === 'login-form') {
     const type = f.dataset.type; const email = f['l-email'].value.trim(); const nameEl = f.querySelector('#l-name'); const name = nameEl ? nameEl.value.trim() : '';
@@ -2432,7 +2513,7 @@ document.addEventListener('submit', e => {
     const main = domOf(BYID[S.user.coId].web), other = w2 && COS.find(x => x.id !== S.user.coId && domOf(x.web) === domOf(w2));
     const m2 = !w2 ? '' : !/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/.test(w2) ? 'Enter a website like yourcompany.in' : domOf(w2) === main ? 'That is already your main website.' : other ? `That website belongs to ${other.name} on Know The Company. Contact us if it's yours.` : '';
     e2.textContent = m2; e2.hidden = !m2; if (m2) { g('cp-web2').focus(); return; }
-    const id = S.user.coId, own = store.get('tn_cprof_' + id, {}); const list = s => s.split(',').map(x => x.trim()).filter(Boolean);
+    const id = S.user.coId, own = {}; const list = s => s.split(',').map(x => x.trim()).filter(Boolean);
     Object.assign(own, { about, founded: yr, size: val('cp-size') || own.size, hq: val('cp-hq'), services: list(val('cp-services')).slice(0, 8), hours: val('cp-hours'), web2: w2 });
     if (g('cp-phone')) Object.assign(own, { phone: val('cp-phone'), email: val('cp-email'), address: val('cp-address'), socials: list(val('cp-socials')) });
     if (!saveProf(id, own)) { toast('Could not save. Your browser storage is full.'); return; }
@@ -2443,16 +2524,19 @@ document.addEventListener('submit', e => {
     const id = S.user.coId, P = cprof(BYID[id]);
     const msg = txt.length < 20 ? 'Write at least 20 characters.' : P.updates.filter(u => u.date === monthNow()).length >= 2 ? 'You can post 2 updates a month on Plus.' : '';
     err.textContent = msg; err.hidden = !msg; if (msg) { ta.focus(); return; }
-    const own = store.get('tn_cprof_' + id, {}); own.updates = [{ date: monthNow(), text: txt }].concat(P.updates).slice(0, 6);
+    const own = {}; own.updates = [{ date: monthNow(), text: txt }].concat(P.updates).slice(0, 6);
     saveProf(id, own); render(); toast('Update posted'); return;
   }
   if (f.classList.contains('oreply') && S.user && S.user.coId) {
     const ta = f.querySelector('textarea'), txt = ta.value.trim(), er = f.querySelector('.err'); er.hidden = !!txt;
     if (!txt) { ta.focus(); return; }
-    const id = S.user.coId, i = +f.dataset.idx;
-    if (f.dataset.kind === 'c') { REVIEWS[id][i].reply = txt; REVIEWS[id][i].replyFrom = S.user.name; store.set('tn_reviews', REVIEWS); }
-    else { EMP[id].reviews[i].reply = txt; EMP[id].reviews[i].replyFrom = S.user.name; store.set('tn_emp', EMP); }
-    render(); toast('Reply posted'); return;
+    const id = S.user.coId, i = +f.dataset.idx, c = BYID[id];
+    const r = f.dataset.kind === 'c' ? REVIEWS[id][i] : EMP[id].reviews[i]; if (!r || !c) return;
+    r.reply = txt; render();
+    insertItem('OwnerContent', { company: c.wid, kind: 'reply', review: r.wid, text: txt })
+      .then(it => { r.replyWid = it._id; toast('Reply posted'); })
+      .catch(e => { r.reply = ''; render(); toast('Could not post your reply: ' + errMsg(e)); });
+    return;
   }
   if (f.id === 'reply-form') {
     const t = f['reply-text'].value.trim(); document.getElementById('err-reply').hidden = !!t;
