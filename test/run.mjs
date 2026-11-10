@@ -24,10 +24,11 @@ const companies = csv.slice(1).map(l => { const r = Object.fromEntries(hdr.map((
 // one verified Plus company to exercise the owner-written sections
 Object.assign(companies.find(c => c._id === 'razorpay.com'), { claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', about: 'About text', founded: '2014', teamSize: '201–1,000 people', services: ['Payments'], phone: '+91 80000 00000', publicEmail: 'x@y.z', employerPage: { why: 'Why work here text, long enough.', benefits: ['Health insurance'], size: '201–1,000 people', hiring: true }, ownerMemberIds: ['m1'] });
 const reviews = [
-  { _id: 'r1', _owner: 'm1', _createdDate: '2026-11-01T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 4, title: 'Quick settlements', body: 'Payments settled in two days and support answered quickly.' },
+  { _id: 'r1', _owner: 'm4', _createdDate: '2026-11-01T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 4, title: 'Quick settlements', body: 'Payments settled in two days and support answered quickly.' },
   { _id: 'r2', _owner: 'm2', _createdDate: '2026-11-02T00:00:00Z', company: 'razorpay.com', type: 'employee', anonymous: true, rating: 3, subRatings: { pay: 3 }, pros: 'Good people and learning culture here.', cons: 'Long hours during launches, every quarter.', recommend: 'yes', employmentStatus: 'Current employee', jobTitle: 'Engineer', tenure: '1–3 years' },
   { _id: 'r3', _owner: 'm2', _createdDate: '2026-11-03T00:00:00Z', company: 'notion.com', type: 'interview', jobTitle: 'Designer', interviewOutcome: 'No offer', interviewDifficulty: 'Hard', interviewExperience: 'Neutral', body: 'Three rounds over two weeks, friendly panel.' },
   { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
+  { _id: 'r6', _owner: 'm1', _createdDate: '2026-11-06T00:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Owner', rating: 1, title: 'OWNER REVIEW', body: 'OWNER REVIEW written by a company account, must never show.' },
   { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
 ];
 const ownerContent = [
@@ -76,7 +77,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[['].filter(w => text.includes(w));
+  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
 }
 // a few interactions: company tabs and a customer review submission
