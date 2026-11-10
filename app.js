@@ -2692,6 +2692,7 @@ syncUser(getMemberState());
 render();
 /* Clean page addresses: fix the address bar, point #route links at clean addresses, handle clicks in the app. */
 new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(n => { if (n.nodeType === 1) realLinks(n); }); }).observe(document.body, { childList: true, subtree: true });
+realLinks(document.body);
 document.addEventListener('click', e => {
   if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   const a = e.target.closest && e.target.closest('a[href]'); if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
