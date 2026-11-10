@@ -1612,6 +1612,7 @@ function vContact() {
       <aside class="side">
         <div class="box"><h2>Email</h2><p>General: <span style="user-select:all;color:var(--fg)">hello@knowthecompany.com</span></p><p>Businesses: <span style="user-select:all;color:var(--fg)">business@knowthecompany.com</span></p><p>Legal and takedowns: <span style="user-select:all;color:var(--fg)">legal@knowthecompany.com</span></p></div>
         <div class="box"><h2>Grievance officer</h2><p>Nimish Chhabra, Grievance Officer<br><span style="user-select:all;color:var(--fg)">grievance@knowthecompany.com</span><br>We acknowledge complaints within 24 hours and resolve them within 7 days.</p></div>
+        ${opBox()}
         <div class="box soft"><h2>Quick answers</h2><p>Many questions are answered in our help centre.</p><a href="#help" style="font-weight:700;font-size:14px">Open help centre</a></div>
       </aside></div></div>`;
 }
@@ -1631,6 +1632,7 @@ const HELP = [
     ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews, a review link and email alerts. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then ₹499 a year. ` : 'It costs ₹499 a year. ') + `Plus (₹${PLUS_PRICE} a year) adds call, WhatsApp and email buttons, photos, offers and updates, and visit stats.`],
     LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost ₹499 a year. We remind you before your free year ends, and the listing continues only if you choose to renew.`] : ['How much does it cost?', '₹499 a year. We remind you before each renewal, and you can stop at any time.'],
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
+    ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to business@knowthecompany.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
     ['Can paying remove bad reviews?', 'No. Payment never changes ratings or hides reviews. You can reply publicly or report reviews that break the rules.'],
     ['My company is already listed. What now?', 'Open your profile and press Claim. You keep the existing reviews.']]],
   ['Trust and safety', [
@@ -1644,20 +1646,26 @@ function vHelp() {
     <div class="box soft" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><p style="color:var(--fg)">Still need help?</p><a class="btn p" href="#contact">Contact us</a></div></div></div>`;
 }
 
+/* ---------- who runs the site ----------
+   Razorpay checks that the business named here matches the KYC documents.
+   Fill these in before applying. Empty fields are simply not shown. */
+const OPERATOR = { legalName: '', address: '', phone: '', taxNote: '' };
+const opName = () => OPERATOR.legalName || 'Know The Company';
+const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this site</h2><p>Know The Company is run by <b style="color:var(--fg)">${esc(OPERATOR.legalName)}</b>.${OPERATOR.address ? `<br>Registered office: ${esc(OPERATOR.address)}` : ''}${OPERATOR.phone ? `<br>Phone: <span style="user-select:all;color:var(--fg)">${esc(OPERATOR.phone)}</span>` : ''}</p></div>` : '';
+
 const legalPage = (title, crumb, intro, sections) => `<div class="wrap" style="max-width:860px">${crumbs([['Home','#home'],[crumb]])}
-  <div class="pagehead"><h1>${title}</h1><p>Last updated: 8 November 2026</p></div>
-  <p class="draftnote">Draft. A lawyer is reviewing this page, and it may change.</p>
+  <div class="pagehead"><h1>${title}</h1><p>Last updated: 10 November 2026</p></div>
   <div class="legal"><p>${intro}</p>${sections.map(([h, items]) => `<h2>${h}</h2>${Array.isArray(items) ? `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>` : `<p>${items}</p>`}`).join('')}</div></div>`;
 function vTerms() {
-  return legalPage('Terms of use', 'Terms of use', 'These terms apply to everyone who uses Know The Company, operated by Know The Company. By using the site you agree to them.', [
+  return legalPage('Terms of use', 'Terms of use', `These terms apply to everyone who uses Know The Company, operated by ${esc(opName())}. By using the site you agree to them.`, [
     ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.']],
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
     ['3. Employee reviews and interviews', ['Post only your own experience as an employee, contractor, intern or job candidate.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews, or interview experiences. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
-    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year.` : 'Basic costs ₹499 a year.', `Plus costs ₹${PLUS_PRICE} a year${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is not renewed, the profile moves to Basic.`, 'We remind you by email at least 7 days before a free year or paid year ends. Your listing renews only if you choose to pay. If you don’t renew, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires.']],
+    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year.` : 'Basic costs ₹499 a year.', `Plus costs ₹${PLUS_PRICE} a year${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is not renewed, the profile moves to Basic.`, 'We remind you by email at least 7 days before a free year or paid year ends. Your listing renews only if you choose to pay. If you don’t renew, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
-    ['8. Contact', ['Questions about these terms: legal@knowthecompany.com.', 'Complaints about content on the site go to our grievance officer, Nimish Chhabra, at grievance@knowthecompany.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
+    ['8. Contact', [...(OPERATOR.legalName ? [`Know The Company is run by ${esc(OPERATOR.legalName)}${OPERATOR.address ? `, ${esc(OPERATOR.address)}` : ''}.`] : []), 'Questions about these terms: legal@knowthecompany.com.', 'Complaints about content on the site go to our grievance officer, Nimish Chhabra, at grievance@knowthecompany.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
 }
 function vPrivacy() {
   return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
@@ -1668,6 +1676,30 @@ function vPrivacy() {
     ['Your rights', 'Depending on where you live, you can ask to access, correct or delete your data, and withdraw consent. Write to privacy@knowthecompany.com and we will reply within the time the law requires. You can also ask us to delete your account from the My reviews page.'],
     ['Cookies and storage', 'We use essential storage to keep you logged in and remember preferences. We use privacy-friendly analytics that count visits without following you across other sites.'],
     ['Contact', 'Privacy questions: privacy@knowthecompany.com. Grievance officer: Nimish Chhabra, grievance@knowthecompany.com.']]);
+}
+
+function vPricing() {
+  const plan = (name, price, note, perks) => `<div class="box" style="gap:12px"><div class="toolbar"><h2 style="font-size:21px">${name}</h2><b style="font-size:21px">${price}</b></div><p class="meta" style="font-size:14px">${note}</p><ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">${perks.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`;
+  return `<div class="wrap" style="max-width:900px">${crumbs([['Home','#home'],['Pricing']])}
+    <div class="pagehead"><h1>Pricing</h1><p>Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating.</p></div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      ${plan('For reviewers', 'Free', 'Always free. No payment is ever asked for.', ['Read every review', 'Write customer, employee and interview reviews', 'Use all free career and company tools'])}
+      ${plan('Basic listing', '₹499 a year', LAUNCH ? `Free for the first year for companies that join before ${LAUNCH_END}, then ₹499 a year.` : 'Billed once a year. Renews only if you choose to pay.', BASIC_PERKS)}
+      ${plan('Plus listing', `₹${PLUS_PRICE.toLocaleString('en-IN')} a year`, LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then ₹${PLUS_PRICE} a year. You are not charged unless you choose to pay.` : 'Billed once a year. Renews only if you choose to pay.', ['Everything in Basic', ...PLUS_PERKS])}
+      ${JOBS_ON ? plan('Extra job post', `₹${EXTRA_JOB} a post`, `${FREE_JOBS} posts a month are included with every listing. Each post stays live for ${JOB_DAYS} days.`, ['For real vacancies only', 'Employers must never charge applicants a fee']) : ''}
+      <div class="box soft"><p style="color:var(--fg)">All prices are in Indian rupees.${OPERATOR.taxNote ? ' ' + esc(OPERATOR.taxNote) : ''} A listing is a digital service that starts once your company is verified; nothing is shipped. Read our <a href="#refunds">refunds and cancellations policy</a> and <a href="#terms">terms of use</a> before you pay.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn p" href="#list">List your company</a><a class="btn g" href="#contact">Ask a question</a></div></div></div></div>`;
+}
+function vRefunds() {
+  return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
+    ['1. What you pay for', [`Basic listing: ₹499 a year. Plus listing: ₹${PLUS_PRICE} a year.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
+    ['2. How the service is delivered', ['Your listing tools switch on as soon as we verify that you represent the company. We email you when the listing is live.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
+    ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you choose to pay. We email you at least 7 days before it ends.']],
+    ['4. Cancelling', ['You can cancel at any time by writing to business@knowthecompany.com from the email address on your listing.', 'Plans do not renew automatically. If you don’t pay for the next year, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'If you cancel a paid plan after the 14-day refund window, your tools stay active until the end of the year you paid for.']],
+    ['5. Refunds', ['Change your mind within 14 days of paying, and we refund the full amount. No reason is needed.', 'After 14 days, fees for the current year are not refundable, except where the law requires a refund.', 'If you were charged twice, or charged for an order that failed, we refund the extra amount in full.', 'If we suspend a listing because it broke our terms, for example by trying to manipulate reviews, the fee is not refunded.']],
+    ['6. How refunds are paid', ['Refunds go back to the payment method you used. We start the refund within 5 working days of approving it.', 'Your bank or card provider may take another 5 to 7 working days to show it in your account.']],
+    ['7. Refunds never affect reviews', 'Paying, cancelling or getting a refund never changes a company’s ratings, review order or moderation, and cancelling never removes reviews.'],
+    ['8. Contact', [`Refund and cancellation requests: business@knowthecompany.com. Include your company name and the date you paid.${OPERATOR.phone ? ` Phone: ${esc(OPERATOR.phone)}.` : ''}`, ...(OPERATOR.address ? [`Registered office: ${esc(OPERATOR.address)}.`] : []), 'If you are not happy with how we handled your request, write to our grievance officer, Nimish Chhabra, at grievance@knowthecompany.com.']]]);
 }
 
 /* ---------- live actions: everything a visitor saves goes to Wix ---------- */
@@ -2048,6 +2080,8 @@ function render() {
   else if (h === 'help') html = vHelp();
   else if (h === 'terms') html = vTerms();
   else if (h === 'privacy') html = vPrivacy();
+  else if (h === 'pricing') { html = vPricing(); nav = 'list'; }
+  else if (h === 'refunds') html = vRefunds();
   else if (CATBYID[h]) { html = vCategory(CATBYID[h]); nav = 'categories'; }
   else if (h === 'removals') html = vRemovals();
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
@@ -2056,6 +2090,7 @@ function render() {
   else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
   app.innerHTML = `<div class="view">${html}</div>`;
   document.body.classList.add('ready');
+  { const fo = document.getElementById('footer-op'); if (fo) fo.textContent = OPERATOR.legalName ? ` Know The Company is run by ${OPERATOR.legalName}.` : ''; }
   renderNav(nav);
   setupReveal(h);
   if (h === 'home' || h === '') { startTyper(); moveBands(); }
@@ -2064,7 +2099,7 @@ function render() {
   const sp = document.getElementById('searchpanel'); if (sp) sp.hidden = true;
   if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) { const g = document.getElementById('review-form'); if (g) { g['r-title'].value = S.draft.title; g['r-body'].value = S.draft.body; g['r-date'].value = S.draft.date || ''; S.draft.applied = true; } }
   setMeta(h);
-  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : 'Know The Company';
+  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : 'Know The Company';
 }
 function setMeta(h) {
   const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';

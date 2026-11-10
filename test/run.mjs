@@ -59,7 +59,7 @@ await import('./app.test.mjs');
 await new Promise(r => setTimeout(r, 200));
 
 const app = g.document.getElementById('app');
-const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'blog', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'removals', 'terms', 'privacy', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
+const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'blog', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'removals', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
 const report = [];
 for (const r of routes) {
   g.location.hash = r;
