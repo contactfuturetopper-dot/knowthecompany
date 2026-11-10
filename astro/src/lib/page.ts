@@ -45,7 +45,7 @@ async function categories(): Promise<string[]> {
   const res = await fetch(`${API}/wix-data/v2/items/query-distinct-values`, {
     method: "POST",
     headers: { Authorization: await visitorToken(), "Content-Type": "application/json" },
-    body: JSON.stringify({ dataCollectionId: "Companies", fieldName: "category", paging: { limit: 1000, offset: 0 } }),
+    body: JSON.stringify({ dataCollectionId: "Companies", fieldName: "category", filter: {}, paging: { limit: 100, offset: 0 } }),
   });
   if (!res.ok) throw new Error(`categories ${res.status}`);
   return ((await res.json()).distinctValues || []).filter((v: unknown) => typeof v === "string");
