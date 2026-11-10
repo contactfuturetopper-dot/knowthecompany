@@ -79,6 +79,12 @@ for (const r of routes) {
   const h1 = (app.querySelector('h1') || {}).textContent || '';
   const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
+  { const hs = [...app.querySelectorAll('h1,h2,h3,h4,h5,h6')].map(h => +h.tagName[1]); const issues = [];
+    if (hs.filter(x => x === 1).length !== 1) issues.push('h1 x' + hs.filter(x => x === 1).length);
+    for (let i = 1; i < hs.length; i++) if (hs[i] > hs[i - 1] + 1) issues.push(`h${hs[i - 1]}>h${hs[i]}`);
+    if (hs.length && hs[0] !== 1) issues.push('starts h' + hs[0]);
+    const can = (g.document.querySelector('link[rel="canonical"]') || {}).href || ''; if (!can || (r === 'home' ? /#/.test(can) : !can.endsWith('#' + r))) issues.push('canonical=' + can);
+    if (issues.length) report.push(`   HEADINGS ${r}: ${[...new Set(issues)].join(' ')} [${hs.join('')}]`); }
 }
 // a few interactions: company tabs and a customer review submission
 g.location.hash = 'co-1password'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 30));

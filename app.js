@@ -952,7 +952,7 @@ function vJobsSoon() {
       <h1 style="font-size:clamp(34px,5vw,54px);line-height:1.05">Jobs at companies you can check first</h1>
       <p style="color:var(--deep-muted);font-size:18px;line-height:1.6;max-width:640px">Know The Company focuses on customer and employee reviews for now. Once companies have enough reviews, verified businesses will post jobs here, right next to what their employees say.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px"><a class="btn gold lg" href="#search">Review a company you worked at</a><a class="btn w lg" href="#list">List your company</a></div></div></section>
-    <section class="wrap sec"><div class="steps">
+    <section class="wrap sec"><h2 class="sr">How jobs will work</h2><div class="steps">
       <div class="step"><span>1</span><h3>Verified employers only</h3><p>Only verified companies will be able to post jobs.</p></div>
       <div class="step"><span>2</span><h3>Reviews beside every job</h3><p>See the company's employee reviews before you apply.</p></div>
       <div class="step"><span>3</span><h3>Never pay to apply</h3><p>Any post that asks applicants for money will be removed.</p></div></div></section>`;
@@ -1687,7 +1687,7 @@ function vBlog() {
       <p style="color:var(--muted);font-size:18px;max-width:640px">Articles for business owners and teams. Every post is about running and growing a business.</p>
       <div class="chips" style="margin-top:6px">${['All', ...BLOG_CATS].map(c => `<button type="button" class="chip" data-act="blogcat" data-cat="${esc(c)}" aria-pressed="${S.blogCat === c}" style="${S.blogCat === c ? 'background:var(--accent);color:var(--accent-ink);border-color:var(--accent)' : ''}">${esc(c)}</button>`).join('')}</div>
     </div></section>
-    <section class="wrap sec"><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(postCard).join('')}</div>
+    <section class="wrap sec"><h2 class="sr">Latest articles</h2><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(postCard).join('')}</div>
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
 function vPost(p) {
@@ -1737,7 +1737,7 @@ function vAbout() {
   return `<section class="band"><div class="wrap" style="padding-block:48px 44px;display:flex;flex-direction:column;gap:14px">
       <p class="eyebrow">About Know The Company</p><h1 style="font-size:clamp(32px,4.8vw,52px);font-weight:800;max-width:820px">Helping people choose companies they can trust</h1>
       <p style="color:var(--muted);font-size:18px;max-width:680px">Know The Company is an open review platform for startups and growing companies, everywhere. Big brands already have thousands of reviews; the companies people actually hire, work with and work for often have none. Anyone can read and write reviews for free. We show how a company treats both its customers and its employees.</p></div></section>
-    <section class="wrap sec"><div class="steps">
+    <section class="wrap sec"><h2 class="sr">Our mission and how we work</h2><div class="steps">
       <div class="step"><p class="lbl">Our mission</p><h3>Honest information before you pay</h3><p>Customers deserve to know how a company treats people before they hand over money or personal data.</p></div>
       <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year. Plus costs [[PP]] a year.` : `Businesses can buy a Basic listing for [[PB]] a year or Plus for [[PP]] a year.`} A listing gives a business tools, and never changes its rating.</p></div>
       <div class="step"><p class="lbl">Who we serve</p><h3>Startups and growing companies worldwide</h3><p>From a two-person studio to a 500-person scale-up, every company can be listed and reviewed.</p></div></div></section>
@@ -2246,7 +2246,7 @@ function render() {
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
   else if (BYID[h]) { loadMedia(BYID[h]); html = vCompany(BYID[h]); }
-  else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><b>Page not found</b><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
+  else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><h1 style="font-size:20px">Page not found</h1><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
   if (S.user && S.myClaims === undefined) loadMyClaims();
   app.innerHTML = `<div class="view">${curText(html)}</div>`;
   document.body.classList.add('ready');
@@ -2265,6 +2265,8 @@ function setMeta(h) {
   const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = `Compare ${k.name} companies by honest customer and employee reviews.`; else if (POSTBYID[h]) d = POSTBYID[h].excerpt;
   let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
+  let cl = document.querySelector('link[rel="canonical"]'); if (!cl) { cl = document.createElement('link'); cl.rel = 'canonical'; document.head.appendChild(cl); }
+  cl.href = location.origin + location.pathname + (h && h !== 'home' ? '#' + h : '');
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
   const noindex = ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';

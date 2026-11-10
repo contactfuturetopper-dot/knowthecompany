@@ -917,3 +917,4 @@ body{font-feature-settings:normal}
 .curswitch button{font:inherit;font-size:14px;font-weight:700;border:0;border-radius:999px;padding:7px 16px;background:transparent;color:var(--muted);cursor:pointer}
 .curswitch button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .curswitch button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-0.01em;line-height:1.3}
