@@ -866,7 +866,7 @@ let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We a
 const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '[[PB]] a year';
 const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
 const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
-const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Priority support'];
+const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Website badge with your live rating','Priority support'];
 const planOf = () => (S.user && S.user.plan) || 'basic';
 const JOBS_ON = false; /* job posts: coming soon. Set to true to switch the whole jobs feature back on. */
 const FREE_JOBS = 5, EXTRA_JOB = 99, JOB_DAYS = 60;
@@ -1350,6 +1350,15 @@ function jobsPanel() {
   return quota + form + `<div class="toolbar"><h2 style="font-size:20px">Your job posts</h2><a href="#jobs" style="font-weight:700;font-size:14px">See how applicants see them</a></div>` + list;
 }
 
+/* Website badge: an embed that shows a company's live rating on its own site (badge.html). Plus only. */
+function badgePanel(c, base) {
+  if (coPlan(c) !== 'plus') return `<div class="box soft" style="gap:8px"><h3 style="font-size:17px">Website badge</h3><p>Show your live rating on your own website and careers page. It comes with Plus.</p><a href="#pricing" style="font-weight:700;font-size:14px">See Plus</a></div>`;
+  const dir = base.replace(/[^/]*$/, '');
+  const snip = t => `<iframe src="${dir}badge.html?c=${encodeURIComponent(c.wid)}${t === 'employee' ? '&t=employee' : ''}" width="300" height="72" style="border:0;overflow:hidden" title="${esc(c.name)} ${t} reviews on Know The Company" loading="lazy"></iframe>`;
+  const row = (label, t) => `<div class="field"><label class="l">${label}</label><div>${snip(t)}</div><div style="display:flex;gap:8px"><textarea readonly rows="3" class="mono" style="flex:1;min-width:0;background:var(--surface);font-size:12px">${esc(snip(t))}</textarea><button class="btn g" type="button" data-act="copy-text" data-text="${esc(snip(t))}">Copy</button></div></div>`;
+  return `<div class="box" style="gap:12px"><h3 style="font-size:17px">Website badge</h3><p class="meta">Paste the code into your website. The badge shows your live rating from published reviews and links to your page here. You can't change the number it shows, which is why visitors trust it.</p>
+    ${row('Customer rating badge', 'customer')}${row('Employee rating badge, for your careers page', 'employee')}</div>`;
+}
 function vDashboard() {
   if (!S.user) return vLogin('business', S.memberLoading ? '' : 'Log in to see your company pages and claims.');
   if (S.myClaims === undefined) loadMyClaims();
@@ -1362,6 +1371,7 @@ function vDashboard() {
       <div class="stats">${stats.map(([v, l, n]) => `<div class="stat"><span>${l}</span><b>${v}</b><small>${n}</small></div>`).join('')}</div>
       ${linkRow('Customer review link', 'cl-' + c.id, base + '#invite-' + c.id)}
       ${linkRow('Employee review link', 'el-' + c.id, base + '#invite-team-' + c.id)}
+      ${badgePanel(c, base)}
       <p class="meta">Send each link to everyone, not only happy customers or staff. Edit your page, photos and employer page, and reply to reviews, from the tabs above. Changes go live straight away.</p></section>`; };
   const KIND = { claim: 'Claim', new: 'New company and claim', access: 'Access request' };
   const STATUS = { pending: ['un', 'Being checked'], verified: ['ok', 'Verified'], rejected: ['cat', 'Not approved'] };

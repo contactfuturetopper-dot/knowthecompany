@@ -107,6 +107,7 @@ report.push('owner about shown: ' + coText.includes('Owner written about text') 
 click('[data-act="cotab"][data-tab="customers"]'); await new Promise(r => setTimeout(r, 40)); report.push('reply on customers tab: ' + app.textContent.includes('Thanks for the review'));
 await go('dashboard');
 report.push('dashboard tabs: ' + app.querySelectorAll('[data-act="dash-tab"]').length);
+report.push('badge embeds on dashboard: ' + app.querySelectorAll('iframe[src*="badge.html?c=razorpay.com"]').length);
 click('[data-act="dash-tab"][data-tab="page"]'); await new Promise(r => setTimeout(r, 40));
 const pf = app.querySelector('#cprof-form'); report.push('company page form: ' + !!pf + ', photos shown: ' + app.querySelectorAll('.gallery img').length);
 if (pf) { pf.querySelector('#cp-about').value = 'We build payment tools for small and growing businesses across India and abroad.'; pf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
