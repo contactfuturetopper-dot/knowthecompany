@@ -51,7 +51,7 @@ async function run() {
   const co = await getItemById('Companies', wid);
   if (!co) { el.innerHTML = `<span class="msg">Rating unavailable</span>${brand}`; link.href = site; return; }
   const name = co.title || wid;
-  link.href = site + '#co-' + (co.slug || slug(name));
+  link.href = site + 'company/' + (co.slug || slug(name));
   link.setAttribute('aria-label', `${name} reviews on Know The Company`);
   const items = [];
   for (let skip = 0, i = 0; i < 10; i++) {

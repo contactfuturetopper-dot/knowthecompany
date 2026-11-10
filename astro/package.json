@@ -1,0 +1,22 @@
+{
+  "name": "know-the-company",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "build": "node scripts/sync.mjs && astro build",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@wix/astro": "^3.0.0",
+    "@wix/astro-pages": "^3.0.0",
+    "@wix/essentials": "^1.0.6",
+    "@wix/sdk": "^1.21.5",
+    "astro": "^7.3.2",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@wix/cli": "^1.1.92",
+    "@wix/astro-wix-hosting-adapter": "^3.0.0"
+  }
+}

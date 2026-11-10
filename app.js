@@ -7,20 +7,20 @@ const COUNTRY = {"AE": "United Arab Emirates", "AR": "Argentina", "AT": "Austria
 const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 
 /* ---------- page addresses ----------
-   Every page has a real address, such as /company/future-topper.html or /pricing.html. Wix hosting only
-   serves files that exist, so scripts/build-pages.js writes one small HTML file per page, plus
-   /pages.json listing what it built. A page with no file yet (say, a company added since the last
-   build) uses an old-style /#route address until the next build. Old /#route links keep working: the
-   page loads from the home file and the address is swapped for the real one. */
+   Every page has a clean address, such as /company/future-topper or /pricing. The site runs on Wix's
+   server hosting (the astro/ folder): the server answers every address with this app and the page's
+   own title, description and canonical tag, and the app reads the page from the address. Old links
+   still work: /#route and /page.html addresses are moved to the clean one. */
 const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'];
 const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Pricing', refunds: 'Refunds and cancellations', removals: 'Removals report' };
-const BUILT = { page: new Set(), co: new Set(), cat: new Set(), blog: new Set(), tool: new Set() };
-const PATH_KINDS = [['company', 'co-', 'co'], ['category', 'cat-', 'cat'], ['blog', 'blog-', 'blog'], ['tools', 'tool-', 'tool']];
+const PATH_KINDS = [['company', 'co-'], ['category', 'cat-'], ['blog', 'blog-'], ['tools', 'tool-']];
 function routeOfPath(path) {
   let p = path; try { p = decodeURIComponent(path); } catch (e) {}
-  for (const [dir, pre] of PATH_KINDS) { const m = p.match(new RegExp('^/' + dir + '/([^/]+)\\.html$')); if (m) return pre + m[1]; }
-  const m = p.match(/^\/([a-z-]+)\.html$/);
-  return m && m[1] !== 'index' ? m[1] : 'home';
+  p = p.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
+  if (p === '/' || p === '/index') return 'home';
+  for (const [dir, pre] of PATH_KINDS) { const m = p.match(new RegExp('^/' + dir + '/([a-z0-9-]+)$')); if (m) return pre + m[1]; }
+  const m = p.match(/^\/([a-z-]+)$/);
+  return m && (PAGE_ROUTES.includes(m[1]) || m[1] === 'sample') ? m[1] : 'not-found';
 }
 const curRoute = () => location.hash.length > 1 ? location.hash.slice(1) : routeOfPath(location.pathname);
 function routeOfHref(href) {
@@ -30,15 +30,16 @@ function routeOfHref(href) {
 }
 function urlFor(r) {
   if (!r || r === 'home') return '/';
-  for (const [dir, pre, kind] of PATH_KINDS) if (r.startsWith(pre) && BUILT[kind].has(r.slice(pre.length))) return '/' + dir + '/' + r.slice(pre.length) + '.html';
-  if (BUILT.page.has(r)) return '/' + r + '.html';
+  if (r === 'sample') return '/list';
+  for (const [dir, pre] of PATH_KINDS) if (r.startsWith(pre) && /^[a-z0-9-]+$/.test(r.slice(pre.length))) return '/' + dir + '/' + r.slice(pre.length);
+  if (PAGE_ROUTES.includes(r)) return '/' + r;
+  if (r === 'not-found') return location.pathname;
   return '/#' + r;
 }
 const isRoute = r => r === 'home' || r === 'sample' || PAGE_ROUTES.includes(r) || r.startsWith('invite-') || !!(BYID[r] || CATBYID[r] || POSTBYID[r] || TOOLBYID[r]);
-/* Swap the address bar to the page's real address when it has one (keeps any ?query). */
+/* Swap the address bar to the page's clean address (keeps any ?query). */
 function canonicalUrl() {
   const u = urlFor(curRoute());
-  if (u.startsWith('/#') && !location.hash) return; /* on a built page, before /pages.json has loaded */
   if (location.pathname + location.hash === u) return;
   const k = u.indexOf('#');
   history.replaceState(history.state, '', k < 0 ? u + location.search : u.slice(0, k) + location.search + u.slice(k));
@@ -2316,9 +2317,9 @@ function setMeta(h) {
   if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = `Compare ${k.name} companies by honest customer and employee reviews.`; else if (POSTBYID[h]) d = POSTBYID[h].excerpt;
   let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
   let cl = document.querySelector('link[rel="canonical"]'); if (!cl) { cl = document.createElement('link'); cl.rel = 'canonical'; document.head.appendChild(cl); }
-  { const u = urlFor(h); cl.href = location.origin + (u.startsWith('/#') && !location.hash ? location.pathname : u); }
+  cl.href = location.origin + urlFor(h);
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
-  const noindex = ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
+  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
   let s = document.getElementById('ldjson'); if (s) s.remove();
   if (c) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
@@ -2689,7 +2690,7 @@ document.addEventListener('submit', e => {
 const fromCache = loadCached();
 syncUser(getMemberState());
 render();
-/* Real page addresses: learn which pages have their own file, then fix the address bar and the links. */
+/* Clean page addresses: fix the address bar, point #route links at clean addresses, handle clicks in the app. */
 new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(n => { if (n.nodeType === 1) realLinks(n); }); }).observe(document.body, { childList: true, subtree: true });
 document.addEventListener('click', e => {
   if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -2699,13 +2700,7 @@ document.addEventListener('click', e => {
   e.preventDefault();
   if (r === curRoute()) { canonicalUrl(); render(); window.scrollTo(0, 0); } else navigate(r);
 });
-(async () => {
-  try {
-    const res = await fetch('/pages.json', { cache: 'no-cache' }); if (!res.ok) return;
-    const j = await res.json(); for (const k of Object.keys(BUILT)) (j[k] || []).forEach(x => BUILT[k].add(x));
-  } catch (e) { return; }
-  canonicalUrl(); realLinks(document.body); if (LOADED) setMeta(curRoute());
-})();
+canonicalUrl();
 subscribeMember(s => { syncUser(s); render(); });
 loadData().then(changed => {
   if (!changed) return;

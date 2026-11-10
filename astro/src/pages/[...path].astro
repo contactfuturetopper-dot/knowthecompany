@@ -1,0 +1,15 @@
+---
+// Every address on the site comes here. Files in public/ (app.js, site.css, the Wix modules, badge.html,
+// auth-callback.html) are served before this page and never reach it.
+import { resolvePage, renderShell } from "../lib/page";
+
+const page = await resolvePage(Astro.url.pathname);
+if ("redirect" in page) return Astro.redirect(page.redirect + Astro.url.search, 301);
+return new Response(renderShell(page), {
+  status: page.status,
+  headers: {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "public, max-age=0, s-maxage=300, stale-while-revalidate=600",
+  },
+});
+---

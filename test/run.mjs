@@ -14,9 +14,7 @@ g.window.HTMLElement.prototype.scrollIntoView = function () {};
 g.window.confirm = () => true;
 g.confirm = () => true;
 g.requestAnimationFrame = f => setTimeout(f, 0);
-/* The page manifest the build writes. Zepto is left out on purpose: a company with no built page yet. */
-g.__pages = { page: ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'], co: ['razorpay', 'notion', '1password'], cat: ['fintech-and-banking'], blog: [], tool: ['offer', 'hike', 'gratuity', 'hra', 'rate'] };
-g.fetch = g.window.fetch = async u => { if (u === '/pages.json') return { ok: true, json: async () => g.__pages }; throw new Error('no network in tests: ' + u); };
+g.fetch = g.window.fetch = async u => { throw new Error('no network in tests: ' + u); };
 for (const id of ['a-cat', 'a-cc', 'a-name', 'a-web', 'b-agree', 'b-cat', 'b-country', 'b-role', 'b-type', 'hj-what', 'hj-where', 'l-code', 'l-email', 'l-pass', 'r-body', 'r-date', 'r-role', 'r-title', 'reply-text']) Object.defineProperty(g.window.HTMLFormElement.prototype, id, { get() { return this.querySelector('#' + id); }, configurable: true });
 
 // CSV -> company items, plus a few published reviews of each type
@@ -111,7 +109,7 @@ const af2 = app.querySelector('#add-form'); af2['a-name'].value = 'Razor Copy'; 
 af2.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60));
 report.push('after duplicate add, hash=' + g.location.hash);
 // a reviewer account that has written reviews can't claim a company
-const routeOf = h => h.startsWith('#') ? h.slice(1) : h.replace(/^\/(company|category|blog|tools)\/(.+)\.html$/, (m, d, x) => ({ company: 'co-', category: 'cat-', blog: 'blog-', tools: 'tool-' })[d] + x).replace(/^\/(.+)\.html$/, '$1');
+const routeOf = h => h.startsWith('#') ? h.slice(1) : h.replace(/\.html$/, '').replace(/^\/(company|category|blog|tools)\/(.+)$/, (m, d, x) => ({ company: 'co-', category: 'cat-', blog: 'blog-', tools: 'tool-' })[d] + x).replace(/^\/([a-z-]+)$/, '$1');
 const go = async h => { g.location.hash = h; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40)); };
 await go('list');
 report.push('reviewer with reviews sees claim block: ' + app.textContent.includes('This account has written reviews') + ', claim form hidden: ' + !app.querySelector('#claim-panel form'));
@@ -149,12 +147,17 @@ await go('categories');
 const catA = app.querySelector('a[href*="fintech"]'); report.push('category link href: ' + (catA && catA.getAttribute('href')));
 await go('home');
 await go('co-zepto'); report.push('unbuilt company address: ' + g.location.pathname + g.location.hash + ' canonical=' + g.document.querySelector('link[rel="canonical"]').getAttribute('href').replace(g.location.origin, ''));
-g.history.pushState(null, '', '/company/notion.html'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
+g.history.pushState(null, '', '/company/notion'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
 report.push('path route: h1=' + (app.querySelector('h1') || {}).textContent + ' canonical=' + g.document.querySelector('link[rel="canonical"]').getAttribute('href').replace(g.location.origin, ''));
 g.location.hash = 'pricing'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40));
 report.push('old hash link becomes: ' + g.location.pathname + g.location.hash);
 { const a = g.document.createElement('a'); a.href = '/category/fintech-and-banking.html'; app.appendChild(a); a.dispatchEvent(new g.window.MouseEvent('click', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 40)); }
 report.push('click real link: path=' + g.location.pathname + ' h1=' + (app.querySelector('h1') || {}).textContent);
+g.history.pushState(null, '', '/'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
+g.history.pushState(null, '', '/terms.html'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
+report.push('old .html address: ' + g.location.pathname + ' h1=' + (app.querySelector('h1') || {}).textContent);
+g.history.pushState(null, '', '/no-such-page'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
+report.push('unknown address: ' + g.location.pathname + ' h1=' + (app.querySelector('h1') || {}).textContent + ' robots=' + g.document.querySelector('meta[name="robots"]').content);
 g.history.pushState(null, '', '/'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
 report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '').slice(0, 30));
 // page text for scripts/build-pages.js: title, description, h1 and intro for each page that isn't data-driven
