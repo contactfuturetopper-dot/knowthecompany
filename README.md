@@ -28,6 +28,10 @@ It prints one line per route and ends with `ERRORS: none` when everything render
 
 ## Deploying
 
+Pushing to `main` publishes the site: `.github/workflows/publish.yml` runs the page test, builds `astro/` and releases it with the Wix CLI. It needs the repository secret `WIX_API_KEY` (a Wix API key with access to this site). Run it by hand from the Actions tab with "Run workflow".
+
+To publish by hand instead:
+
 The Wix site ID is `0bb4d935-f739-4b4a-b2ee-a42910e1a74f`; its OAuth client (and Code Store project) id is `5783d517-0173-420b-ba45-67e1d2efd460`.
 
 ```
