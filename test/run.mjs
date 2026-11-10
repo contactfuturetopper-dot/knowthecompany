@@ -165,12 +165,14 @@ report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '
   await go('tools'); const tools = [...new Set([...app.querySelectorAll('a[href]')].map(a => routeOf(a.getAttribute('href'))).filter(r => r.startsWith('tool-')))];
   const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'];
   const out = [];
+  const DEFAULT_DESC = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   for (const r of [...pages, ...tools, ...posts]) {
     await go(r);
     const h1el = app.querySelector('h1'); let intro = '';
     if (h1el) { let n = h1el; for (let i = 0; i < 6 && n; i++) { n = n.nextElementSibling || (n.parentElement && n.parentElement.nextElementSibling); if (n && n.tagName === 'P' && n.textContent.trim().length > 30) { intro = n.textContent.trim(); break; } } }
     const [ah1, aintro] = AUTH[r] || [];
-    out.push({ route: r, title: g.document.title, desc: g.document.querySelector('meta[name="description"]').content, h1: ah1 || (h1el ? h1el.textContent.trim() : ''), intro: aintro || intro });
+    const desc = g.document.querySelector('meta[name="description"]').content;
+    out.push({ route: r, title: g.document.title, ...(desc === DEFAULT_DESC ? {} : { desc }), h1: ah1 || (h1el ? h1el.textContent.trim() : ''), intro: aintro || intro });
   }
   fs.writeFileSync('../scripts/pages-meta.json', JSON.stringify(out, null, 1));
   report.push('pages-meta: ' + out.length + ' pages, missing h1: ' + out.filter(x => !x.h1).map(x => x.route).join(',') + ' missing intro: ' + out.filter(x => !x.intro).map(x => x.route).join(','));

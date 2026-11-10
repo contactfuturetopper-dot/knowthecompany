@@ -10,10 +10,11 @@
    them as /#co-<slug>, which still works.
 
    pages-meta.json is written by `cd test && npm test` from the real app, so page titles and
-   headings stay in step with app.js. */
+   headings stay in step with app.js. A page without `desc` uses the site's default description. */
 async function buildPages() {
   const siteId = '0bb4d935-f739-4b4a-b2ee-a42910e1a74f';
   const ORIGIN = 'https://www.knowthecompany.com';
+  const DEFAULT_DESC = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   const NOT_IN_SITEMAP = ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'];
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -75,7 +76,7 @@ async function buildPages() {
     if (m.route.startsWith('tool-')) { path = '/tools/' + m.route.slice(5) + '.html'; built.tool.push(m.route.slice(5)); }
     else if (m.route.startsWith('blog-')) { path = '/blog/' + m.route.slice(5) + '.html'; built.blog.push(m.route.slice(5)); }
     else { path = '/' + m.route + '.html'; built.page.push(m.route); }
-    out.push({ path: path.slice(1), content: page(path, m.title, m.desc, m.h1, m.intro ? '<p>' + esc(m.intro) + '</p>' : '') });
+    out.push({ path: path.slice(1), content: page(path, m.title, m.desc || DEFAULT_DESC, m.h1, m.intro ? '<p>' + esc(m.intro) + '</p>' : '') });
     if (!NOT_IN_SITEMAP.includes(m.route)) sitemap.push(path);
   }
 
