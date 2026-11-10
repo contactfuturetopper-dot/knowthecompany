@@ -5,7 +5,7 @@ import fs from 'node:fs';
 const html = fs.readFileSync('../index.html', 'utf8').replace('<script type="module" src="/app.js"></script>', '');
 const dom = new JSDOM(html, { url: 'https://example.test/', pretendToBeVisual: true });
 const g = globalThis;
-for (const k of ['window', 'document', 'location', 'localStorage', 'navigator', 'HTMLElement', 'Node', 'CustomEvent', 'Event', 'getComputedStyle', 'matchMedia', 'URLSearchParams']) {
+for (const k of ['window', 'document', 'location', 'localStorage', 'navigator', 'HTMLElement', 'Node', 'CustomEvent', 'Event', 'getComputedStyle', 'matchMedia', 'URLSearchParams', 'MutationObserver', 'history', 'URL', 'PopStateEvent']) {
   try { g[k] = dom.window[k]; } catch (e) {}
 }
 g.window.matchMedia = g.matchMedia = () => ({ matches: false, addListener() {}, removeListener() {} });
@@ -14,6 +14,9 @@ g.window.HTMLElement.prototype.scrollIntoView = function () {};
 g.window.confirm = () => true;
 g.confirm = () => true;
 g.requestAnimationFrame = f => setTimeout(f, 0);
+/* The page manifest the build writes. Zepto is left out on purpose: a company with no built page yet. */
+g.__pages = { page: ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'], co: ['razorpay', 'notion', '1password'], cat: ['fintech-and-banking'], blog: [], tool: ['offer', 'hike', 'gratuity', 'hra', 'rate'] };
+g.fetch = g.window.fetch = async u => { if (u === '/pages.json') return { ok: true, json: async () => g.__pages }; throw new Error('no network in tests: ' + u); };
 for (const id of ['a-cat', 'a-cc', 'a-name', 'a-web', 'b-agree', 'b-cat', 'b-country', 'b-role', 'b-type', 'hj-what', 'hj-where', 'l-code', 'l-email', 'l-pass', 'r-body', 'r-date', 'r-role', 'r-title', 'reply-text']) Object.defineProperty(g.window.HTMLFormElement.prototype, id, { get() { return this.querySelector('#' + id); }, configurable: true });
 
 // CSV -> company items, plus a few published reviews of each type
@@ -83,7 +86,7 @@ for (const r of routes) {
     if (hs.filter(x => x === 1).length !== 1) issues.push('h1 x' + hs.filter(x => x === 1).length);
     for (let i = 1; i < hs.length; i++) if (hs[i] > hs[i - 1] + 1) issues.push(`h${hs[i - 1]}>h${hs[i]}`);
     if (hs.length && hs[0] !== 1) issues.push('starts h' + hs[0]);
-    const can = (g.document.querySelector('link[rel="canonical"]') || {}).href || ''; if (!can || (r === 'home' ? /#/.test(can) : !can.endsWith('#' + r))) issues.push('canonical=' + can);
+    const can = (g.document.querySelector('link[rel="canonical"]') || {}).href || ''; const here = g.location.origin + g.location.pathname + g.location.hash; if (!can || can !== here) issues.push('canonical=' + can + ' url=' + here);
     if (issues.length) report.push(`   HEADINGS ${r}: ${[...new Set(issues)].join(' ')} [${hs.join('')}]`); }
 }
 // a few interactions: company tabs and a customer review submission
@@ -101,13 +104,14 @@ report.push('emp form present: ' + !!app.querySelector('#emp-form'));
 g.location.hash = 'add'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 30));
 const af = app.querySelector('#add-form'); af['a-name'].value = 'Blue Lotus Sarees'; af['a-web'].value = 'https://www.bluelotus.in/';
 af.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60));
-report.push('after add, hash=' + g.location.hash);
+report.push('after add, hash=' + g.location.hash + ' path=' + g.location.pathname + ' writes=' + inserted.length);
 // duplicate website is blocked before any write
 g.location.hash = 'add'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 30));
 const af2 = app.querySelector('#add-form'); af2['a-name'].value = 'Razor Copy'; af2['a-web'].value = 'razorpay.com';
 af2.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60));
 report.push('after duplicate add, hash=' + g.location.hash);
 // a reviewer account that has written reviews can't claim a company
+const routeOf = h => h.startsWith('#') ? h.slice(1) : h.replace(/^\/(company|category|blog|tools)\/(.+)\.html$/, (m, d, x) => ({ company: 'co-', category: 'cat-', blog: 'blog-', tools: 'tool-' })[d] + x).replace(/^\/(.+)\.html$/, '$1');
 const go = async h => { g.location.hash = h; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40)); };
 await go('list');
 report.push('reviewer with reviews sees claim block: ' + app.textContent.includes('This account has written reviews') + ', claim form hidden: ' + !app.querySelector('#claim-panel form'));
@@ -140,6 +144,37 @@ const usd = app.textContent;
 report.push('pricing INR first: ' + before + ', after USD: ' + (usd.includes('$9') && usd.includes('$19') && !usd.includes('₹499')));
 click('[data-act="cur"][data-cur="INR"]'); await new Promise(r => setTimeout(r, 40));
 await go('list'); report.push('list in INR: ' + app.textContent.includes('₹999') + ', switch shown: ' + !!app.querySelector('.curswitch'));
+// real page addresses
+await go('categories');
+const catA = app.querySelector('a[href*="fintech"]'); report.push('category link href: ' + (catA && catA.getAttribute('href')));
+await go('home');
+await go('co-zepto'); report.push('unbuilt company address: ' + g.location.pathname + g.location.hash + ' canonical=' + g.document.querySelector('link[rel="canonical"]').getAttribute('href').replace(g.location.origin, ''));
+g.history.pushState(null, '', '/company/notion.html'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
+report.push('path route: h1=' + (app.querySelector('h1') || {}).textContent + ' canonical=' + g.document.querySelector('link[rel="canonical"]').getAttribute('href').replace(g.location.origin, ''));
+g.location.hash = 'pricing'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40));
+report.push('old hash link becomes: ' + g.location.pathname + g.location.hash);
+{ const a = g.document.createElement('a'); a.href = '/category/fintech-and-banking.html'; app.appendChild(a); a.dispatchEvent(new g.window.MouseEvent('click', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 40)); }
+report.push('click real link: path=' + g.location.pathname + ' h1=' + (app.querySelector('h1') || {}).textContent);
+g.history.pushState(null, '', '/'); g.window.dispatchEvent(new g.window.PopStateEvent('popstate')); await new Promise(r => setTimeout(r, 40));
+report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '').slice(0, 30));
+// page text for scripts/build-pages.js: title, description, h1 and intro for each page that isn't data-driven
+{
+  g.__mock.member = { member: null, loggedIn: false, loading: false, error: null }; globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 40));
+  const AUTH = { login: ['Log in to Know The Company', 'Log in or create a free account to write reviews.'], 'business-login': ['Company login', 'Log in to manage your company page, reply to reviews and see your plan.'], dashboard: ['Company dashboard', 'Log in to manage your company page.'], 'my-reviews': ['My reviews', 'Log in to see the reviews you have written.'], search: ['Search companies', 'Search for a company by name or website.'] };
+  await go('blog'); const posts = [...new Set([...app.querySelectorAll('a.postcard')].map(a => routeOf(a.getAttribute('href'))))];
+  await go('tools'); const tools = [...new Set([...app.querySelectorAll('a[href]')].map(a => routeOf(a.getAttribute('href'))).filter(r => r.startsWith('tool-')))];
+  const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'];
+  const out = [];
+  for (const r of [...pages, ...tools, ...posts]) {
+    await go(r);
+    const h1el = app.querySelector('h1'); let intro = '';
+    if (h1el) { let n = h1el; for (let i = 0; i < 6 && n; i++) { n = n.nextElementSibling || (n.parentElement && n.parentElement.nextElementSibling); if (n && n.tagName === 'P' && n.textContent.trim().length > 30) { intro = n.textContent.trim(); break; } } }
+    const [ah1, aintro] = AUTH[r] || [];
+    out.push({ route: r, title: g.document.title, desc: g.document.querySelector('meta[name="description"]').content, h1: ah1 || (h1el ? h1el.textContent.trim() : ''), intro: aintro || intro });
+  }
+  fs.writeFileSync('../scripts/pages-meta.json', JSON.stringify(out, null, 1));
+  report.push('pages-meta: ' + out.length + ' pages, missing h1: ' + out.filter(x => !x.h1).map(x => x.route).join(',') + ' missing intro: ' + out.filter(x => !x.intro).map(x => x.route).join(','));
+}
 console.log(report.join('\n'));
 console.log('\nWRITES:'); inserted.forEach(([c, d]) => console.log(' ', c, JSON.stringify(d).slice(0, 220)));
 console.log('\nERRORS:', errors.length ? errors.join('\n') : 'none');

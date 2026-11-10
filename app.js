@@ -5,6 +5,56 @@ import { subscribeMember, getMemberState, login as memberLogin, register as memb
 
 const COUNTRY = {"AE": "United Arab Emirates", "AR": "Argentina", "AT": "Austria", "AU": "Australia", "BD": "Bangladesh", "BE": "Belgium", "BG": "Bulgaria", "BM": "Bermuda", "BR": "Brazil", "CA": "Canada", "CH": "Switzerland", "CL": "Chile", "CN": "China", "CO": "Colombia", "CY": "Cyprus", "CZ": "Czechia", "DE": "Germany", "DK": "Denmark", "EE": "Estonia", "EG": "Egypt", "ES": "Spain", "ET": "Ethiopia", "FI": "Finland", "FR": "France", "GB": "United Kingdom", "Global": "Global", "HK": "Hong Kong", "HU": "Hungary", "ID": "Indonesia", "IE": "Ireland", "IL": "Israel", "IN": "India", "IS": "Iceland", "IT": "Italy", "JP": "Japan", "KE": "Kenya", "KR": "South Korea", "KW": "Kuwait", "LI": "Liechtenstein", "LK": "Sri Lanka", "LT": "Lithuania", "LU": "Luxembourg", "MA": "Morocco", "MX": "Mexico", "MY": "Malaysia", "NG": "Nigeria", "NL": "Netherlands", "NO": "Norway", "NZ": "New Zealand", "PA": "Panama", "PE": "Peru", "PH": "Philippines", "PK": "Pakistan", "PL": "Poland", "PT": "Portugal", "QA": "Qatar", "RO": "Romania", "RU": "Russia", "SA": "Saudi Arabia", "SE": "Sweden", "SG": "Singapore", "SK": "Slovakia", "TG": "Togo", "TH": "Thailand", "TR": "Türkiye", "TW": "Taiwan", "US": "United States", "UY": "Uruguay", "VN": "Vietnam", "ZA": "South Africa"};
 const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+/* ---------- page addresses ----------
+   Every page has a real address, such as /company/future-topper.html or /pricing.html. Wix hosting only
+   serves files that exist, so scripts/build-pages.js writes one small HTML file per page, plus
+   /pages.json listing what it built. A page with no file yet (say, a company added since the last
+   build) uses an old-style /#route address until the next build. Old /#route links keep working: the
+   page loads from the home file and the address is swapped for the real one. */
+const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'];
+const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Pricing', refunds: 'Refunds and cancellations', removals: 'Removals report' };
+const BUILT = { page: new Set(), co: new Set(), cat: new Set(), blog: new Set(), tool: new Set() };
+const PATH_KINDS = [['company', 'co-', 'co'], ['category', 'cat-', 'cat'], ['blog', 'blog-', 'blog'], ['tools', 'tool-', 'tool']];
+function routeOfPath(path) {
+  let p = path; try { p = decodeURIComponent(path); } catch (e) {}
+  for (const [dir, pre] of PATH_KINDS) { const m = p.match(new RegExp('^/' + dir + '/([^/]+)\\.html$')); if (m) return pre + m[1]; }
+  const m = p.match(/^\/([a-z-]+)\.html$/);
+  return m && m[1] !== 'index' ? m[1] : 'home';
+}
+const curRoute = () => location.hash.length > 1 ? location.hash.slice(1) : routeOfPath(location.pathname);
+function routeOfHref(href) {
+  if (!href) return '';
+  if (href[0] === '#') return href.slice(1) || 'home';
+  try { const u = new URL(href, location.href); if (u.origin !== location.origin) return ''; return u.hash.length > 1 ? u.hash.slice(1) : routeOfPath(u.pathname); } catch (e) { return ''; }
+}
+function urlFor(r) {
+  if (!r || r === 'home') return '/';
+  for (const [dir, pre, kind] of PATH_KINDS) if (r.startsWith(pre) && BUILT[kind].has(r.slice(pre.length))) return '/' + dir + '/' + r.slice(pre.length) + '.html';
+  if (BUILT.page.has(r)) return '/' + r + '.html';
+  return '/#' + r;
+}
+const isRoute = r => r === 'home' || r === 'sample' || PAGE_ROUTES.includes(r) || r.startsWith('invite-') || !!(BYID[r] || CATBYID[r] || POSTBYID[r] || TOOLBYID[r]);
+/* Swap the address bar to the page's real address when it has one (keeps any ?query). */
+function canonicalUrl() {
+  const u = urlFor(curRoute());
+  if (u.startsWith('/#') && !location.hash) return; /* on a built page, before /pages.json has loaded */
+  if (location.pathname + location.hash === u) return;
+  const k = u.indexOf('#');
+  history.replaceState(history.state, '', k < 0 ? u + location.search : u.slice(0, k) + location.search + u.slice(k));
+}
+function navigate(r, replace) {
+  history[replace ? 'replaceState' : 'pushState'](null, '', urlFor(r));
+  routeChanged();
+}
+/* Links are written as href="#route" in the views; point them at the real address so people and search
+   engines see it, and handle clicks without reloading the page. */
+function realLinks(root) {
+  if (!root || !root.querySelectorAll) return;
+  const list = root.matches && root.matches('a[href^="#"]') ? [root] : [];
+  root.querySelectorAll('a[href^="#"]').forEach(a => list.push(a));
+  for (const a of list) { const r = a.getAttribute('href').slice(1); if (r && isRoute(r)) { const u = urlFor(r); if (!u.startsWith('/#')) a.setAttribute('href', u); } }
+}
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initials = n => String(n || '?').replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase() || String(n || '?')[0];
 
@@ -433,7 +483,7 @@ function cmpOut() {
     <p class="meta" style="margin-top:10px">Ratings come only from reviews. Know a company well? <a href="#${a.id}">Review ${esc(a.name)}</a> or <a href="#${b.id}">${esc(b.name)}</a>.</p>`;
 }
 function runTool() {
-  const x = TOOLBYID[(location.hash || '').slice(1)]; if (!x) return;
+  const x = TOOLBYID[curRoute()]; if (!x) return;
   if (x.id === 'compare') { const o = document.getElementById('cmp-out'); if (o) o.innerHTML = cmpOut(); return; }
   const r = document.getElementById('tool-res'); if (r) r.innerHTML = toolResult(x.id);
 }
@@ -743,7 +793,7 @@ function empCard(r, idx, cid) {
     ${r.advice ? `<div class="ersec"><h4>Advice to management</h4><p>${esc(r.advice)}</p></div>` : ''}
     <p class="recline">${r.rec === 'yes' ? TICK() + 'Would recommend working here' : CROSS() + 'Would not recommend working here'}</p>
     ${r.reply ? `<div class="reply"><b>Reply from ${esc(r.replyFrom || 'the company')}</b><span>${esc(r.reply)}</span></div>` : ''}
-    ${cid && !mine && location.hash !== '#dashboard' ? rvActions(cid, 'e', idx, r) : ''}
+    ${cid && !mine && curRoute() !== 'dashboard' ? rvActions(cid, 'e', idx, r) : ''}
     ${mine ? `<div><button class="link" type="button" data-act="del-emp" data-wid="${esc(r.wid)}">Remove my review</button></div>` : ''}
   </article>`;
 }
@@ -1394,7 +1444,7 @@ function vDashboard() {
   if (!S.user) return vLogin('business', S.memberLoading ? '' : 'Log in to see your company pages and claims.');
   if (S.myClaims === undefined) loadMyClaims();
   const mine = COS.filter(c => (c.raw.ownerMemberIds || []).includes(S.user.id));
-  const base = location.origin + location.pathname;
+  const base = location.origin + '/';
   const linkRow = (label, id, url) => `<div class="field"><label class="l" for="${id}">${label}</label><div style="display:flex;gap:8px"><input id="${id}" type="text" readonly value="${esc(url)}" class="mono" style="flex:1;min-width:0;background:var(--surface)"><button class="btn g" type="button" data-act="copy-text" data-text="${esc(url)}">Copy</button></div></div>`;
   const coCard = c => { const rv = reviewsFor(c.id), er = empData(c.id).reviews, all = rv.concat(er);
     const stats = [[rv.length ? avgOf(rv).toFixed(1) : '–', 'Customer rating', rv.length + ' review' + (rv.length === 1 ? '' : 's')], [er.length ? avgOf(er).toFixed(1) : '–', 'Employee rating', er.length + ' review' + (er.length === 1 ? '' : 's')], [all.length ? all.filter(r => r.reply).length + ' of ' + all.length : '–', 'Replied', 'Reply to every review']];
@@ -1456,7 +1506,7 @@ async function startIdp(key, biz) {
   const rand = n => b64url(crypto.getRandomValues(new Uint8Array(n)));
   const verifier = rand(48), state = rand(24);
   const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
-  const redirectUri = new URL('auth-callback.html', location.href.split('#')[0]).href;
+  const redirectUri = location.origin + '/auth-callback.html';
   const returnTo = biz ? 'dashboard' : (S.returnTo || 'my-reviews');
   try { sessionStorage.setItem('ktc_oauth', JSON.stringify({ verifier, state, redirectUri, returnTo, back: biz ? 'business-login' : 'login' })); } catch (e) { toast('Your browser blocked sign-in storage. Use email instead.'); return; }
   const authRequest = { redirectUri, clientId: WIX_CLIENT_ID, codeChallenge: challenge, codeChallengeMethod: 'S256', responseMode: 'fragment', responseType: 'code', scope: 'offline_access', state, idp: idp.id };
@@ -1579,7 +1629,7 @@ function renderNav(active) {
   const acct = S.memberLoading ? '<span class="loginlink" aria-hidden="true" style="min-width:64px"></span>' : u ? `<details class="dd um"><summary class="usum"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">${esc(initials(u.name))}</span>${esc(u.name.split(' ')[0])}</summary><div class="ddmenu right" style="min-width:240px"><div class="mh">Your account</div><a href="#my-reviews"><span class="mi">${nI('reply', 18)}</span><b>My reviews</b></a><a href="#dashboard"><span class="mi">${nI('grid', 18)}</span><b>Company dashboard</b></a><button class="mrow" type="button" data-act="logout"><span class="mi">${nI('login', 18)}</span><b>Log out</b></button></div></details>` : '<a class="loginlink" href="#login" data-nav="login">Log in</a>';
   right.innerHTML = `<button class="iconbtn" type="button" data-act="open-search" aria-label="Search companies">${nI('search')}</button>${bell}${acct}<button class="btn p wr" type="button" data-act="open-picker">Write a review</button><button class="iconbtn burger" type="button" data-act="open-menu" aria-label="Menu">${nI('menu')}</button>`;
   const acctHref = !u ? '#login' : u.type === 'reviewer' ? '#my-reviews' : '#dashboard';
-  bbar.innerHTML = `<a href="#home" ${['', '#', '#home'].includes(location.hash) ? 'aria-current="page"' : ''}>${nI('home', 22)}Home</a><a href="#categories" ${active === 'categories' ? 'aria-current="page"' : ''}>${nI('grid', 22)}Companies</a><button type="button" class="rv" data-act="open-picker"><span class="c">${nI('pen', 24)}</span>Review</button><a href="#tools" ${active === 'tools' ? 'aria-current="page"' : ''}>${nI('tools', 22)}Tools</a><a href="${acctHref}" ${['login', 'my-reviews', 'dashboard'].includes(active) ? 'aria-current="page"' : ''}>${nI('user', 22)}${u ? 'Account' : 'Log in'}</a>`;
+  bbar.innerHTML = `<a href="#home" ${curRoute() === 'home' ? 'aria-current="page"' : ''}>${nI('home', 22)}Home</a><a href="#categories" ${active === 'categories' ? 'aria-current="page"' : ''}>${nI('grid', 22)}Companies</a><button type="button" class="rv" data-act="open-picker"><span class="c">${nI('pen', 24)}</span>Review</button><a href="#tools" ${active === 'tools' ? 'aria-current="page"' : ''}>${nI('tools', 22)}Tools</a><a href="${acctHref}" ${['login', 'my-reviews', 'dashboard'].includes(active) ? 'aria-current="page"' : ''}>${nI('user', 22)}${u ? 'Account' : 'Log in'}</a>`;
 }
 function pickList(q) {
   q = (q || '').trim().toLowerCase();
@@ -1607,7 +1657,7 @@ function openMenu() {
   m.hidden = false; document.body.style.overflow = 'hidden';
 }
 function closeModals() { document.querySelectorAll('.modal').forEach(m => { m.hidden = true; m.innerHTML = ''; }); document.body.style.overflow = ''; }
-function go(h) { if (location.hash === '#' + h) render(); else location.hash = h; }
+function go(h) { if (curRoute() === h) render(); else navigate(h); }
 
 const BLOG_CATS = ['Reviews & reputation', 'Customer experience', 'Startup growth', 'Rules & compliance'];
 const POSTS = [
@@ -1866,7 +1916,7 @@ const errMsg = e => {
   if (e && e.status === 403) return 'Please log in again, then try once more.';
   return m && m.length < 160 ? m : 'Something went wrong. Please try again.';
 };
-const needLogin = (msg, tab) => { S.returnTo = (location.hash || '#home').slice(1); if (tab) S.returnTab = tab; S.notice = msg; go('login'); window.scrollTo(0, 0); };
+const needLogin = (msg, tab) => { S.returnTo = curRoute(); if (tab) S.returnTab = tab; S.notice = msg; go('login'); window.scrollTo(0, 0); };
 let PENDING = store.get('ktc_pending', []);
 const addPending = p => { PENDING.unshift({ ...p, member: S.user ? S.user.id : '', at: todayISO() }); PENDING = PENDING.slice(0, 60); store.set('ktc_pending', PENDING); };
 async function insertCompany(data) {
@@ -1892,7 +1942,7 @@ function afterLogin() {
   const back = S.returnTo; S.returnTo = ''; S.notice = '';
   S.auth = { mode: 'signin', error: '' };
   toast(back ? (S.returnTab ? 'Logged in. You can post your review now.' : 'Logged in.') : 'Logged in.');
-  go(back || (location.hash === '#business-login' ? 'dashboard' : 'my-reviews')); window.scrollTo(0, 0);
+  go(back || (curRoute() === 'business-login' ? 'dashboard' : 'my-reviews')); window.scrollTo(0, 0);
 }
 function onAuthResult(r) {
   if (r.state === 'SUCCESS') { afterLogin(); return; }
@@ -1954,7 +2004,7 @@ document.addEventListener('submit', async e => {
   }
 
   if (id === 'review-form') {
-    const c = BYID[location.hash.slice(1)]; if (!c) return;
+    const c = BYID[curRoute()]; if (!c) return;
     const body = f['r-body'].value.trim();
     const eR = !S.rating, eB = body.length < 20;
     document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
@@ -1977,7 +2027,7 @@ document.addEventListener('submit', async e => {
   }
 
   if (id === 'emp-form' || id === 'int-form') {
-    const c = BYID[location.hash.slice(1)]; if (!c || !S.user) return;
+    const c = BYID[curRoute()]; if (!c || !S.user) return;
     const check = list => { let first = null; list.forEach(([k, bad, foc]) => { document.getElementById('err-' + k).hidden = !bad; const el = document.getElementById(k); if (el) el.setAttribute('aria-invalid', bad ? 'true' : 'false'); if (bad && !first) first = foc || k; }); if (first) document.getElementById(first).focus(); return !first; };
     let data;
     if (id === 'emp-form') {
@@ -2009,16 +2059,16 @@ document.addEventListener('submit', async e => {
     if (eN) { f['a-name'].focus(); return; } if (eW) { f['a-web'].focus(); return; }
     const cid = companyIdFor(web), W2 = webs2();
     const dup = BYWID[cid] || COS.find(c => W2[c.id] && W2[c.id] === domOf(web));
-    if (dup) { toast(`${dup.name} is already listed`); location.hash = dup.id; return; }
+    if (dup) { toast(`${dup.name} is already listed`); navigate(dup.id); return; }
     if (!S.user) { S.addPrefill = name; needLogin('Log in to add a company. It keeps fake listings out.'); return; }
     busy(f, true);
     try {
       const it = await insertCompany({ _id: cid, title: name, slug: uniqueSlug(name), website: cid, category: f['a-cat'].value, country: f['a-cc'].value, bio: '', addedBy: 'reviewer', claimStatus: 'none', plan: 'none', countCustomer: 0, countEmployee: 0, countInterview: 0 });
       const c = addCompanyLocal({ ...it, _id: it._id || cid });
-      S.addPrefill = ''; toast(`${name} added. Now share your experience.`); location.hash = c.id;
+      S.addPrefill = ''; toast(`${name} added. Now share your experience.`); navigate(c.id);
     } catch (err) {
       busy(f, false);
-      if (err && err.status === 409) { await loadData(); const ex = BYWID[cid]; toast('That website is already listed'); if (ex) location.hash = ex.id; return; }
+      if (err && err.status === 409) { await loadData(); const ex = BYWID[cid]; toast('That website is already listed'); if (ex) navigate(ex.id); return; }
       toast(errMsg(err), 5000);
     }
     return;
@@ -2038,7 +2088,7 @@ document.addEventListener('submit', async e => {
 
   if (id === 'report-form') {
     const r = f.querySelector('input[name="rp-reason"]:checked'); document.getElementById('err-rp').hidden = !!r; if (!r) return;
-    const c = BYID[location.hash.slice(1)]; busy(f, true);
+    const c = BYID[curRoute()]; busy(f, true);
     try { await insertItem('Reports', { kind: 'report', review: f.dataset.key, company: c ? c.wid : undefined, reason: r.value, note: f.querySelector('#rp-note').value.trim(), status: 'open' }); }
     catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
     const R = store.get('ktc_reported', {}); R[f.dataset.key] = todayISO(); store.set('ktc_reported', R);
@@ -2208,7 +2258,7 @@ function startTyper() {
 })();
 
 function render() {
-  const h = (location.hash || '#home').slice(1);
+  const h = curRoute();
   if (!LOADED) {
     app.innerHTML = LOAD_ERR ? `<div class="wrap"><div class="empty" style="margin-top:40px"><b>We couldn't load the companies</b><p>Check your connection and try again.</p><button class="btn p" type="button" data-act="reload">Try again</button></div></div>`
       : `<div class="wrap"><div class="empty" style="margin-top:40px;border:0" aria-busy="true"><b>Loading…</b></div></div>`;
@@ -2223,7 +2273,7 @@ function render() {
   else if (h === 'why-list') { html = vWhy(); nav = 'list'; }
   else if (TOOLBYID[h]) { html = vTool(TOOLBYID[h]); nav = 'tools'; }
   else if (h === 'add') html = vAdd();
-  else if (h === 'sample') { location.replace('#list'); return; }
+  else if (h === 'sample') { navigate('list', true); return; }
   else if (h === 'list') { html = vList(); nav = 'list'; }
   else if (h === 'dashboard') { html = vDashboard(); nav = 'dashboard'; }
   else if (h === 'login') { html = vLogin('reviewer'); nav = 'login'; }
@@ -2259,14 +2309,14 @@ function render() {
   const sp = document.getElementById('searchpanel'); if (sp) sp.hidden = true;
   if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) { const g = document.getElementById('review-form'); if (g) { g['r-title'].value = S.draft.title; g['r-body'].value = S.draft.body; g['r-date'].value = S.draft.date || ''; S.draft.applied = true; } }
   setMeta(h);
-  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : 'Know The Company';
+  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : PAGE_TITLES[h] ? `${PAGE_TITLES[h]} · Know The Company` : 'Know The Company · Customer and employee reviews of startups';
 }
 function setMeta(h) {
   const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = `Compare ${k.name} companies by honest customer and employee reviews.`; else if (POSTBYID[h]) d = POSTBYID[h].excerpt;
   let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
   let cl = document.querySelector('link[rel="canonical"]'); if (!cl) { cl = document.createElement('link'); cl.rel = 'canonical'; document.head.appendChild(cl); }
-  cl.href = location.origin + location.pathname + (h && h !== 'home' ? '#' + h : '');
+  { const u = urlFor(h); cl.href = location.origin + (u.startsWith('/#') && !location.hash ? location.pathname : u); }
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
   const noindex = ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
@@ -2276,17 +2326,20 @@ function setMeta(h) {
     s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'ldjson'; s.textContent = JSON.stringify(o); document.head.appendChild(s); }
 }
 (() => { if (store.get('ktc_consent', null)) return; const el = document.getElementById('cookie'); el.innerHTML = '<p><b>Your privacy choices</b><br>We use essential storage to keep you logged in. With your OK, we also use analytics to improve the site. <a href="#privacy">Privacy policy</a></p><div class="row"><button class="btn p" type="button" data-act="cookie" data-v="all">Accept analytics</button><button class="btn g" type="button" data-act="cookie" data-v="essential">Essential only</button></div>'; el.hidden = false; })();
-let lastHash = location.hash;
-window.addEventListener('hashchange', () => {
-  const h = location.hash.slice(1);
-  if (CATBYID[h] && lastHash !== location.hash) S.catFilter = { country: '', text: '', sort: 'name' };
-  if (BYID[h] && lastHash !== location.hash) { S.rating = 0; S.coTab = S.returnTab || (isVerifiedCo(BYID[h]) ? 'overview' : 'customers'); S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
+let lastRoute = curRoute();
+function routeChanged() {
+  const h = curRoute();
+  canonicalUrl();
+  if (CATBYID[h] && lastRoute !== h) S.catFilter = { country: '', text: '', sort: 'name' };
+  if (BYID[h] && lastRoute !== h) { S.rating = 0; S.coTab = S.returnTab || (isVerifiedCo(BYID[h]) ? 'overview' : 'customers'); S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
   if (!BYID[h] && h !== 'login' && h !== 'business-login') S.returnTab = '';
-  if (h === 'list' && !lastHash.startsWith('#list')) { if (S.listStep === 4 || S.listStep === 'req-done') { S.listStep = 0; S.listData = { plan: S.listData.plan }; } }
+  if (h === 'list' && lastRoute !== 'list') { if (S.listStep === 4 || S.listStep === 'req-done') { S.listStep = 0; S.listData = { plan: S.listData.plan }; } }
   if (h !== 'login' && h !== 'business-login') S.notice = '';
-  lastHash = location.hash;
+  lastRoute = h;
   render(); window.scrollTo(0, 0);
-});
+}
+window.addEventListener('hashchange', routeChanged);
+window.addEventListener('popstate', routeChanged);
 
 /* ---------- toast ---------- */
 let tt; function toast(msg, ms = 2600) { const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, ms); }
@@ -2300,22 +2353,22 @@ function suggestFor(input) {
     `<button type="button" data-searchall="1"><span style="padding-left:2px;font-weight:700;color:var(--accent)">See all results for “${esc(input.value.trim())}”</span></button>`;
   box.hidden = false;
 }
-function runSearch(q) { S.q = q; if (location.hash === '#search') render(); else location.hash = 'search'; }
+function runSearch(q) { S.q = q; if (curRoute() === 'search') render(); else navigate('search'); }
 document.addEventListener('click', e => { document.querySelectorAll('details.dd[open]').forEach(d => { if (!d.contains(e.target)) d.open = false; }); if (e.target.classList && e.target.classList.contains('modal')) closeModals(); }, true);
 document.addEventListener('toggle', e => { const d = e.target; if (!d.classList || !d.classList.contains('dd') || !d.open) return; document.querySelectorAll('details.dd[open]').forEach(o => { if (o !== d) o.open = false; }); if (d.classList.contains('bell')) { store.set('tn_seen', notifs().length); const b = d.querySelector('.badge'); if (b) b.remove(); } }, true);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModals(); document.getElementById('searchpanel').hidden = true; document.querySelectorAll('details.dd[open]').forEach(d => d.open = false); } });
 document.addEventListener('input', e => {
   if (e.target.id === 'cf-q') { S.cfQ = e.target.value; document.getElementById('cf-res').innerHTML = cfResults(e.target.value); return; }
   if (e.target.id === 'pk-q') { document.getElementById('pk-list').innerHTML = pickList(e.target.value); return; }
-  if (e.target.closest && e.target.closest('[data-tool]')) { if (e.target.id === 'c-a' || e.target.id === 'c-b' || TOOLBYID[(location.hash || '').slice(1)]) runTool(); return; }
+  if (e.target.closest && e.target.closest('[data-tool]')) { if (e.target.id === 'c-a' || e.target.id === 'c-b' || TOOLBYID[curRoute()]) runTool(); return; }
   if (e.target.id === 'calc-sale') { const v = parseFloat(e.target.value); if (v > 0) { S.calcSale = v; const o = document.querySelector('.calc .out'); if (o) o.innerHTML = calcOut(v); } return; }
   const t = e.target;
   if (t.dataset.suggest) suggestFor(t);
-  if (t.dataset.filter === 'text') { S.catFilter.text = t.value; const k = CATBYID[location.hash.slice(1)]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
+  if (t.dataset.filter === 'text') { S.catFilter.text = t.value; const k = CATBYID[curRoute()]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.dataset.filter && t.dataset.filter !== 'text') { S.catFilter[t.dataset.filter] = t.value; const k = CATBYID[location.hash.slice(1)]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
+  if (t.dataset.filter && t.dataset.filter !== 'text') { S.catFilter[t.dataset.filter] = t.value; const k = CATBYID[curRoute()]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
@@ -2323,7 +2376,7 @@ document.addEventListener('keydown', e => {
   if (tb && ['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) { e.preventDefault(); const all = [...tb.parentElement.querySelectorAll('[role="tab"]')]; const i = all.indexOf(tb), n = all.length; all[e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : n - 1].click(); }
 });
 document.addEventListener('click', e => {
-  const go = e.target.closest('[data-go]'); if (go) { if (go.closest('#sugg-hero') && S.heroTab === 'salaries') S.returnTab = 'salaries'; document.querySelectorAll('.sugg').forEach(b => b.hidden = true); document.querySelectorAll('[data-suggest]').forEach(i => i.value = ''); location.hash = go.dataset.go; return; }
+  const go = e.target.closest('[data-go]'); if (go) { if (go.closest('#sugg-hero') && S.heroTab === 'salaries') S.returnTab = 'salaries'; document.querySelectorAll('.sugg').forEach(b => b.hidden = true); document.querySelectorAll('[data-suggest]').forEach(i => i.value = ''); navigate(go.dataset.go); return; }
   const all = e.target.closest('[data-searchall]'); if (all) { const box = all.closest('.sugg'); const inp = box.parentElement.querySelector('input'); box.hidden = true; runSearch(inp.value); return; }
   if (!e.target.closest('.hsearch')) document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
   const a = e.target.closest('[data-act]'); if (!a) return;
@@ -2335,11 +2388,11 @@ document.addEventListener('click', e => {
   if (act === 'rv-star') { const n = +a.dataset.n; S.rvStar = S.rvStar === n ? 0 : n; renderKeep(); return; }
   if (act === 'rv-proof') { S.rvProof = !S.rvProof; renderKeep(); return; }
   if (act === 'rv-clear') { S.rvStar = 0; S.rvProof = false; renderKeep(); return; }
-  if (act === 'share-co') { const c = BYID[a.dataset.id]; const u = location.origin + location.pathname + '#' + c.id; const tx = encodeURIComponent(`${c.name} reviews from customers and employees: ${u}`);
+  if (act === 'share-co') { const c = BYID[a.dataset.id]; const u = location.origin + urlFor(c.id); const tx = encodeURIComponent(`${c.name} reviews from customers and employees: ${u}`);
     openModal(`${mHead('Share ' + esc(c.name) + "'s page")}<div class="field"><label class="l" for="sh-url">Link</label><div style="display:flex;gap:8px"><input id="sh-url" type="text" readonly value="${u}" class="mono" style="flex:1;min-width:0;background:var(--surface)"><button class="btn p" type="button" data-act="copy-text" data-text="${u}">Copy</button></div></div><div class="sharegrid"><a href="https://wa.me/?text=${tx}" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}" target="_blank" rel="noopener">LinkedIn</a><a href="https://twitter.com/intent/tweet?text=${tx}" target="_blank" rel="noopener">X</a><a href="mailto:?subject=${encodeURIComponent(c.name + ' reviews')}&body=${tx}">Email</a></div>`); return; }
   if (act === 'suggest') { const c = BYID[a.dataset.id]; openModal(`<form id="suggest-form" data-id="${c.id}" novalidate style="display:flex;flex-direction:column;gap:14px">${mHead('Suggest an edit')}<p>Tell us what's wrong on ${esc(c.name)}'s page. We check every suggestion before changing anything.</p><div class="field"><label class="l" for="sg-what">What needs fixing?</label><select id="sg-what">${['Website', 'Name', 'Category', 'Country', 'Description', 'The company has closed', 'This is a duplicate page', 'Something else'].map(x => `<option>${x}</option>`).join('')}</select></div><div class="field"><label class="l" for="sg-note">What should it say?</label><textarea id="sg-note" rows="3" maxlength="600" placeholder="For example, the correct website or the page this duplicates"></textarea><p class="err" id="err-sg" hidden>Add a short explanation, at least 10 characters.</p></div><div><button class="btn p" type="submit">Send suggestion</button></div></form>`); return; }
-  if (act === 'inv-rate') { const id = a.dataset.id; S.draft = { cid: id, rating: +a.dataset.n, title: '', body: '', date: '' }; S.invitedFor = id; S.returnTab = 'customers'; S.scrollTo = 'review-form'; location.hash = id; return; }
-  if (act === 'inv-go') { e.preventDefault(); S.invitedFor = a.dataset.id; S.returnTab = a.dataset.tab; S.scrollTo = 'emp-form'; location.hash = a.dataset.id; return; }
+  if (act === 'inv-rate') { const id = a.dataset.id; S.draft = { cid: id, rating: +a.dataset.n, title: '', body: '', date: '' }; S.invitedFor = id; S.returnTab = 'customers'; S.scrollTo = 'review-form'; navigate(id); return; }
+  if (act === 'inv-go') { e.preventDefault(); S.invitedFor = a.dataset.id; S.returnTab = a.dataset.tab; S.scrollTo = 'emp-form'; navigate(a.dataset.id); return; }
   if (act === 'cookie') { store.set('ktc_consent', { analytics: a.dataset.v === 'all', at: todayISO() }); document.getElementById('cookie').hidden = true; toast(a.dataset.v === 'all' ? 'Thanks. Analytics is on.' : 'Only essential storage is used.'); return; }
   if (act === 'cp-del' && S.user && S.user.coId) { const own = {}; own[a.dataset.k] = ''; saveProf(S.user.coId, own); render(); toast('Removed'); return; }
   if (act === 'cp-del-photo' && S.user && S.user.coId) { const id = S.user.coId, own = {}; own.photos = cprof(BYID[id]).photos.filter((_, i) => i !== +a.dataset.i); saveProf(id, own); render(); toast('Photo removed'); return; }
@@ -2347,11 +2400,11 @@ document.addEventListener('click', e => {
   if (act === 'open-picker') { closeModals(); openPicker(a.dataset.as); return; }
   if (act === 'open-menu') { openMenu(); return; }
   if (act === 'close-modal') { closeModals(); return; }
-  if (act === 'close-modal-go') { if (a.dataset.sheet === 'dash-tab') S.dashTab = a.dataset.tab; if (a.dataset.sheet === 'goto-plans') S.scrollTo = 'plans'; closeModals(); if (a.getAttribute('href') === location.hash) { e.preventDefault(); render(); } return; }
-  if (act === 'pick-co') { const as = (document.querySelector('input[name="pk-as"]:checked') || {}).value || 'customers'; closeModals(); if (location.hash === '#' + a.dataset.id) { S.coTab = as; render(); } else { S.returnTab = as; location.hash = a.dataset.id; } return; }
+  if (act === 'close-modal-go') { if (a.dataset.sheet === 'dash-tab') S.dashTab = a.dataset.tab; if (a.dataset.sheet === 'goto-plans') S.scrollTo = 'plans'; closeModals(); if (routeOfHref(a.getAttribute('href')) === curRoute()) { e.preventDefault(); render(); } return; }
+  if (act === 'pick-co') { const as = (document.querySelector('input[name="pk-as"]:checked') || {}).value || 'customers'; closeModals(); if (curRoute() === a.dataset.id) { S.coTab = as; render(); } else { S.returnTab = as; navigate(a.dataset.id); } return; }
   if (act === 'cur') { store.set('ktc_cur', a.dataset.cur); renderKeep(); return; }
-  if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (location.hash === '#dashboard') { e.preventDefault(); render(); } return; }
-  if (act === 'goto-plans') { S.scrollTo = 'plans'; if (location.hash === '#list') { e.preventDefault(); render(); } return; }
+  if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (curRoute() === 'dashboard') { e.preventDefault(); render(); } return; }
+  if (act === 'goto-plans') { S.scrollTo = 'plans'; if (curRoute() === 'list') { e.preventDefault(); render(); } return; }
   if (act === 'add-cat') { S.addCat = a.dataset.cat; return; }
   if (act === 'add-prefill') { S.addPrefill = a.dataset.name || ''; return; }
   if (act === 'cotab-link') { S.returnTab = a.dataset.tab; return; }
@@ -2384,7 +2437,7 @@ document.addEventListener('click', e => {
     const b = document.getElementById(`e-${a.dataset.k}-${a.dataset.n}`); if (b) b.focus();
   }
   if (act === 'gate-login') {
-    const c = BYID[location.hash.slice(1)]; if (!c) return;
+    const c = BYID[curRoute()]; if (!c) return;
     S.returnTo = c.id; S.returnTab = S.coTab;
     S.notice = 'Log in to post. You can stay anonymous or use your name, and your email is never shown.';
     go('login'); window.scrollTo(0, 0);
@@ -2396,7 +2449,7 @@ document.addEventListener('click', e => {
   if (act === 'del-review') { const id = a.dataset.id; (REVIEWS[id] || []).splice(+a.dataset.idx, 1); store.set('tn_reviews', REVIEWS); render(); toast('Review removed'); }
   if (act === 'claim') { const c = BYID[a.dataset.id] || COS.find(x => x.name === a.dataset.name); S.cf = { method: 'email' };
     if (c && isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else if (c) { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } else { S.listData = { mode: 'new', name: a.dataset.name || '', plan: S.listData.plan }; S.listStep = 1; }
-    S.scrollTo = 'list-form-area'; if (location.hash === '#list') { e.preventDefault(); render(); } }
+    S.scrollTo = 'list-form-area'; if (curRoute() === 'list') { e.preventDefault(); render(); } }
   if (act === 'cf-claim') { const c = BYID[a.dataset.id]; S.cf = { method: 'email' }; if (isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } cfRefresh(); return; }
   if (act === 'cf-request') { S.reqCo = a.dataset.id; S.listStep = 'req'; cfRefresh(); return; }
   if (act === 'cf-new') { const q = (S.cfQ || '').trim(); S.listData = { mode: 'new', name: q.includes('.') ? '' : q, web: q.includes('.') ? q : '', plan: S.listData.plan }; S.cf = { method: 'email' }; S.listStep = 1; cfRefresh(); return; }
@@ -2451,20 +2504,20 @@ document.addEventListener('submit', e => {
     document.getElementById('err-a-name').hidden = !eN; document.getElementById('err-a-web').hidden = !eW;
     if (eN) { f['a-name'].focus(); return; } if (eW) { f['a-web'].focus(); return; }
     const W2 = webs2(); const dup = COS.find(c => c.id === 'co-' + slug(name) || c.web === web || W2[c.id] === domOf(web));
-    if (dup) { toast(`${dup.name} is already listed`); location.hash = dup.id; return; }
+    if (dup) { toast(`${dup.name} is already listed`); navigate(dup.id); return; }
     const row = [name, web, f['a-cat'].value, f['a-cc'].value, 'No description yet. The owner can add one by claiming this profile.', 1];
     const c = mkCo(row); ADDED.push(row); store.set('tn_added', ADDED);
     COS.push(c); BYID[c.id] = c; ensureCat(c.cat, c.catId).items.push(c);
-    S.addPrefill = ''; toast(`${name} added. Now share your experience.`); location.hash = c.id; return;
+    S.addPrefill = ''; toast(`${name} added. Now share your experience.`); navigate(c.id); return;
   }
-  if (f.id === 'hero-jobs-form') { const what = f['hj-what'].value.trim(), where = f['hj-where'].value.trim(); S.jobFilter = { q: [what, where].filter(Boolean).join(' '), type: '', mode: '' }; location.hash = 'jobs'; return; }
+  if (f.id === 'hero-jobs-form') { const what = f['hj-what'].value.trim(), where = f['hj-where'].value.trim(); S.jobFilter = { q: [what, where].filter(Boolean).join(' '), type: '', mode: '' }; navigate('jobs'); return; }
   if (f.id === 'hero-search-form' && S.heroTab === 'salaries') { const q = f.querySelector('input').value.trim().toLowerCase(); document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
     const m = q && (COS.find(c => c.name.toLowerCase() === q || c.web === q) || COS.find(c => c.name.toLowerCase().startsWith(q)));
-    if (m) { S.returnTab = 'salaries'; location.hash = m.id; } else runSearch(q); return; }
+    if (m) { S.returnTab = 'salaries'; navigate(m.id); } else runSearch(q); return; }
   if (f.id === 'top-search-form' || f.id === 'hero-search-form' || f.id === 'page-search-form') { const inp = f.querySelector('input'); document.querySelectorAll('.sugg').forEach(b => b.hidden = true); runSearch(inp.value); return; }
   if (f.id === 'review-form') {
     if (reviewBlock()) { toast('Company accounts can’t write reviews.'); return; }
-    const c = BYID[location.hash.slice(1)]; const body = f['r-body'].value.trim();
+    const c = BYID[curRoute()]; const body = f['r-body'].value.trim();
     const eR = !S.rating, eB = body.length < 20;
     document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
     if (eR) { f.querySelector('[data-n="1"]').focus(); return; } if (eB) { f['r-body'].focus(); return; }
@@ -2482,7 +2535,7 @@ document.addEventListener('submit', e => {
   }
   if (f.id === 'emp-form' || f.id === 'sal-form' || f.id === 'int-form') {
     if (reviewBlock()) { toast('Company accounts can’t write reviews.'); return; }
-    const c = BYID[location.hash.slice(1)]; if (!c || !S.user || S.user.type !== 'reviewer') return;
+    const c = BYID[curRoute()]; if (!c || !S.user || S.user.type !== 'reviewer') return;
     const v = id => document.getElementById(id).value.trim();
     const check = list => { let first = null; list.forEach(([k, bad, foc]) => { document.getElementById('err-' + k).hidden = !bad; const el = document.getElementById(k); if (el) el.setAttribute('aria-invalid', bad ? 'true' : 'false'); if (bad && !first) first = foc || k; }); if (first) document.getElementById(first).focus(); return !first; };
     const done = (kind, item, msg, headId) => { empBucket(c.id)[kind].unshift({ by: S.user.email, ...item, verified: workVerified(c), date: monthNow() }); store.set('tn_emp', EMP); delete S.formCache[f.id]; render(); toast(msg); const h = document.getElementById(headId); if (h) h.scrollIntoView({ block: 'start' }); };
@@ -2636,6 +2689,23 @@ document.addEventListener('submit', e => {
 const fromCache = loadCached();
 syncUser(getMemberState());
 render();
+/* Real page addresses: learn which pages have their own file, then fix the address bar and the links. */
+new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(n => { if (n.nodeType === 1) realLinks(n); }); }).observe(document.body, { childList: true, subtree: true });
+document.addEventListener('click', e => {
+  if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest && e.target.closest('a[href]'); if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+  const href = a.getAttribute('href'); if (!href || href === '#' || /^(mailto|tel|javascript):/i.test(href)) return;
+  const r = routeOfHref(href); if (!r || !isRoute(r)) return;
+  e.preventDefault();
+  if (r === curRoute()) { canonicalUrl(); render(); window.scrollTo(0, 0); } else navigate(r);
+});
+(async () => {
+  try {
+    const res = await fetch('/pages.json', { cache: 'no-cache' }); if (!res.ok) return;
+    const j = await res.json(); for (const k of Object.keys(BUILT)) (j[k] || []).forEach(x => BUILT[k].add(x));
+  } catch (e) { return; }
+  canonicalUrl(); realLinks(document.body); if (LOADED) setMeta(curRoute());
+})();
 subscribeMember(s => { syncUser(s); render(); });
 loadData().then(changed => {
   if (!changed) return;
