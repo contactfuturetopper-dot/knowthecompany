@@ -1020,6 +1020,11 @@ footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-siz
 @media (max-width:640px){
   .mshort-3 > :nth-child(n+4), .mshort-4 > :nth-child(n+5){display:none}
   .bens .ben .prev{display:none}
+  .bens.awards{grid-template-columns:1fr 1fr!important;gap:10px}
+  .bens.awards .ben{padding:14px}
+  .bens.awards .ben h3{font-size:16px}
+  .bens.awards .ben p{font-size:14px}
+  .both .bjoin{display:none}
 }
 
 /* ---------- bigger tap targets on phones ---------- */

@@ -1493,7 +1493,7 @@ function vList() {
       <p class="meta" style="margin-top:12px">Source: <a href="https://www.brightlocal.com/research/local-consumer-review-survey/" target="_blank" rel="noopener">BrightLocal Local Consumer Review Survey 2023</a>.</p></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">What you get</p><h2>Six ways your company page works for you</h2></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
-      <div class="bens">
+      <div class="bens mshort-3">
         <div class="ben">${ic2('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>', 1)}<h3>Tell your story to job seekers</h3><p>Your employer page shows why people should work for you: your mission, benefits, team photos and company updates, right next to what employees say.</p>
           <div class="prev"><b style="font-size:14px">Work at your company</b><span class="meta">Why work here · benefits · photos · updates</span></div></div>
         <div class="ben">${ic2('<path d="M4 5h16v11H9.5L5 20v-4H4z"/>', 2)}<h3>Reply to employees and customers</h3><p>Answer every review publicly, from your team and your customers. Thank people, explain what changed, and show you listen.</p>
@@ -1518,7 +1518,7 @@ function vList() {
       </ol></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Awards</p><h2>Employees’ Choice: Best Workplaces</h2><p>Every year we recognise the best places to work, chosen only from employee ratings. You can't apply, nominate yourself or pay to win.</p></div></div>
-      <div class="bens" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">${[['Startups, up to 50 people', 'For young teams where every person shapes the culture.'], ['Growing companies, 51–250', 'For companies building their first managers and processes.'], ['Mid-sized companies, 251–1,000', 'For established employers that still move fast.'], ['Best startup to work for', 'For young companies of any size that look after their people.']].map(([h, p], k) => `<div class="ben">${ic2('<circle cx="12" cy="9" r="6"/><path d="M8.5 14l-1.5 7 5-3 5 3-1.5-7"/>', (k % 6) + 1)}<h3>${h}</h3><p>${p}</p></div>`).join('')}</div>
+      <div class="bens awards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">${[['Startups, up to 50 people', 'For young teams where every person shapes the culture.'], ['Growing companies, 51–250', 'For companies building their first managers and processes.'], ['Mid-sized companies, 251–1,000', 'For established employers that still move fast.'], ['Best startup to work for', 'For young companies of any size that look after their people.']].map(([h, p], k) => `<div class="ben">${ic2('<circle cx="12" cy="9" r="6"/><path d="M8.5 14l-1.5 7 5-3 5 3-1.5-7"/>', (k % 6) + 1)}<h3>${h}</h3><p>${p}</p></div>`).join('')}</div>
       <p class="meta" style="margin-top:14px">Winners are announced once a year; the next list comes out in 2027. To qualify, a company needs at least 10 employee reviews in the year and no sign of review manipulation. Winners get a badge for their website and careers page.</p></section>
 
     <section class="wrap sec"><div class="calc">
