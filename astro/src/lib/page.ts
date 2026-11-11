@@ -4,6 +4,7 @@
 import shell from "../generated/shell.html?raw";
 import meta from "../generated/pages-meta.json";
 import posts from "../generated/posts.json";
+import catIntros from "../generated/cat-intros.json";
 import { graph, orgNode, webPage, breadcrumbs, companyNodes, type Crumb } from "./schema";
 
 export const ORIGIN = "https://www.knowthecompany.com";
@@ -56,8 +57,9 @@ async function categories(): Promise<string[]> {
 /* ---- addresses ---- */
 /* `ld` is this page's structured data (schema.org JSON-LD), added to the shell as one @graph with the
    site's Organization and WebSite. */
-export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[] } | { redirect: string };
-type Post = { slug: string; cat: string; date: string; title: string; excerpt: string };
+export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string } | { redirect: string };
+type Post = { slug: string; cat: string; date: string; title: string; excerpt: string; body: [string, string | string[]][] };
+const catIntro = (name: string) => (catIntros as Record<string, string>)[name] || `Customer and employee reviews of ${name} companies: how they treat the people they serve and the people who work for them.`;
 const POSTS = new Map((posts as Post[]).map(p => [p.slug, p]));
 
 /** Old addresses (/#route is handled in the browser; /x.html and trailing slashes here) move to the clean one. */
@@ -74,7 +76,7 @@ export async function resolvePage(pathname: string): Promise<Page> {
   const moved = cleanPath(pathname);
   if (moved) return { redirect: moved };
   const p = pathname;
-  if (p === "/") return { status: 200, path: "/", title: HOME_TITLE, desc: DEFAULT_DESC, h1: "Know the company before you deal with it.", body: "", noindex: false, ld: [webPage("/", HOME_TITLE, DEFAULT_DESC, { type: "WebPage", about: true })] };
+  if (p === "/") return { status: 200, path: "/", title: HOME_TITLE, desc: DEFAULT_DESC, h1: "Know the company before you deal with it.", body: await homeBody(), noindex: false, ld: [webPage("/", HOME_TITLE, DEFAULT_DESC, { type: "WebPage", about: true })] };
 
   let m = p.match(/^\/(tools|blog)\/([a-z0-9-]+)$/);
   if (m) {
@@ -91,8 +93,8 @@ export async function resolvePage(pathname: string): Promise<Page> {
       if (c) {
         const name = c.title || c._id, cat = c.category || "Other";
         const title = `${name} reviews · Know The Company`, desc = trim(`${name} reviews from customers and employees. ${c.bio || ""}`);
-        const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "");
         const reviews = await companyReviews(c._id).catch(() => []);
+        const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "") + reviewsHtml(name, reviews);
         const crumbs: Crumb[] = [{ name: cat, path: `/category/${slug(cat)}` }, { name, path: p }];
         const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews)];
         return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld };
@@ -107,8 +109,8 @@ export async function resolvePage(pathname: string): Promise<Page> {
       const name = (await categories()).find(n => slug(n) === m![1]);
       if (!name) return notFound(p);
       const list = (await query("Companies", { category: { $eq: name } }, 100)).map(c => ({ s: c.slug || slug(c.title || c._id), n: c.title || c._id })).sort((a, b) => a.n.localeCompare(b.n));
-      const body = `<p>Compare companies by real customer experiences</p><ul>${list.map(c => `<li><a href="/company/${c.s}">${esc(c.n)}</a></li>`).join("")}</ul>`;
-      const title = `${name} · Know The Company`, desc = `Compare ${name} companies by honest customer and employee reviews.`;
+      const body = `<p>${esc(catIntro(name))}</p><ul>${list.map(c => `<li><a href="/company/${c.s}">${esc(c.n)}</a></li>`).join("")}</ul>`;
+      const title = `${name} · Know The Company`, desc = trim(catIntro(name));
       const ld = [
         webPage(p, title, desc, { type: "CollectionPage", mainEntity: `${ORIGIN}${p}#list`, crumbs: true }),
         breadcrumbs(p, [{ name: "All categories", path: "/categories" }, { name, path: p }]),
@@ -122,7 +124,9 @@ export async function resolvePage(pathname: string): Promise<Page> {
 }
 function fromMeta(path: string, m: Meta): Page {
   const desc = m.desc || DEFAULT_DESC;
-  return { status: 200, path, title: m.title, desc, h1: m.h1, body: m.intro ? `<p>${esc(m.intro)}</p>` : "", noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc) };
+  const post = m.route.startsWith("blog-") ? POSTS.get(m.route.slice(5)) : undefined;
+  const body = (m.intro ? `<p>${esc(m.intro)}</p>` : "") + (post ? articleHtml(post) : "");
+  return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article" } : {}) };
 }
 const PAGE_TYPES: Record<string, string> = { about: "AboutPage", contact: "ContactPage", categories: "CollectionPage", tools: "CollectionPage", blog: "CollectionPage", search: "SearchResultsPage" };
 /* Structured data for the fixed pages: the page itself, its breadcrumb trail, and what it is about. */
@@ -165,15 +169,66 @@ function pageSchema(path: string, m: Meta, desc: string): object[] {
 
 /* Published reviews of one company, as a visitor sees them, without reviews written by any account that
    manages a company (the same rule the app and the badge apply). */
+/* Members can insert items but only the team can edit them, and Wix gives a new item equal created and
+   updated times. So a review its writer published without moderation, or a company a member inserted with
+   team-only fields filled in, is ignored until an admin has touched it. Same rule as "trust" in app.js. */
+const ADMIN_ID = "c0f544a7-207e-490b-b7d9-830ef39f49c7";
+const tms = (d: unknown) => { const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d; const t = Date.parse(String(v)); return isNaN(t) ? 0 : t; };
+export const adminTouched = (it: any) => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
 async function companyReviews(companyId: string): Promise<any[]> {
-  const items = (await query("Reviews", { company: { $eq: companyId } }, 1000)).filter(r => r.type !== "interview" && Number(r.rating) > 0);
+  const items = (await query("Reviews", { company: { $eq: companyId } }, 1000)).filter(r => r.type !== "interview" && Number(r.rating) > 0 && adminTouched(r));
   const authors = [...new Set(items.map(r => r._owner).filter(Boolean))];
   const blocked = new Set<string>();
   for (let i = 0; i < authors.length; i += 50) {
     const owners = await query("Companies", { ownerMemberIds: { $hasSome: authors.slice(i, i + 50) } }, 100);
-    owners.forEach(c => (c.ownerMemberIds || []).forEach((id: string) => blocked.add(id)));
+    owners.filter(adminTouched).forEach(c => (c.ownerMemberIds || []).forEach((id: string) => blocked.add(id)));
   }
   return items.filter(r => !blocked.has(r._owner));
+}
+/* ---- text versions of the page content, for search engines and AI crawlers that don't run JavaScript ---- */
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+function monthYear(d: unknown): string {
+  const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d;
+  const t = typeof v === "string" ? new Date(v) : null;
+  return t && !isNaN(t.getTime()) ? `${MONTHS[t.getUTCMonth()]} ${t.getUTCFullYear()}` : "";
+}
+const stars = (n: unknown) => `${Number(n)} out of 5`;
+function reviewsHtml(name: string, reviews: any[]): string {
+  const sorted = [...reviews].sort((a, b) => String(monthIso(b._createdDate)).localeCompare(String(monthIso(a._createdDate))));
+  const customer = sorted.filter(r => (r.type || "customer") === "customer");
+  const employee = sorted.filter(r => r.type === "employee");
+  const avg = (l: any[]) => (l.reduce((s, r) => s + Number(r.rating), 0) / l.length).toFixed(1);
+  const reply = (r: any) => r.reply ? `<blockquote><p><strong>Reply from ${esc(name)}:</strong> ${esc(r.reply)}</p></blockquote>` : "";
+  let html = `<section><h2>Customer reviews of ${esc(name)}</h2>`;
+  html += customer.length
+    ? `<p>Rated ${avg(customer)} out of 5 from ${customer.length} customer review${customer.length === 1 ? "" : "s"}.</p>` + customer.slice(0, 20).map(r => `<article><h3>${esc(r.title || "Customer review")}</h3><p>${stars(r.rating)} · ${esc(r.displayName || "Reviewer")}${monthYear(r._createdDate) ? " · " + monthYear(r._createdDate) : ""}</p>${r.body ? `<p>${esc(r.body)}</p>` : ""}${reply(r)}</article>`).join("")
+    : `<p>No customer reviews of ${esc(name)} yet. If you have bought from or used ${esc(name)}, you can write the first one.</p>`;
+  html += `</section><section><h2>Employee reviews of ${esc(name)}</h2>`;
+  if (employee.length) {
+    const rec = employee.filter(r => r.recommend === "yes").length;
+    html += `<p>Rated ${avg(employee)} out of 5 by ${employee.length} current or former employee${employee.length === 1 ? "" : "s"}. ${Math.round(rec / employee.length * 100)}% would recommend working there.</p>`;
+    html += employee.slice(0, 20).map(r => `<article><h3>${esc(r.jobTitle || "Employee review")}</h3><p>${stars(r.rating)} · ${esc(r.employmentStatus || "Employee")}${r.anonymous || !r.displayName ? "" : " · " + esc(r.displayName)}${monthYear(r._createdDate) ? " · " + monthYear(r._createdDate) : ""}</p>${r.pros ? `<p><strong>Pros:</strong> ${esc(r.pros)}</p>` : ""}${r.cons ? `<p><strong>Cons:</strong> ${esc(r.cons)}</p>` : ""}${r.advice ? `<p><strong>Advice to management:</strong> ${esc(r.advice)}</p>` : ""}${reply(r)}</article>`).join("");
+  } else html += `<p>No employee reviews of ${esc(name)} yet. Current and former employees can review anonymously.</p>`;
+  return html + "</section>";
+}
+const monthIso = (d: unknown) => { const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d; return typeof v === "string" ? v : ""; };
+function articleHtml(post: Post): string {
+  return (post.body || []).map(([k, v]) => k === "h" ? `<h2>${esc(v)}</h2>` : k === "ul" ? `<ul>${(v as string[]).map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : `<p>${esc(v)}</p>`).join("");
+}
+const TOOL_LINKS: [string, string][] = (meta as Meta[]).filter(m => m.route.startsWith("tool-")).map(m => [`/tools/${m.route.slice(5)}`, m.h1]);
+async function homeBody(): Promise<string> {
+  const cats = await categories().catch(() => [] as string[]);
+  return `<p>Customers and employees review the same company, on one page. Read what people say about startups and growing companies before you buy from them, work with them or join them.</p>
+<h2>What customers and employees say, together</h2>
+<p>Review sites usually cover one side: customers or employees. Every company page here has both, so you see how a company treats the people it works for and the people who work for it.</p>
+<ul><li>Customers rate the quality of the work, product or service, communication and support, value for money, and whether the company kept its promises.</li><li>Employees rate culture and management, pay and benefits, career growth and work-life balance, anonymously or with their name.</li></ul>
+<h2>Free for everyone, and no ratings bought</h2>
+<p>Reading and writing reviews costs nothing. Companies can pay for listing tools, never for stars: paying never changes, hides or delays a review.</p>
+${cats.length ? `<h2>Browse by category</h2><ul>${cats.sort().map(c => `<li><a href="/category/${slug(c)}">${esc(c)}</a></li>`).join("")}</ul>` : ""}
+<h2>Free career and company tools</h2><ul>${TOOL_LINKS.map(([href, name]) => `<li><a href="${href}">${esc(name)}</a></li>`).join("")}</ul>
+<h2>How it works</h2>
+<ol><li>Search the company by name or website. Each page shows its reviews and whether the company is verified.</li><li>Read real experiences: customers share how they were treated, employees share anonymous reviews.</li><li>Share your own. Good or bad, every review is published the same way, and the company can reply.</li></ol>
+<p><a href="/list">List your company</a> · <a href="/why-list">Why companies list here</a> · <a href="/pricing">Pricing</a></p>`;
 }
 function notFound(path: string): Page {
   return { status: 404, path, title: "Page not found · Know The Company", desc: DEFAULT_DESC, h1: "Page not found", body: "<p>That link doesn't match a company or category.</p>", noindex: true };
@@ -192,7 +247,15 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
     .replace(/<link rel="canonical" href="[^"]*">/, () => `<link rel="canonical" href="${ORIGIN}${pg.path}">`)
     .replace(/<meta name="robots" content="[^"]*">/, () => `<meta name="robots" content="${robots}">`);
   if (!/<meta name="robots"/.test(html)) html = html.replace("</title>", () => `</title>\n<meta name="robots" content="${robots}">`);
-  if (pg.h1 && pg.path !== "/") html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
+  /* Link previews on WhatsApp, LinkedIn, X, Facebook and Slack. */
+  const url = `${ORIGIN}${pg.path}`, shareTitle = pg.title.replace(/ · Know The Company$/, "");
+  const og = [
+    ["og:site_name", "Know The Company"], ["og:type", pg.ogType || "website"], ["og:url", url], ["og:title", shareTitle], ["og:description", pg.desc],
+    ["og:image", `${ORIGIN}/og-image.png`], ["og:image:width", "1200"], ["og:image:height", "630"], ["og:image:alt", "Know The Company: customer and employee reviews of startups and growing companies"], ["og:locale", "en_GB"],
+  ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join("\n")
+    + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
+  html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
+  if (pg.h1) html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
   if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);
   return html;
 }

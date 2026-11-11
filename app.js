@@ -61,18 +61,77 @@ const initials = n => String(n || '?').replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/
 
 COUNTRY.WW = 'Online / worldwide';
 
+/* ---------- trust ----------
+   Signed-in members can insert items (a review, a missing company) but only the site's admins can edit them
+   afterwards. Wix stamps a new item with the same created and updated time, so an item a member inserted and
+   nobody on the team has touched since still has equal times. Anything such an item claims about itself that
+   only the team may decide (a published review, a verified company, its plan, its owners, its employer page)
+   is ignored until an admin has edited or published it. Items the admin account inserted are trusted. */
+const ADMIN_ID = 'c0f544a7-207e-490b-b7d9-830ef39f49c7';
+const tms = d => { const v = d && typeof d === 'object' && !(d instanceof Date) && '$date' in d ? d.$date : d; const t = v instanceof Date ? v.getTime() : Date.parse(v); return isNaN(t) ? 0 : t; };
+const adminTouched = it => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
+const trustedCo = it => adminTouched(it) ? it : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null };
+
 /* ---------- companies, from the Wix CMS (collection "Companies") ---------- */
-const mkCo = it => ({
+const mkCo = raw => { const it = trustedCo(raw); return {
   wid: it._id, name: it.title || it._id, web: it.website || it._id, cat: it.category || 'Other', cc: it.country || 'WW', bio: it.bio || '',
   added: it.addedBy === 'reviewer' ? 1 : it.addedBy === 'owner' ? 2 : 0, country: COUNTRY[it.country] || it.country || COUNTRY.WW,
   id: 'co-' + (it.slug || slug(it.title || it._id)), catId: 'cat-' + slug(it.category || 'Other'), raw: it
-});
+}; };
 /* Keeps the whole site out of search engines until launch. Set to false to let pages be indexed
    (and remove the robots meta tag in index.html). */
 const SITE_NOINDEX = true;
 let COS = [], CATS = [], BYID = {}, BYWID = {}, CATBYID = {}, FORM_CATS = [];
 /* Every category a company can pick when it's listed or added. Categories already in use are merged in,
    and "Other" always comes last. */
+/* One line about each category, shown under its heading and used as its search description. */
+const CAT_INTROS = {
+  'Fintech & Banking': 'Reviews of payment apps, digital banks and lending startups: how they handle your money, your KYC and your complaints, and how they treat their teams.',
+  'Education & E-learning': 'Reviews of online courses, tutoring apps and learning platforms from students, parents and the teachers and staff who work there.',
+  'Jobs & Freelancing': 'Reviews of job boards, freelance marketplaces and HR and payroll software, from people hiring, people looking for work and the staff behind them.',
+  'Mobility & Logistics': 'Reviews of ride-hailing apps, car marketplaces, scooters, buses and delivery networks: pricing, safety, support and what it is like to drive or work for them.',
+  'Crypto Exchanges': 'Reviews of crypto exchanges and wallets: fees, withdrawals, frozen accounts and support, plus what employees say about the company behind the app.',
+  'E-commerce & Marketplaces': 'Reviews of online shops and resale marketplaces: deliveries, returns, refunds and seller support, and how the companies treat their staff.',
+  'Technology & Software': 'Reviews of software companies, from password managers and developer tools to privacy apps: product quality, billing, support and working culture.',
+  'Social Media & Entertainment': 'Reviews of social apps, creator platforms, streaming services and game studios, from users, creators and the people who build them.',
+  'Stock Brokers & Investing': 'Reviews of brokers and investing apps: charges, order execution, withdrawals and customer support, and what working there is really like.',
+  'Real Estate': 'Reviews of property portals, brokers and coworking companies: whether listings match reality, deposits, service, and what employees say.',
+  'Travel & Hospitality': 'Reviews of booking sites, bus and train apps, hotel chains and tour platforms: cancellations, refunds, hidden fees and support when plans go wrong.',
+  'Web Hosting & Website Builders': 'Reviews of web hosts and website builders: uptime, speed, renewal prices, migrations and support, from site owners and the teams who run them.',
+  'Food & Delivery': 'Reviews of food and grocery delivery apps: order accuracy, delivery times and refunds, and how riders and staff are treated.',
+  'Consumer Brands': 'Reviews of direct-to-consumer brands in food, beauty and home: product quality, delivery and returns, and life inside the company.',
+  'Health & Wellness': 'Reviews of health apps, doctor booking platforms, online pharmacies and wellbeing services: quality of care, privacy, billing and support.',
+  'Consumer Electronics': 'Reviews of phone, audio and wearable brands: build quality, warranty claims and service centres, and what employees say about working there.'
+};
+const catIntro = name => CAT_INTROS[name] || `Customer and employee reviews of ${name} companies: how they treat the people they serve and the people who work for them.`;
+/* Search descriptions for the fixed pages. */
+const PAGE_DESCS = {
+  categories: 'Browse startups and growing companies by category, from fintech and education to travel, crypto and food delivery, and read what customers and employees say.',
+  search: 'Search Know The Company for any startup or growing company by name or website, and read its customer and employee reviews.',
+  tools: 'Free tools for your career and business: compare job offers, work out a salary hike, set a freelance rate, and estimate gratuity and HRA in India.',
+  'why-list': 'Why companies list on Know The Company: a verified page, public replies to reviews, and an honest record that customers, job seekers and AI search can find.',
+  add: 'Can\'t find a company? Add it to Know The Company and write the first review. The company can claim its page later.',
+  list: 'Claim your free company page on Know The Company. Reply to customer and employee reviews and show job seekers what working with you is like.',
+  dashboard: 'Manage your company page on Know The Company: your details, replies to reviews and your listing plan.',
+  login: 'Log in or create a free Know The Company account to write customer and employee reviews.',
+  'business-login': 'Company login for Know The Company. Manage your company page, reply to reviews and check your plan.',
+  'my-reviews': 'See the reviews you have written on Know The Company and keep track of replies.',
+  jobs: 'Jobs at companies you can check first. Job listings are coming to Know The Company soon; until then, read employee reviews before you apply.',
+  guidelines: 'How Know The Company works: who can write a review, what we take down and why, how companies reply, and why paying never changes a rating.',
+  'write-for-us': 'Write for Know The Company. We publish practical guest articles for business owners on reviews, customers, hiring and growth.',
+  about: 'Know The Company is an open review site where customers and employees review the same startups and growing companies, side by side on one page.',
+  contact: 'Contact Know The Company about reviews, company listings, payments or anything else. We usually reply within 2 working days.',
+  help: 'Help for reviewers, employees and companies: writing a review, staying anonymous as an employee, claiming a company page and paid plans.',
+  terms: 'The terms for using Know The Company: who can write reviews, what they must be, company pages, paid listings and what we can remove.',
+  privacy: 'How Know The Company collects, uses and protects your data: what we collect, what we never do with it, cookies, and your rights.',
+  pricing: 'Know The Company pricing. Reading and writing reviews is free. Companies pay for listing tools in INR or USD, and paying never changes a rating.',
+  refunds: 'Refunds and cancellations for paid Know The Company listings: how autopay works, how to cancel a plan and when a refund applies.',
+  'tool-offer': 'Compare two job offers side by side on salary, bonus, benefits and costs, and see which one is worth more each year. Free, no sign-up.',
+  'tool-hike': 'Salary hike calculator: work out your new salary from a percentage hike, or the hike behind a new offer, in any currency. Free, no sign-up.',
+  'tool-rate': 'Freelance rate calculator: find the hourly and day rate you need to hit your income target after business costs, time off and non-billable hours.',
+  'tool-gratuity': 'Gratuity calculator for India: estimate the gratuity you get on leaving a job, using the 15/26 formula. Free, no sign-up.',
+  'tool-hra': 'HRA exemption calculator for India: see how much of your house rent allowance is tax-free under the old tax regime. Free, no sign-up.'
+};
 const ALL_CATS = ['Accounting & Tax', 'Advertising & Marketing', 'Aerospace & Defense', 'Agriculture & Farming', 'Airlines', 'Architecture & Interior Design', 'Automotive', 'Beauty & Personal Care', 'Chemicals & Materials', 'Construction & Engineering', 'Consumer Brands', 'Consumer Electronics', 'Crypto Exchanges', 'E-commerce & Marketplaces', 'Education & E-learning', 'Energy & Utilities', 'Events & Weddings', 'Fashion & Apparel', 'Fintech & Banking', 'Food & Beverage Brands', 'Food & Delivery', 'Gaming', 'Government & Public Services', 'Groceries & Retail', 'Health & Wellness', 'Healthcare & Hospitals', 'Home & Furniture', 'Home Services & Repairs', 'HR & Staffing', 'Industrial & Manufacturing', 'Insurance', 'IT Services & Consulting', 'Jewellery & Accessories', 'Jobs & Freelancing', 'Legal Services', 'Media & News', 'Mining & Metals', 'Mobility & Logistics', 'Non-profits & NGOs', 'Pets & Animal Care', 'Pharmacy & Medicines', 'Printing & Packaging', 'Professional Services', 'Real Estate', 'Restaurants & Cafés', 'Security Services', 'Semiconductors & Hardware', 'Social Media & Entertainment', 'Sports & Fitness', 'Stock Brokers & Investing', 'Technology & Software', 'Telecom & Internet', 'Textiles', 'Travel & Hospitality', 'Web Hosting & Website Builders'];
 const formCats = () => [...new Set(ALL_CATS.concat(CATS.map(k => k.name)))].filter(n => n !== 'Other').sort((a, b) => a.localeCompare(b)).concat('Other');
 const CLAIMS = {};
@@ -122,6 +181,7 @@ function indexReviews(items) {
   for (const r of items) {
     if (r._owner && owners.has(r._owner)) continue;
     if (r.type === 'interview') continue; /* interviews section removed */
+    if (!adminTouched(r)) continue; /* published by its writer without moderation: see "trust" above */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
     const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', date: monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: r.reply || '', replyFrom: c.name, verified: !!r.workEmailVerified };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
@@ -618,8 +678,8 @@ function vHome() {
         <div class="step"><span>3</span><h3>Share your own</h3><p>Good or bad, every review is published the same way, and the company can reply.</p></div>
       </div></section>
 
-    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>From our blog for companies</h2><p>Practical advice on reviews, reputation and growth.</p></div><a href="#blog" style="font-weight:700">All articles</a></div>
-      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${POSTS.slice(0, 3).map(postCard).join('')}</div></section>
+${POSTS.length ? `    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>From our blog for companies</h2><p>Practical advice on reviews, reputation and growth.</p></div><a href="#blog" style="font-weight:700">All articles</a></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${POSTS.slice(0, 3).map(postCard).join('')}</div></section>` : ''}
 
     <section class="wrap sec"><div class="cta">
       <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px"><p class="eyebrow" style="color:var(--deep-muted)">For employers</p>
@@ -658,7 +718,7 @@ function vCategory(k) {
   const countries = [...new Set(k.items.map(c => c.cc))].sort((a, b) => (COUNTRY[a] || a).localeCompare(COUNTRY[b] || b));
   const f = S.catFilter;
   return `<div class="wrap">${crumbs([['Home','#home'],['Categories','#categories'],[k.name]])}
-    <div class="pagehead"><h1>${esc(k.name)}</h1><p>Compare companies by real customer experiences</p></div>
+    <div class="pagehead"><h1>${esc(k.name)}</h1><p>${esc(catIntro(k.name))}</p></div>
     <div class="layout">
       <aside class="side" aria-label="Filters"><div class="box">
         <div class="field"><label class="l" for="f-country">Country</label><select id="f-country" data-filter="country"><option value="">All countries</option>${countries.map(cc => `<option value="${cc}" ${f.country === cc ? 'selected' : ''}>${esc(COUNTRY[cc] || cc)}</option>`).join('')}</select></div>
@@ -1168,21 +1228,6 @@ function vInvite(c, k) {
     <p class="meta" style="max-width:460px">Your review is published whether it's good or bad. ${esc(c.name)} can reply, but can't edit or hide it. Reviews from invitations are labelled “Invited”.</p>
     ${list.length || er.length ? `<a href="#${c.id}" style="font-size:14px;font-weight:700">Read what others say</a>` : ''}</div></div>`;
 }
-/* Removals report: taken off the site until there are reviews to report on. To bring it back, add 'removals'
-   to PAGE_ROUTES and PAGE_TITLES, route it in render(), and link it from the footer and the guidelines. */
-function vRemovals() {
-  const cats = RPT_REASONS.slice(0, 4).concat(['Removed by court or government order']); const R = {};
-  return `<div class="wrap" style="max-width:860px">${crumbs([['Home', '#home'], ['Removals report']])}
-    <div class="pagehead"><h1>Removals report</h1><p>Every review we take down is counted here, so you can see we don't hide reviews for anyone.</p></div>
-    <div style="display:flex;flex-direction:column;gap:18px">
-      <section class="box"><h2>When we remove a review</h2><p>Only when it breaks our <a href="#guidelines">review guidelines</a>, or when a court or government order requires it. Companies can't remove reviews, and paying never changes a rating. Negative reviews are never removed for being negative.</p></section>
-      <section class="box"><div class="toolbar"><h2>This quarter</h2><span class="meta">Updated monthly</span></div>
-        <table class="rtable"><thead><tr><th>Reason</th><th>Reviews removed</th></tr></thead><tbody>${cats.map(x => `<tr><td>${esc(x)}</td><td>${R[x] || 0}</td></tr>`).join('')}</tbody></table>
-        <p class="meta">Counts include customer reviews and employee reviews. Reviews that were reported but stayed up aren't counted.</p></section>
-      <section class="box"><h2>Companies caught manipulating reviews</h2><p>If we find that a company bought reviews, wrote its own or pressured people to remove them, we remove the affected reviews and show a warning on its page for at least 90 days. It looks like this:</p>
-        ${warnBan({ name: 'Example Company' }, { date: '1 October', text: 'offered discounts in exchange for 5-star reviews.' }).replace('<div class="wrap">', '<div>')}</section>
-    </div></div>`;
-}
 const coPlan = c => (CLAIMS[c.id] && CLAIMS[c.id].plan) || 'basic';
 const coEmployer = id => (BYID[id] && BYID[id].raw && BYID[id].raw.employerPage) || null;
 const curEmp = () => S.user && S.user.coId ? (coEmployer(S.user.coId) || { why: '', benefits: [], size: EMP_SIZES[0], hiring: false }) : EMPLOYER;
@@ -1661,72 +1706,17 @@ function closeModals() { document.querySelectorAll('.modal').forEach(m => { m.hi
 function go(h) { if (curRoute() === h) render(); else navigate(h); }
 
 const BLOG_CATS = ['Reviews & reputation', 'Customer experience', 'Startup growth', 'Rules & compliance'];
+/* Blog posts. Empty until new articles are added; while it is empty the blog pages, links and home
+   section stay hidden and /blog is a 404. Each post looks like:
+   { slug: 'url-slug', cat: 'One of BLOG_CATS', date: 'YYYY-MM-DD', title: '...', tone: 1-6,
+     excerpt: 'One or two sentences.',
+     body: [['p', 'Paragraph'], ['h', 'Subheading'], ['ul', ['Point', 'Point']]] },
+   The server reads this list at build time and writes the article into the page for search engines. */
 const POSTS = [
-  { slug: 'get-your-first-customer-reviews', cat: 'Reviews & reputation', date: '2026-11-02', title: 'How to get your first 10 customer reviews', tone: 1,
-    excerpt: 'A new profile with no reviews looks empty. Here is a simple routine for collecting honest reviews from the customers you already have.',
-    body: [
-      ['p', 'Most customers will happily leave a review. They just need to be asked at the right moment, with as little effort as possible. The goal is a steady flow of honest reviews, not a burst of five-star praise.'],
-      ['h', 'Ask when the job is done'],
-      ['p', 'The best moment to ask is right after a good outcome: the delivery arrived, the repair worked, the class ended. Waiting a week means the customer has moved on.'],
-      ['h', 'Make it one tap'],
-      ['p', 'Send your review link directly by WhatsApp, SMS or email, or print it as a QR code on your receipt. Every extra step, such as searching for your business, loses people.'],
-      ['h', 'Ask everyone, not only happy customers'],
-      ['p', 'Choosing who to ask based on whether they seem satisfied is called review gating. It skews your rating and is against the rules on most platforms, including ours. Ask every customer the same way.'],
-      ['h', 'Never pay or reward reviews'],
-      ['p', 'Discounts, gifts or cashback in return for a review make it a paid endorsement. Many countries now treat this as an unfair trade practice. A thank-you message is fine; a reward is not.'],
-      ['h', 'A simple message to copy'],
-      ['p', '“Thanks for choosing us today. If you have a minute, we would value an honest review: knowthecompany.com/review/your-business. It helps other customers and helps us improve.”']
-    ] },
-  { slug: 'reply-to-negative-reviews', cat: 'Customer experience', date: '2026-10-28', title: 'How to reply to a negative review', tone: 3,
-    excerpt: 'A calm, specific reply to a bad review often does more for your reputation than another five-star rating. Here is how to write one.',
-    body: [
-      ['p', 'People reading reviews look closely at how a business handles problems. A thoughtful reply shows that someone is listening, and it is written as much for future customers as for the reviewer.'],
-      ['h', 'Reply within two days'],
-      ['p', 'A quick response shows you take feedback seriously. Set a reminder to check new reviews every working day.'],
-      ['h', 'Thank them and name the issue'],
-      ['p', 'Start by thanking the customer and restating the problem in plain words. This shows you read the review rather than pasting a template.'],
-      ['h', 'Explain and fix, without arguing'],
-      ['p', 'If something went wrong, say so and explain what you are doing about it. If the facts are different from what was written, state them politely once. Avoid blaming the customer.'],
-      ['h', 'Move details offline'],
-      ['p', 'Offer a direct way to resolve it, such as a phone number or email, and never post the customer\'s personal details or order data in public.'],
-      ['h', 'Report only what breaks the rules'],
-      ['p', 'Reviews that contain abuse, personal data, or are clearly not from a customer can be reported for moderation. A review that is simply negative stays up, and your reply is your chance to answer it.']
-    ] },
-  { slug: 'fake-review-rules-for-businesses', cat: 'Rules & compliance', date: '2026-10-21', title: 'Fake reviews: what businesses need to know about the rules', tone: 5,
-    excerpt: 'Regulators in many countries now treat fake and incentivised reviews as illegal. A plain-language overview for business owners.',
-    body: [
-      ['p', 'Fake reviews used to be a reputation risk. In many markets they are now a legal risk as well. This overview is general information, not legal advice; check the rules in each country where you sell.'],
-      ['h', 'What counts as a fake review'],
-      ['ul', ['Reviews written by owners, staff or their family posing as customers', 'Reviews bought from agencies or freelancers', 'Reviews given in exchange for discounts, gifts or cashback without clear disclosure', 'Hiding or suppressing negative reviews while showing positive ones']],
-      ['h', 'Where the rules have tightened'],
-      ['p', 'In the United States, the Federal Trade Commission introduced a rule banning fake reviews and testimonials, which took effect in October 2024. In the United Kingdom, the Digital Markets, Competition and Consumers Act made fake reviews a banned practice from April 2025. In the European Union, sites that show reviews must explain whether and how they check that reviews come from real customers. India has a national standard for online reviews, IS 19000:2022, covering how reviews are collected, moderated and published.'],
-      ['h', 'What to do instead'],
-      ['ul', ['Ask every customer for a review, the same way', 'Disclose any review you invited or incentivised', 'Reply to criticism publicly and fix the cause', 'Keep records of how you collect reviews']]
-    ] },
-  { slug: 'build-trust-young-startup', cat: 'Startup growth', date: '2026-10-07', title: 'Seven ways a young startup can earn trust', tone: 4,
-    excerpt: 'Customers and candidates are careful with companies they have never heard of. These signals help them choose you the first time.',
-    body: [
-      ['p', 'A first-time visitor, client or job applicant has a few seconds to decide whether your company is real and reliable. These signals answer the questions they are silently asking.'],
-      ['ul', ['Show your registered company name, address and a real contact on your website', 'Explain clearly what you offer, what it costs and what happens after someone signs up', 'Collect reviews from customers and employees, including the less positive ones, and reply to them', 'Introduce the team behind the company, with names and roles', 'Answer messages quickly and say how long replies usually take', 'Keep your website, social profiles and company listings consistent', 'Put your rating and reviews where people decide: your website, proposals and careers page']],
-      ['h', 'Avoid the things that scare people away'],
-      ['p', 'Vague claims, stock photos of people who do not work there, and offers that seem too good to be true make people suspicious. Specific details and honest reviews do the opposite.']
-    ] },
-  { slug: 'turn-feedback-into-improvements', cat: 'Customer experience', date: '2026-09-30', title: 'Turning customer feedback into real improvements', tone: 6,
-    excerpt: 'Reviews are free research. A monthly routine for finding patterns in what customers say and acting on them.',
-    body: [
-      ['p', 'One review is an opinion. Ten reviews that mention the same problem are a pattern worth fixing. A short monthly routine turns feedback into decisions.'],
-      ['h', 'Tag every review'],
-      ['p', 'Give each review one or two tags such as delivery, price, staff, quality or communication. A simple spreadsheet is enough.'],
-      ['h', 'Count and compare'],
-      ['p', 'At the end of the month, count the tags in negative and positive reviews. The tag that appears most in complaints is usually your best place to start.'],
-      ['h', 'Fix one thing at a time'],
-      ['p', 'Choose one change, make it, and tell customers about it in your replies. Then watch whether that complaint becomes less common over the next few months.'],
-      ['h', 'Share wins with your team'],
-      ['p', 'Positive reviews that mention staff by name are worth sharing internally. Recognition helps the behaviour customers liked happen more often.']
-    ] }
 ];
 POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
 const POSTBYID = Object.fromEntries(POSTS.map(p => [p.id, p]));
+if (!POSTS.length) PAGE_ROUTES.splice(PAGE_ROUTES.indexOf('blog'), 1);
 const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 const postCard = p => `<a class="postcard" href="#${p.id}"><span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>
   <div class="postmeta"><span>${fmtDate(p.date)}</span><span>${p.read} min read</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></a>`;
@@ -2313,15 +2303,17 @@ function render() {
 }
 function setMeta(h) {
   const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
-  if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = `Compare ${k.name} companies by honest customer and employee reviews.`; else if (POSTBYID[h]) d = POSTBYID[h].excerpt;
+  if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = catIntro(k.name); else if (POSTBYID[h]) d = POSTBYID[h].excerpt; else if (PAGE_DESCS[h]) d = PAGE_DESCS[h];
   let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
   let cl = document.querySelector('link[rel="canonical"]'); if (!cl) { cl = document.createElement('link'); cl.rel = 'canonical'; document.head.appendChild(cl); }
   cl.href = location.origin + urlFor(h);
+  /* Social sharing tags follow the page too (the server writes them for the first page load). */
+  [['og:title', document.title], ['og:description', m.content], ['og:url', cl.href], ['twitter:title', document.title], ['twitter:description', m.content]].forEach(([k2, v]) => { const t = document.querySelector(`meta[property="${k2}"],meta[name="${k2}"]`); if (t) t.content = v; });
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
   const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
   let s = document.getElementById('ldjson'); if (s) s.remove();
-  if (c) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
+  if (c && !document.getElementById('ld-json')) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
     if (l.length) o.aggregateRating = { '@type': 'AggregateRating', ratingValue: +avgOf(l).toFixed(1), reviewCount: l.length, bestRating: 5, worstRating: 1 };
     s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'ldjson'; s.textContent = JSON.stringify(o); document.head.appendChild(s); }
 }

@@ -21,16 +21,19 @@ for (const id of ['a-cat', 'a-cc', 'a-name', 'a-web', 'b-agree', 'b-cat', 'b-cou
 const csv = fs.readFileSync('../data/companies-for-wix-cms.csv', 'utf8').trim().split(/\r?\n/);
 const parse = line => { const out = []; let cur = '', q = false; for (let i = 0; i < line.length; i++) { const ch = line[i]; if (q) { if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; } else if (ch === '"') q = true; else if (ch === ',') { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out; };
 const hdr = parse(csv[0]);
-const companies = csv.slice(1).map(l => { const r = Object.fromEntries(hdr.map((h, i) => [h, parse(l)[i]])); return { _id: r.website, title: r.title, slug: r.slug, website: r.website, category: r.category, country: r.country, bio: r.bio, addedBy: 'seed', claimStatus: 'none', plan: 'none' }; });
+const companies = csv.slice(1).map(l => { const r = Object.fromEntries(hdr.map((h, i) => [h, parse(l)[i]])); return { _id: r.website, title: r.title, slug: r.slug, website: r.website, category: r.category, country: r.country, bio: r.bio, addedBy: 'seed', claimStatus: 'none', plan: 'none', _owner: 'c0f544a7-207e-490b-b7d9-830ef39f49c7' }; });
 // one verified Plus company to exercise the owner-written sections
+// A company a member inserted with team-only fields filled in; nobody on the team has edited it.
+companies.push({ _id: 'fakeco.com', title: 'Fakeco', slug: 'fakeco', website: 'fakeco.com', category: 'Fintech & Banking', country: 'IN', bio: 'Inserted by a member.', addedBy: 'reviewer', claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', ownerMemberIds: ['m9'], employerPage: { why: 'FAKE EMPLOYER PAGE text that must never show.', benefits: [], hiring: true }, _owner: 'm9', _createdDate: '2026-11-09T00:00:00Z', _updatedDate: '2026-11-09T00:00:00Z' });
 Object.assign(companies.find(c => c._id === 'razorpay.com'), { claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', about: 'About text', founded: '2014', teamSize: '201–1,000 people', services: ['Payments'], phone: '+91 80000 00000', publicEmail: 'x@y.z', employerPage: { why: 'Why work here text, long enough.', benefits: ['Health insurance'], size: '201–1,000 people', hiring: true }, ownerMemberIds: ['m1'] });
 const reviews = [
-  { _id: 'r1', _owner: 'm4', _createdDate: '2026-11-01T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 4, title: 'Quick settlements', body: 'Payments settled in two days and support answered quickly.' },
-  { _id: 'r2', _owner: 'm2', _createdDate: '2026-11-02T00:00:00Z', company: 'razorpay.com', type: 'employee', anonymous: true, rating: 3, subRatings: { pay: 3 }, pros: 'Good people and learning culture here.', cons: 'Long hours during launches, every quarter.', recommend: 'yes', employmentStatus: 'Current employee', jobTitle: 'Engineer', tenure: '1–3 years' },
-  { _id: 'r3', _owner: 'm2', _createdDate: '2026-11-03T00:00:00Z', company: 'notion.com', type: 'interview', jobTitle: 'Designer', interviewOutcome: 'No offer', interviewDifficulty: 'Hard', interviewExperience: 'Neutral', body: 'Three rounds over two weeks, friendly panel.' },
-  { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
-  { _id: 'r6', _owner: 'm1', _createdDate: '2026-11-06T00:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Owner', rating: 1, title: 'OWNER REVIEW', body: 'OWNER REVIEW written by a company account, must never show.' },
-  { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
+  { _id: 'r1', _owner: 'm4', _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T01:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 4, title: 'Quick settlements', body: 'Payments settled in two days and support answered quickly.' },
+  { _id: 'r2', _owner: 'm2', _createdDate: '2026-11-02T00:00:00Z', _updatedDate: '2026-11-02T01:00:00Z', company: 'razorpay.com', type: 'employee', anonymous: true, rating: 3, subRatings: { pay: 3 }, pros: 'Good people and learning culture here.', cons: 'Long hours during launches, every quarter.', recommend: 'yes', employmentStatus: 'Current employee', jobTitle: 'Engineer', tenure: '1–3 years' },
+  { _id: 'r3', _owner: 'm2', _createdDate: '2026-11-03T00:00:00Z', _updatedDate: '2026-11-03T01:00:00Z', company: 'notion.com', type: 'interview', jobTitle: 'Designer', interviewOutcome: 'No offer', interviewDifficulty: 'Hard', interviewExperience: 'Neutral', body: 'Three rounds over two weeks, friendly panel.' },
+  { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', _updatedDate: '2026-11-04T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
+  { _id: 'r6', _owner: 'm1', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Owner', rating: 1, title: 'OWNER REVIEW', body: 'OWNER REVIEW written by a company account, must never show.' },
+  { _id: 'r7', _owner: 'm4', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T00:00:00Z', _publishStatus: 'PUBLISHED', company: 'razorpay.com', type: 'customer', displayName: 'Sneaky', rating: 5, title: 'SELF PUBLISHED', body: 'SELF PUBLISHED by its writer without moderation, must never show.' },
+  { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', _updatedDate: '2026-11-05T01:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
 ];
 const ownerContent = [
   { _id: 'oc1', _owner: 'm1', _updatedDate: '2026-11-07T00:00:00Z', company: 'razorpay.com', kind: 'profile', data: { about: 'Owner written about text for the profile page.', hours: 'Mon to Fri' } },
@@ -70,7 +73,7 @@ await import('./app.test.mjs');
 await new Promise(r => setTimeout(r, 200));
 
 const app = g.document.getElementById('app');
-const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'blog', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
+const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
 const report = [];
 for (const r of routes) {
   g.location.hash = r;
@@ -78,7 +81,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
+  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'SELF PUBLISHED', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
   { const hs = [...app.querySelectorAll('h1,h2,h3,h4,h5,h6')].map(h => +h.tagName[1]); const issues = [];
     if (hs.filter(x => x === 1).length !== 1) issues.push('h1 x' + hs.filter(x => x === 1).length);
@@ -118,6 +121,8 @@ g.__mock.member = { member: { id: 'm1', loginEmail: 'owner@razorpay.com', displa
 globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 60));
 await go('co-1password');
 report.push('company account review form hidden: ' + !app.querySelector('#review-form') + ', block shown: ' + app.textContent.includes('Company accounts can’t write reviews'));
+await go('co-fakeco');
+report.push('member-inserted company shown as verified: ' + app.textContent.includes('Verified company') + ', fake employer page shown: ' + app.textContent.includes('FAKE EMPLOYER PAGE'));
 await go('co-razorpay');
 const coText = app.textContent;
 report.push('owner about shown: ' + coText.includes('Owner written about text') + ', non-owner hidden: ' + !coText.includes('NOT AN OWNER') + ', owner reply shown: ' + coText.includes('Thanks for the review'));
@@ -166,7 +171,7 @@ report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '
   const AUTH = { login: ['Log in to Know The Company', 'Log in or create a free account to write reviews.'], 'business-login': ['Company login', 'Log in to manage your company page, reply to reviews and see your plan.'], dashboard: ['Company dashboard', 'Log in to manage your company page.'], 'my-reviews': ['My reviews', 'Log in to see the reviews you have written.'], search: ['Search companies', 'Search for a company by name or website.'] };
   await go('blog'); const posts = [...new Set([...app.querySelectorAll('a.postcard')].map(a => routeOf(a.getAttribute('href'))))];
   await go('tools'); const tools = [...new Set([...app.querySelectorAll('a[href]')].map(a => routeOf(a.getAttribute('href'))).filter(r => r.startsWith('tool-')))];
-  const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
+  const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', ...(posts.length ? ['blog'] : []), 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
   const out = [];
   const DEFAULT_DESC = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   for (const r of [...pages, ...tools, ...posts]) {

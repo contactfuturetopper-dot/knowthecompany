@@ -2,192 +2,176 @@
  {
   "route": "categories",
   "title": "All categories · Know The Company",
+  "desc": "Browse startups and growing companies by category, from fintech and education to travel, crypto and food delivery, and read what customers and employees say.",
   "h1": "All categories",
   "intro": "Pick a category to compare companies."
  },
  {
   "route": "search",
   "title": "Search companies · Know The Company",
+  "desc": "Search Know The Company for any startup or growing company by name or website, and read its customer and employee reviews.",
   "h1": "Search companies",
   "intro": "Search for a company by name or website."
  },
  {
   "route": "tools",
   "title": "Free tools · Know The Company",
+  "desc": "Free tools for your career and business: compare job offers, work out a salary hike, set a freelance rate, and estimate gratuity and HRA in India.",
   "h1": "Free career and company tools",
   "intro": "Compare companies and offers, check a hike, price your freelance work, and estimate Indian gratuity and HRA. No sign-up needed."
  },
  {
   "route": "why-list",
   "title": "Why list your company · Know The Company",
+  "desc": "Why companies list on Know The Company: a verified page, public replies to reviews, and an honest record that customers, job seekers and AI search can find.",
   "h1": "Be found, and trusted, everywhere people check you.",
   "intro": "Customers, job seekers, investors and AI assistants all look at what others say about a company before they decide. A verified page with real reviews puts your true story in front of them."
  },
  {
   "route": "add",
   "title": "Add a company · Know The Company",
+  "desc": "Can't find a company? Add it to Know The Company and write the first review. The company can claim its page later.",
   "h1": "Add a company or website",
   "intro": "Missing a company? Add it, then write the first review. The company can claim it later."
  },
  {
   "route": "list",
   "title": "List your company · Know The Company",
+  "desc": "Claim your free company page on Know The Company. Reply to customer and employee reviews and show job seekers what working with you is like.",
   "h1": "Be the company customers trust and people want to work for.",
   "intro": "Claim your free company page. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one."
  },
  {
   "route": "dashboard",
   "title": "Company dashboard · Know The Company",
+  "desc": "Manage your company page on Know The Company: your details, replies to reviews and your listing plan.",
   "h1": "Company dashboard",
   "intro": "Log in to manage your company page."
  },
  {
   "route": "login",
   "title": "Log in · Know The Company",
+  "desc": "Log in or create a free Know The Company account to write customer and employee reviews.",
   "h1": "Log in to Know The Company",
   "intro": "Log in or create a free account to write reviews."
  },
  {
   "route": "business-login",
   "title": "Company login · Know The Company",
+  "desc": "Company login for Know The Company. Manage your company page, reply to reviews and check your plan.",
   "h1": "Company login",
   "intro": "Log in to manage your company page, reply to reviews and see your plan."
  },
  {
   "route": "my-reviews",
   "title": "My reviews · Know The Company",
+  "desc": "See the reviews you have written on Know The Company and keep track of replies.",
   "h1": "My reviews",
   "intro": "Log in to see the reviews you have written."
  },
  {
   "route": "jobs",
   "title": "Jobs · Know The Company",
+  "desc": "Jobs at companies you can check first. Job listings are coming to Know The Company soon; until then, read employee reviews before you apply.",
   "h1": "Jobs at companies you can check first",
   "intro": "Know The Company focuses on customer and employee reviews for now. Once companies have enough reviews, verified businesses will post jobs here, right next to what their employees say."
  },
  {
   "route": "guidelines",
   "title": "How Know The Company works · Know The Company",
+  "desc": "How Know The Company works: who can write a review, what we take down and why, how companies reply, and why paying never changes a rating.",
   "h1": "How Know The Company works",
   "intro": "The rules that keep reviews useful for everyone."
  },
  {
-  "route": "blog",
-  "title": "Blog for companies · Know The Company",
-  "h1": "Practical advice on reviews, reputation and growing a business",
-  "intro": "Articles for business owners and teams. Every post is about running and growing a business."
- },
- {
   "route": "write-for-us",
   "title": "Write for us · Know The Company",
+  "desc": "Write for Know The Company. We publish practical guest articles for business owners on reviews, customers, hiring and growth.",
   "h1": "Share what you've learned running a business",
   "intro": "We publish practical guest articles for business owners and teams. We only accept business and company topics."
  },
  {
   "route": "about",
   "title": "About us · Know The Company",
+  "desc": "Know The Company is an open review site where customers and employees review the same startups and growing companies, side by side on one page.",
   "h1": "Helping people choose companies they can trust",
   "intro": "Know The Company is an open review platform for startups and growing companies, everywhere. Big brands already have thousands of reviews; the companies people actually hire, work with and work for often have none. Anyone can read and write reviews for free. We show how a company treats both its customers and its employees."
  },
  {
   "route": "contact",
   "title": "Contact us · Know The Company",
+  "desc": "Contact Know The Company about reviews, company listings, payments or anything else. We usually reply within 2 working days.",
   "h1": "Contact us",
   "intro": "Questions about reviews, listings or anything else. We usually reply within 2 working days."
  },
  {
   "route": "help",
   "title": "Help centre · Know The Company",
+  "desc": "Help for reviewers, employees and companies: writing a review, staying anonymous as an employee, claiming a company page and paid plans.",
   "h1": "Help centre",
   "intro": "Answers for reviewers, employees and companies."
  },
  {
   "route": "terms",
   "title": "Terms of use · Know The Company",
+  "desc": "The terms for using Know The Company: who can write reviews, what they must be, company pages, paid listings and what we can remove.",
   "h1": "Terms of use",
   "intro": ""
  },
  {
   "route": "privacy",
   "title": "Privacy policy · Know The Company",
+  "desc": "How Know The Company collects, uses and protects your data: what we collect, what we never do with it, cookies, and your rights.",
   "h1": "Privacy policy",
   "intro": ""
  },
  {
   "route": "pricing",
   "title": "Pricing · Know The Company",
+  "desc": "Know The Company pricing. Reading and writing reviews is free. Companies pay for listing tools in INR or USD, and paying never changes a rating.",
   "h1": "Pricing",
   "intro": "Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating."
  },
  {
   "route": "refunds",
   "title": "Refunds and cancellations · Know The Company",
+  "desc": "Refunds and cancellations for paid Know The Company listings: how autopay works, how to cancel a plan and when a refund applies.",
   "h1": "Refunds and cancellations",
   "intro": ""
  },
  {
   "route": "tool-offer",
   "title": "Compare job offers · Know The Company",
+  "desc": "Compare two job offers side by side on salary, bonus, benefits and costs, and see which one is worth more each year. Free, no sign-up.",
   "h1": "Compare job offers",
   "intro": "Weigh two offers on pay, bonus, benefits and costs, and see which is worth more each year."
  },
  {
   "route": "tool-hike",
   "title": "Salary hike calculator · Know The Company",
+  "desc": "Salary hike calculator: work out your new salary from a percentage hike, or the hike behind a new offer, in any currency. Free, no sign-up.",
   "h1": "Salary hike calculator",
   "intro": "Work out your new salary from a hike, or the hike behind an offer. Any currency."
  },
  {
   "route": "tool-rate",
   "title": "Freelance rate calculator · Know The Company",
+  "desc": "Freelance rate calculator: find the hourly and day rate you need to hit your income target after business costs, time off and non-billable hours.",
   "h1": "Freelance rate calculator",
   "intro": "Find the hourly and day rate a freelancer or small team needs to hit an income target."
  },
  {
   "route": "tool-gratuity",
   "title": "Gratuity calculator · Know The Company",
+  "desc": "Gratuity calculator for India: estimate the gratuity you get on leaving a job, using the 15/26 formula. Free, no sign-up.",
   "h1": "Gratuity calculator",
   "intro": "Estimate gratuity on leaving a job in India, using the 15/26 formula."
  },
  {
   "route": "tool-hra",
   "title": "HRA exemption calculator · Know The Company",
+  "desc": "HRA exemption calculator for India: see how much of your house rent allowance is tax-free under the old tax regime. Free, no sign-up.",
   "h1": "HRA exemption calculator",
   "intro": "Estimate how much of your house rent allowance is tax-free in India (old tax regime)."
- },
- {
-  "route": "blog-get-your-first-customer-reviews",
-  "title": "How to get your first 10 customer reviews · Know The Company",
-  "desc": "A new profile with no reviews looks empty. Here is a simple routine for collecting honest reviews from the customers you already have.",
-  "h1": "How to get your first 10 customer reviews",
-  "intro": "A new profile with no reviews looks empty. Here is a simple routine for collecting honest reviews from the customers you already have."
- },
- {
-  "route": "blog-reply-to-negative-reviews",
-  "title": "How to reply to a negative review · Know The Company",
-  "desc": "A calm, specific reply to a bad review often does more for your reputation than another five-star rating. Here is how to write one.",
-  "h1": "How to reply to a negative review",
-  "intro": "A calm, specific reply to a bad review often does more for your reputation than another five-star rating. Here is how to write one."
- },
- {
-  "route": "blog-fake-review-rules-for-businesses",
-  "title": "Fake reviews: what businesses need to know about the rules · Know The Company",
-  "desc": "Regulators in many countries now treat fake and incentivised reviews as illegal. A plain-language overview for business owners.",
-  "h1": "Fake reviews: what businesses need to know about the rules",
-  "intro": "Regulators in many countries now treat fake and incentivised reviews as illegal. A plain-language overview for business owners."
- },
- {
-  "route": "blog-build-trust-young-startup",
-  "title": "Seven ways a young startup can earn trust · Know The Company",
-  "desc": "Customers and candidates are careful with companies they have never heard of. These signals help them choose you the first time.",
-  "h1": "Seven ways a young startup can earn trust",
-  "intro": "Customers and candidates are careful with companies they have never heard of. These signals help them choose you the first time."
- },
- {
-  "route": "blog-turn-feedback-into-improvements",
-  "title": "Turning customer feedback into real improvements · Know The Company",
-  "desc": "Reviews are free research. A monthly routine for finding patterns in what customers say and acting on them.",
-  "h1": "Turning customer feedback into real improvements",
-  "intro": "Reviews are free research. A monthly routine for finding patterns in what customers say and acting on them."
  }
 ]

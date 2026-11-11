@@ -15,12 +15,13 @@ await build({
     b.onLoad({ filter: /.*/, namespace: "raw" }, a => ({ contents: fs.readFileSync(a.path, "utf8"), loader: "text" }));
   } }],
 });
-const companies = [{ _id: "futuretopper.in", title: "Future Topper", slug: "future-topper", category: "Education & E-learning", website: "futuretopper.in", country: "IN", bio: "Exam prep <app>", ownerMemberIds: ["owner1"] }];
+const companies = [{ _id: "futuretopper.in", title: "Future Topper", slug: "future-topper", category: "Education & E-learning", website: "futuretopper.in", country: "IN", bio: "Exam prep <app>", ownerMemberIds: ["owner1"], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7" }];
 const reviews = [
-  { _id: "r1", _owner: "m2", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Asha", title: "Great", body: "Good notes </script>", _createdDate: { $date: "2026-11-01T10:00:00Z" } },
-  { _id: "r2", _owner: "m3", company: "futuretopper.in", rating: 4, displayName: "Ravi", body: "Helpful", _createdDate: "2026-10-20T10:00:00Z" },
-  { _id: "r3", _owner: "owner1", company: "futuretopper.in", type: "customer", rating: 1, displayName: "Owner", body: "self" },
-  { _id: "r4", _owner: "m4", company: "futuretopper.in", type: "employee", rating: 3 },
+  { _id: "r1", _owner: "m2", _updatedDate: "2026-11-02T09:00:00Z", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Asha", title: "Great", body: "Good notes </script>", _createdDate: { $date: "2026-11-01T10:00:00Z" } },
+  { _id: "r2", _owner: "m3", _updatedDate: "2026-11-02T09:00:00Z", company: "futuretopper.in", rating: 4, displayName: "Ravi", body: "Helpful", _createdDate: "2026-10-20T10:00:00Z" },
+  { _id: "r3", _owner: "owner1", _updatedDate: "2026-11-03T09:00:00Z", company: "futuretopper.in", type: "customer", rating: 1, displayName: "Owner", body: "self" },
+  { _id: "r4", _owner: "m4", _updatedDate: "2026-11-04T09:00:00Z", company: "futuretopper.in", type: "employee", rating: 3 },
+  { _id: "r5", _owner: "m5", _createdDate: "2026-11-05T00:00:00Z", _updatedDate: "2026-11-05T00:00:00Z", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Sneaky", body: "SELF PUBLISHED" },
 ];
 /* For the sitemap: 250 companies, so it has to page through them, plus one duplicate slug and one with no slug. */
 const allCompanies = [...companies, ...Array.from({ length: 247 }, (_, i) => ({ _id: `c${i}.com`, title: `Co ${i}`, slug: `co-${i}`, _updatedDate: { $date: "2026-11-01T00:00:00Z" } })),
@@ -41,7 +42,7 @@ globalThis.fetch = async (url, init) => {
   throw new Error("unexpected " + url + JSON.stringify(body));
 };
 const { resolvePage, renderShell, sitemapXml, SITEMAP_PATH } = await import(out);
-for (const p of ["/", "/company/future-topper", "/category/education-and-e-learning", "/blog/reply-to-negative-reviews", "/tools/hike", "/tools", "/blog", "/about", "/pricing", "/nope"]) {
+for (const p of ["/", "/company/future-topper", "/category/education-and-e-learning", "/tools/hike", "/tools", "/blog", "/about", "/pricing", "/nope"]) {
   const pg = await resolvePage(p);
   const html = renderShell(pg);
   const m = html.match(/<script type="application\/ld\+json" id="ld-json">([\s\S]*?)<\/script>/);
@@ -49,7 +50,6 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const g = JSON.parse(m[1])["@graph"];
   console.log(p, pg.status, g.map(n => n["@type"]).join(","));
   if (p === "/company/future-topper") { const c = g.find(n => n["@id"]?.endsWith("#company")); console.log(JSON.stringify(c, null, 1)); console.log(JSON.stringify(g.find(n => n["@type"] === "EmployerAggregateRating"))); console.log(JSON.stringify(g.find(n => n["@type"] === "BreadcrumbList"))); fs.writeFileSync(path.join(tmp, "company.html"), html); }
-  if (p === "/blog/reply-to-negative-reviews") console.log(JSON.stringify(g.find(n => n["@type"] === "BlogPosting")));
 }
 {
   const pg = await resolvePage("/company/future-topper");
@@ -65,15 +65,34 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   console.log("SCHEMA CHECK: ok");
 }
 
+/* What crawlers that don't run JavaScript see: real page text, and link preview tags. */
+{
+  const co = renderShell(await resolvePage("/company/future-topper"));
+  const main = co.slice(co.indexOf('<main id="app">'), co.indexOf("</main>"));
+  assert.ok(main.includes("Customer reviews of Future Topper") && main.includes("Rated 4.5 out of 5 from 2 customer reviews"), "company page lists its reviews");
+  assert.ok(!main.includes("SELF PUBLISHED"), "a review published without moderation is left out");
+  assert.ok(main.includes("Good notes &lt;/script&gt;") && !main.includes(">self<"), "review text is escaped and the owner's review is left out");
+  assert.ok(main.includes("Employee reviews of Future Topper"));
+  assert.ok(co.includes('<meta property="og:title" content="Future Topper reviews">') && co.includes('<meta name="twitter:card" content="summary_large_image">'), "link preview tags");
+  assert.equal((co.match(/property="og:title"/g) || []).length, 1, "one og:title");
+  assert.ok(co.includes('<meta property="og:url" content="https://www.knowthecompany.com/company/future-topper">'));
+  const home = renderShell(await resolvePage("/"));
+  assert.ok(home.includes('<a href="/category/education-and-e-learning">') && home.includes("How it works"), "home page has text and category links");
+  const cat = await resolvePage("/category/education-and-e-learning");
+  assert.ok(cat.desc.startsWith("Reviews of online courses") && cat.body.includes("Reviews of online courses"), "category intro");
+  assert.equal((await resolvePage("/blog")).status, 404, "no blog while there are no posts");
+  console.log("PAGE TEXT CHECK: ok");
+}
+
 /* Sitemap: every company once, public pages only, valid XML escaping, and not at an address Wix takes over. */
 {
   assert.ok(!SITEMAP_PATH.endsWith("sitemap.xml"), "Wix answers any address ending in sitemap.xml itself");
   const xml = await sitemapXml();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
   assert.equal(new Set(locs).size, locs.length, "no duplicate URLs");
-  for (const want of ["/", "/pricing", "/tools/hike", "/blog/reply-to-negative-reviews", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
+  for (const want of ["/", "/pricing", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
     assert.ok(locs.includes("https://www.knowthecompany.com" + want), "sitemap has " + want);
-  for (const not of ["/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
+  for (const not of ["/blog", "/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
     assert.ok(!locs.includes("https://www.knowthecompany.com" + not), "sitemap leaves out " + not);
   assert.ok(xml.includes("<lastmod>2026-11-01</lastmod>"));
   assert.ok(!/&(?!amp;|lt;|gt;|quot;|#39;)/.test(xml), "XML is escaped");

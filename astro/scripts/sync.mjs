@@ -2,6 +2,7 @@
 // app.js, site.css, the Wix modules, the badge and sign-in pages into public/, and index.html (the page
 // shell), scripts/pages-meta.json (page titles and headings) and the blog posts list into src/generated/.
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { transform } from "esbuild";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,14 +14,29 @@ rmSync(pub, { recursive: true, force: true });
 rmSync(gen, { recursive: true, force: true });
 mkdirSync(pub, { recursive: true });
 mkdirSync(gen, { recursive: true });
-for (const f of ["app.js", "site.css", "badge.html", "auth-callback.html", "logo.png"]) cpSync(join(root, f), join(pub, f));
+for (const f of ["app.js", "site.css", "badge.html", "auth-callback.html", "logo.png", "og-image.png", "favicon.ico", "favicon.svg", "favicon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest"]) cpSync(join(root, f), join(pub, f));
 cpSync(join(root, "js"), join(pub, "js"), { recursive: true });
+// Minify the app and its styles for the browser (the repository keeps the readable copies).
+for (const [f, loader] of [["app.js", "js"], ["site.css", "css"]]) {
+  const src = readFileSync(join(root, f), "utf8");
+  const { code } = await transform(src, { loader, minify: true, format: loader === "js" ? "esm" : undefined, target: loader === "js" ? "es2020" : ["chrome90", "safari14", "firefox90"], legalComments: "none" });
+  writeFileSync(join(pub, f), code);
+  console.log(`minified ${f}: ${(src.length / 1024).toFixed(0)} KB -> ${(code.length / 1024).toFixed(0)} KB`);
+}
 cpSync(join(root, "index.html"), join(gen, "shell.html"));
 cpSync(join(root, "scripts", "pages-meta.json"), join(gen, "pages-meta.json"));
-// Blog posts (slug, section, date, title, summary) for their structured data, read from app.js's POSTS list.
+// Data the server writes into pages, read from app.js so there is one copy: the blog posts (with their
+// article text) and the one-line category intros. Each is a plain literal in app.js, evaluated here.
 const app = readFileSync(join(root, "app.js"), "utf8");
-const posts = [...app.matchAll(/\{ slug: '([^']+)', cat: '([^']+)', date: '(\d{4}-\d{2}-\d{2})', title: '((?:[^'\\]|\\.)+)'[^\n]*\n\s*excerpt: '((?:[^'\\]|\\.)+)'/g)]
-  .map(m => ({ slug: m[1], cat: m[2], date: m[3], title: m[4].replace(/\\'/g, "'"), excerpt: m[5].replace(/\\'/g, "'") }));
-if (!posts.length) throw new Error("no blog posts found in app.js");
+function literal(name, open, close) {
+  const start = app.indexOf(`const ${name} = ${open}`);
+  if (start < 0) throw new Error(`${name} not found in app.js`);
+  const from = app.indexOf(open, start), end = app.indexOf(`\n${close};\n`, from);
+  return new Function(`return ${app.slice(from, end + 2)}`)();
+}
+const posts = literal("POSTS", "[", "]").map(p => ({ slug: p.slug, cat: p.cat, date: p.date, title: p.title, excerpt: p.excerpt, body: p.body }));
 writeFileSync(join(gen, "posts.json"), JSON.stringify(posts, null, 1));
-console.log(`synced app files into public/ and src/generated/ (${posts.length} blog posts)`);
+const intros = literal("CAT_INTROS", "{", "}");
+if (Object.keys(intros).length < 5) throw new Error("category intros look wrong");
+writeFileSync(join(gen, "cat-intros.json"), JSON.stringify(intros, null, 1));
+console.log(`synced app files into public/ and src/generated/ (${posts.length} blog posts, ${Object.keys(intros).length} category intros)`);

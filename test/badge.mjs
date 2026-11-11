@@ -3,11 +3,12 @@ import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
 const html = fs.readFileSync('../badge.html', 'utf8');
 const script = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1];
-const companies = { 'razorpay.com': { _id: 'razorpay.com', title: 'Razorpay', slug: 'razorpay', claimStatus: 'verified', ownerMemberIds: ['m1'] }, 'notion.com': { _id: 'notion.com', title: 'Notion', slug: 'notion' } };
+const companies = { 'razorpay.com': { _id: 'razorpay.com', title: 'Razorpay', slug: 'razorpay', claimStatus: 'verified', ownerMemberIds: ['m1'], _owner: 'c0f544a7-207e-490b-b7d9-830ef39f49c7' }, 'notion.com': { _id: 'notion.com', title: 'Notion', slug: 'notion' } };
 const reviews = [
-  { _owner: 'm2', company: 'razorpay.com', type: 'customer', rating: 5 }, { _owner: 'm3', company: 'razorpay.com', type: 'customer', rating: 4 },
-  { _owner: 'm1', company: 'razorpay.com', type: 'customer', rating: 1 },
-  { company: 'razorpay.com', type: 'employee', rating: 3 }
+  { _owner: 'm2', company: 'razorpay.com', type: 'customer', rating: 5, _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T02:00:00Z' }, { _owner: 'm3', company: 'razorpay.com', type: 'customer', rating: 4, _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T02:00:00Z' },
+  { _owner: 'm1', company: 'razorpay.com', type: 'customer', rating: 1, _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T02:00:00Z' },
+  { _owner: 'm7', company: 'razorpay.com', type: 'customer', rating: 1, _createdDate: '2026-11-03T00:00:00Z', _updatedDate: '2026-11-03T00:00:00Z' },
+  { company: 'razorpay.com', type: 'employee', rating: 3, _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T02:00:00Z' }
 ];
 async function render(qs) {
   const dom = new JSDOM(html.replace(/<script type="module">[\s\S]*?<\/script>/, ''), { url: 'https://example.test/badge.html' + qs });

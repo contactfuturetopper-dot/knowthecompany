@@ -45,6 +45,10 @@ const star = (fill, k) => `<svg width="14" height="14" viewBox="0 0 24 24" aria-
 const stars = avg => `<span class="stars" aria-hidden="true">${[0, 1, 2, 3, 4].map(i => star(Math.max(0, Math.min(1, avg - i)), i)).join('')}</span>`;
 const brand = '<span class="brand">Know<b>The</b>Company</span>';
 const site = new URL('./', location.href).href;
+/* Ignore what a member wrote that nobody on the team has touched since (same rule as "trust" in app.js). */
+const ADMIN_ID = 'c0f544a7-207e-490b-b7d9-830ef39f49c7';
+const tms = d => { const v = d && typeof d === 'object' && !(d instanceof Date) && '$date' in d ? d.$date : d; const t = v instanceof Date ? v.getTime() : Date.parse(v); return isNaN(t) ? 0 : t; };
+const adminTouched = it => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
 
 async function run() {
   if (!wid) { el.innerHTML = `<span class="msg">Rating unavailable</span>${brand}`; link.href = site; return; }
@@ -65,10 +69,10 @@ async function run() {
   const blocked = new Set();
   for (let i = 0; i < authors.length; i += 50) {
     const page = await queryItems('Companies', { filters: [{ field: 'ownerMemberIds', op: 'hasSome', value: authors.slice(i, i + 50) }], limit: 1000 });
-    page.items.forEach(c => (c.ownerMemberIds || []).forEach(id => blocked.add(id)));
+    page.items.filter(adminTouched).forEach(c => (c.ownerMemberIds || []).forEach(id => blocked.add(id)));
   }
-  const list = items.filter(r => !blocked.has(r._owner) && (r.type || 'customer') === type && Number(r.rating) > 0);
-  const verified = co.claimStatus === 'verified' ? '<span class="ver">Verified</span>' : '';
+  const list = items.filter(r => adminTouched(r) && !blocked.has(r._owner) && (r.type || 'customer') === type && Number(r.rating) > 0);
+  const verified = adminTouched(co) && co.claimStatus === 'verified' ? '<span class="ver">Verified</span>' : '';
   if (!list.length) {
     el.innerHTML = `<span class="row"><span class="msg">No ${type} reviews yet</span>${verified}</span><span class="meta">Be the first to review ${esc(name)} on ${brand}</span>`;
     return;

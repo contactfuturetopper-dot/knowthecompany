@@ -9,7 +9,7 @@
   --t1:#ECFCCB; --t1i:#3F6212; --t2:#E7EEFB; --t2i:#1F4C9A; --t3:#FBEDE2; --t3i:#8A4314;
   --t4:#F0E9FB; --t4i:#5B3196; --t5:#FBE8EE; --t5i:#9A2445; --t6:#E5F3F5; --t6i:#155E6B;
   --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
   --display:var(--font);
   --gold:#A3E635; --gold-soft:#F1FCD9; --gold-ink:#365314;
   --shadow-sm:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.08);
