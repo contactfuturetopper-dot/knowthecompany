@@ -736,7 +736,7 @@ function vHome() {
       <div class="pcard"><span class="pi" style="background:var(--t3);color:var(--t3i)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg></span><div><b>Your call on your name</b><p>Post employee reviews anonymously or with your name. Your email is never shown.</p></div></div>
     </section>
 
-    <section class="wrap sec" aria-labelledby="both-h"><div class="sechead"><div style="max-width:720px"><p class="eyebrow">Two sides, one page</p><h2 id="both-h">What customers and employees say, together</h2></div></div>
+    <section class="wrap sec" aria-labelledby="both-h"><div class="sechead"><div style="max-width:720px"><h2 id="both-h">What customers and employees say, together</h2></div></div>
       <div class="both">
         <div class="bside c"><div class="who2"><span class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v13H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><div><h3>Customers and clients</h3><p class="sub">How the company delivers</p></div></div>
           <ul>${['Quality of the work, product or service','Communication and support','Value for money','Whether it kept its promises'].map(x => `<li>${TICK('#1E293B')}${x}</li>`).join('')}</ul>
@@ -752,34 +752,34 @@ function vHome() {
         <div><b>Running a company?</b><p>One page for your reputation with clients and candidates, and one place to reply to both.</p></div>
       </div></section>
 
-    <section class="hb hb-grey"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">Explore</p><h2>Browse by category</h2></div><a href="#categories" style="font-weight:700">All ${CATS.length} categories</a></div>
+    <section class="hb hb-grey"><div class="wrap sec"><div class="sechead"><div><h2>Browse by category</h2></div><a href="#categories" style="font-weight:700">All ${CATS.length} categories</a></div>
       <div class="grid">${CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 8).map(catTile).join('')}</div></div></section>
 
     ${recentReviews()}
 
-    <section class="hb hb-cream"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>Why companies list here</h2></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
+    <section class="hb hb-cream"><div class="wrap sec"><div class="sechead"><div><h2>Why companies list here</h2></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
       <div class="reasons">${REASONS.slice(0, 6).map(reasonCard).join('')}</div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px"><a class="btn p lg" href="#why-list">See why it matters</a><a class="btn o lg" href="#list">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>
 
-    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Free tools</p><h2>Make better career and company decisions</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid">${TOOLS.filter(x => !x.soon).slice(0, 6).map(toolCard).join('')}</div></section>
+    <section class="wrap sec"><div class="sechead"><div><h2>Make better career and company decisions</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid">${TOOLS.filter(x => !x.soon).slice(0, 6).map(toolCard).join('')}</div></section>
 
     
 
-    ${!JOBS_ON ? '' : (() => { const js = JOBS.filter(isLive).sort((a, b) => dayNum(b.posted) - dayNum(a.posted)).slice(0, 3); return js.length ? `<section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Hiring now</p><h2>Latest jobs at verified companies</h2></div><a href="#jobs" style="font-weight:700">All jobs</a></div>
+    ${!JOBS_ON ? '' : (() => { const js = JOBS.filter(isLive).sort((a, b) => dayNum(b.posted) - dayNum(a.posted)).slice(0, 3); return js.length ? `<section class="wrap sec"><div class="sechead"><div><h2>Latest jobs at verified companies</h2></div><a href="#jobs" style="font-weight:700">All jobs</a></div>
       <div class="jgrid">${js.map(jobTile).join('')}</div></section>` : ''; })()}
 
-    <section class="hb hb-lime"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">Simple and fair</p><h2>How it works</h2></div></div>
+    <section class="hb hb-lime"><div class="wrap sec"><div class="sechead"><div><h2>How it works</h2></div></div>
       <div class="steps">
         <div class="step"><span>1</span><h3>Search the company</h3><p>Type a name or website. Each page shows its reviews and whether the company is verified.</p></div>
         <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews.</p></div>
         <div class="step"><span>3</span><h3>Share your own</h3><p>Good or bad, every review is published the same way, and the company can reply.</p></div>
       </div></div></section>
 
-${POSTS.length ? `    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>From our blog for companies</h2></div><a href="#blog" style="font-weight:700">All articles</a></div>
+${POSTS.length ? `    <section class="wrap sec"><div class="sechead"><div><h2>From our blog for companies</h2></div><a href="#blog" style="font-weight:700">All articles</a></div>
       <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${POSTS.slice(0, 3).map(postCard).join('')}</div></section>` : ''}
 
     <section class="wrap sec"><div class="cta">
-      <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px"><p class="eyebrow" style="color:var(--deep-muted)">For employers</p>
+      <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px">
         <h2>${LAUNCH ? 'List your company free for a year.' : 'Get a verified listing for [[PB]] a year.'}</h2>
         <p>Show up in your category, reply to clients and employees, and share proof of your reputation.${LAUNCH ? ` Businesses that join before ${LAUNCH_END} get their first year free.` : ''}</p></div>
       <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:16px">
