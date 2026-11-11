@@ -2061,7 +2061,9 @@ async function payApi(action, body) {
   return d;
 }
 async function loadPay(c, force) {
-  if (!force && (PAY.company === c.wid && (PAY.data || PAY.loading))) return;
+  /* One load per company: after an error, wait for a button press or a page change rather than retrying
+     on every draw. */
+  if (!force && PAY.company === c.wid && (PAY.data || PAY.loading || PAY.err)) return;
   Object.assign(PAY, { company: c.wid, loading: true, err: '' });
   try { PAY.data = await payApi('status', { company: c.wid }); } catch (e) { PAY.data = null; PAY.err = e.message; }
   PAY.loading = false;
@@ -2103,6 +2105,7 @@ function planPanel(c) {
     ${PAY.loading && !d ? '<p class="meta">Loading…</p>' : ''}
     ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}
     ${!isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Plus, ${P.PP} a year</h3><p>Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.${LAUNCH ? ` Your first ${PLUS_TRIAL_DAYS} days are free; the first charge is on day ${PLUS_TRIAL_DAYS + 1}.` : ''}</p>${btn('plus', LAUNCH ? `Start Plus free for ${PLUS_TRIAL_DAYS} days` : `Get Plus for ${P.PP} a year`)}</div>` : ''}
+    ${isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Keep Plus with autopay, ${P.PP} a year</h3><p>${d && d.planEndsAt ? `Your Plus plan runs until ${esc(fmt(d.planEndsAt))}. ` : ''}Set up yearly autopay so it carries on without a gap. Nothing is charged before then.</p>${btn('plus', 'Set up autopay for Plus')}</div>` : ''}
     ${!isPlus && !basicLive && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Basic, ${P.PB} a year</h3><p>${LAUNCH ? `Basic is free for your first year. Set up autopay now so your page stays live after that; nothing is charged until the free year ends.` : 'Keep your verified listing with yearly autopay.'}</p>${btn('basic', LAUNCH ? 'Set up autopay for later' : `Pay ${P.PB} a year`)}</div>` : ''}
     ${live.some(b => b.status !== 'cancelling') ? `<p class="meta">Autopay renews every year. Cancel any time: an autopay that hasn’t charged yet ends straight away, and a paid year runs to its end. <button class="link" type="button" data-act="pay-cancel">Cancel autopay</button></p>` : ''}
     ${PAY.err ? `<p class="err" role="alert">${esc(PAY.err)}</p>` : ''}

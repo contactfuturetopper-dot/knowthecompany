@@ -107,13 +107,14 @@ export async function planIdFor(plan: string, currency: string): Promise<string>
   return made.id;
 }
 
-/* When the first charge falls: Plus starts with a free trial during the launch offer, Basic is free until
-   the end of the company's free year (planEndsAt) or, without a date, for a year from now. */
+/* When the first charge falls. If the company's current plan already runs to a date (planEndsAt), autopay
+   starts then. Otherwise Plus starts with its free days during the launch offer, and Basic is free for a year. */
 export function firstChargeAt(plan: string, company: any): Date | null {
   const now = Date.now();
-  if (plan === "plus") return LAUNCH ? new Date(now + PLUS_TRIAL_DAYS * DAY) : null;
   const ends = company.planEndsAt ? new Date(company.planEndsAt).getTime() : 0;
-  if (ends > now + DAY) return new Date(ends);
+  /* A plan that is already paid or free until a date keeps that date: autopay starts after it. */
+  if (ends > now + DAY && (plan === "basic" || company.plan === "plus")) return new Date(ends);
+  if (plan === "plus") return LAUNCH ? new Date(now + PLUS_TRIAL_DAYS * DAY) : null;
   return LAUNCH ? new Date(now + 365 * DAY) : null;
 }
 export const subscriptionTotal = YEARS;
