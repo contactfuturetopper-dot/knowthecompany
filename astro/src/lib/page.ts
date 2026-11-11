@@ -221,9 +221,11 @@ export async function allCompanies(): Promise<any[]> {
 }
 /* Raw reviews: read with the project's elevated permission. If that isn't available (local checks), read
    as a visitor, which returns only what the collection lets visitors see. */
+export let reviewsSource = "";
 export async function rawReviews(companyId?: string): Promise<any[]> {
-  try { return await allReviewsElevated(companyId); }
-  catch {
+  try { const r = await allReviewsElevated(companyId); reviewsSource = "elevated"; return r; }
+  catch (e) {
+    reviewsSource = "visitor: " + String((e as Error)?.message || e).slice(0, 120).replace(/[^\x20-\x7e]/g, "");
     const out: any[] = [];
     for (let offset = 0; offset < 50_000; offset += 1000) {
       const page = await query("Reviews", companyId ? { company: { $eq: companyId } } : {}, 1000, offset);
