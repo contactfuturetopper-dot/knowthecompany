@@ -260,7 +260,6 @@ async function homeBody(): Promise<string> {
   const cats = await categories().catch(() => [] as string[]);
   return `<p>Customers and employees review the same company, on one page. Read what people say about startups and growing companies before you buy from them, work with them or join them.</p>
 <h2>What customers and employees say, together</h2>
-<p>Review sites usually cover one side: customers or employees. Every company page here has both, so you see how a company treats the people it works for and the people who work for it.</p>
 <ul><li>Customers rate the quality of the work, product or service, communication and support, value for money, and whether the company kept its promises.</li><li>Employees rate culture and management, pay and benefits, career growth and work-life balance, anonymously or with their name.</li></ul>
 <h2>Free for everyone, and no ratings bought</h2>
 <p>Reading and writing reviews costs nothing. Companies can pay for listing tools, never for stars: paying never changes, hides or delays a review.</p>
