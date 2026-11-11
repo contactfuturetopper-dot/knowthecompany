@@ -126,12 +126,6 @@
   "intro": ""
  },
  {
-  "route": "removals",
-  "title": "Removals report · Know The Company",
-  "h1": "Removals report",
-  "intro": "Every review we take down is counted here, so you can see we don't hide reviews for anyone."
- },
- {
   "route": "tool-offer",
   "title": "Compare job offers · Know The Company",
   "h1": "Compare job offers",

@@ -11,8 +11,8 @@ const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ
    server hosting (the astro/ folder): the server answers every address with this app and the page's
    own title, description and canonical tag, and the app reads the page from the address. Old links
    still work: /#route and /page.html addresses are moved to the clean one. */
-const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds', 'removals'];
-const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Pricing', refunds: 'Refunds and cancellations', removals: 'Removals report' };
+const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
+const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Pricing', refunds: 'Refunds and cancellations' };
 const PATH_KINDS = [['company', 'co-'], ['category', 'cat-'], ['blog', 'blog-'], ['tools', 'tool-']];
 function routeOfPath(path) {
   let p = path; try { p = decodeURIComponent(path); } catch (e) {}
@@ -632,7 +632,7 @@ function vHome() {
 
     <section class="wrap"><div class="promise">
       <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:8px"><h2 style="font-size:24px">Our promise on reviews</h2><p style="color:var(--muted)">Paying for a listing buys tools and visibility, never stars.</p></div>
-      <ul><li>Negative reviews are never hidden or delayed.</li><li>Companies can't edit or remove reviews.</li><li><a href="#removals" style="color:inherit">Every removal is listed in a public report.</a></li><li>Companies caught buying reviews get a public warning.</li></ul>
+      <ul><li>Negative reviews are never hidden or delayed.</li><li>Companies can't edit or remove reviews.</li><li>Companies caught buying reviews get a public warning.</li></ul>
     </div></section>`;
 }
 
@@ -1168,6 +1168,8 @@ function vInvite(c, k) {
     <p class="meta" style="max-width:460px">Your review is published whether it's good or bad. ${esc(c.name)} can reply, but can't edit or hide it. Reviews from invitations are labelled “Invited”.</p>
     ${list.length || er.length ? `<a href="#${c.id}" style="font-size:14px;font-weight:700">Read what others say</a>` : ''}</div></div>`;
 }
+/* Removals report: taken off the site until there are reviews to report on. To bring it back, add 'removals'
+   to PAGE_ROUTES and PAGE_TITLES, route it in render(), and link it from the footer and the guidelines. */
 function vRemovals() {
   const cats = RPT_REASONS.slice(0, 4).concat(['Removed by court or government order']); const R = {};
   return `<div class="wrap" style="max-width:860px">${crumbs([['Home', '#home'], ['Removals report']])}
@@ -1487,7 +1489,7 @@ function vGuidelines() {
       <section class="box"><h2>Before a review goes live</h2><p>A person reads every review before it is published. We aim to decide within 48 hours. If a review breaks these guidelines we don't publish it.</p></section>
       <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
       <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. When they invite reviews, they must invite all their customers, not only the happy ones. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
-      <section class="box"><h2>When we remove a review</h2><p>Only when it breaks these guidelines or we receive a valid legal order. Every removal is counted in our public <a href="#removals">removals report</a>.</p></section>
+      <section class="box"><h2>When we remove a review</h2><p>Only when it breaks these guidelines or we receive a valid legal order.</p></section>
     </div></div>`;
 }
 
@@ -1870,7 +1872,7 @@ function vTerms() {
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
     ['3. Employee reviews', ['Post only your own experience as an employee, contractor or intern.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
     ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is cancelled, the profile moves to Basic when the year you paid for ends.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
-    ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law. We publish counts of removals in our removals report.'],
+    ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
     ['8. Contact', [...(OPERATOR.legalName ? [`Know The Company is run by ${esc(OPERATOR.legalName)}${OPERATOR.address ? `, ${esc(OPERATOR.address)}` : ''}.`] : []), 'Questions about these terms: knowthecompanysupport@gmail.com.', 'Complaints about content on the site go to our grievance officer, Nimish Chhabra, at knowthecompanysupport@gmail.com. We acknowledge complaints within 24 hours and resolve them within 7 days.']]]);
@@ -2293,7 +2295,6 @@ function render() {
   else if (h === 'pricing') { html = vPricing(); nav = 'list'; }
   else if (h === 'refunds') html = vRefunds();
   else if (CATBYID[h]) { html = vCategory(CATBYID[h]); nav = 'categories'; }
-  else if (h === 'removals') html = vRemovals();
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
   else if (BYID[h]) { loadMedia(BYID[h]); html = vCompany(BYID[h]); }
