@@ -208,7 +208,7 @@ function reviewsHtml(name: string, reviews: any[]): string {
   const reply = (r: any) => r.reply && adminTouched(r) ? `<blockquote><p><strong>Reply from ${esc(name)}:</strong> ${esc(r.reply)}</p></blockquote>` : "";
   let html = `<section><h2>Customer reviews of ${esc(name)}</h2>`;
   html += customer.length
-    ? `<p>Rated ${avg(customer)} out of 5 from ${customer.length} customer review${customer.length === 1 ? "" : "s"}.</p>` + customer.slice(0, 20).map(r => `<article><h3>${esc(r.title || "Customer review")}</h3><p>${stars(r.rating)} · ${esc(r.displayName || "Reviewer")}${monthYear(r._createdDate) ? " · " + monthYear(r._createdDate) : ""}</p>${r.body ? `<p>${esc(r.body)}</p>` : ""}${reply(r)}</article>`).join("")
+    ? `<p>Rated ${avg(customer)} out of 5 from ${customer.length} customer review${customer.length === 1 ? "" : "s"}.</p>` + customer.slice(0, 20).map(r => { const imp = r.importedFrom && adminTouched(r), when = monthYear(imp && r.originalDate ? r.originalDate : r._createdDate); return `<article><h3>${esc(r.title || "Customer review")}</h3><p>${stars(r.rating)} · ${esc(r.displayName || "Reviewer")}${when ? " · " + when : ""}</p>${imp ? `<p>Imported: shared by ${esc(name)} from its own records, first given via ${esc(r.importedFrom)}. Confirmed with the reviewer before publishing.</p>` : ""}${r.body ? `<p>${esc(r.body)}</p>` : ""}${reply(r)}</article>`; }).join("")
     : `<p>No customer reviews of ${esc(name)} yet. If you have bought from or used ${esc(name)}, you can write the first one.</p>`;
   html += `</section><section><h2>Employee reviews of ${esc(name)}</h2>`;
   if (employee.length) {

@@ -33,6 +33,7 @@ const reviews = [
   { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', _updatedDate: '2026-11-04T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
   { _id: 'r6', _owner: 'm1', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Owner', rating: 1, title: 'OWNER REVIEW', body: 'OWNER REVIEW written by a company account, must never show.' },
   { _id: 'r7', _owner: 'm4', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T00:00:00Z', _publishStatus: 'PUBLISHED', company: 'razorpay.com', type: 'customer', displayName: 'Sneaky', rating: 5, title: 'Posted just now', body: 'Posted by its writer, goes live straight away.', proofChecked: true, workEmailVerified: true, reply: 'FAKE REPLY stored on the review by its writer.' },
+  { _id: 'r8', _owner: 'c0f544a7-207e-490b-b7d9-830ef39f49c7', _createdDate: '2026-11-10T00:00:00Z', _updatedDate: '2026-11-10T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Meera J.', rating: 4, title: 'Old but good', body: 'Imported review from email feedback, confirmed with the reviewer.', importedFrom: 'Email or message', originalDate: '2025-03-10' },
   { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', _updatedDate: '2026-11-05T01:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
 ];
 const ownerContent = [
@@ -122,6 +123,7 @@ globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 60)
 await go('co-1password');
 report.push('company account review form hidden: ' + !app.querySelector('#review-form') + ', block shown: ' + app.textContent.includes('Company accounts can’t write reviews'));
 await go('co-razorpay'); app.querySelector('[data-act=cotab][data-tab=customers]').click(); await new Promise(r => setTimeout(r, 40));
+report.push('imported label: ' + app.textContent.includes('First given via Email or message in Mar 2025'));
 report.push('tab: ' + (app.querySelector('[role=tab][aria-selected=true]') || {}).textContent + ', r1 shown: ' + app.textContent.includes('Quick settlements') + ', new review live: ' + app.textContent.includes('Posted just now') + ', its own proof label shown: ' + (app.innerHTML.match(/Proof checked<\/span>/g) || []).length);
 await go('co-fakeco');
 report.push('member-inserted company shown as verified: ' + app.textContent.includes('Verified company') + ', fake employer page shown: ' + app.textContent.includes('FAKE EMPLOYER PAGE'));
@@ -132,6 +134,13 @@ click('[data-act="cotab"][data-tab="customers"]'); await new Promise(r => setTim
 await go('dashboard');
 report.push('dashboard tabs: ' + app.querySelectorAll('[data-act="dash-tab"]').length);
 report.push('badge embeds on dashboard: ' + app.querySelectorAll('iframe[src*="badge.html?c=razorpay.com"]').length);
+click('[data-act="dash-tab"][data-tab="import"]'); await new Promise(r => setTimeout(r, 40));
+report.push('past reviews tab: form ' + !!app.querySelector('#import-form'));
+{ const imf = app.querySelector('#import-form');
+  if (imf) { const set = (k, v) => { imf.querySelector('#' + k).value = v; };
+    set('im-name', 'Meera J.'); set('im-email', 'meera@example.com'); set('im-rating', '4'); set('im-date', '2025-03-10'); set('im-body', 'Settlements were quick and support answered within the hour.'); imf.querySelector('#im-ok').checked = true;
+    imf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
+  report.push('past review sent: ' + JSON.stringify(inserted.filter(x => x[0] === 'ReviewImports').map(x => [x[1].company, x[1].status, x[1].rating]))); }
 click('[data-act="dash-tab"][data-tab="page"]'); await new Promise(r => setTimeout(r, 40));
 const pf = app.querySelector('#cprof-form'); report.push('company page form: ' + !!pf + ', photos shown: ' + app.querySelectorAll('.gallery img').length);
 if (pf) { pf.querySelector('#cp-about').value = 'We build payment tools for small and growing businesses across India and abroad.'; pf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }

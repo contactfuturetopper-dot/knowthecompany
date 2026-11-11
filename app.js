@@ -184,7 +184,8 @@ function indexReviews(items) {
     if (r.type === 'interview') continue; /* interviews section removed */
     const team = adminTouched(r); /* labels and replies only count once the team has set them: see "trust" above */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
-    const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', date: monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
+    const imported = team && r.importedFrom ? { from: String(r.importedFrom), date: monthOf(r.originalDate || '') } : null; /* a past review a Plus company shared, confirmed with its writer by the team */
+    const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
     else if (r.type === 'interview') empBucket(c.id).interviews.push({ ...base, role: r.jobTitle || '', outcome: r.interviewOutcome || '', diff: r.interviewDifficulty || '', exp: r.interviewExperience || '', process: r.body || '', questions: r.interviewQuestions || '' });
     else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: team && !!r.proofChecked, invited: !!r.invited });
@@ -851,8 +852,9 @@ function reviewCard(r, idx, cid) {
   return `<article class="review">
     <div class="who"><span class="avatar" aria-hidden="true" style="width:40px;height:40px;font-size:14px;border-radius:999px">${esc(initials(r.name || 'You'))}</span>
       <div class="t"><b style="font-size:15px">${esc(r.name || 'You')}</b><span class="meta">${esc(r.date)}</span></div>
-      ${r.invited ? '<span class="pill cat">Invited</span>' : ''}${mine ? '<span class="pill ok">Your review</span>' : ''}${r.proof ? '<span class="pill ok">Proof checked</span>' : ''}</div>
+      ${r.invited ? '<span class="pill cat">Invited</span>' : ''}${r.imported ? '<span class="pill cat">Imported</span>' : ''}${mine ? '<span class="pill ok">Your review</span>' : ''}${r.proof ? '<span class="pill ok">Proof checked</span>' : ''}</div>
     ${starRow(r.rating, 18)}
+    ${r.imported ? `<p class="meta" style="font-size:13px">Shared by ${esc(r.replyFrom || 'the company')} from its own records. First given via ${esc(r.imported.from)}${r.imported.date ? ' in ' + esc(r.imported.date) : ''}. We confirmed it with the reviewer before publishing.</p>` : ''}
     ${r.title ? `<h3>${esc(r.title)}</h3>` : ''}
     <p class="body">${esc(r.body)}</p>
     ${r.reply ? `<div class="reply"><b>Reply from ${esc(r.replyFrom || 'the company')}</b><span>${esc(r.reply)}</span></div>` : ''}
@@ -1105,7 +1107,7 @@ let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We a
 const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '[[PB]] a year';
 const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
 const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
-const PLUS_PERKS = ['Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Website badge with your live rating','Priority support'];
+const PLUS_PERKS = ['Bring your past reviews: we confirm each one with the reviewer, then publish it', 'Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Website badge with your live rating','Priority support'];
 const planOf = () => (S.user && S.user.plan) || 'basic';
 const JOBS_ON = false; /* job posts: coming soon. Set to true to switch the whole jobs feature back on. */
 const FREE_JOBS = 5, EXTRA_JOB = 99, JOB_DAYS = 60;
@@ -1610,11 +1612,11 @@ function vDashboard() {
   const empty = !mine.length && claims && !claims.length;
   const sel = mine.find(c => c.id === S.dashCo) || mine[0];
   if (sel) { S.user.coId = sel.id; S.user.plan = coPlan(sel); loadMedia(sel); }
-  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies']];
+  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews']];
   const tab = TABS.some(t => t[0] === S.dashTab) ? S.dashTab : 'overview';
   const pick = mine.length > 1 ? `<div class="field" style="max-width:360px"><label class="l" for="dash-co">Company</label><select id="dash-co" data-dashco>${mine.map(c => `<option value="${c.id}" ${c === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : '';
   const tabs = sel ? `<nav style="display:flex;flex-wrap:wrap;gap:8px" aria-label="Dashboard sections">${TABS.map(([k, l]) => `<a class="btn ${k === tab ? 'p' : 'g'}" href="#dashboard" data-act="dash-tab" data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>` : '';
-  const body = !sel ? '' : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
+  const body = !sel ? '' : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
   return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
     <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><a class="btn o" href="#list">Claim or add a company</a></div>
     ${pick}${tabs}${body}
@@ -1629,6 +1631,7 @@ function vGuidelines() {
     <div style="display:flex;flex-direction:column;gap:22px;line-height:1.65">
       <section class="box"><h2>How we list companies</h2><p>Well-known startups are added from public information (name, website, category, country) so people can review them. Other companies are added by their owners, or by reviewers who have worked with them. These profiles are marked “Unclaimed” and show no rating until real customers review them. A listed company is never presented as a partner or customer of Know The Company.</p></section>
       <section class="box"><h2>Writing a review</h2><p>Write about your own experience in the last 12 months. No hate speech, personal data about staff, or claims of crime without evidence. Reviews in exchange for money, discounts or gifts are not allowed.</p></section>
+      <section class="box"><h2>Reviews companies bring with them</h2><p>Companies on the Plus plan can send us reviews they collected before joining, from their own website, emails, surveys or other review sites. We contact every reviewer to confirm they wrote the review and agree to it appearing here, and we publish nothing we can't confirm. Companies must send all the reviews they have, not only the good ones. Imported reviews are labelled "Imported" and show where and when they were first given.</p></section>
       <section class="box"><h2>When a review goes live</h2><p>Reviews are published as soon as they are posted. Our team reads new reviews and reports, and takes down any review that breaks these guidelines. Anyone can report a review they think breaks them.</p></section>
       <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
       <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. When they invite reviews, they must invite all their customers, not only the happy ones. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
@@ -2021,6 +2024,51 @@ async function insertCompany(data) {
   const res = await wixRequest('/wix-data/v2/items', { body: { dataCollectionId: 'Companies', dataItem: { id: data._id, data } } });
   return (res && res.dataItem && res.dataItem.data) || data;
 }
+/* ---------- past reviews (Plus plan) ----------
+   A Plus company can send us reviews it collected before joining: from its website, emails, surveys or
+   another platform. Each goes into ReviewImports (members can add, only the team can read anyone else's
+   or change them). The team emails the reviewer to confirm they wrote it and are happy for it to appear,
+   then publishes it in Reviews with importedFrom and originalDate set, and it shows labelled "Imported". */
+const IMPORT_SOURCES = ['Our website', 'Email or message', 'Survey or feedback form', 'Google', 'Another review site', 'In person or on paper', 'Other'];
+const IMPORT_STATUS = { pending: ['un', 'Being checked'], confirmed: ['un', 'Confirmed, publishing soon'], published: ['ok', 'Published'], rejected: ['cat', 'Not published'] };
+async function loadMyImports(c) {
+  if (!S.user || !c) return;
+  if (S.myImports && S.myImports.co === c.wid) return;
+  S.myImports = { co: c.wid, items: null };
+  try { const p = await queryItems('ReviewImports', { limit: 200, filters: [{ field: 'company', op: 'eq', value: c.wid }] }); S.myImports = { co: c.wid, items: p.items }; }
+  catch (e) { S.myImports = { co: c.wid, items: [], err: errMsg(e) }; }
+  renderKeep();
+}
+function importPanel(c) {
+  if (coPlan(c) !== 'plus') return `<section class="box" style="gap:12px"><h2>Bring your past reviews</h2>
+      <p>On the Plus plan you can send us reviews ${esc(c.name)} collected before joining Know The Company, from your website, emails, surveys or another review site. We contact each reviewer to confirm the review is real and that they're happy for it to appear here, then publish it on your page with an "Imported" label.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn p" href="#pricing">See the Plus plan</a></div></section>`;
+  loadMyImports(c);
+  const list = S.myImports && S.myImports.co === c.wid ? S.myImports.items : null;
+  const sent = list === null ? '<p class="meta">Loading what you have sent…</p>' : list.length
+    ? list.slice().sort((a, b) => String(b._createdDate).localeCompare(String(a._createdDate))).map(x => { const [k, t] = IMPORT_STATUS[x.status] || IMPORT_STATUS.pending; return `<div class="cfrow"><div class="t"><b>${esc(x.reviewerName || 'Reviewer')} · ${'★'.repeat(Math.max(0, Math.min(5, Number(x.rating) || 0)))}</b><small>${esc(String(x.body || '').slice(0, 90))}${String(x.body || '').length > 90 ? '…' : ''}</small></div><span class="pill ${k}">${t}</span></div>`; }).join('')
+    : '<p class="meta">Nothing sent yet.</p>';
+  const opt = (v, cur) => `<option ${v === cur ? 'selected' : ''}>${esc(v)}</option>`;
+  return `<section class="box" style="gap:14px"><h2>Bring your past reviews</h2>
+      <p>Send us reviews ${esc(c.name)} received before joining, one at a time. For each one we email the reviewer to confirm they wrote it and agree to it appearing here. Reviews we can't confirm, or that look edited, aren't published.</p>
+      <ul class="meta" style="font-size:14px;line-height:1.6;padding-left:18px;margin:0"><li>Send every review you can, good and bad. Picking only the best ones breaks our <a href="#guidelines">guidelines</a>.</li><li>Copy the words exactly as the reviewer wrote them.</li><li>We never show the reviewer's email. We only use it to confirm the review.</li><li>Published reviews are labelled "Imported" and show where and when they were first given.</li></ul>
+    </section>
+    <form class="box" id="import-form" novalidate style="gap:14px">
+      <h2>Add a review</h2>
+      <div class="row"><div class="field"><label class="l" for="im-name">Reviewer's name</label><input id="im-name" type="text" maxlength="60" autocomplete="off"><p class="err" id="err-im-name" hidden>Enter the reviewer's name as they gave it.</p></div>
+        <div class="field"><label class="l" for="im-email">Reviewer's email</label><input id="im-email" type="email" maxlength="120" autocomplete="off" placeholder="So we can confirm it with them"><p class="err" id="err-im-email" hidden>We need the reviewer's email to confirm the review.</p></div></div>
+      <div class="row"><div class="field"><label class="l" for="im-rating">Rating</label><select id="im-rating"><option value="">Choose</option>${[5, 4, 3, 2, 1].map(n => `<option value="${n}">${n} star${n === 1 ? '' : 's'}</option>`).join('')}</select><p class="err" id="err-im-rating" hidden>Choose the rating the reviewer gave.</p></div>
+        <div class="field"><label class="l" for="im-date">Date it was given</label><input id="im-date" type="date" max="${todayISO()}"><p class="err" id="err-im-date" hidden>Enter roughly when the review was given.</p></div></div>
+      <div class="row"><div class="field"><label class="l" for="im-source">Where it was given</label><select id="im-source">${IMPORT_SOURCES.map(v => opt(v)).join('')}</select></div>
+        <div class="field"><label class="l" for="im-proof">Link or proof <span class="meta">(optional)</span></label><input id="im-proof" type="url" maxlength="400" placeholder="Where we can see the original"></div></div>
+      <div class="field"><label class="l" for="im-title">Title <span class="meta">(optional)</span></label><input id="im-title" type="text" maxlength="110"></div>
+      <div class="field"><label class="l" for="im-body">Review, word for word</label><textarea id="im-body" rows="5" maxlength="4000"></textarea><p class="err" id="err-im-body" hidden>Paste the review text (at least 20 characters).</p></div>
+      <label class="check"><input id="im-ok" type="checkbox"><span>This review is real, written by this person about ${esc(c.name)}, and copied without changes.</span></label>
+      <p class="err" id="err-im-ok" hidden>Please confirm the review is real and unchanged.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><button class="btn p" type="submit">Send for checking</button><span class="meta" style="font-size:13px">You can add the next one straight after.</span></div>
+    </form>
+    <section class="box" style="gap:10px"><h2>What you've sent</h2>${sent}${S.myImports && S.myImports.err ? `<p class="err">${esc(S.myImports.err)}</p>` : ''}</section>`;
+}
 async function loadMyClaims() {
   if (!S.user) { S.myClaims = []; return; }
   S.myClaims = null;
@@ -2074,7 +2122,7 @@ async function submitClaim() {
 
 document.addEventListener('submit', async e => {
   const f = e.target; const id = f.id;
-  const HANDLED = ['review-form', 'emp-form', 'int-form', 'add-form', 'req-form', 'report-form', 'suggest-form', 'login-form', 'signup-form', 'verify-form', 'forgot-form', 'contact-form', 'pitch-form'];
+  const HANDLED = ['review-form', 'emp-form', 'int-form', 'add-form', 'req-form', 'report-form', 'suggest-form', 'login-form', 'signup-form', 'verify-form', 'forgot-form', 'import-form', 'contact-form', 'pitch-form'];
   if (!HANDLED.includes(id)) return;
   e.preventDefault(); e.stopImmediatePropagation();
   const v = k => { const el = f.querySelector('#' + k); return el ? el.value.trim() : ''; };
@@ -2082,6 +2130,23 @@ document.addEventListener('submit', async e => {
   /* Password reset: Wix emails a link to its reset page, which sends the member back to /login
      (an allowed redirect address of the site's sign-in app). The reply never says whether the email has
      an account, so the form can't be used to find out who is registered. */
+  if (id === 'import-form') {
+    const mine = S.user ? COS.filter(x => (x.raw.ownerMemberIds || []).includes(S.user.id)) : [];
+    const c = mine.find(x => x.id === S.dashCo) || mine[0]; if (!c || coPlan(c) !== 'plus') return;
+    const body = v('im-body'), email = v('im-email');
+    const errs = { 'im-name': !v('im-name'), 'im-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 'im-rating': !v('im-rating'), 'im-date': !v('im-date'), 'im-body': body.length < 20, 'im-ok': !(f.querySelector('#im-ok') || {}).checked };
+    Object.entries(errs).forEach(([k, bad]) => { const el = document.getElementById('err-' + k); if (el) el.hidden = !bad; });
+    const first = Object.keys(errs).find(k => errs[k]); if (first) { f.querySelector('#' + first).focus(); return; }
+    busy(f, true);
+    try {
+      const it = await insertItem('ReviewImports', { company: c.wid, companyName: c.name, type: 'customer', reviewerName: v('im-name'), reviewerEmail: email, rating: Number(v('im-rating')), title: v('im-title'), body, givenOn: v('im-date'), source: v('im-source'), proofUrl: v('im-proof'), consent: true, status: 'pending' });
+      if (S.myImports && S.myImports.co === c.wid && S.myImports.items) S.myImports.items.unshift(it || { reviewerName: v('im-name'), rating: Number(v('im-rating')), body, status: 'pending', _createdDate: new Date().toISOString() });
+      f.reset(); busy(f, false); renderKeep();
+      toast('Sent. We’ll confirm it with the reviewer before it goes live.', 5000);
+    } catch (err) { busy(f, false); toast('That didn’t send: ' + errMsg(err), 6000); }
+    return;
+  }
+
   if (id === 'forgot-form') {
     const email = v('l-email'), bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     document.getElementById('err-l-email').hidden = !bad;

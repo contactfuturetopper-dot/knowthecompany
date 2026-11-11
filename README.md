@@ -45,3 +45,13 @@ zip -qr build.zip .wix dist
 Release `build.zip` with the Wix MCP tool `UploadHeadlessWebsiteFiles` (`prepare: true` with the zip's size, PUT the zip to the URL it returns, then the second call). The upload URL is on Amazon S3, so the PUT has to run from a machine that can reach it. `astro/.env.local` (not in git) holds `WIX_CLIENT_ID="5783d517-0173-420b-ba45-67e1d2efd460"`, `WIX_CLOUD_PROVIDER="KUBERNETES"` and placeholder values for `WIX_CLIENT_INSTANCE_ID`, `WIX_CLIENT_PUBLIC_KEY` and `WIX_CLIENT_SECRET`, which the hosting fills in at release.
 
 Do not upload the root files to the site as static files any more: a release replaces the whole site, and a static drop over it would bring back `.html` addresses that the app no longer serves.
+
+## Past reviews from Plus companies
+
+Companies on the Plus plan can send reviews they collected before joining from the "Past reviews" tab of their dashboard. Each one lands in the `ReviewImports` collection with status `pending` (members can add items and see their own; only the team can see the rest or change them). To publish one:
+
+1. Email the reviewer at `reviewerEmail` and ask them to confirm they wrote it and agree to it appearing on Know The Company. Set `status` to `confirmed` once they reply, or `rejected` with a `note` if they don't or the text doesn't match.
+2. Add it to `Reviews` from the CMS (so it is the admin's item): `company` = the website id, `type` = `customer`, `displayName`, `rating`, `title`, `body`, `importedFrom` = the `source`, `originalDate` = `givenOn`.
+3. Set the import's `status` to `published`.
+
+The site shows these reviews with an "Imported" label, where and when they were first given, and that the reviewer confirmed them. They count towards the rating like any other review.
