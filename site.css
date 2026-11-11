@@ -659,7 +659,7 @@ h1,h2,h3,.brand b{letter-spacing:-0.025em}
 #cf-code{font-family:var(--mono);font-size:22px;letter-spacing:.3em;max-width:220px}
 .progress{flex-wrap:wrap}
 header.top .wrap.hdr{flex-wrap:nowrap;gap:12px;padding-block:12px}
-.mainnav{display:flex;align-items:center;gap:2px;margin-left:16px;font-size:15px;font-weight:500}
+.mainnav{display:flex;align-items:center;gap:2px;margin-left:auto;font-size:15px;font-weight:500}
 .mainnav>a,.dd>summary{color:var(--fg);text-decoration:none;padding:9px 11px;border-radius:9px;cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;user-select:none}
 .dd>summary::-webkit-details-marker{display:none}
 .dd>summary.car::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.55}
@@ -681,7 +681,8 @@ details.dd{position:relative;border:0;border-radius:0;padding:0;background:trans
 .ddmenu .mi{background:var(--surface);color:var(--fg)}
 .ddmenu .all{justify-content:center;font-weight:700;color:var(--accent);border-top:1px solid var(--line);border-radius:0 0 10px 10px;margin-top:4px}
 .ddmenu .mh{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);padding:8px 10px 4px}
-.hright{margin-left:auto;display:flex;align-items:center;gap:4px}
+.hright{margin-left:8px;display:flex;align-items:center;gap:4px}
+/* The menu sits on the right, next to search and log in. On small screens the menu is hidden and .hright takes the auto margin instead (see the 980px rule). */
 .iconbtn{width:42px;height:42px;border-radius:12px;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--fg);cursor:pointer;position:relative;flex:none;list-style:none}
 .iconbtn::-webkit-details-marker{display:none}
 .iconbtn:hover{background:var(--surface)}
@@ -720,6 +721,7 @@ header.top .searchpanel .hsearch{flex:1;max-width:none}
 .burger{display:none}
 @media (max-width:980px){
   .mainnav,.loginlink,.hright .wr,.hright .dd.um{display:none}
+  .hright{margin-left:auto}
   .burger{display:inline-flex}
   .bbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));justify-content:space-around}
   body{padding-bottom:76px}
