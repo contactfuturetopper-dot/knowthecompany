@@ -31,6 +31,10 @@ for f in sorted(glob.glob(f'{ROOT}/data/facts/batch-*.json')):
         }
         if rec['founded'] and not re.match(r'^(1[89]|20)\d\d$', rec['founded']): problems.append(f'{wid}: odd founded {rec["founded"]}'); rec['founded'] = None
         out[wid] = {k: v for k, v in rec.items() if v not in (None, [], {})}
+# Hand corrections after review, applied last. Status notes must stay true for months, not days.
+OVERRIDES = {'mercadobitcoin.com.br': {'status': 'Active'}}
+for wid, fix in OVERRIDES.items():
+    if wid in out: out[wid].update(fix)
 json.dump(dict(sorted(out.items())), open(f'{ROOT}/data/company-facts.json', 'w'), indent=1, ensure_ascii=False)
 print(f'merged facts for {len(out)} companies')
 for p in problems: print('  check:', p)
