@@ -1901,7 +1901,7 @@
    "Developer APIs and firehose"
   ],
   "markets": "Worldwide",
-  "description": "Bluesky Social PBC runs the Bluesky app on the web, iOS and Android, where people post short updates and choose which feeds they read. The service began in 2019 as a project started by Jack Dorsey while he was Twitter's chief executive, and has been an independent public benefit corporation since 2021, led by Jay Graber and owned by her and the Bluesky team. It is built on the open AT Protocol, so developers can write their own feed algorithms and use public APIs. Bluesky says it passed 44 million users by May 2026, and sign-up no longer needs an invite.",
+  "description": "Bluesky Social PBC runs the Bluesky app on the web, iOS and Android, where people post short updates and pick which feeds they read. The project began at Twitter in 2019 under Jack Dorsey and became an independent public benefit corporation in 2021, led by Jay Graber. Graber stepped down as chief executive in March 2026 to become chief innovation officer and board chair, and Toni Schneider, the founding CEO of Automattic, was made permanent CEO that July. The company has no official headquarters and says it passed 44 million users in May 2026.",
   "status": "Active",
   "links": {
    "x": "https://twitter.com/bluesky",
@@ -1936,9 +1936,28 @@
    {
     "fact": "description",
     "url": "https://bsky.social/about"
+   },
+   {
+    "fact": "founders",
+    "url": "https://ppc.land/bluesky-drops-interim-tag-as-schneider-becomes-permanent-ceo/"
+   },
+   {
+    "fact": "status",
+    "url": "https://ppc.land/bluesky-drops-interim-tag-as-schneider-becomes-permanent-ceo/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.geekwire.com/2026/jay-graber-steps-down-as-bluesky-ceo-moves-into-chief-innovation-officer-role-at-social-media-platform/"
+   },
+   {
+    "fact": "description",
+    "url": "https://ppc.land/bluesky-drops-interim-tag-as-schneider-becomes-permanent-ceo/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "founders": [
+   "Jay Graber"
+  ]
  },
  "btcmarkets.net": {
   "name": "BTC Markets",
@@ -2945,7 +2964,7 @@
    "Coffee creamers",
    "La Colombe ready-to-drink coffee"
   ],
-  "description": "Chobani was founded by Hamdi Ulukaya, who grew up on a family farm in Türkiye and still runs the company as chief executive from Chobani House in New York City's NoHo district. Besides yogurt it sells high-protein milk, oat milk, Flavor Drops creamer and La Colombe canned coffee. Its plants are in New Berlin, New York, Twin Falls, Idaho, and Norton Shores, Michigan, where La Colombe drinks are made, and a new dairy plant is being built in Rome, New York. In 2026 it bought a former Keurig Dr Pepper site in Allentown, Pennsylvania, and repurchased Keurig Dr Pepper's equity stake.",
+  "description": "Hamdi Ulukaya founded Chobani in 2005 by buying a single yogurt plant in New Berlin, New York, and still runs it as chief executive from Chobani House in New York City. Besides Greek yogurt it sells high-protein milk, oat milk, coffee creamers and La Colombe canned coffee, made at plants in New York, Idaho and Michigan, and a new dairy plant is being built in Rome, New York. The company raised $650 million in October 2025 and expected net sales of $3.8 billion that year. In 2026 it bought a former Keurig Dr Pepper site in Allentown, Pennsylvania.",
   "status": "Active",
   "sources": [
    {
@@ -2979,9 +2998,41 @@
    {
     "fact": "description",
     "url": "https://www.dairyfoods.com/articles/97665-chobani-announces-new-global-headquarters"
+   },
+   {
+    "fact": "founded",
+    "url": "https://stockanalysis.com/stocks/cho/company"
+   },
+   {
+    "fact": "hq",
+    "url": "https://chobani.com/careers"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.thedairysite.com/news/chobani-raises-650m-to-fund-us-plant-expansion"
+   },
+   {
+    "fact": "markets",
+    "url": "https://stockanalysis.com/stocks/cho/company"
+   },
+   {
+    "fact": "description",
+    "url": "https://stockanalysis.com/stocks/cho/company"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.thedairysite.com/news/chobani-raises-650m-to-fund-us-plant-expansion"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "founded": "2005",
+  "markets": "United States and Australia",
+  "links": {
+   "x": "https://twitter.com/chobani",
+   "instagram": "https://www.instagram.com/chobani/",
+   "facebook": "https://www.facebook.com/Chobani",
+   "youtube": "https://www.youtube.com/chobani"
+  }
  },
  "classdojo.com": {
   "name": "ClassDojo",
@@ -3442,10 +3493,12 @@
    "CRED garage"
   ],
   "markets": "India",
-  "description": "CRED is operated by Dreamplug Technologies Pvt Ltd and is open to members it judges creditworthy. Members pay credit card bills from issuers such as HDFC, ICICI, SBI, Axis and American Express, set payment reminders, check their credit score and track card spending, collecting rewards and cashback along the way. The app also handles UPI payments, including scan and pay, tap to pay and RuPay credit cards on UPI. Further services include CRED money for tracking finances, CRED mint, CRED cash+ and CRED garage for car owners.",
+  "description": "Kunal Shah started CRED in Bengaluru in 2018 as a credit card bill payment app open only to people with high credit scores. Members can also make UPI payments, track their credit score and card spending, and redeem rewards on shopping and travel, and the company says about 1.7 crore members use its products each month. In June 2026 Meta agreed to lead a Rs 8,550 crore Series H round that values CRED at about Rs 43,239 crore. Shah stepped down as chief executive to run WhatsApp, and Miten Sampat became interim CEO.",
   "status": "Active",
   "links": {
-   "x": "https://x.com/CRED_club"
+   "x": "https://x.com/CRED_club",
+   "appStore": "https://apps.apple.com/in/app/cred-credit-cards-payments/id1428580080",
+   "playStore": "https://play.google.com/store/apps/details?id=com.dreamplug.androidapp"
   },
   "sources": [
    {
@@ -3475,9 +3528,42 @@
    {
     "fact": "description",
     "url": "https://cred.club/about"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.businesswire.com/news/home/20260622947239/en/CRED-to-Raise-INR-8550-Crore-USD-900M-From-Meta"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2026/06/meta-rs-8550-cr-investment-cred-kunal-shah-lead-whatsapp"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.businesswire.com/news/home/20260622947239/en/CRED-to-Raise-INR-8550-Crore-USD-900M-From-Meta"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.businesswire.com/news/home/20260622947239/en/CRED-to-Raise-INR-8550-Crore-USD-900M-From-Meta"
+   },
+   {
+    "fact": "status",
+    "url": "https://yourstory.com/2026/06/meta-rs-8550-cr-investment-cred-kunal-shah-lead-whatsapp"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.businesswire.com/news/home/20260622947239/en/CRED-to-Raise-INR-8550-Crore-USD-900M-From-Meta"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2026/06/meta-rs-8550-cr-investment-cred-kunal-shah-lead-whatsapp"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "founded": "2018",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Kunal Shah"
+  ]
  },
  "crypto.com": {
   "name": "Crypto.com",
@@ -3496,13 +3582,14 @@
    "Custody"
   ],
   "markets": "90 countries",
-  "description": "Crypto.com was co-founded by Kris Marszalek, its chief executive, with Rafael Melo and Bobby Bao, and says it has 150 million users in 90 countries. Its main app covers crypto buying and selling, staking, Earn, tokenised stocks and prediction markets, while a separate exchange serves advanced traders. The company also issues Visa prepaid cards, offers the Onchain wallet and is behind the Cronos blockchain. It lists licences or registrations in the United States, Canada, the UK, the EEA under MiCA, Singapore, Hong Kong, Australia, South Korea, Dubai, Abu Dhabi and Bahrain.",
+  "description": "Crypto.com was founded in 2016 and is headquartered in Singapore, with co-founder Kris Marszalek as chief executive alongside co-founders Rafael Melo and Bobby Bao. It says it serves 150 million users in 90 countries through its main app, which covers buying, selling and staking crypto, tokenised stocks and prediction markets, while a separate exchange serves advanced traders. It also issues Visa prepaid cards, offers the Onchain wallet and is behind the Cronos blockchain. The company lists licences or registrations in markets including the United States, the UK, the EEA under MiCA, Singapore and Dubai.",
   "status": "Active",
   "links": {
    "linkedin": "https://www.linkedin.com/company/cryptocom",
    "x": "https://x.com/cryptocom",
-   "instagram": "https://www.instagram.com/cryptocomofficial",
-   "facebook": "https://www.facebook.com/CryptoComOfficial"
+   "instagram": "https://www.instagram.com/cryptocomofficial/",
+   "facebook": "https://www.facebook.com/CryptoComOfficial",
+   "appStore": "https://apps.apple.com/app/id1262148500"
   },
   "sources": [
    {
@@ -3532,9 +3619,28 @@
    {
     "fact": "description",
     "url": "https://crypto.com/en/licenses"
+   },
+   {
+    "fact": "founded",
+    "url": "https://mothership.sg/2026/03/crypto-com-cut-workforce-ai-adoption/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://mothership.sg/2026/03/crypto-com-cut-workforce-ai-adoption/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://mothership.sg/2026/03/crypto-com-cut-workforce-ai-adoption/"
+   },
+   {
+    "fact": "description",
+    "url": "https://mothership.sg/2026/03/crypto-com-cut-workforce-ai-adoption/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "founded": "2016",
+  "hq": "Singapore, Singapore",
+  "employees": "1,001-5,000"
  },
  "cuemath.com": {
   "name": "Cuemath",
@@ -3943,7 +4049,7 @@
    "Mobile trading app"
   ],
   "markets": "16 European countries",
-  "description": "DEGIRO is an execution-only online broker for self-directed retail investors, giving access to around 50 exchanges in Europe, North America and Asia-Pacific as well as over-the-counter trading. The German broker flatex bought the Dutch company in 2020, after regulators approved the deal that July, and DEGIRO now sits alongside the flatex and ViTrade brands within Frankfurt-based flatexDEGIRO SE. The group reported 3.66 million customer accounts across 16 European countries at the end of June 2026. DEGIRO customers can earn income from securities lending, and a wider savings plan offering is planned for late 2026.",
+  "description": "DEGIRO started in 2008 as a broker for professional investors and opened its online service to private investors in the Netherlands in September 2013. It offers execution-only trading in shares, ETFs, bonds, options and futures on around 50 exchanges in Europe, North America and Asia-Pacific, and says it has more than 3 million clients. The German broker flatex bought DEGIRO in 2020. The business now trades as the Amsterdam-based Dutch branch of flatexDEGIRO Bank SE, which is supervised by BaFin in Germany and by the AFM and DNB in the Netherlands.",
   "status": "Active",
   "sources": [
    {
@@ -3973,9 +4079,48 @@
    {
     "fact": "description",
     "url": "https://www.marketscreener.com/FLATEX-AG-31637144/news/flatex-AG-Regulator-approves-today-flatex-to-acquire-100-of-DEGIRO-30963896/"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.euronext.com/en/about/media/bell-ceremony-archive/10-year-anniversary-degiro"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.degiro.com/uk/"
+   },
+   {
+    "fact": "parent",
+    "url": "https://flatexdegiro.com/English/investor-relations/overview/default.aspx"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.degiro.com/uk/"
+   },
+   {
+    "fact": "status",
+    "url": "https://www.degiro.com/uk/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.euronext.com/en/about/media/bell-ceremony-archive/10-year-anniversary-degiro"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.degiro.com/uk/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "flatexDEGIRO Bank Dutch Branch",
+  "founded": "2008",
+  "hq": "Amsterdam, Netherlands",
+  "links": {
+   "linkedin": "https://www.linkedin.com/company/degiro-b-v-/",
+   "x": "https://twitter.com/degiro",
+   "instagram": "https://www.instagram.com/degiro/",
+   "facebook": "https://www.facebook.com/degiroeu/",
+   "appStore": "https://apps.apple.com/gb/app/degiro-investing-trading/id1099174456",
+   "playStore": "https://play.google.com/store/apps/details?id=nl.degiro.trader"
+  }
  },
  "depop.com": {
   "name": "Depop",
@@ -5001,10 +5146,10 @@
    "Courier marketplace"
   ],
   "markets": "21 countries in Europe, Central Asia and Africa",
-  "description": "Glovo runs a delivery app and marketplace that connects customers with restaurants, grocers and other local businesses, and with the couriers who carry their orders. It describes itself as a Spanish technology company and works in 21 countries across Europe, Central Asia and Africa. About 150,000 local stores and 120,000 couriers use the platform each month, and the company employs around 3,000 people. Its Glovo for Impact programme covers social meals, food waste and sustainable packaging, and reports 16 million social meals so far.",
-  "status": "Active",
+  "description": "Glovo was founded in Barcelona in 2015 by Oscar Pierre and Sacha Michaud and has been part of the German group Delivery Hero since 2022. Its app connects customers with restaurants, supermarkets and other local shops, and with the couriers who carry their orders, in 21 countries across Europe, Central Asia and Africa. The company employs around 3,000 people. Under Uber's pending takeover of Delivery Hero, announced in July 2026, Glovo's businesses in Spain, Portugal, Poland, Romania and Moldova are due to be sold to the investment firm SSW Partners, with completion expected in the second half of 2027.",
+  "status": "Active. Parent Delivery Hero is subject to a pending takeover by Uber, expected to close in the second half of 2027",
   "links": {
-   "linkedin": "https://www.linkedin.com/company/glovo-app",
+   "linkedin": "https://www.linkedin.com/company/glovo-app/",
    "appStore": "https://apps.apple.com/app/id951812684",
    "playStore": "https://play.google.com/store/apps/details?id=com.glovo"
   },
@@ -5032,9 +5177,61 @@
    {
     "fact": "description",
     "url": "https://about.glovoapp.com/"
+   },
+   {
+    "fact": "founded",
+    "url": "https://about.glovoapp.com/press/glovo-celebrates-10-years"
+   },
+   {
+    "fact": "hq",
+    "url": "https://about.glovoapp.com/press/glovo-celebrates-10-years"
+   },
+   {
+    "fact": "founders",
+    "url": "https://about.glovoapp.com/press/glovo-celebrates-10-years"
+   },
+   {
+    "fact": "parent",
+    "url": "https://about.glovoapp.com/press/glovo-celebrates-10-years"
+   },
+   {
+    "fact": "parent",
+    "url": "https://marketing4ecommerce.net/en/uber-launches-its-tender-offer-for-delivery-hero/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://about.glovoapp.com/press/glovo-celebrates-10-years"
+   },
+   {
+    "fact": "status",
+    "url": "https://marketing4ecommerce.net/en/uber-launches-its-tender-offer-for-delivery-hero/"
+   },
+   {
+    "fact": "status",
+    "url": "https://www.01net.it/uber-publishes-offer-document-for-its-takeover-offer-for-delivery-hero/"
+   },
+   {
+    "fact": "description",
+    "url": "https://about.glovoapp.com/press/glovo-celebrates-10-years"
+   },
+   {
+    "fact": "description",
+    "url": "https://marketing4ecommerce.net/en/uber-launches-its-tender-offer-for-delivery-hero/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.capital.ro/schimbare-majora-pentru-glovo-romania-cine-preia-afacerea-dupa-decizia-delivery-hero.html"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "founded": "2015",
+  "hq": "Barcelona, Spain",
+  "founders": [
+   "Oscar Pierre",
+   "Sacha Michaud"
+  ],
+  "parent": "Delivery Hero",
+  "ownership": "Subsidiary of Delivery Hero"
  },
  "gocardless.com": {
   "name": "GoCardless",
@@ -5165,11 +5362,12 @@
   "name": "Gopuff",
   "products": [
    "Snack and drink delivery",
+   "Grocery and household essentials delivery",
    "Alcohol delivery",
-   "Grocery and household delivery",
-   "FAM membership"
+   "FAM membership",
+   "Go AI shopping assistant"
   ],
-  "description": "Gopuff takes orders through its app and website for snacks, drinks, ice cream, frozen food, health products, electronics and household goods, and in some areas beer and other alcohol, with delivery in as little as 15 minutes. Its paid FAM membership gives lower member prices on many items, in some cases 40% below the standard price. The service also runs a set of weekly deals that are refreshed every Monday.",
+  "description": "Gopuff was founded in 2013 by Yakir Gola and Rafael Ilishayev while they were students at Drexel University in Philadelphia, where the company is still based. It runs more than 400 of its own micro-fulfilment centres in the United States and the UK, stocking over 5,000 products for delivery in as little as 15 minutes. Members of its paid FAM scheme get lower prices on many items. In 2026 it added Go, an AI shopping feature in its app built with SpaceXAI, after raising $250 million in a round led by Eldridge Industries in late 2025.",
   "status": "Active",
   "sources": [
    {
@@ -5183,9 +5381,70 @@
    {
     "fact": "description",
     "url": "https://www.gopuff.com/"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.cnbc.com/2020/06/16/gopuff-disruptor-50.html"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.retailitinsights.com/doc/gopuff-and-spacexai-launch-go-an-ai-powered-personal-shopping-genius-that-predicts-and-delivers-orders-in-minutes-0001"
+   },
+   {
+    "fact": "hq",
+    "url": "https://technical.ly/entrepreneurship/gopuff-raises-250m-next-growth-phase.md"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.retailitinsights.com/doc/gopuff-and-spacexai-launch-go-an-ai-powered-personal-shopping-genius-that-predicts-and-delivers-orders-in-minutes-0001"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.cnbc.com/2020/06/16/gopuff-disruptor-50.html"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://technical.ly/entrepreneurship/gopuff-raises-250m-next-growth-phase.md"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.retailitinsights.com/doc/gopuff-and-spacexai-launch-go-an-ai-powered-personal-shopping-genius-that-predicts-and-delivers-orders-in-minutes-0001"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.retailitinsights.com/doc/gopuff-and-spacexai-launch-go-an-ai-powered-personal-shopping-genius-that-predicts-and-delivers-orders-in-minutes-0001"
+   },
+   {
+    "fact": "status",
+    "url": "https://www.retailitinsights.com/doc/gopuff-and-spacexai-launch-go-an-ai-powered-personal-shopping-genius-that-predicts-and-delivers-orders-in-minutes-0001"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.cnbc.com/2020/06/16/gopuff-disruptor-50.html"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.retailitinsights.com/doc/gopuff-and-spacexai-launch-go-an-ai-powered-personal-shopping-genius-that-predicts-and-delivers-orders-in-minutes-0001"
+   },
+   {
+    "fact": "description",
+    "url": "https://technical.ly/entrepreneurship/gopuff-raises-250m-next-growth-phase.md"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "GoBrands, Inc.",
+  "founded": "2013",
+  "hq": "Philadelphia, United States",
+  "founders": [
+   "Yakir Gola",
+   "Rafael Ilishayev"
+  ],
+  "ownership": "Private",
+  "markets": "US and UK",
+  "links": {
+   "linkedin": "https://www.linkedin.com/company/gopuff",
+   "appStore": "https://apps.apple.com/app/id722804810"
+  }
  },
  "gostudent.org": {
   "name": "GoStudent",
@@ -5414,7 +5673,7 @@
    "Hiring and career research"
   ],
   "markets": "Gulf and wider Middle East",
-  "description": "GulfTalent runs a job portal for professional and managerial roles across the Gulf states and the wider Middle East. Job seekers can search vacancies, keep an online profile and sign up for email job alerts, while employers use the site to advertise openings and reach candidates. The site went live in 2005 and says about 10 million people and around 9,000 companies use it. It also publishes guides and research on hiring activity and job hunting in the region.",
+  "description": "GulfTalent runs a job portal for professional and managerial roles across the Gulf states and the wider Middle East. Job seekers can search vacancies, keep an online profile and sign up for email job alerts, while employers use the site to advertise openings and reach candidates. The company was founded in 2005, recruits its own staff in Dubai, and says about 10 million people and around 9,000 companies use the platform. It also publishes guides and research on hiring activity and job hunting in the region.",
   "status": "Active",
   "sources": [
    {
@@ -5444,6 +5703,22 @@
    {
     "fact": "description",
     "url": "https://www.gulftalent.com/resources/dubai-jobs-guide/reaching-employer"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.gulftalent.com/uae/jobs/business-analyst-497032"
+   },
+   {
+    "fact": "status",
+    "url": "https://www.gulftalent.com/uae/jobs/business-analyst-497032"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.gulftalent.com/uae/jobs/business-analyst-497032"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.gulftalent.com/resources/dubai-jobs-guide"
    }
   ],
   "checked": "2026-11-11"
@@ -5845,7 +6120,7 @@
    "Daily Greens"
   ],
   "markets": "UK, Europe and the United States",
-  "description": "Huel makes plant-based, nutritionally complete food, starting with powdered meals in 2015 and later adding ready-to-drink shakes, hot savoury meals, bars, greens powders and functional drinks. It sells mainly direct to consumers online, with a growing supermarket presence, and the UK is its largest market, followed by the United States and Europe. Revenue reached about £250 million in its tenth financial year. The French food group Danone agreed to buy the company in March 2026 and completed the acquisition in September 2026 after clearance from the UK Competition and Markets Authority.",
+  "description": "Huel was set up by entrepreneur Julian Hearn and former NHS dietitian James Collier and began selling powdered complete meals in 2015. It now also makes ready-to-drink shakes, hot savoury meals, bars, greens powders and functional drinks, sold mainly direct to customers online, with a manufacturing site and warehouse in Milton Keynes. The UK is its largest market, followed by continental Europe and the United States, and revenue reached about £254 million in its tenth financial year. The French food group Danone completed its purchase of Huel in September 2026, with James McMaster as chief executive.",
   "status": "Acquired by Danone in September 2026",
   "links": {
    "linkedin": "https://www.linkedin.com/company/huel",
@@ -5885,9 +6160,47 @@
    {
     "fact": "description",
     "url": "https://www.bakeryandsnacks.com/Article/2026/03/23/danones-1bn-huel-deal-why-the-multinational-is-betting-big-on-meal-replacements/"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.expressandstar.com/uk-news/2026/03/23/danone-to-buy-british-nutrition-firm-huel"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.just-food.com/news/danone-buys-meal-replacement-firm-huel/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.expressandstar.com/uk-news/2026/03/23/danone-to-buy-british-nutrition-firm-huel"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.just-food.com/news/danone-buys-meal-replacement-firm-huel/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.just-food.com/news/danone-buys-meal-replacement-firm-huel/"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.just-food.com/news/danone-buys-meal-replacement-firm-huel/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.just-food.com/news/danone-buys-meal-replacement-firm-huel/"
+   },
+   {
+    "fact": "description",
+    "url": "https://mfn.se/all/a/danone/danone-completes-its-acquisition-of-huel-extending-its-portfolio-in-functional-nutrition-56b79f6b"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "hq": "Hertfordshire, United Kingdom",
+  "founders": [
+   "Julian Hearn",
+   "James Collier"
+  ],
+  "employees": "201-500"
  },
  "idealista.com": {
   "name": "idealista",
@@ -7188,13 +7501,14 @@
    "OTC trading"
   ],
   "markets": "200+ countries and regions",
-  "description": "KuCoin runs a cryptocurrency exchange that lists more than 1,000 tokens and offers spot, futures and margin trading, automated trading bots, savings and staking products under KuCoin Earn, OTC trading and a KuCard payment card. The platform launched in 2017 after development began in 2013, and BC Wong became chief executive in 2025. KuCoin says it has 45 million users in more than 200 countries and regions. It holds a MiCA licence for its EU entity and an AUSTRAC registration in Australia, and has launched a regulated exchange in Thailand.",
+  "description": "KuCoin runs a cryptocurrency exchange that lists more than 1,000 tokens and offers spot, futures and margin trading, automated trading bots, savings and staking products under KuCoin Earn, OTC trading and a KuCard payment card. Its first code was written in late 2013 and the platform launched in 2017. BC Wong became chief executive in 2025. KuCoin says it has 45 million users in more than 200 countries and regions, holds a MiCA licence for its EU entity and an AUSTRAC registration in Australia, and runs a regulated exchange in Thailand.",
   "status": "Active",
   "links": {
-   "linkedin": "https://www.linkedin.com/company/kucoin",
+   "linkedin": "https://www.linkedin.com/company/kucoin/",
    "x": "https://x.com/KuCoinCom",
-   "instagram": "https://www.instagram.com/kucoinexchange",
-   "youtube": "https://www.youtube.com/c/KuCoinExchange"
+   "instagram": "https://www.instagram.com/kucoinexchange/",
+   "youtube": "https://www.youtube.com/c/KuCoinExchange",
+   "appStore": "https://apps.apple.com/us/app/id1378956601"
   },
   "sources": [
    {
@@ -7220,9 +7534,21 @@
    {
     "fact": "description",
     "url": "https://www.kucoin.com/about-us"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.kucoin.com/about-us"
+   },
+   {
+    "fact": "founders",
+    "url": "https://crypto.news/kucoin-appoints-ceo-michael-gan-as-kugroup-chairman-with-johnny-lyu-taking-his-role/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "founders": [
+   "Michael Gan",
+   "Johnny Lyu"
+  ]
  },
  "lalamove.com": {
   "name": "Lalamove",
@@ -7237,9 +7563,9 @@
    "Same-day business deliveries",
    "Driver partner app"
   ],
-  "markets": "400+ cities in 15 markets",
-  "description": "Lalamove is the international brand of Lalatech, which runs an app-based delivery platform matching businesses and individuals with independent drivers of motorcycles, vans and trucks. Chow Shing-yuk founded the business in Hong Kong in 2013 and remains chairman and chief executive. Outside mainland China, where it trades as Huolala, it operates in markets including Hong Kong, Southeast Asia, Mexico, Brazil, Japan, Turkey, the UAE and Germany. Across the group, about 2.1 million carriers and 21.3 million merchants used the platform each month on average in 2025.",
-  "status": "Active. Parent Lalatech filed a draft listing application with the Hong Kong Stock Exchange in 2026",
+  "markets": "18 markets across Asia, Latin America and EMEA",
+  "description": "Lalamove is the international brand of Hong Kong-based Lalatech, which runs an app-based delivery platform matching businesses and individuals with independent drivers of motorcycles, vans and trucks. Chow Shing-yuk founded the business in Hong Kong in 2013 and is chairman and chief executive. Outside mainland China, where the group trades as Huolala, Lalamove lists 18 markets across Asia, Latin America and EMEA, including Japan, Brazil, Türkiye, the UAE and the UK. Across the group, about 2.1 million carriers and 21.3 million merchants used the platform each month on average in 2025.",
+  "status": "Active. Parent Lalatech filed an updated Hong Kong listing application in April 2026 and is not yet listed",
   "sources": [
    {
     "fact": "founded",
@@ -7276,9 +7602,49 @@
    {
     "fact": "description",
     "url": "https://www.thestandard.com.hk/finance/article/68960/Back-on-the-road-again"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.lalamove.com/en-sg/about-lalamove"
+   },
+   {
+    "fact": "hq",
+    "url": "https://thebambooworks.com/?p=61515"
+   },
+   {
+    "fact": "parent",
+    "url": "https://thebambooworks.com/?p=61515"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://thebambooworks.com/?p=61515"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.lalamove.com/en-sg/about-lalamove"
+   },
+   {
+    "fact": "status",
+    "url": "https://thebambooworks.com/?p=61515"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.lalamove.com/en-sg/about-lalamove"
+   },
+   {
+    "fact": "description",
+    "url": "https://thebambooworks.com/?p=61515"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "hq": "Hong Kong, China",
+  "ownership": "Subsidiary of Lalatech",
+  "links": {
+   "linkedin": "https://www.linkedin.com/company/lalamove/",
+   "youtube": "https://www.youtube.com/channel/UC2YVWH9ZQC1weHk6iV1Yp1Q",
+   "appStore": "https://apps.apple.com/app/id735701965",
+   "playStore": "https://play.google.com/store/apps/details?id=hk.easyvan.app.client"
+  }
  },
  "ledger.com": {
   "name": "Ledger",
@@ -7351,8 +7717,8 @@
    "Shared e-bikes",
    "Lime app"
   ],
-  "description": "Lime runs shared electric scooters and bikes, along with other small transit vehicles, that riders find and start through the Lime app for short trips around towns and cities. In most places the vehicles are dockless, so a rider can end a trip near their destination instead of returning to a fixed station. The service is meant for trips too long to walk but too short to justify a car or taxi. Toby Sun and Brad Bao co-founded the company.",
-  "status": "Active",
+  "description": "Lime rents out dockless electric scooters and e-bikes that riders find and start through its app for short trips, in about 230 cities across 29 countries. Toby Sun and Brad Bao co-founded the business in 2017 and it is based in San Francisco, with Wayne Ting as chief executive. Its holding company, Neutron Holdings, listed on Nasdaq under the ticker LIME in July 2026, raising about $167 million at $25 a share. Uber holds a 24% stake, and Lime reported revenue of $886.7 million for 2025.",
+  "status": "Active. Listed on Nasdaq in July 2026",
   "sources": [
    {
     "fact": "founders",
@@ -7369,9 +7735,58 @@
    {
     "fact": "description",
     "url": "https://www.li.me/about-us"
+   },
+   {
+    "fact": "founded",
+    "url": "https://www.renaissancecapital.com/Profile/LIME"
+   },
+   {
+    "fact": "founded",
+    "url": "https://thenextweb.com/news/lime-ipo-priced-25-dollars-nasdaq"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.renaissancecapital.com/Profile/LIME"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://techcrunch.com/2026/07/01/lime-raises-167m-in-ipo-after-years-of-teasing-a-public-debut/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.renaissancecapital.com/Profile/LIME"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.renaissancecapital.com/Profile/LIME"
+   },
+   {
+    "fact": "markets",
+    "url": "https://techcrunch.com/2026/07/01/lime-raises-167m-in-ipo-after-years-of-teasing-a-public-debut/"
+   },
+   {
+    "fact": "status",
+    "url": "https://techcrunch.com/2026/07/01/lime-raises-167m-in-ipo-after-years-of-teasing-a-public-debut/"
+   },
+   {
+    "fact": "description",
+    "url": "https://techcrunch.com/2026/07/01/lime-raises-167m-in-ipo-after-years-of-teasing-a-public-debut/"
+   },
+   {
+    "fact": "description",
+    "url": "https://thenextweb.com/news/lime-ipo-priced-25-dollars-nasdaq"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Neutron Holdings, Inc.",
+  "founded": "2017",
+  "hq": "San Francisco, United States",
+  "ownership": "Public (NASDAQ: LIME)",
+  "employees": "1,001-5,000",
+  "markets": "About 230 cities in 29 countries",
+  "links": {
+   "appStore": "https://apps.apple.com/app/lime/id1199780189"
+  }
  },
  "luno.com": {
   "name": "Luno",
@@ -9028,11 +9443,11 @@
    "Bike, auto and cab rides",
    "Outstation trips",
    "Hourly rentals",
-   "Postpaid+ pay later",
-   "Ola for Business"
+   "Ola for Business",
+   "Driver subscription plans"
   ],
-  "description": "Ola was started in December 2010 by Bhavish Aggarwal and Ankit Bhati. Through its app riders book bike taxis, auto-rickshaws and Prime sedans and SUVs for daily trips, as well as outstation journeys between cities and cabs hired by the hour. It also offers Postpaid+, a pay-later option for rides, and a corporate travel service, Ola for Business. The company says more than 55 crore rides are booked on the platform each year. It sits alongside sister businesses such as Ola Electric and Krutrim.",
-  "status": "Active",
+  "description": "Ola was started in Bengaluru in December 2010 by Bhavish Aggarwal and Ankit Bhati and is run by ANI Technologies, which renamed the business Ola Consumer in 2024. Its app books bike taxis, auto-rickshaws and cabs for city trips, along with outstation journeys, hourly rentals and Ola for Business corporate travel. The company closed its operations in the UK, Australia and New Zealand in 2024 to concentrate on India, and later wound down its ONDC food and commerce services. Drivers now pay a fixed daily or monthly subscription instead of a commission on each ride.",
+  "status": "Active (Ola Cabs renamed Ola Consumer in 2024; international operations closed in 2024)",
   "links": {
    "x": "https://twitter.com/Olacabs",
    "instagram": "https://www.instagram.com/olacabs",
@@ -9068,9 +9483,48 @@
    {
     "fact": "description",
     "url": "https://www.olacabs.com/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2024/04/ola-shuts-down-international-operations-uk-australia-new-zealand"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.outlookbusiness.com/corporate/ola-consumer-turns-free-cash-flow-positive-in-h2-fy26-post-biz-rejig"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.outlookbusiness.com/corporate/ola-consumer-turns-free-cash-flow-positive-in-h2-fy26-post-biz-rejig"
+   },
+   {
+    "fact": "markets",
+    "url": "https://yourstory.com/2024/04/ola-shuts-down-international-operations-uk-australia-new-zealand"
+   },
+   {
+    "fact": "status",
+    "url": "https://www.business-standard.com/companies/news/ola-cabs-rebranded-to-ola-consumer-ceo-aggarwal-launches-loyalty-program-124081500603_1.html"
+   },
+   {
+    "fact": "status",
+    "url": "https://www.outlookbusiness.com/corporate/ola-consumer-turns-free-cash-flow-positive-in-h2-fy26-post-biz-rejig"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2024/04/ola-shuts-down-international-operations-uk-australia-new-zealand"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.outlookbusiness.com/corporate/ola-consumer-turns-free-cash-flow-positive-in-h2-fy26-post-biz-rejig"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.business-standard.com/companies/news/ola-cabs-rebranded-to-ola-consumer-ceo-aggarwal-launches-loyalty-program-124081500603_1.html"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "ANI Technologies Pvt Ltd",
+  "hq": "Bengaluru, India",
+  "markets": "India"
  },
  "omio.com": {
   "name": "Omio",
@@ -13934,17 +14388,20 @@
   "legalName": "AL Talent, Inc.",
   "ownership": "Private",
   "products": [
-   "Wellfound Jobs free job posting",
+   "Free job posting",
    "Built-in applicant tracking",
    "Wellfound Reach AI candidate sourcing",
    "Wellfound Autopilot managed recruiting",
    "Startup and remote job search"
   ],
   "markets": "Worldwide, mainly US",
-  "description": "Wellfound runs a hiring platform for startups, where companies post jobs for free and candidates apply to roles at early-stage and growing technology firms, many of them remote. It began as AngelList Talent inside AngelList and was spun out as a separate company under the Wellfound name in November 2022, trading through AL Talent, Inc. Paid products include Reach, which uses AI to source candidates, and Autopilot, a managed recruiting service. The company says more than 10 million candidates have opted in and over 27,000 companies are hiring on the site.",
+  "description": "Wellfound runs a hiring marketplace for startups, where companies post jobs free of charge and candidates apply to roles at early-stage and growing technology firms, many of them remote. It began inside AngelList as AngelList Talent and became a separate company, AL Talent, Inc., under the Wellfound name in November 2022, with Amit Matani as chief executive. Paid products include Reach, which sources candidates with AI, and Autopilot, a managed recruiting service. In January 2026 it bought the AI recruiting tool Hirefly, and it says more than 10 million candidates have opted in to the platform.",
   "status": "Active (renamed from AngelList Talent in 2022)",
   "links": {
-   "linkedin": "https://www.linkedin.com/company/wellfound/"
+   "linkedin": "https://www.linkedin.com/company/wellfoundhq",
+   "x": "https://x.com/wellfoundhq",
+   "instagram": "https://www.instagram.com/wellfoundhq",
+   "youtube": "https://www.youtube.com/@wellfound_hq"
   },
   "sources": [
    {
@@ -13966,6 +14423,22 @@
    {
     "fact": "markets",
     "url": "https://wellfound.com/blog/angellist-talent-is-now-wellfound"
+   },
+   {
+    "fact": "products",
+    "url": "https://wellfound.com/blog/wellfound-acquires-hirefly"
+   },
+   {
+    "fact": "status",
+    "url": "https://wellfound.com/blog/wellfound-acquires-hirefly"
+   },
+   {
+    "fact": "description",
+    "url": "https://wellfound.com/blog/angellist-talent-is-now-wellfound"
+   },
+   {
+    "fact": "description",
+    "url": "https://wellfound.com/blog/wellfound-acquires-hirefly"
    }
   ],
   "checked": "2026-11-11"
