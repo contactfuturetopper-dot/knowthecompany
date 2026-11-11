@@ -12,6 +12,7 @@ on:
       - "index.html"
       - "badge.html"
       - "auth-callback.html"
+      - "logo.png"
       - "js/**"
       - "astro/**"
       - "test/**"
@@ -54,6 +55,10 @@ jobs:
       - name: Install
         working-directory: astro
         run: npm ci --no-audit --no-fund
+
+      - name: Check the structured data
+        working-directory: astro
+        run: npm run check
 
       - name: Build
         working-directory: astro

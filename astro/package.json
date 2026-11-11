@@ -5,7 +5,8 @@
   "scripts": {
     "sync": "node scripts/sync.mjs",
     "build": "node scripts/sync.mjs && astro build",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "node scripts/sync.mjs && node scripts/check-schema.mjs"
   },
   "dependencies": {
     "@wix/astro": "^3.0.0",

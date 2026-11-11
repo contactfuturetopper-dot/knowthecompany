@@ -2331,6 +2331,8 @@ let lastRoute = curRoute();
 function routeChanged() {
   const h = curRoute();
   canonicalUrl();
+  /* The server's structured data describes the page it served; drop it once the app shows another page. */
+  if (h !== lastRoute) { const ld = document.getElementById('ld-json'); if (ld) ld.remove(); }
   if (CATBYID[h] && lastRoute !== h) S.catFilter = { country: '', text: '', sort: 'name' };
   if (BYID[h] && lastRoute !== h) { S.rating = 0; S.coTab = S.returnTab || (isVerifiedCo(BYID[h]) ? 'overview' : 'customers'); S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
   if (!BYID[h] && h !== 'login' && h !== 'business-login') S.returnTab = '';

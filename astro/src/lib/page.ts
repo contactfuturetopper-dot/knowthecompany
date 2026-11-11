@@ -3,6 +3,8 @@
 // <main> for search engines and for the moment before the app starts. The app then draws the page.
 import shell from "../generated/shell.html?raw";
 import meta from "../generated/pages-meta.json";
+import posts from "../generated/posts.json";
+import { graph, orgNode, webPage, breadcrumbs, companyNodes, type Crumb } from "./schema";
 
 export const ORIGIN = "https://www.knowthecompany.com";
 const CLIENT_ID = "5783d517-0173-420b-ba45-67e1d2efd460";
@@ -52,7 +54,11 @@ async function categories(): Promise<string[]> {
 }
 
 /* ---- addresses ---- */
-export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean } | { redirect: string };
+/* `ld` is this page's structured data (schema.org JSON-LD), added to the shell as one @graph with the
+   site's Organization and WebSite. */
+export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[] } | { redirect: string };
+type Post = { slug: string; cat: string; date: string; title: string; excerpt: string };
+const POSTS = new Map((posts as Post[]).map(p => [p.slug, p]));
 
 /** Old addresses (/#route is handled in the browser; /x.html and trailing slashes here) move to the clean one. */
 export function cleanPath(pathname: string): string | null {
@@ -68,7 +74,7 @@ export async function resolvePage(pathname: string): Promise<Page> {
   const moved = cleanPath(pathname);
   if (moved) return { redirect: moved };
   const p = pathname;
-  if (p === "/") return { status: 200, path: "/", title: HOME_TITLE, desc: DEFAULT_DESC, h1: "Know the company before you deal with it.", body: "", noindex: false };
+  if (p === "/") return { status: 200, path: "/", title: HOME_TITLE, desc: DEFAULT_DESC, h1: "Know the company before you deal with it.", body: "", noindex: false, ld: [webPage("/", HOME_TITLE, DEFAULT_DESC, { type: "WebPage", about: true })] };
 
   let m = p.match(/^\/(tools|blog)\/([a-z0-9-]+)$/);
   if (m) {
@@ -84,8 +90,12 @@ export async function resolvePage(pathname: string): Promise<Page> {
       const [c] = await query("Companies", { slug: { $eq: m[1] } }, 1);
       if (c) {
         const name = c.title || c._id, cat = c.category || "Other";
+        const title = `${name} reviews · Know The Company`, desc = trim(`${name} reviews from customers and employees. ${c.bio || ""}`);
         const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "");
-        return { status: 200, path: p, title: `${name} reviews · Know The Company`, desc: trim(`${name} reviews from customers and employees. ${c.bio || ""}`), h1: name, body, noindex: false };
+        const reviews = await companyReviews(c._id).catch(() => []);
+        const crumbs: Crumb[] = [{ name: cat, path: `/category/${slug(cat)}` }, { name, path: p }];
+        const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews)];
+        return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld };
       }
       return notFound(p);
     } catch { return unknown(p); }
@@ -98,13 +108,72 @@ export async function resolvePage(pathname: string): Promise<Page> {
       if (!name) return notFound(p);
       const list = (await query("Companies", { category: { $eq: name } }, 100)).map(c => ({ s: c.slug || slug(c.title || c._id), n: c.title || c._id })).sort((a, b) => a.n.localeCompare(b.n));
       const body = `<p>Compare companies by real customer experiences</p><ul>${list.map(c => `<li><a href="/company/${c.s}">${esc(c.n)}</a></li>`).join("")}</ul>`;
-      return { status: 200, path: p, title: `${name} · Know The Company`, desc: `Compare ${name} companies by honest customer and employee reviews.`, h1: name, body, noindex: false };
+      const title = `${name} · Know The Company`, desc = `Compare ${name} companies by honest customer and employee reviews.`;
+      const ld = [
+        webPage(p, title, desc, { type: "CollectionPage", mainEntity: `${ORIGIN}${p}#list`, crumbs: true }),
+        breadcrumbs(p, [{ name: "All categories", path: "/categories" }, { name, path: p }]),
+        { "@type": "ItemList", "@id": `${ORIGIN}${p}#list`, name: `${name} companies`, numberOfItems: list.length,
+          itemListElement: list.map((c, i) => ({ "@type": "ListItem", position: i + 1, url: `${ORIGIN}/company/${c.s}`, name: c.n })) },
+      ];
+      return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld };
     } catch { return unknown(p); }
   }
   return notFound(p);
 }
 function fromMeta(path: string, m: Meta): Page {
-  return { status: 200, path, title: m.title, desc: m.desc || DEFAULT_DESC, h1: m.h1, body: m.intro ? `<p>${esc(m.intro)}</p>` : "", noindex: NOINDEX_ROUTES.includes(m.route) };
+  const desc = m.desc || DEFAULT_DESC;
+  return { status: 200, path, title: m.title, desc, h1: m.h1, body: m.intro ? `<p>${esc(m.intro)}</p>` : "", noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc) };
+}
+const PAGE_TYPES: Record<string, string> = { about: "AboutPage", contact: "ContactPage", categories: "CollectionPage", tools: "CollectionPage", blog: "CollectionPage", search: "SearchResultsPage" };
+/* Structured data for the fixed pages: the page itself, its breadcrumb trail, and what it is about. */
+function pageSchema(path: string, m: Meta, desc: string): object[] {
+  const r = m.route;
+  if (r.startsWith("blog-")) {
+    const post = POSTS.get(r.slice(5));
+    const crumbs: Crumb[] = [{ name: "Blog", path: "/blog" }, { name: m.h1, path }];
+    const out: object[] = [webPage(path, m.title, desc, { type: "WebPage", mainEntity: `${ORIGIN}${path}#article`, crumbs: true }), breadcrumbs(path, crumbs)];
+    if (post) out.push({
+      "@type": "BlogPosting", "@id": `${ORIGIN}${path}#article`, headline: post.title, description: post.excerpt,
+      datePublished: post.date, dateModified: post.date, articleSection: post.cat, inLanguage: "en",
+      author: { "@id": `${ORIGIN}/#organization` }, publisher: { "@id": `${ORIGIN}/#organization` },
+      mainEntityOfPage: { "@id": `${ORIGIN}${path}#webpage` }, isPartOf: { "@id": `${ORIGIN}/blog#blog` },
+    });
+    return out;
+  }
+  if (r.startsWith("tool-")) {
+    return [
+      webPage(path, m.title, desc, { type: "WebPage", mainEntity: `${ORIGIN}${path}#app`, crumbs: true }),
+      breadcrumbs(path, [{ name: "Free tools", path: "/tools" }, { name: m.h1, path }]),
+      { "@type": "WebApplication", "@id": `${ORIGIN}${path}#app`, name: m.h1, url: `${ORIGIN}${path}`, description: m.intro || desc,
+        applicationCategory: "BusinessApplication", operatingSystem: "Any", browserRequirements: "Requires JavaScript",
+        isAccessibleForFree: true, offers: { "@type": "Offer", price: "0", priceCurrency: "INR" }, provider: { "@id": `${ORIGIN}/#organization` } },
+    ];
+  }
+  const out: object[] = [webPage(path, m.title, desc, { type: PAGE_TYPES[r] || "WebPage", crumbs: true, about: r === "about" || r === "contact" })];
+  out.push(breadcrumbs(path, [{ name: m.h1 && m.h1.length < 60 ? m.h1 : (m.title.split(" · ")[0]), path }]));
+  if (r === "blog") out.push({
+    "@type": "Blog", "@id": `${ORIGIN}/blog#blog`, name: "Know The Company blog", url: `${ORIGIN}/blog`, description: m.intro || desc,
+    publisher: { "@id": `${ORIGIN}/#organization` },
+    blogPost: [...POSTS.values()].map(p => ({ "@type": "BlogPosting", headline: p.title, url: `${ORIGIN}/blog/${p.slug}`, datePublished: p.date })),
+  });
+  if (r === "tools") out.push({
+    "@type": "ItemList", name: "Free career and company tools",
+    itemListElement: (meta as Meta[]).filter(x => x.route.startsWith("tool-")).map((x, i) => ({ "@type": "ListItem", position: i + 1, url: `${ORIGIN}/tools/${x.route.slice(5)}`, name: x.h1 })),
+  });
+  return out;
+}
+
+/* Published reviews of one company, as a visitor sees them, without reviews written by any account that
+   manages a company (the same rule the app and the badge apply). */
+async function companyReviews(companyId: string): Promise<any[]> {
+  const items = (await query("Reviews", { company: { $eq: companyId } }, 1000)).filter(r => r.type !== "interview" && Number(r.rating) > 0);
+  const authors = [...new Set(items.map(r => r._owner).filter(Boolean))];
+  const blocked = new Set<string>();
+  for (let i = 0; i < authors.length; i += 50) {
+    const owners = await query("Companies", { ownerMemberIds: { $hasSome: authors.slice(i, i + 50) } }, 100);
+    owners.forEach(c => (c.ownerMemberIds || []).forEach((id: string) => blocked.add(id)));
+  }
+  return items.filter(r => !blocked.has(r._owner));
 }
 function notFound(path: string): Page {
   return { status: 404, path, title: "Page not found · Know The Company", desc: DEFAULT_DESC, h1: "Page not found", body: "<p>That link doesn't match a company or category.</p>", noindex: true };
@@ -124,5 +193,6 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
     .replace(/<meta name="robots" content="[^"]*">/, () => `<meta name="robots" content="${robots}">`);
   if (!/<meta name="robots"/.test(html)) html = html.replace("</title>", () => `</title>\n<meta name="robots" content="${robots}">`);
   if (pg.h1 && pg.path !== "/") html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
+  if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);
   return html;
 }
