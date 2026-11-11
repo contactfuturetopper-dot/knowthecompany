@@ -689,6 +689,9 @@ details.dd{position:relative;border:0;border-radius:0;padding:0;background:trans
 .loginlink{padding:9px 12px;color:var(--fg);font-weight:600;text-decoration:none;border-radius:9px;white-space:nowrap}
 .loginlink:hover{background:var(--surface)}
 .hright .wr{min-height:44px;padding:0 18px;margin-left:6px;white-space:nowrap}
+.hright .wr2{padding:0 16px}
+/* Two header buttons need room: drop List your company before the menu starts to squeeze. */
+@media (max-width:1180px){.hright .wr2{display:none}}
 .badge{position:absolute;top:5px;right:5px;min-width:18px;height:18px;border-radius:99px;background:#C2410C;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--card)}
 .notif{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px;color:var(--fg);text-decoration:none}
 .notif:hover{background:var(--surface)}
