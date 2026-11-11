@@ -757,7 +757,7 @@ function vHome() {
 
     ${recentReviews()}
 
-    <section class="hb hb-deep"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>Why companies list here</h2><p>Customers, job seekers, investors and AI assistants check what others say about a company. Here's what a verified page does for you.</p></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
+    <section class="hb hb-cream"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>Why companies list here</h2><p>Customers, job seekers, investors and AI assistants check what others say about a company. Here's what a verified page does for you.</p></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
       <div class="reasons">${REASONS.slice(0, 6).map(reasonCard).join('')}</div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px"><a class="btn p lg" href="#why-list">See why it matters</a><a class="btn o lg" href="#list">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>
 
