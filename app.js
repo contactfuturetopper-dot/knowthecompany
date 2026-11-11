@@ -1409,7 +1409,7 @@ function claimPanel() {
   const labels = ['Find your company', 'Your details', 'Verify and plan'];
   const steps = typeof st === 'number' && st < 4 ? `<div class="progress" aria-label="Progress">${labels.map((l, i) => `<span class="${st === i ? 'on' : ''}">${i + 1} · ${l}</span>`).join('')}</div>` : '';
   const co = d.coId ? BYID[d.coId] : null;
-  if (!S.user) return `<div class="formcard"><h2>Log in to claim or add your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail. A work email gets verified fastest.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
+  if (!S.user) return `<div class="formcard"><h2>Log in to claim or add your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
   if (st === 'req') { const c = BYID[S.reqCo]; return `<form class="formcard" id="req-form" novalidate><h2>Request access to ${esc(c.name)}</h2>
       <div class="cosum">${avatar(c, 44, 15)}<div style="flex:1"><b>${esc(c.name)}</b><span class="meta">${esc(c.web)} · already managed</span></div></div>
       <p style="color:var(--muted)">Someone at ${esc(c.name)} already manages this page. We’ll ask them to add you. If they don’t reply within 7 days, our team reviews your request and may ask for documents.</p>
@@ -1434,7 +1434,7 @@ function claimPanel() {
       <h3 style="font-size:17px">About you</h3>
       <div class="row"><div class="field"><label class="l" for="b-person">Your name</label><input id="b-person" type="text" value="${esc(d.person || '')}"><p class="err" id="err-b-person" hidden>Enter your name.</p></div>
         <div class="field"><label class="l" for="b-role">Your role</label><select id="b-role">${ROLES.map(r => `<option ${d.role === r ? 'selected' : ''}>${r}</option>`).join('')}</select></div></div>
-      <div class="row"><div class="field"><label class="l" for="b-email">Email</label><input id="b-email" type="email" value="${esc(d.email || '')}" placeholder="you@${esc(domOf(d.web) || 'yourcompany.com')}" aria-describedby="hint-b-email"><p class="meta" id="hint-b-email">Any email works, including Gmail. One at your company’s website gets verified fastest.</p><p class="err" id="err-b-email" hidden>Enter an email address like name@company.com.</p></div>
+      <div class="row"><div class="field"><label class="l" for="b-email">Email</label><input id="b-email" type="email" value="${esc(d.email || '')}" placeholder="you@${esc(domOf(d.web) || 'yourcompany.com')}" aria-describedby="hint-b-email"><p class="meta" id="hint-b-email">Any email works, including Gmail.</p><p class="err" id="err-b-email" hidden>Enter an email address like name@company.com.</p></div>
         <div class="field"><label class="l" for="b-phone">Phone</label><input id="b-phone" type="tel" value="${esc(d.phone || '')}"><p class="err" id="err-b-phone" hidden>Enter a phone number with at least 8 digits.</p></div></div>
       <label class="check"><input id="b-agree" type="checkbox" ${d.agree ? 'checked' : ''}><span>I work for this company and can manage its page. I understand paying never affects reviews or ratings.</span></label>
       <p class="err" id="err-b-agree" hidden>Tick the box to continue.</p>
@@ -1443,7 +1443,7 @@ function claimPanel() {
     const opt = (k, title, desc, rec) => `<button type="button" class="vopt" data-act="cf-method" data-m="${k}" aria-pressed="${m === k}">${rec ? '<span class="rec">Fastest</span>' : ''}<b>${title}</b><small>${desc}</small></button>`;
     let body = '';
     if (m === 'email') body = !match
-      ? `<p>We’ll email <b>${esc(d.email)}</b> to confirm the claim. Because it isn’t an address at ${esc(dom || 'your company website')}, we’ll also ask for one simple proof that you run ${esc(d.name)}, like a document or a website check. Gmail and other personal addresses are fine.</p>`
+      ? `<p>We’ll email <b>${esc(d.email)}</b> to confirm the claim. Gmail and other personal addresses are fine. We only ask for more if someone else claims ${esc(d.name)} too.</p>`
       : `<p>We’ll email <b>${esc(d.email)}</b> to confirm you can receive email at ${esc(dom)}. Reply to it and your badge goes live.</p>`;
     if (m === 'website') body = `<p>Add <b>one</b> of these to ${esc(dom || 'your website')}. You can remove it after you’re verified.</p>
       <div class="field"><span class="l">Option 1 · DNS TXT record</span><div class="codebox">knowthecompany-verification=${tok}</div></div>
@@ -1453,7 +1453,7 @@ function claimPanel() {
       <div class="field"><label class="l" for="cf-doctype">Document you’ll send</label><select id="cf-doctype">${['Company registration certificate','Tax or VAT/GST registration','Recent invoice in the company’s name','Other official document'].map(x => `<option>${x}</option>`).join('')}</select></div>`;
     const ready = true;
     return `<div class="formcard">${steps}<h2>Verify you work at ${esc(d.name)}</h2><p style="color:var(--muted)">Choose one way. Any email works, including Gmail.</p>
-      <div class="vopts">${opt('email', 'Email', match ? `Confirm through ${esc(d.email)}` : `Through ${esc(d.email)}, plus one simple proof`, match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
+      <div class="vopts">${opt('email', 'Email', match ? `Confirm through ${esc(d.email)}` : `Confirm through ${esc(d.email)}`, match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
       <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
