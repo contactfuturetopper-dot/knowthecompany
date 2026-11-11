@@ -32,7 +32,7 @@ const reviews = [
   { _id: 'r3', _owner: 'm2', _createdDate: '2026-11-03T00:00:00Z', _updatedDate: '2026-11-03T01:00:00Z', company: 'notion.com', type: 'interview', jobTitle: 'Designer', interviewOutcome: 'No offer', interviewDifficulty: 'Hard', interviewExperience: 'Neutral', body: 'Three rounds over two weeks, friendly panel.' },
   { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', _updatedDate: '2026-11-04T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
   { _id: 'r6', _owner: 'm1', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Owner', rating: 1, title: 'OWNER REVIEW', body: 'OWNER REVIEW written by a company account, must never show.' },
-  { _id: 'r7', _owner: 'm4', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T00:00:00Z', _publishStatus: 'PUBLISHED', company: 'razorpay.com', type: 'customer', displayName: 'Sneaky', rating: 5, title: 'SELF PUBLISHED', body: 'SELF PUBLISHED by its writer without moderation, must never show.' },
+  { _id: 'r7', _owner: 'm4', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T00:00:00Z', _publishStatus: 'PUBLISHED', company: 'razorpay.com', type: 'customer', displayName: 'Sneaky', rating: 5, title: 'Posted just now', body: 'Posted by its writer, goes live straight away.', proofChecked: true, workEmailVerified: true, reply: 'FAKE REPLY stored on the review by its writer.' },
   { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', _updatedDate: '2026-11-05T01:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
 ];
 const ownerContent = [
@@ -81,7 +81,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'SELF PUBLISHED', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
+  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'FAKE REPLY', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
   { const hs = [...app.querySelectorAll('h1,h2,h3,h4,h5,h6')].map(h => +h.tagName[1]); const issues = [];
     if (hs.filter(x => x === 1).length !== 1) issues.push('h1 x' + hs.filter(x => x === 1).length);
@@ -121,6 +121,8 @@ g.__mock.member = { member: { id: 'm1', loginEmail: 'owner@razorpay.com', displa
 globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 60));
 await go('co-1password');
 report.push('company account review form hidden: ' + !app.querySelector('#review-form') + ', block shown: ' + app.textContent.includes('Company accounts can’t write reviews'));
+await go('co-razorpay'); app.querySelector('[data-act=cotab][data-tab=customers]').click(); await new Promise(r => setTimeout(r, 40));
+report.push('tab: ' + (app.querySelector('[role=tab][aria-selected=true]') || {}).textContent + ', r1 shown: ' + app.textContent.includes('Quick settlements') + ', new review live: ' + app.textContent.includes('Posted just now') + ', its own proof label shown: ' + (app.innerHTML.match(/Proof checked<\/span>/g) || []).length);
 await go('co-fakeco');
 report.push('member-inserted company shown as verified: ' + app.textContent.includes('Verified company') + ', fake employer page shown: ' + app.textContent.includes('FAKE EMPLOYER PAGE'));
 await go('co-razorpay');

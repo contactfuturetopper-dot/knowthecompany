@@ -64,9 +64,10 @@ COUNTRY.WW = 'Online / worldwide';
 /* ---------- trust ----------
    Signed-in members can insert items (a review, a missing company) but only the site's admins can edit them
    afterwards. Wix stamps a new item with the same created and updated time, so an item a member inserted and
-   nobody on the team has touched since still has equal times. Anything such an item claims about itself that
-   only the team may decide (a published review, a verified company, its plan, its owners, its employer page)
-   is ignored until an admin has edited or published it. Items the admin account inserted are trusted. */
+   nobody on the team has touched since still has equal times. Reviews go live as soon as they are posted, but
+   anything an item claims that only the team may decide (a review's "Proof checked" or "Work email verified"
+   label or a reply stored on it; a company's verified status, plan, owners or employer page) is ignored until
+   an admin has edited it. Items the admin account inserted are trusted. */
 const ADMIN_ID = 'c0f544a7-207e-490b-b7d9-830ef39f49c7';
 const tms = d => { const v = d && typeof d === 'object' && !(d instanceof Date) && '$date' in d ? d.$date : d; const t = v instanceof Date ? v.getTime() : Date.parse(v); return isNaN(t) ? 0 : t; };
 const adminTouched = it => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
@@ -181,12 +182,12 @@ function indexReviews(items) {
   for (const r of items) {
     if (r._owner && owners.has(r._owner)) continue;
     if (r.type === 'interview') continue; /* interviews section removed */
-    if (!adminTouched(r)) continue; /* published by its writer without moderation: see "trust" above */
+    const team = adminTouched(r); /* labels and replies only count once the team has set them: see "trust" above */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
-    const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', date: monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: r.reply || '', replyFrom: c.name, verified: !!r.workEmailVerified };
+    const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', date: monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
     else if (r.type === 'interview') empBucket(c.id).interviews.push({ ...base, role: r.jobTitle || '', outcome: r.interviewOutcome || '', diff: r.interviewDifficulty || '', exp: r.interviewExperience || '', process: r.body || '', questions: r.interviewQuestions || '' });
-    else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: !!r.proofChecked, invited: !!r.invited });
+    else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: team && !!r.proofChecked, invited: !!r.invited });
   }
 }
 async function fetchAll(collectionId, filters) {
@@ -469,6 +470,48 @@ const jobTile = j => `<a class="jtile" href="#jobs">
     <div class="top">${avatar({ name: j.biz }, 44, 15)}<div style="min-width:0"><b>${esc(j.title)}</b><span class="meta">${esc(j.biz)}${j.sample ? ' · Sample' : ''}</span></div></div>
     <div class="jtags"><span class="jtag">${ic('pin', 14)}${esc(j.loc)}</span><span class="jtag">${ic('clock', 14)}${esc(j.type)}</span>${j.pay ? `<span class="jtag pay">${ic('cash', 14)}${esc(j.pay)}</span>` : ''}</div></a>`;
 
+/* ---------- 404 ----------
+   Says what was missing in plain words, and offers a way on: a search, the categories, and for a company
+   address, a one-tap way to add that company. */
+function vNotFound() {
+  const path = location.pathname;
+  const m = path.match(/^\/(company|category)\/([^/]+)\/?$/);
+  let guess = ''; try { guess = m ? decodeURIComponent(m[2]).replace(/[-_]+/g, ' ').replace(/\.html$/, '').trim() : ''; } catch (e) {}
+  const nice = guess.replace(/\b[a-z]/g, ch => ch.toUpperCase()).slice(0, 60);
+  let h1 = 'This page doesn’t exist', lead = 'The link may be old or mistyped. Search for a company, or pick up from one of the pages below.', cta = '';
+  if (m && m[1] === 'company' && nice) {
+    h1 = `We don’t have a page for “${esc(nice)}” yet`;
+    lead = `It may be listed under a different name, so try a search first. If it’s not here, add it in under a minute and write the first review.`;
+    cta = `<a class="btn p lg" href="#add" data-act="add-prefill" data-name="${esc(nice)}">Add ${esc(nice)}</a>`;
+  } else if (m && m[1] === 'category') {
+    h1 = 'We don’t have that category';
+    lead = 'Here are the categories we do have. You can also search for a company by name or website.';
+  }
+  const cats = CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 10);
+  const links = [['#categories', 'All categories', 'Browse every company by what it does'], ['#tools', 'Free tools', 'Offer comparison, salary hike, freelance rate and more'], ['#list', 'List your company', 'Claim your page and reply to reviews'], ['#guidelines', 'How reviews work', 'Who can review and what we take down'], ['#help', 'Help centre', 'Answers for reviewers and companies'], ['#contact', 'Contact us', 'Tell us about a broken link']];
+  return `<section class="nf"><div class="wrap nfgrid">
+      <div class="nftext">
+        <p class="eyebrow">Error 404</p>
+        <h1>${h1}</h1>
+        <p class="nflead">${lead}</p>
+        <form role="search" id="page-search-form" class="nfsearch" autocomplete="off"><label class="sr" for="page-search">Search companies</label><input id="page-search" type="search" value="${esc(guess)}" placeholder="Company name or website"><button class="btn p" type="submit">Search</button></form>
+        <div class="nfbtns">${cta}<a class="btn ${cta ? 'o' : 'p'} lg" href="#home">Go to the homepage</a></div>
+      </div>
+      <div class="nfart" aria-hidden="true"><svg viewBox="0 -18 336 384" width="300" height="343" overflow="visible">
+        <path d="M68 40H262A50 50 0 0 1 312 90V340A20 20 0 0 1 292 360H38A20 20 0 0 1 18 340V90A50 50 0 0 1 68 40Z" fill="#1B2738"/>
+        <rect x="60" y="88" width="88" height="70" rx="18" fill="#364559"/><rect x="182" y="88" width="88" height="70" rx="18" fill="#364559"/>
+        <rect x="60" y="180" width="88" height="70" rx="18" fill="#364559"/><rect x="182" y="180" width="88" height="70" rx="18" fill="#2A3749" stroke="#ADE436" stroke-width="3" stroke-dasharray="7 7"/>
+        <rect x="60" y="272" width="88" height="70" rx="18" fill="#364559"/><rect x="182" y="272" width="88" height="70" rx="18" fill="#364559"/>
+        <g class="nfbub"><rect x="210" y="0" width="112" height="84" rx="22" fill="#ADE436"/><path d="M250 82H282L262 108Z" fill="#ADE436"/><text x="266" y="58" text-anchor="middle" font-size="46" font-weight="800" fill="#1B2738" font-family="inherit">?</text></g>
+      </svg></div>
+    </div></section>
+    <section class="wrap sec" style="padding-top:44px">
+      <h2 style="font-size:22px;margin-bottom:14px">Browse by category</h2>
+      <div class="chips nfcats">${cats.map(k => `<a class="chip" href="#${k.id}">${esc(k.name)}</a>`).join('')}<a class="chip" href="#categories" style="font-weight:800">All categories</a></div>
+      <h2 style="font-size:22px;margin:34px 0 14px">Or try one of these</h2>
+      <div class="nflinks">${links.map(([href, t, d]) => `<a href="${href}"><b>${t}</b><span>${d}</span></a>`).join('')}</div>
+    </section>`;
+}
 function vAdd() {
   const p = S.addPrefill || '';
   const ctry = Object.entries(COUNTRY).sort((a, b) => a[0] === 'WW' ? -1 : b[0] === 'WW' ? 1 : a[1].localeCompare(b[1]));
@@ -709,14 +752,14 @@ function vHome() {
         <div><b>Running a company?</b><p>One page for your reputation with clients and candidates, and one place to reply to both.</p></div>
       </div></section>
 
-    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Explore</p><h2>Browse by category</h2><p>Find a company by what it does, or add one that's missing and write the first review.</p></div><a href="#categories" style="font-weight:700">All ${CATS.length} categories</a></div>
-      <div class="grid">${CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 8).map(catTile).join('')}</div></section>
+    <section class="hb hb-grey"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">Explore</p><h2>Browse by category</h2><p>Find a company by what it does, or add one that's missing and write the first review.</p></div><a href="#categories" style="font-weight:700">All ${CATS.length} categories</a></div>
+      <div class="grid">${CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 8).map(catTile).join('')}</div></div></section>
 
     ${recentReviews()}
 
-    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>Why companies list here</h2><p>Customers, job seekers, investors and AI assistants check what others say about a company. Here's what a verified page does for you.</p></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
+    <section class="hb hb-deep"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>Why companies list here</h2><p>Customers, job seekers, investors and AI assistants check what others say about a company. Here's what a verified page does for you.</p></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
       <div class="reasons">${REASONS.slice(0, 6).map(reasonCard).join('')}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px"><a class="btn p lg" href="#why-list">See why it matters</a><a class="btn o lg" href="#list">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></section>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px"><a class="btn p lg" href="#why-list">See why it matters</a><a class="btn o lg" href="#list">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Free tools</p><h2>Make better career and company decisions</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid">${TOOLS.filter(x => !x.soon).slice(0, 6).map(toolCard).join('')}</div></section>
 
@@ -725,12 +768,12 @@ function vHome() {
     ${!JOBS_ON ? '' : (() => { const js = JOBS.filter(isLive).sort((a, b) => dayNum(b.posted) - dayNum(a.posted)).slice(0, 3); return js.length ? `<section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Hiring now</p><h2>Latest jobs at verified companies</h2><p>Read what employees say before you apply.</p></div><a href="#jobs" style="font-weight:700">All jobs</a></div>
       <div class="jgrid">${js.map(jobTile).join('')}</div></section>` : ''; })()}
 
-    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Simple and fair</p><h2>How it works</h2></div></div>
+    <section class="hb hb-lime"><div class="wrap sec"><div class="sechead"><div><p class="eyebrow">Simple and fair</p><h2>How it works</h2></div></div>
       <div class="steps">
         <div class="step"><span>1</span><h3>Search the company</h3><p>Type a name or website. Each page shows its reviews and whether the company is verified.</p></div>
         <div class="step"><span>2</span><h3>Read real experiences</h3><p>Customers share how they were treated. Employees share anonymous reviews.</p></div>
         <div class="step"><span>3</span><h3>Share your own</h3><p>Good or bad, every review is published the same way, and the company can reply.</p></div>
-      </div></section>
+      </div></div></section>
 
 ${POSTS.length ? `    <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">For companies</p><h2>From our blog for companies</h2><p>Practical advice on reviews, reputation and growth.</p></div><a href="#blog" style="font-weight:700">All articles</a></div>
       <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${POSTS.slice(0, 3).map(postCard).join('')}</div></section>` : ''}
@@ -891,7 +934,7 @@ function empForm(c) {
       <div class="planpick">
         <label><input type="radio" name="e-show" value="anon" ${S.empShow !== 'named' ? 'checked' : ''}><span><b>Anonymous</b><small>Shown as “Anonymous employee”. ${esc(c.name)} can't see who wrote it. In a small team, your job title and dates can still hint at who you are, so share only what you're comfortable with.</small></span></label>
         <label><input type="radio" name="e-show" value="named" ${S.empShow === 'named' ? 'checked' : ''}><span><b>With my name</b><small>Shown as “${esc(displayName())}”. Named reviews often carry more weight with readers.</small></span></label></div></fieldset>
-    <label class="check"><input id="e-first" type="checkbox"><span>I work or worked at this company, and this is my own experience.</span></label><p class="err" id="err-e-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Don't name junior colleagues or share confidential company information. Every review is checked by our team before it appears. <a href="#guidelines">Read the guidelines</a></p>
+    <label class="check"><input id="e-first" type="checkbox"><span>I work or worked at this company, and this is my own experience.</span></label><p class="err" id="err-e-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Don't name junior colleagues or share confidential company information. Your review is published as soon as you post it. Reviews that break the <a href="#guidelines">guidelines</a> are taken down.</p>
     <div><button class="btn p lg" type="submit">Post review</button></div>
   </form>`;
 }
@@ -997,7 +1040,7 @@ function vCompany(c) {
         <div class="field"><label class="l" for="r-body">Your review</label><textarea id="r-body" rows="5" maxlength="2000" placeholder="What happened? What went well or badly?"></textarea><p class="err" id="err-body" hidden>Write at least 20 characters so others understand what happened.</p></div>
         <div class="row"><div class="field"><label class="l" for="r-date">Date of experience</label><input id="r-date" type="month"></div>
           <div class="field" style="justify-content:flex-end"><p class="meta" style="font-size:14px;padding-bottom:12px">${S.user && S.user.type === 'reviewer' ? `Posting as <b style="color:var(--fg)">${esc(S.user.name)}</b>` : 'You’ll log in as a reviewer before posting.'}</p></div></div>
-        <label class="check"><input id="r-first" type="checkbox"><span>This is my own experience. I don’t work for this company or a competitor, and nobody paid me or gave me anything to write it.</span></label><p class="err" id="err-r-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Every review is checked by our team before it appears.</p>
+        <label class="check"><input id="r-first" type="checkbox"><span>This is my own experience. I don’t work for this company or a competitor, and nobody paid me or gave me anything to write it.</span></label><p class="err" id="err-r-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Your review is published as soon as you post it. Reviews that break the <a href="#guidelines">guidelines</a> are taken down.</p>
         <div><button class="btn p lg" type="submit">Post review</button></div>
       </form>`}
       <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
@@ -1585,7 +1628,7 @@ function vGuidelines() {
     <div style="display:flex;flex-direction:column;gap:22px;line-height:1.65">
       <section class="box"><h2>How we list companies</h2><p>Well-known startups are added from public information (name, website, category, country) so people can review them. Other companies are added by their owners, or by reviewers who have worked with them. These profiles are marked “Unclaimed” and show no rating until real customers review them. A listed company is never presented as a partner or customer of Know The Company.</p></section>
       <section class="box"><h2>Writing a review</h2><p>Write about your own experience in the last 12 months. No hate speech, personal data about staff, or claims of crime without evidence. Reviews in exchange for money, discounts or gifts are not allowed.</p></section>
-      <section class="box"><h2>Before a review goes live</h2><p>A person reads every review before it is published. We aim to decide within 48 hours. If a review breaks these guidelines we don't publish it.</p></section>
+      <section class="box"><h2>When a review goes live</h2><p>Reviews are published as soon as they are posted. Our team reads new reviews and reports, and takes down any review that breaks these guidelines. Anyone can report a review they think breaks them.</p></section>
       <section class="box"><h2>Employee reviews</h2><p>Write only about your own time at the company as an employee, contractor or intern. Don't name junior colleagues or identify anyone other than senior leaders. Don't share confidential company information or trade secrets, and don't make accusations you can't back up. Employers can't remove employee reviews. You choose whether each employee review is anonymous or shows your name. We never show your email, and we share an anonymous reviewer's identity only when a valid court order requires it.</p></section>
       <section class="box"><h2>What companies can and can't do</h2><p>Companies can reply publicly, invite customers to review, and report reviews that break these rules. When they invite reviews, they must invite all their customers, not only the happy ones. They can't edit, hide or delay reviews, and paying for a listing never changes ratings.</p></section>
       <section class="box"><h2>When we remove a review</h2><p>Only when it breaks these guidelines or we receive a valid legal order.</p></section>
@@ -1672,14 +1715,14 @@ function vMyReviews() {
   const total = mine.length + emp.reviews.length + emp.interviews.length + pend.length;
   const item = (cid, card) => `<div style="display:flex;flex-direction:column;gap:8px"><a href="#${cid}" style="font-weight:700;text-decoration:none">${esc(BYID[cid].name)}</a>${card}</div>`;
   const group = (title, items) => items.length ? `<section style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:22px">${title} <span class="count">(${items.length})</span></h2>${items.join('')}</section>` : '';
-  const pendCard = p => `<article class="review"><div class="toolbar"><a href="#${p.cid}" style="font-weight:700;text-decoration:none">${esc(BYID[p.cid].name)}</a><span class="pill un">Waiting for approval</span></div><p class="meta">${esc(LABEL[p.type] || 'Review')} · sent ${esc(fmtDay(p.at))}</p>${p.title ? `<p>${esc(p.title)}</p>` : ''}</article>`;
+  const pendCard = p => `<article class="review"><div class="toolbar"><a href="#${p.cid}" style="font-weight:700;text-decoration:none">${esc(BYID[p.cid].name)}</a><span class="pill un">Just posted</span></div><p class="meta">${esc(LABEL[p.type] || 'Review')} · sent ${esc(fmtDay(p.at))}</p>${p.title ? `<p>${esc(p.title)}</p>` : ''}</article>`;
   return `<div class="wrap">${crumbs([['Home','#home'],['My reviews']])}
     <div class="pagehead"><h1>My reviews</h1><p>${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div>
-    <div class="mainc" style="max-width:860px;gap:30px">${total ? group('Waiting for approval', pend.map(pendCard))
+    <div class="mainc" style="max-width:860px;gap:30px">${total ? group('Just posted', pend.map(pendCard))
         + group('Customer reviews', mine.map(([cid, r, i]) => item(cid, reviewCard(r, i, cid))))
         + group('Employee reviews', emp.reviews.map(([cid, r, i]) => item(cid, empCard(r, i, cid))))
         + group('Interviews', emp.interviews.map(([cid, r, i]) => item(cid, intCard(r, i, cid))))
-        + (pend.length ? '<p class="meta">Reviews waiting for approval are listed on this device only.</p>' : '')
+        + (pend.length ? '<p class="meta">Reviews you just posted show here until the page refreshes.</p>' : '')
       : `<div class="empty"><b>You haven't written any reviews yet</b><p>Search for a company you've used or worked for and share how it went.</p><a class="btn p" href="#search">Find a company</a></div>`}
       <section class="box" style="margin-top:12px"><h2>Delete your account</h2><p>We remove your account and everything you have posted, then confirm by email.</p><button class="btn g" type="button" data-act="del-account" style="align-self:flex-start">Ask us to delete my account</button></section></div></div>`;
 }
@@ -2067,7 +2110,8 @@ document.addEventListener('submit', async e => {
     } catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
     addPending({ cid: c.id, type: 'customer', title: f['r-title'].value.trim() || body.slice(0, 80) });
     S.invitedFor = ''; S.rating = 0; S.draft = null; S.sentFor = c.id; render();
-    toast('Thanks. Your review appears once our team has checked it.', 5000);
+    toast('Thanks. Your review is live.', 5000);
+    loadData().then(ch => { if (ch) renderKeep(); });
     return;
   }
 
@@ -2092,7 +2136,8 @@ document.addEventListener('submit', async e => {
     catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
     addPending({ cid: c.id, type: data.type, title: data.jobTitle });
     S.emp = EMP_ZERO(); S.invitedFor = ''; delete S.formCache[id]; render();
-    toast(id === 'emp-form' ? 'Thanks. Your review appears once our team has checked it.' : 'Thanks. Your interview appears once our team has checked it.', 5000);
+    toast('Thanks. Your review is live.', 5000);
+    loadData().then(ch => { if (ch) renderKeep(); });
     return;
   }
 
@@ -2340,7 +2385,7 @@ function render() {
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
   else if (BYID[h]) { loadMedia(BYID[h]); loadFacts(BYID[h]); html = vCompany(BYID[h]); }
-  else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><h1 style="font-size:20px">Page not found</h1><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
+  else html = vNotFound();
   if (S.user && S.myClaims === undefined) loadMyClaims();
   app.innerHTML = `<div class="view">${curText(html)}</div>`;
   document.body.classList.add('ready');
@@ -2353,7 +2398,7 @@ function render() {
   const sp = document.getElementById('searchpanel'); if (sp) sp.hidden = true;
   if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) { const g = document.getElementById('review-form'); if (g) { g['r-title'].value = S.draft.title; g['r-body'].value = S.draft.body; g['r-date'].value = S.draft.date || ''; S.draft.applied = true; } }
   setMeta(h);
-  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : PAGE_TITLES[h] ? `${PAGE_TITLES[h]} · Know The Company` : 'Know The Company · Customer and employee reviews of startups';
+  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : PAGE_TITLES[h] ? `${PAGE_TITLES[h]} · Know The Company` : h === 'home' ? 'Know The Company · Customer and employee reviews of startups' : !isRoute(h) ? 'Page not found · Know The Company' : 'Know The Company · Customer and employee reviews of startups';
 }
 function setMeta(h) {
   const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';

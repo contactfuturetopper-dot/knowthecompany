@@ -14,7 +14,7 @@ rmSync(pub, { recursive: true, force: true });
 rmSync(gen, { recursive: true, force: true });
 mkdirSync(pub, { recursive: true });
 mkdirSync(gen, { recursive: true });
-for (const f of ["app.js", "site.css", "badge.html", "auth-callback.html", "logo.png", "og-image.png", "favicon.ico", "favicon.svg", "favicon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest"]) cpSync(join(root, f), join(pub, f));
+for (const f of ["app.js", "site.css", "badge.html", "auth-callback.html", "logo.png", "og-image.png", "icon.svg", "icon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest"]) cpSync(join(root, f), join(pub, f));
 cpSync(join(root, "js"), join(pub, "js"), { recursive: true });
 // Minify the app and its styles for the browser (the repository keeps the readable copies).
 for (const [f, loader] of [["app.js", "js"], ["site.css", "css"]]) {

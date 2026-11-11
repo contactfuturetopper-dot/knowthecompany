@@ -57,8 +57,8 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const ld = html.match(/<script type="application\/ld\+json" id="ld-json">([\s\S]*?)<\/script>/)[1];
   assert.ok(!/<\/script/i.test(ld), "review text must not close the script tag");
   const c = JSON.parse(ld)["@graph"].find(n => n["@id"]?.endsWith("#company"));
-  assert.equal(c.aggregateRating.reviewCount, 2, "the owner's own review is left out");
-  assert.equal(c.aggregateRating.ratingValue, 4.5);
+  assert.equal(c.aggregateRating.reviewCount, 3, "the owner's own review is left out");
+  assert.equal(c.aggregateRating.ratingValue, 4.7);
   assert.equal(c.url, "https://futuretopper.in");
   const nf = renderShell(await resolvePage("/nope"));
   assert.ok(!nf.includes("ld-json"), "no structured data on a missing page");
@@ -69,8 +69,8 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
 {
   const co = renderShell(await resolvePage("/company/future-topper"));
   const main = co.slice(co.indexOf('<main id="app">'), co.indexOf("</main>"));
-  assert.ok(main.includes("Customer reviews of Future Topper") && main.includes("Rated 4.5 out of 5 from 2 customer reviews"), "company page lists its reviews");
-  assert.ok(!main.includes("SELF PUBLISHED"), "a review published without moderation is left out");
+  assert.ok(main.includes("Customer reviews of Future Topper") && main.includes("Rated 4.7 out of 5 from 3 customer reviews"), "company page lists its reviews");
+  assert.ok(main.includes("SELF PUBLISHED"), "reviews go live as soon as they are posted");
   assert.ok(main.includes("Good notes &lt;/script&gt;") && !main.includes(">self<"), "review text is escaped and the owner's review is left out");
   assert.ok(main.includes("Employee reviews of Future Topper"));
   assert.ok(co.includes('<meta property="og:title" content="Future Topper reviews">') && co.includes('<meta name="twitter:card" content="summary_large_image">'), "link preview tags");

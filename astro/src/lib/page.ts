@@ -175,13 +175,14 @@ function pageSchema(path: string, m: Meta, desc: string): object[] {
 /* Published reviews of one company, as a visitor sees them, without reviews written by any account that
    manages a company (the same rule the app and the badge apply). */
 /* Members can insert items but only the team can edit them, and Wix gives a new item equal created and
-   updated times. So a review its writer published without moderation, or a company a member inserted with
-   team-only fields filled in, is ignored until an admin has touched it. Same rule as "trust" in app.js. */
+   updated times. Reviews go live as soon as they are posted, but a reply stored on a review, or a company a
+   member inserted with team-only fields filled in, counts only once an admin has touched it. Same rule as
+   "trust" in app.js. */
 const ADMIN_ID = "c0f544a7-207e-490b-b7d9-830ef39f49c7";
 const tms = (d: unknown) => { const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d; const t = Date.parse(String(v)); return isNaN(t) ? 0 : t; };
 export const adminTouched = (it: any) => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
 async function companyReviews(companyId: string): Promise<any[]> {
-  const items = (await query("Reviews", { company: { $eq: companyId } }, 1000)).filter(r => r.type !== "interview" && Number(r.rating) > 0 && adminTouched(r));
+  const items = (await query("Reviews", { company: { $eq: companyId } }, 1000)).filter(r => r.type !== "interview" && Number(r.rating) > 0);
   const authors = [...new Set(items.map(r => r._owner).filter(Boolean))];
   const blocked = new Set<string>();
   for (let i = 0; i < authors.length; i += 50) {
@@ -203,7 +204,7 @@ function reviewsHtml(name: string, reviews: any[]): string {
   const customer = sorted.filter(r => (r.type || "customer") === "customer");
   const employee = sorted.filter(r => r.type === "employee");
   const avg = (l: any[]) => (l.reduce((s, r) => s + Number(r.rating), 0) / l.length).toFixed(1);
-  const reply = (r: any) => r.reply ? `<blockquote><p><strong>Reply from ${esc(name)}:</strong> ${esc(r.reply)}</p></blockquote>` : "";
+  const reply = (r: any) => r.reply && adminTouched(r) ? `<blockquote><p><strong>Reply from ${esc(name)}:</strong> ${esc(r.reply)}</p></blockquote>` : "";
   let html = `<section><h2>Customer reviews of ${esc(name)}</h2>`;
   html += customer.length
     ? `<p>Rated ${avg(customer)} out of 5 from ${customer.length} customer review${customer.length === 1 ? "" : "s"}.</p>` + customer.slice(0, 20).map(r => `<article><h3>${esc(r.title || "Customer review")}</h3><p>${stars(r.rating)} · ${esc(r.displayName || "Reviewer")}${monthYear(r._createdDate) ? " · " + monthYear(r._createdDate) : ""}</p>${r.body ? `<p>${esc(r.body)}</p>` : ""}${reply(r)}</article>`).join("")
@@ -270,7 +271,7 @@ ${cats.length ? `<h2>Browse by category</h2><ul>${cats.sort().map(c => `<li><a h
 <p><a href="/list">List your company</a> · <a href="/why-list">Why companies list here</a> · <a href="/pricing">Pricing</a></p>`;
 }
 function notFound(path: string): Page {
-  return { status: 404, path, title: "Page not found · Know The Company", desc: DEFAULT_DESC, h1: "Page not found", body: "<p>That link doesn't match a company or category.</p>", noindex: true };
+  return { status: 404, path, title: "Page not found · Know The Company", desc: DEFAULT_DESC, h1: "This page doesn’t exist", body: `<p>The link may be old or mistyped. Search for a company, or pick up from one of these pages.</p><ul><li><a href="/">Home</a></li><li><a href="/categories">All categories</a></li><li><a href="/search">Search companies</a></li><li><a href="/tools">Free tools</a></li><li><a href="/add">Add a missing company</a></li><li><a href="/help">Help centre</a></li></ul>`, noindex: true };
 }
 /* Wix couldn't be read: serve the app with general details and let it draw the page. */
 function unknown(path: string): Page {
