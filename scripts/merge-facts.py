@@ -9,7 +9,7 @@ ids = {r['website'] for r in csv.DictReader(open(f'{ROOT}/data/companies-for-wix
 BANNED = r'\b(leading|top|best|premier|innovative|revolutionary|cutting-edge|seamless|seamlessly|robust|world-class|empower\w*|transform\w*|journey|landscape|ecosystem|delve|unlock|elevate|boasts?|renowned|vibrant|testament|crucial role|in today)\b'
 LINK_KEYS = ['linkedin', 'x', 'instagram', 'facebook', 'youtube', 'appStore', 'playStore']
 out, problems = {}, []
-for f in sorted(glob.glob(f'{ROOT}/data/facts/batch-*.json')):
+for f in sorted(glob.glob(f'{ROOT}/data/facts/batch-*.json')):  # batch-z-* (second passes) sort last
     try: rows = json.load(open(f))
     except Exception as e: problems.append(f'{f}: unreadable ({e})'); continue
     for x in rows:
@@ -30,7 +30,16 @@ for f in sorted(glob.glob(f'{ROOT}/data/facts/batch-*.json')):
             'links': links, 'sources': [{'fact': str(s.get('fact', '')), 'url': s['url']} for s in srcs], 'checked': clean(x.get('checked')) or '2026-11-11',
         }
         if rec['founded'] and not re.match(r'^(1[89]|20)\d\d$', rec['founded']): problems.append(f'{wid}: odd founded {rec["founded"]}'); rec['founded'] = None
-        out[wid] = {k: v for k, v in rec.items() if v not in (None, [], {})}
+        rec = {k: v for k, v in rec.items() if v not in (None, [], {})}
+        if wid in out:  # a later pass fills gaps; it never blanks a fact found earlier
+            prev = out[wid]
+            for k, v in rec.items():
+                if k == 'sources': prev['sources'] = prev.get('sources', []) + [x for x in v if x not in prev.get('sources', [])]
+                elif k == 'links': prev['links'] = {**prev.get('links', {}), **v}
+                elif k == 'status' and v == 'Active' and prev.get('status'): continue
+                else: prev[k] = v
+        else:
+            out[wid] = rec
 # Hand corrections after review, applied last. Status notes must stay true for months, not days.
 OVERRIDES = {'mercadobitcoin.com.br': {'status': 'Active'}}
 for wid, fix in OVERRIDES.items():

@@ -1,0 +1,100 @@
+[
+ {
+  "title": "Gopuff",
+  "website": "gopuff.com",
+  "category": "Food & Delivery",
+  "country": "US",
+  "bio": "American delivery service selling snacks, groceries, drinks and household essentials from its own micro-fulfilment centres."
+ },
+ {
+  "title": "Lime",
+  "website": "li.me",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Electric scooter and bike sharing service available in many cities."
+ },
+ {
+  "title": "CRED",
+  "website": "cred.club",
+  "category": "Fintech & Banking",
+  "country": "IN",
+  "bio": "CRED is an Indian app that lets members pay credit card bills, rent and utilities and access rewards and credit products."
+ },
+ {
+  "title": "DEGIRO",
+  "website": "degiro.com",
+  "category": "Stock Brokers & Investing",
+  "country": "NL",
+  "bio": "DEGIRO is an online broker offering European investors low-cost access to stocks, ETFs, bonds, options and futures on many exchanges."
+ },
+ {
+  "title": "Glovo",
+  "website": "glovoapp.com",
+  "category": "Food & Delivery",
+  "country": "ES",
+  "bio": "Spanish delivery app that brings restaurant meals, groceries and other local store items to customers in Europe, Africa and Asia."
+ },
+ {
+  "title": "Wellfound",
+  "website": "wellfound.com",
+  "category": "Jobs & Freelancing",
+  "country": "US",
+  "bio": "Wellfound, formerly AngelList Talent, is a job platform where startups post roles and candidates apply for jobs at early-stage companies."
+ },
+ {
+  "title": "Bluesky",
+  "website": "bsky.app",
+  "category": "Social Media & Entertainment",
+  "country": "US",
+  "bio": "Decentralized social network for short posts built on the open AT Protocol, with customizable feeds and moderation."
+ },
+ {
+  "title": "Chobani",
+  "website": "chobani.com",
+  "category": "Consumer Brands",
+  "country": "US",
+  "bio": "American food company making Greek yogurt, oat milk, coffee creamers and ready-to-drink coffee products."
+ },
+ {
+  "title": "Crypto.com",
+  "website": "crypto.com",
+  "category": "Crypto Exchanges",
+  "country": "SG",
+  "bio": "Crypto trading app with a debit card and exchange."
+ },
+ {
+  "title": "GulfTalent",
+  "website": "gulftalent.com",
+  "category": "Jobs & Freelancing",
+  "country": "AE",
+  "bio": "GulfTalent is an online recruitment platform listing professional jobs in the Gulf countries and connecting employers with experienced candidates."
+ },
+ {
+  "title": "Huel",
+  "website": "huel.com",
+  "category": "Consumer Brands",
+  "country": "GB",
+  "bio": "British company selling nutritionally complete powdered meals, ready-to-drink shakes, hot meals and snack bars, mainly online."
+ },
+ {
+  "title": "KuCoin",
+  "website": "kucoin.com",
+  "category": "Crypto Exchanges",
+  "country": "Global",
+  "bio": "Cryptocurrency exchange listing a wide range of coins."
+ },
+ {
+  "title": "Lalamove",
+  "website": "lalamove.com",
+  "category": "Mobility & Logistics",
+  "country": "HK",
+  "bio": "Hong Kong-based on-demand delivery app that connects customers with drivers of motorcycles, vans and trucks for same-day deliveries."
+ },
+ {
+  "title": "Ola",
+  "website": "olacabs.com",
+  "category": "Mobility & Logistics",
+  "country": "IN",
+  "bio": "Indian ride-hailing app for booking cabs, autos and bikes."
+ }
+]
