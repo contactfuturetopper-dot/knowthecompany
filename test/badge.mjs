@@ -19,6 +19,8 @@ async function render(qs) {
       if (col === 'Companies') { if (f.op !== 'hasSome') throw new Error('bad op'); return { items: Object.values(companies).filter(c => (c.ownerMemberIds || []).some(id => f.value.includes(id))), hasNext: false }; }
       const items = reviews.filter(r => r[f.field] === f.value); return { items, hasNext: false }; }
   };
+  /* The site's server (/api/data) cleans reviews; here it leaves out the owner's (m1) and drops member IDs. */
+  g.fetch = async url => { const c = new URL(url, 'https://example.test').searchParams.get('company'); return { ok: true, json: async () => ({ rvs: reviews.filter(r => r.company === c && r._owner !== 'm1').map(({ _owner, ...r }) => r) }) }; };
   const src = script.replace(/import\s*\{([^}]+)\}\s*from\s*"\/js\/wix\/items\.js";/, 'const {$1} = globalThis.__m;');
   fs.writeFileSync('badge.test.mjs', src + `\nexport const done = new Promise(r => setTimeout(r, 30));`);
   const mod = await import('./badge.test.mjs?' + qs); await mod.done;

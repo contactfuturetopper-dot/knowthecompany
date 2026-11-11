@@ -1,0 +1,273 @@
+[
+ {
+  "website": "cardekho.com",
+  "name": "CarDekho",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "careem.com",
+  "name": "Careem",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "carousell.com",
+  "name": "Carousell",
+  "hq": "Singapore, Singapore",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "cars24.com",
+  "name": "CARS24",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "cashfree.com",
+  "name": "Cashfree Payments",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "casper.com",
+  "name": "Casper",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "celonis.com",
+  "name": "Celonis",
+  "hq": "Munich, Germany",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "checkout.com",
+  "name": "Checkout.com",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "chobani.com",
+  "name": "Chobani",
+  "hq": "New York City, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "classdojo.com",
+  "name": "ClassDojo",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "cleartrip.com",
+  "name": "Cleartrip",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "codecademy.com",
+  "name": "Codecademy",
+  "hq": "New York City, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "coindcx.com",
+  "name": "CoinDCX",
+  "hq": "Mumbai, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "coinone.co.kr",
+  "name": "Coinone",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "coinspot.com.au",
+  "name": "CoinSpot",
+  "hq": "Melbourne, Australia",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "coursehero.com",
+  "name": "Course Hero",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "cred.club",
+  "name": "CRED",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "crypto.com",
+  "name": "Crypto.com",
+  "hq": "Singapore, Singapore",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "cuemath.com",
+  "name": "Cuemath",
+  "hq": "Gurugram, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "darwinbox.com",
+  "name": "Darwinbox",
+  "hq": "Hyderabad, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "datacamp.com",
+  "name": "DataCamp",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "deel.com",
+  "name": "Deel",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "degiro.com",
+  "name": "DEGIRO",
+  "hq": "Amsterdam, Netherlands",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "depop.com",
+  "name": "Depop",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "dhgate.com",
+  "name": "DHgate",
+  "hq": "Beijing, China",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "discord.com",
+  "name": "Discord",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "docker.com",
+  "name": "Docker",
+  "hq": "Palo Alto, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "doctolib.fr",
+  "name": "Doctolib",
+  "hq": null,
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "dubizzle.com",
+  "name": "dubizzle",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "duckduckgo.com",
+  "name": "DuckDuckGo",
+  "hq": "Paoli, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "ebanx.com",
+  "name": "EBANX",
+  "hq": "Curitiba, Brazil",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "emma-sleep.com",
+  "name": "Emma",
+  "hq": "Frankfurt, Germany",
+  "missing": [
+   "legalName"
+  ]
+ }
+]

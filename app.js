@@ -1,4 +1,6 @@
 import { queryItems, insertItem, updateItem, removeItem } from "/js/wix/items.js";
+import { toItem } from "/js/wix/items-core.js";
+import { imgSrc, imgRatio } from "/js/wix/media.js";
 import { wixRequest } from "/js/wix/client.js";
 import { WIX_CLIENT_ID } from "/js/wix/config.js";
 import { subscribeMember, getMemberState, login as memberLogin, register as memberRegister, verifyEmail as memberVerify, logout as memberLogout } from "/js/wix/member-store.js";
@@ -70,7 +72,17 @@ COUNTRY.WW = 'Online / worldwide';
    an admin has edited it. Items the admin account inserted are trusted. */
 const ADMIN_ID = 'c0f544a7-207e-490b-b7d9-830ef39f49c7';
 const tms = d => { const v = d && typeof d === 'object' && !(d instanceof Date) && '$date' in d ? d.$date : d; const t = v instanceof Date ? v.getTime() : Date.parse(v); return isNaN(t) ? 0 : t; };
-const adminTouched = it => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
+const adminTouched = it => !!it && (it._team === true || it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
+const validRating = n => Number.isInteger(Number(n)) && Number(n) >= 1 && Number(n) <= 5;
+/* When two companies share an address, the one the team created or edited wins, then the oldest, so a
+   member can add a company but can't take over the page of one that already exists. Same rule as lib/data.ts. */
+function dedupeCos(items) {
+  const best = new Map();
+  const better = (a, b) => adminTouched(a) !== adminTouched(b) ? adminTouched(a) : tms(a._createdDate) < tms(b._createdDate);
+  for (const it of items) { const k = it.slug || slug(it.title || it._id); const p = best.get(k); if (!p || better(it, p)) best.set(k, it); }
+  const keep = new Set(best.values());
+  return items.filter(it => keep.has(it));
+}
 const trustedCo = it => adminTouched(it) ? it : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null, logo: '' };
 /* The company's logo: its official icon, imported by the team into the site's media library, or one its owners set. */
 const logoOf = c => { const u = String((c && c.raw && c.raw.logo) || ''); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; };
@@ -141,7 +153,7 @@ const CLAIMS = {};
 const SB_CATS = [];
 const ensureCat = (name, id) => { let k = CATBYID[id]; if (!k) { const w = name.replace(/&/g, '').split(/\s+/).filter(Boolean); k = { name, id, items: [], short: (w[0][0] + (w[1] ? w[1][0] : '')).toUpperCase(), tone: (CATS.length % 6) + 1 }; CATS.push(k); CATBYID[id] = k; } return k; };
 function indexCompanies(items) {
-  COS = items.map(mkCo);
+  COS = dedupeCos(items).map(mkCo);
   CATS = []; CATBYID = {};
   COS.forEach(c => { let k = CATS.find(x => x.name === c.cat); if (!k) { k = { name: c.cat, id: c.catId, items: [] }; CATS.push(k); } k.items.push(c); });
   CATS.forEach((k, i) => { const w = k.name.replace(/&/g,'').split(/\s+/).filter(Boolean); k.short = (w[0][0] + (w[1] ? w[1][0] : '')).toUpperCase(); k.tone = (i % 6) + 1; });
@@ -180,14 +192,20 @@ function indexReviews(items) {
      of every page and rating, however it was posted, and an account that becomes a company account stops
      counting as a reviewer from that moment. */
   const owners = new Set(COS.flatMap(c => c.raw.ownerMemberIds || []));
-  items.sort((a, b) => String(b._createdDate || '').localeCompare(String(a._createdDate || '')));
+  /* Reviews normally come from the site's server (/api/data), already cleaned: no member IDs, ratings 1 to 5,
+     one review per person per company. The same rules run here too, for the fallback read and for the
+     signed-in member's own reviews merged in by applyData. */
+  items = mergeMine(items).sort((a, b) => String(b._createdDate || '').localeCompare(String(a._createdDate || '')));
+  const seen = new Set();
   for (const r of items) {
     if (r._owner && owners.has(r._owner)) continue;
     if (r.type === 'interview') continue; /* interviews section removed */
+    if (!validRating(r.rating)) continue;
+    if (r._owner && r._owner !== ADMIN_ID) { const key = r._owner + '|' + (typeof r.company === 'object' && r.company ? r.company._id : r.company) + '|' + (r.type || 'customer'); if (seen.has(key)) continue; seen.add(key); }
     const team = adminTouched(r); /* labels and replies only count once the team has set them: see "trust" above */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
     const imported = team && r.importedFrom ? { from: String(r.importedFrom), date: monthOf(r.originalDate || '') } : null; /* a past review a Plus company shared, confirmed with its writer by the team */
-    const base = { wid: r._id, by: r._owner || '', type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
+    const base = { wid: r._id, by: r._owner || (MINE.has(r._id) && S.user ? S.user.id : ''), type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
     else if (r.type === 'interview') empBucket(c.id).interviews.push({ ...base, role: r.jobTitle || '', outcome: r.interviewOutcome || '', diff: r.interviewDifficulty || '', exp: r.interviewExperience || '', process: r.body || '', questions: r.interviewQuestions || '' });
     else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: team && !!r.proofChecked, invited: !!r.invited });
@@ -209,7 +227,7 @@ let LOADED = false, LOAD_ERR = '';
 const DATA_KEY = 'ktc_data_v1';
 let DATA_SIG = '';
 const sigOf = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) >>> 0; return h.toString(36) + ':' + str.length; };
-function applyData(cos, rvs, own) { indexCompanies(cos); indexReviews(rvs); applyOwner(own || []); LOADED = true; LOAD_ERR = ''; }
+function applyData(cos, rvs, own) { LAST = { rvs, own: own || [] }; indexCompanies(cos); indexReviews(rvs.slice()); applyOwner(own || []); LOADED = true; LOAD_ERR = ''; }
 
 /* ---------- owner-written content (collection "OwnerContent") ----------
    Verified owners write their own profile, employer page, photos, cover and replies as items in OwnerContent.
@@ -355,11 +373,42 @@ function loadCached() {
   try { applyData(c.cos, c.rvs, c.own); DATA_SIG = c.sig || ''; return true; } catch (e) { return false; }
 }
 /* Resolves to true when what is on screen should be redrawn. */
-async function loadData() {
+/* The signed-in member's own reviews, read straight from Wix (members can read only their own). They mark
+   which reviews on screen are theirs, show a new review before the server's one-minute cache catches up,
+   and stop a second review of the same company. */
+let MINE = new Set(), MINE_ITEMS = [], MINE_FOR = '';
+const mergeMine = items => { const have = new Set(items.map(r => r._id)); return items.concat(MINE_ITEMS.filter(r => !have.has(r._id)).map(r => ({ ...r, _owner: '', _team: false, proofChecked: false, workEmailVerified: false, reply: '', importedFrom: '' }))); };
+async function loadMine() {
+  const id = S.user ? S.user.id : '';
+  if (id === MINE_FOR) return false;
+  MINE_FOR = id;
+  try { MINE_ITEMS = id ? (await fetchAll('Reviews')).filter(r => !r._owner || r._owner === id) : []; } catch (e) { MINE_ITEMS = []; }
+  MINE = new Set(MINE_ITEMS.map(r => r._id));
+  if (LAST) { indexReviews(LAST.rvs.slice()); applyOwner(LAST.own); }
+  return true;
+}
+const alreadyReviewed = (c, type) => MINE_ITEMS.some(r => (typeof r.company === 'object' && r.company ? r.company._id : r.company) === c.wid && (r.type || 'customer') === type);
+let LAST = null;
+async function fetchData(fresh) {
   try {
+    const res = await fetch('/api/data' + (fresh ? '?t=' + Date.now() : ''), { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('data ' + res.status);
+    const d = await res.json();
+    if (!Array.isArray(d.cos) || !Array.isArray(d.rvs)) throw new Error('data shape');
+    const norm = l => (l || []).map(x => toItem(x, { imgSrc, imgRatio }));
+    return { cos: norm(d.cos), rvs: norm(d.rvs), own: norm(d.own) };
+  } catch (e) {
+    /* Fallback: read Wix directly. Reviews then come back only if the collection lets visitors read them. */
     const ownQ = kind => fetchAll('OwnerContent', [{ field: 'kind', op: 'eq', value: kind }]).catch(() => []);
-    const [cos, rvs, profs, replies] = await Promise.all([fetchAll('Companies'), fetchAll('Reviews'), ownQ('profile'), ownQ('reply')]);
-    const own = profs.concat(replies);
+    const [cos, rvs, profs, replies] = await Promise.all([fetchAll('Companies'), fetchAll('Reviews').catch(() => []), ownQ('profile'), ownQ('reply')]);
+    return { cos, rvs, own: profs.concat(replies) };
+  }
+}
+async function loadData(fresh) {
+  try {
+    if (fresh) MINE_FOR = '__';
+    await loadMine();
+    const { cos, rvs, own } = await fetchData(fresh);
     const json = JSON.stringify({ cos, rvs, own }), sig = sigOf(json);
     const changed = sig !== DATA_SIG || !LOADED;
     if (changed) applyData(cos, rvs, own);
@@ -374,6 +423,10 @@ async function loadData() {
 
 /* ---------- page state ---------- */
 const S = { heroTab: 'companies', jobFilter: { q: '', type: '', mode: '' }, jobPending: null, blogCat: 'All', pitchSent: false, contactSent: false, user: null, memberLoading: true, auth: { mode: 'signin', error: '' }, notice: '', returnTo: '', draft: null, q: '', catFilter: { country: '', text: '', sort: 'name' }, rating: 0, listStep: 0, listData: {}, claim: '', dashTab: 'overview', copied: false, coTab: '', returnTab: '', emp: EMP_ZERO(), formCache: {} };
+/* A review draft survives a sign-in that leaves the site (Google, Facebook): it is kept in this tab's session
+   storage until the review is posted. */
+const setDraft = d => { S.draft = d; try { if (d) sessionStorage.setItem('ktc_draft', JSON.stringify(d)); else sessionStorage.removeItem('ktc_draft'); } catch (e) {} };
+try { const d = JSON.parse(sessionStorage.getItem('ktc_draft') || 'null'); if (d && d.cid) S.draft = { ...d, applied: false }; } catch (e) {}
 function syncUser(s) {
   const m = s.member || {};
   S.memberLoading = !!s.loading;
@@ -756,15 +809,15 @@ function vHome() {
       </div></section>
 
     <section class="hb hb-grey"><div class="wrap sec"><div class="sechead"><div><h2>Browse by category</h2></div><a href="#categories" style="font-weight:700">All ${CATS.length} categories</a></div>
-      <div class="grid">${CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 8).map(catTile).join('')}</div></div></section>
+      <div class="grid mshort-4">${CATS.slice().sort((a, b) => b.items.length - a.items.length).slice(0, 8).map(catTile).join('')}</div></div></section>
 
     ${recentReviews()}
 
     <section class="hb hb-cream"><div class="wrap sec"><div class="sechead"><div><h2>Why companies list here</h2></div><a href="#why-list" style="font-weight:700">All 12 reasons</a></div>
-      <div class="reasons">${REASONS.slice(0, 6).map(reasonCard).join('')}</div>
+      <div class="reasons mshort-3">${REASONS.slice(0, 6).map(reasonCard).join('')}</div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px"><a class="btn p lg" href="#why-list">See why it matters</a><a class="btn o lg" href="#list">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>
 
-    <section class="wrap sec"><div class="sechead"><div><h2>Make better career and company decisions</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid">${TOOLS.filter(x => !x.soon).slice(0, 6).map(toolCard).join('')}</div></section>
+    <section class="wrap sec"><div class="sechead"><div><h2>Make better career and company decisions</h2></div><a href="#tools" style="font-weight:700">All tools</a></div><div class="toolgrid mshort-3">${TOOLS.filter(x => !x.soon).slice(0, 6).map(toolCard).join('')}</div></section>
 
     
 
@@ -1186,41 +1239,6 @@ function vJobs() {
       <div class="mainc" id="job-results">${jobResults()}</div></div></div>`;
 }
 
-function vSample() {
-  const rv = SAMPLE.reviews; const avg = avgOf(rv); const er = SAMPLE.emp; const eavg = avgOf(er); const E = EMPLOYER; const live = JOBS_ON ? liveJobsFor('Brightline Studio') : [];
-  const bars = [5,4,3,2,1].map(n => { const k = rv.filter(r => r.rating === n).length; return `<div class="bar"><span style="width:52px">${n} star</span><span class="tr"><i style="width:${Math.round(k / rv.length * 100)}%"></i></span><span style="width:20px;text-align:right">${k}</span></div>`; }).join('');
-  const work = `<section class="box" id="work" style="gap:14px"><div class="toolbar"><h2 style="font-size:20px">Work at Brightline Studio</h2>${E.hiring || live.length ? '<span class="pill ok">Hiring now</span>' : ''}</div>
-      <p style="color:var(--fg);font-size:15px;line-height:1.6">${esc(E.why)}</p>
-      ${E.benefits.length ? `<div style="display:flex;flex-direction:column;gap:8px"><h3 style="font-size:15px">Benefits</h3><ul class="benefits">${E.benefits.map(b => `<li>${TICK()}${esc(b)}</li>`).join('')}</ul></div>` : ''}
-      <div class="kv"><span>Team size</span><span>${esc(E.size)}</span></div>
-      ${JOBS_ON ? `<div style="display:flex;flex-direction:column;gap:8px"><h3 style="font-size:15px">Open jobs (${live.length})</h3>${live.length ? live.map(j => `<div class="kv" style="align-items:baseline"><span style="color:var(--fg);font-weight:600">${esc(j.title)}</span><span style="text-align:right">${esc(j.loc)} · ${esc(j.type)}</span></div>`).join('') + `<a href="#jobs" style="font-weight:700;font-size:14px">View jobs and apply</a>` : '<p class="meta">No open jobs right now.</p>'}</div>` : ''}
-      <div class="photos">${['Team photo','Studio','Workshop day'].map(p => `<div class="ph">${p}<small>Photo placeholder</small></div>`).join('')}</div>
-      <p class="meta">This section is written by the company${E.sample ? ' (example content)' : ''} and never changes its ratings.</p></section>`;
-  const emps = `<section style="display:flex;flex-direction:column;gap:12px" id="er-sample"><h2 style="font-size:22px">Employee reviews</h2>${empSummary(er)}${er.map((r, i) => empCard(r, i, 'sample')).join('')}</section>`;
-  return `<div class="demo" style="border-bottom:1px solid var(--line)"><div class="wrap">Sample profile with example data, showing a verified listing on the Plus plan.</div></div>
-  <section class="band"><div class="wrap">${crumbs([['Home','#home'],['Companies','#categories'],['Brightline Studio']])}
-    <div class="phero"><span class="avatar" aria-hidden="true" style="width:88px;height:88px;font-size:28px;background:var(--t1);color:var(--t1i);border-color:transparent">BS</span>
-      <div class="t"><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><h1>Brightline Studio</h1><span class="pill ver" style="font-size:13px">${TICK('var(--accent-ink)')}Verified company</span></div>
-        <p style="font-size:17px;line-height:1.55;max-width:640px">Product design and web development agency that helps startups launch apps and websites, from first sketch to launch day. (Sample bio)</p>
-        <p style="color:var(--muted)">Design and development agency · London, UK · <a href="https://example.com" target="_blank" rel="nofollow sponsored noopener" style="font-weight:600">brightline.example</a></p>
-        <div style="display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="meta" style="font-weight:700">Customers</span>${starRow(avg, 20)}<b>${avg.toFixed(1)}</b><span style="color:var(--muted)">${rv.length} reviews</span></span><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="meta" style="font-weight:700">Employees</span>${starRow(+eavg.toFixed(1), 20)}<b>${eavg.toFixed(1)}</b><span style="color:var(--muted)">${er.length} reviews</span></span></div></div>
-      <div class="acts"><a class="btn p" href="#home">Write a review</a><a class="btn g" href="#co-future-topper" data-act="demo-contact" data-what="call">Call</a><a class="btn g" href="#co-future-topper" data-act="demo-contact" data-what="WhatsApp">WhatsApp</a></div></div></div></section>
-  <div class="wrap" style="padding-top:28px"><div class="layout">
-    <div class="mainc" style="gap:18px">
-      <div class="chips" aria-label="On this page"><button type="button" class="chip" data-act="jump" data-to="rv-sample">Customer reviews (${rv.length})</button><button type="button" class="chip" data-act="jump" data-to="er-sample">Employee reviews (${er.length})</button><button type="button" class="chip" data-act="jump" data-to="work">Work here${live.length ? ` · ${live.length} jobs` : ''}</button></div>
-      <section class="box"><h2>Rating breakdown</h2><div class="bars">${bars}</div></section>
-      <h2 id="rv-sample" style="font-size:22px">Customer reviews</h2>${rv.map(r => reviewCard(r)).join('')}
-      ${emps}
-      ${work}
-    </div>
-    <aside class="side">
-      <div class="box"><h2>Contact and location</h2><div class="kv"><span>Address</span><span>Example Street, London</span></div><div class="kv"><span>Phone</span><span>+44 0000 000000 (example)</span></div><div class="kv"><span>Hours</span><span>Mon–Fri, 9 am–6 pm</span></div></div>
-      <div class="box"><div class="toolbar"><h2>Latest update</h2><span class="meta">Oct 2026</span></div><p style="color:var(--fg)">Example update. We just launched a fixed-price design sprint for early-stage startups.</p><p class="meta">Posted by the company. Updates never change ratings.</p></div>
-      <div class="box"><h2>Photos</h2><div class="photos" style="grid-template-columns:1fr 1fr">${['Studio','Team','Client work','Offsite'].map(p => `<div class="ph">${p}<small>Photo placeholder</small></div>`).join('')}</div></div>
-      <div class="box soft"><h2>What “Verified” means</h2><p>We confirmed this company controls its email domain or website, or checked its registration documents. Verification never changes its rating.</p></div>
-      <div class="box"><h2>Want a profile like this?</h2><p>This profile uses Plus: website and contact buttons, photos and updates for [[PP]] a year. ${LAUNCH ? 'Basic is free for your first year.' : 'Basic costs [[PB]] a year.'}</p><a class="btn p" href="#list">List your company</a></div>
-    </aside></div></div>`;
-}
 
 const PERKS = ['Verified company badge','A link to your website on your profile','Employer branding page: why work here, benefits, team size and photos','Job posts (coming soon)','Your own page in your city and category','Reply publicly to customer and employee reviews','Review links for customers and employees','Logo, photos, hours and contact details','Profile view stats'];
 const FAQS = [
@@ -1320,7 +1338,7 @@ function rvList(list, cid) {
   return bar + (items.length ? items.map(([r, i]) => reviewCard(r, i, cid)).join('') : `<div class="empty"><b>No reviews match these filters</b><button class="btn g" type="button" data-act="rv-clear">Clear filters</button></div>`);
 }
 const WARNINGS = {};
-const warnBan = (c, w) => `<div class="wrap"><div class="warnban" role="note">${svgI('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>', 22)}<div><b>Warning: review manipulation</b>On ${esc(w.date)}, we found evidence that ${esc(c.name)} ${esc(w.text)} We removed the affected reviews. <a href="#removals">How we handle this</a></div></div></div>`;
+const warnBan = (c, w) => `<div class="wrap"><div class="warnban" role="note">${svgI('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>', 22)}<div><b>Warning: review manipulation</b>On ${esc(w.date)}, we found evidence that ${esc(c.name)} ${esc(w.text)} We removed the affected reviews. <a href="#guidelines">How we handle this</a></div></div></div>`;
 function vInvite(c, k) {
   const list = reviewsFor(c.id), er = empData(c.id).reviews; const team = k === 'e';
   return `<div class="wrap"><div class="invite">${coLogo(c, 84)}
@@ -1391,13 +1409,13 @@ function claimPanel() {
   const labels = ['Find your company', 'Your details', 'Verify and plan'];
   const steps = typeof st === 'number' && st < 4 ? `<div class="progress" aria-label="Progress">${labels.map((l, i) => `<span class="${st === i ? 'on' : ''}">${i + 1} · ${l}</span>`).join('')}</div>` : '';
   const co = d.coId ? BYID[d.coId] : null;
-  if (!S.user) return `<div class="formcard"><h2>Log in to claim or add your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Use your work email if you have one: it's the fastest way to get verified.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
+  if (!S.user) return `<div class="formcard"><h2>Log in to claim or add your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail. A work email gets verified fastest.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
   if (st === 'req') { const c = BYID[S.reqCo]; return `<form class="formcard" id="req-form" novalidate><h2>Request access to ${esc(c.name)}</h2>
       <div class="cosum">${avatar(c, 44, 15)}<div style="flex:1"><b>${esc(c.name)}</b><span class="meta">${esc(c.web)} · already managed</span></div></div>
       <p style="color:var(--muted)">Someone at ${esc(c.name)} already manages this page. We’ll ask them to add you. If they don’t reply within 7 days, our team reviews your request and may ask for documents.</p>
       <div class="row"><div class="field"><label class="l" for="r-person">Your name</label><input id="r-person" type="text"><p class="err" id="err-r-person" hidden>Enter your name.</p></div>
         <div class="field"><label class="l" for="r-role">Your role</label><select id="r-role">${ROLES.map(r => `<option>${r}</option>`).join('')}</select></div></div>
-      <div class="field"><label class="l" for="r-email">Work email</label><input id="r-email" type="email" placeholder="you@${esc(c.web)}"><p class="err" id="err-r-email" hidden>Enter a valid email address.</p></div>
+      <div class="field"><label class="l" for="r-email">Email</label><input id="r-email" type="email" placeholder="you@${esc(c.web)}"><p class="err" id="err-r-email" hidden>Enter a valid email address.</p></div>
       <div class="field"><label class="l" for="r-msg">Message to the current admin <span class="meta">(optional)</span></label><textarea id="r-msg" rows="3" maxlength="500"></textarea></div>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="submit">Send request</button><button class="btn g lg" type="button" data-act="cf-restart">Back to search</button></div></form>`; }
   if (st === 'req-done') { const c = BYID[S.reqCo]; return `<div class="formcard"><div class="vstate ok">${TICK('var(--accent-soft-ink)')}<span>Request sent for ${esc(c.name)}.</span></div><p style="color:var(--muted)">We’ll contact the current admin and email you when they respond. If they don’t within 7 days, our team reviews your request.</p><div><button class="btn g lg" type="button" data-act="cf-restart">Back to search</button></div></div>`; }
@@ -1416,7 +1434,7 @@ function claimPanel() {
       <h3 style="font-size:17px">About you</h3>
       <div class="row"><div class="field"><label class="l" for="b-person">Your name</label><input id="b-person" type="text" value="${esc(d.person || '')}"><p class="err" id="err-b-person" hidden>Enter your name.</p></div>
         <div class="field"><label class="l" for="b-role">Your role</label><select id="b-role">${ROLES.map(r => `<option ${d.role === r ? 'selected' : ''}>${r}</option>`).join('')}</select></div></div>
-      <div class="row"><div class="field"><label class="l" for="b-email">Work email</label><input id="b-email" type="email" value="${esc(d.email || '')}" placeholder="you@${esc(domOf(d.web) || 'yourcompany.com')}" aria-describedby="hint-b-email"><p class="meta" id="hint-b-email">An email at your company’s website is the fastest way to get verified.</p><p class="err" id="err-b-email" hidden>Enter an email address like name@company.com.</p></div>
+      <div class="row"><div class="field"><label class="l" for="b-email">Email</label><input id="b-email" type="email" value="${esc(d.email || '')}" placeholder="you@${esc(domOf(d.web) || 'yourcompany.com')}" aria-describedby="hint-b-email"><p class="meta" id="hint-b-email">Any email works, including Gmail. One at your company’s website gets verified fastest.</p><p class="err" id="err-b-email" hidden>Enter an email address like name@company.com.</p></div>
         <div class="field"><label class="l" for="b-phone">Phone</label><input id="b-phone" type="tel" value="${esc(d.phone || '')}"><p class="err" id="err-b-phone" hidden>Enter a phone number with at least 8 digits.</p></div></div>
       <label class="check"><input id="b-agree" type="checkbox" ${d.agree ? 'checked' : ''}><span>I work for this company and can manage its page. I understand paying never affects reviews or ratings.</span></label>
       <p class="err" id="err-b-agree" hidden>Tick the box to continue.</p>
@@ -1425,17 +1443,17 @@ function claimPanel() {
     const opt = (k, title, desc, rec) => `<button type="button" class="vopt" data-act="cf-method" data-m="${k}" aria-pressed="${m === k}">${rec ? '<span class="rec">Fastest</span>' : ''}<b>${title}</b><small>${desc}</small></button>`;
     let body = '';
     if (m === 'email') body = !match
-      ? `<div class="vstate warn"><span><b>${esc(d.email)}</b> isn’t an email at <b>${esc(dom || 'your company website')}</b>, so we can’t use it to verify. <button class="link" type="button" data-act="cf-edit">Change email</button> or choose another way above.</span></div>`
-      : `<p>We’ll send a 6-digit code to <b>${esc(d.email)}</b> to confirm you can receive email at ${esc(dom)}. Reply with it and your badge goes live.</p>`;
+      ? `<p>We’ll email <b>${esc(d.email)}</b> to confirm the claim. Because it isn’t an address at ${esc(dom || 'your company website')}, we’ll also ask for one simple proof that you run ${esc(d.name)}, like a document or a website check. Gmail and other personal addresses are fine.</p>`
+      : `<p>We’ll email <b>${esc(d.email)}</b> to confirm you can receive email at ${esc(dom)}. Reply to it and your badge goes live.</p>`;
     if (m === 'website') body = `<p>Add <b>one</b> of these to ${esc(dom || 'your website')}. You can remove it after you’re verified.</p>
       <div class="field"><span class="l">Option 1 · DNS TXT record</span><div class="codebox">knowthecompany-verification=${tok}</div></div>
       <div class="field"><span class="l">Option 2 · Tag in your homepage’s &lt;head&gt;</span><div class="codebox">&lt;meta name="knowthecompany-verification" content="${tok}"&gt;</div></div>
       <p class="meta">After you send your claim, we check your DNS record or homepage and email you the result.</p>`;
     if (m === 'docs') body = `<p>We’ll email you to ask for one official document that shows the company name, like a registration certificate or a recent invoice. Only our team sees it.</p>
       <div class="field"><label class="l" for="cf-doctype">Document you’ll send</label><select id="cf-doctype">${['Company registration certificate','Tax or VAT/GST registration','Recent invoice in the company’s name','Other official document'].map(x => `<option>${x}</option>`).join('')}</select></div>`;
-    const ready = m !== 'email' || match;
-    return `<div class="formcard">${steps}<h2>Verify you work at ${esc(d.name)}</h2><p style="color:var(--muted)">Choose one way. Most companies use their work email.</p>
-      <div class="vopts">${opt('email', 'Work email', match ? `Code to ${esc(d.email)}` : 'Needs an email at your website', match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
+    const ready = true;
+    return `<div class="formcard">${steps}<h2>Verify you work at ${esc(d.name)}</h2><p style="color:var(--muted)">Choose one way. Any email works, including Gmail.</p>
+      <div class="vopts">${opt('email', 'Email', match ? `Confirm through ${esc(d.email)}` : `Through ${esc(d.email)}, plus one simple proof`, match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
       <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
@@ -1525,11 +1543,11 @@ function vList() {
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
     <section class="wrap sec"><div class="steps">
       <div class="step"><span>1</span><h3>Add details</h3><p>Company name, website, category, city and contact. About two minutes.</p></div>
-      <div class="step">${LAUNCH ? '<span>2</span><h3>Show it’s yours</h3><p>No payment for your first year. Choose how you’ll prove the company is yours: work email, website or documents.</p>' : '<span>2</span><h3>Pay [[PB]] for the year</h3><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
+      <div class="step">${LAUNCH ? '<span>2</span><h3>Show it’s yours</h3><p>No payment for your first year. Choose how you’ll prove the company is yours: email, website or documents.</p>' : '<span>2</span><h3>Pay [[PB]] for the year</h3><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
       <div class="step"><span>3</span><h3>Get verified</h3><p>We check your claim, then your Verified badge goes live and your dashboard opens.</p></div></div></section>
     <section class="wrap sec" id="list-form-area"><div class="layout">
       <div class="mainc">${panel}</div>
-      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: through your work email, a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
+      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: through your email (any address, including Gmail), a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
         <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
     </div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
@@ -2104,7 +2122,6 @@ async function submitClaim() {
   if (claimBlock()) { toast('Delete your reviewer account before claiming a company.'); render(); return; }
   const plan = (document.querySelector('input[name=plan]:checked') || {}).value || d.plan || 'basic'; d.plan = plan;
   const dom = domOf(d.web); const method = cf.method === 'docs' ? 'documents' : (cf.method || 'email');
-  if (method === 'email' && !domainMatch(d.email, d.web)) { toast('Choose another way to verify, or change your email.'); return; }
   const btn = document.querySelector('[data-act="cf-submit"]'); if (btn) btn.disabled = true;
   try {
     let wid = d.coId && BYID[d.coId] ? BYID[d.coId].wid : '';
@@ -2194,19 +2211,20 @@ document.addEventListener('submit', async e => {
     if (eR) { f.querySelector('[data-n="1"]').focus(); return; } if (eB) { f['r-body'].focus(); return; }
     const m = f['r-date'].value;
     if (!S.user) {
-      S.draft = { cid: c.id, rating: S.rating, title: f['r-title'].value, body: f['r-body'].value, date: m };
+      setDraft({ cid: c.id, rating: S.rating, title: f['r-title'].value, body: f['r-body'].value, date: m });
       S.returnTo = c.id; S.notice = 'Log in to post your review. Your draft is saved.';
       go('login'); window.scrollTo(0, 0); return;
     }
     if (!checkFirst(f, 'r-first')) return;
+    if (alreadyReviewed(c, 'customer')) { toast(`You've already reviewed ${c.name}. To post a new review, remove your earlier one from My reviews first.`, 7000); return; }
     busy(f, true);
     try {
       await insertItem('Reviews', { company: c.wid, companySlug: c.id.slice(3), type: 'customer', displayName: S.user.name, anonymous: false, rating: S.rating, title: f['r-title'].value.trim(), body, experienceDate: m || '', firstHand: true, invited: S.invitedFor === c.id });
     } catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
     addPending({ cid: c.id, type: 'customer', title: f['r-title'].value.trim() || body.slice(0, 80) });
-    S.invitedFor = ''; S.rating = 0; S.draft = null; S.sentFor = c.id; render();
+    S.invitedFor = ''; S.rating = 0; setDraft(null); S.sentFor = c.id; render();
     toast('Thanks. Your review is live.', 5000);
-    loadData().then(ch => { if (ch) renderKeep(); });
+    loadData(true).then(ch => { if (ch) renderKeep(); });
     return;
   }
 
@@ -2226,13 +2244,14 @@ document.addEventListener('submit', async e => {
       if (!checkFirst(f, 'i-first')) return;
       data = { type: 'interview', anonymous: true, jobTitle: v('i-role'), interviewOutcome: v('i-outcome'), interviewDifficulty: v('i-diff'), interviewExperience: v('i-exp'), body: v('i-process'), interviewQuestions: v('i-questions') };
     }
+    if (data.type !== 'interview' && alreadyReviewed(c, data.type)) { toast(`You've already reviewed ${c.name} as an employee. To post a new review, remove your earlier one from My reviews first.`, 7000); return; }
     busy(f, true);
     try { await insertItem('Reviews', { ...data, company: c.wid, companySlug: c.id.slice(3), firstHand: true, workEmailVerified: workVerified(c), invited: S.invitedFor === c.id }); }
     catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
     addPending({ cid: c.id, type: data.type, title: data.jobTitle });
     S.emp = EMP_ZERO(); S.invitedFor = ''; delete S.formCache[id]; render();
     toast('Thanks. Your review is live.', 5000);
-    loadData().then(ch => { if (ch) renderKeep(); });
+    loadData(true).then(ch => { if (ch) renderKeep(); });
     return;
   }
 
@@ -2253,7 +2272,7 @@ document.addEventListener('submit', async e => {
       S.addPrefill = ''; toast(`${name} added. Now share your experience.`); navigate(c.id);
     } catch (err) {
       busy(f, false);
-      if (err && err.status === 409) { await loadData(); const ex = BYWID[cid]; toast('That website is already listed'); if (ex) navigate(ex.id); return; }
+      if (err && err.status === 409) { await loadData(true); const ex = BYWID[cid]; toast('That website is already listed'); if (ex) navigate(ex.id); return; }
       toast(errMsg(err), 5000);
     }
     return;
@@ -2329,7 +2348,7 @@ document.addEventListener('click', async e => {
     stop(); const wid = a.dataset.wid; if (!wid) return;
     if (!window.confirm('Remove this review? This can’t be undone.')) return;
     a.disabled = true;
-    try { await removeItem('Reviews', wid); await loadData(); render(); toast('Review removed'); }
+    try { await removeItem('Reviews', wid); await loadData(true); render(); toast('Review removed'); }
     catch (err) { a.disabled = false; toast(errMsg(err), 5000); }
     return;
   }
@@ -2344,7 +2363,6 @@ document.addEventListener('click', async e => {
     return;
   }
   if (act === 'cf-submit') { stop(); submitClaim(); return; }
-  if (['rv-helpful', 'go-plus', 'demo-card', 'demo-poster', 'google-login', 'pay', 'cf-send', 'cf-verify', 'cf-check', 'cf-docs', 'report'].includes(act)) { stop(); return; }
 });
 
 document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.jfilter === 'q') { S.jobFilter.q = t.value; const r = document.getElementById('job-results'); if (r) r.innerHTML = jobResults(); } });
@@ -2511,7 +2529,7 @@ function setMeta(h) {
     if (l.length) o.aggregateRating = { '@type': 'AggregateRating', ratingValue: +avgOf(l).toFixed(1), reviewCount: l.length, bestRating: 5, worstRating: 1 };
     s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'ldjson'; s.textContent = JSON.stringify(o); document.head.appendChild(s); }
 }
-(() => { if (store.get('ktc_consent', null)) return; const el = document.getElementById('cookie'); el.innerHTML = '<p><b>Your privacy choices</b><br>We use essential storage to keep you logged in. With your OK, we also use analytics to improve the site. <a href="#privacy">Privacy policy</a></p><div class="row"><button class="btn p" type="button" data-act="cookie" data-v="all">Accept analytics</button><button class="btn g" type="button" data-act="cookie" data-v="essential">Essential only</button></div>'; el.hidden = false; })();
+(() => { if (store.get('ktc_consent', null)) return; const el = document.getElementById('cookie'); el.innerHTML = '<p><b>Your privacy choices</b><br><span class="ck-long">We use essential storage to keep you logged in. With your OK, we also use analytics to improve the site. </span><span class="ck-short">Analytics only with your OK. </span><a href="/privacy">Privacy policy</a></p><div class="row"><button class="btn p" type="button" data-act="cookie" data-v="all">Accept<span class="ck-long"> analytics</span></button><button class="btn g" type="button" data-act="cookie" data-v="essential">Essential only</button></div>'; el.hidden = false; })();
 let lastRoute = curRoute();
 function routeChanged() {
   const h = curRoute();
@@ -2571,7 +2589,6 @@ document.addEventListener('click', e => {
   const act = a.dataset.act;
   if (act === 'open-search') { const p = document.getElementById('searchpanel'); p.hidden = !p.hidden; if (!p.hidden) setTimeout(() => document.getElementById('top-search').focus(), 20); return; }
   if (act === 'close-search') { document.getElementById('searchpanel').hidden = true; return; }
-  if (act === 'rv-helpful') { const H = store.get('tn_helpful', {}); if (H[a.dataset.key]) delete H[a.dataset.key]; else H[a.dataset.key] = 1; store.set('tn_helpful', H); renderKeep(); return; }
   if (act === 'rv-report') { openModal(`<form id="report-form" data-key="${a.dataset.key}" novalidate style="display:flex;flex-direction:column;gap:14px">${mHead('Report this review')}<p>Reports are checked by our team. We remove reviews only if they break our <a href="#guidelines" data-act="close-modal-go">guidelines</a>, not for being negative.</p><fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px"><legend class="l" style="margin-bottom:6px">What's wrong with it?</legend>${RPT_REASONS.map((x, i) => `<label class="radio"><input type="radio" name="rp-reason" value="${esc(x)}" ${i ? '' : ''}>${esc(x)}</label>`).join('')}</fieldset><p class="err" id="err-rp" hidden>Choose a reason.</p><div class="field"><label class="l" for="rp-note">Details <span class="meta">(optional)</span></label><textarea id="rp-note" rows="3" maxlength="600"></textarea></div><div><button class="btn p" type="submit">Send report</button></div></form>`); return; }
   if (act === 'rv-star') { const n = +a.dataset.n; S.rvStar = S.rvStar === n ? 0 : n; renderKeep(); return; }
   if (act === 'rv-proof') { S.rvProof = !S.rvProof; renderKeep(); return; }
@@ -2579,7 +2596,7 @@ document.addEventListener('click', e => {
   if (act === 'share-co') { const c = BYID[a.dataset.id]; const u = location.origin + urlFor(c.id); const tx = encodeURIComponent(`${c.name} reviews from customers and employees: ${u}`);
     openModal(`${mHead('Share ' + esc(c.name) + "'s page")}<div class="field"><label class="l" for="sh-url">Link</label><div style="display:flex;gap:8px"><input id="sh-url" type="text" readonly value="${u}" class="mono" style="flex:1;min-width:0;background:var(--surface)"><button class="btn p" type="button" data-act="copy-text" data-text="${u}">Copy</button></div></div><div class="sharegrid"><a href="https://wa.me/?text=${tx}" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}" target="_blank" rel="noopener">LinkedIn</a><a href="https://twitter.com/intent/tweet?text=${tx}" target="_blank" rel="noopener">X</a><a href="mailto:?subject=${encodeURIComponent(c.name + ' reviews')}&body=${tx}">Email</a></div>`); return; }
   if (act === 'suggest') { const c = BYID[a.dataset.id]; openModal(`<form id="suggest-form" data-id="${c.id}" novalidate style="display:flex;flex-direction:column;gap:14px">${mHead('Suggest an edit')}<p>Tell us what's wrong on ${esc(c.name)}'s page. We check every suggestion before changing anything.</p><div class="field"><label class="l" for="sg-what">What needs fixing?</label><select id="sg-what">${['Website', 'Name', 'Category', 'Country', 'Description', 'The company has closed', 'This is a duplicate page', 'Something else'].map(x => `<option>${x}</option>`).join('')}</select></div><div class="field"><label class="l" for="sg-note">What should it say?</label><textarea id="sg-note" rows="3" maxlength="600" placeholder="For example, the correct website or the page this duplicates"></textarea><p class="err" id="err-sg" hidden>Add a short explanation, at least 10 characters.</p></div><div><button class="btn p" type="submit">Send suggestion</button></div></form>`); return; }
-  if (act === 'inv-rate') { const id = a.dataset.id; S.draft = { cid: id, rating: +a.dataset.n, title: '', body: '', date: '' }; S.invitedFor = id; S.returnTab = 'customers'; S.scrollTo = 'review-form'; navigate(id); return; }
+  if (act === 'inv-rate') { const id = a.dataset.id; setDraft({ cid: id, rating: +a.dataset.n, title: '', body: '', date: '' }); S.invitedFor = id; S.returnTab = 'customers'; S.scrollTo = 'review-form'; navigate(id); return; }
   if (act === 'inv-go') { e.preventDefault(); S.invitedFor = a.dataset.id; S.returnTab = a.dataset.tab; S.scrollTo = 'emp-form'; navigate(a.dataset.id); return; }
   if (act === 'cookie') { store.set('ktc_consent', { analytics: a.dataset.v === 'all', at: todayISO() }); document.getElementById('cookie').hidden = true; toast(a.dataset.v === 'all' ? 'Thanks. Analytics is on.' : 'Only essential storage is used.'); return; }
   if (act === 'cp-del' && S.user && S.user.coId) { const own = {}; own[a.dataset.k] = ''; saveProf(S.user.coId, own); render(); toast('Removed'); return; }
@@ -2645,23 +2662,11 @@ document.addEventListener('click', e => {
   if (act === 'cf-edit') { S.listStep = 1; S.cf.codeSent = false; cfRefresh(); return; }
   if (act === 'cf-back-verify') { S.listStep = 2; cfRefresh(); return; }
   if (act === 'cf-method') { S.cf.method = a.dataset.m; cfRefresh(false); return; }
-  if (act === 'cf-send') { S.cf.codeSent = true; S.cf.code = String(100000 + Math.floor(Math.random() * 900000)); cfRefresh(false); toast(`Code sent to ${S.listData.email} (demo)`); const i = document.getElementById('cf-code'); if (i) i.focus(); return; }
-  if (act === 'cf-verify') { const i = document.getElementById('cf-code'); const ok = i && i.value.trim() === S.cf.code; document.getElementById('err-cf-code').hidden = ok; if (!ok) { i.focus(); return; } S.listData.verified = 'email'; S.listStep = 3; cfRefresh(); toast('Work email verified'); return; }
-  if (act === 'cf-check') { S.listData.verified = 'website'; S.listStep = 3; cfRefresh(); toast('Website check passed (demo)'); return; }
-  if (act === 'cf-docs') { const fl = document.getElementById('cf-file'); const ok = fl && fl.files && fl.files.length; document.getElementById('err-cf-file').hidden = !!ok; if (!ok) { fl.focus(); return; } S.listData.verified = 'docs'; S.listData.docType = document.getElementById('cf-doctype').value; S.listStep = 3; cfRefresh(); toast('Document sent for review (demo)'); return; }
   if (act === 'pick-plan') { e.preventDefault(); S.listData = { ...S.listData, plan: a.dataset.plan }; render(); const el = document.getElementById('list-form-area'); el.scrollIntoView({ behavior: 'smooth' }); const r = document.querySelector(`input[name=plan][value=${a.dataset.plan}]`); if (r) r.checked = true; return; }
-  if (act === 'go-plus') { S.user.plan = 'plus'; S.listData.plusFrom = todayISO(); store.set('tn_user', S.user); store.set('tn_listing', S.listData); render(); toast(LAUNCH ? `Plus trial started for ${PLUS_TRIAL_DAYS} days (demo)` : `Upgraded to Plus (demo)`); return; }
-  if (act === 'demo-card') { toast('On the live site this downloads a square image of the review.'); return; }
-  if (act === 'google-login') { const type = a.dataset.type; finishLogin(type, type === 'business' ? (S.listData.email || 'owner@brightline.example') : 'priya.s@gmail.com', type === 'business' ? '' : 'Priya S.'); toast('Signed in with Google (demo)'); return; }
-  if (act === 'demo-poster') { toast('On the live site this downloads a printable A4 poster.'); return; }
-  if (act === 'demo-contact') { e.preventDefault(); toast(`On the live site this opens ${a.dataset.what === 'call' ? 'a phone call' : a.dataset.what === 'email' ? 'an email' : 'a WhatsApp chat'} with the company.`); return; }
   if (act === 'to-form') { e.preventDefault(); document.getElementById('list-form-area').scrollIntoView({ behavior: 'smooth' }); const f = document.getElementById('b-name'); if (f) f.focus({ preventScroll: true }); }
   if (act === 'list-back') { S.listStep = 1; render(); document.getElementById('list-form-area').scrollIntoView(); }
-  if (act === 'pay') { const pr = document.querySelector('input[name=plan]:checked'); if (pr) S.listData.plan = pr.value; S.listStep = 4; S.listData.listedAt = todayISO();
-    { const d = S.listData, id = 'co-' + slug(d.name); if (!BYID[id]) { const ccOf = Object.entries(COUNTRY).find(([k, n]) => n === d.country); const row = [d.name, (d.web || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, ''), d.cat, ccOf ? ccOf[0] : 'WW', 'No description yet. The owner can add one from the dashboard.', 2]; const c = mkCo(row); ADDED.push(row); store.set('tn_added', ADDED); COS.push(c); BYID[c.id] = c; ensureCat(c.cat, c.catId).items.push(c); } CLAIMS[id] = { by: d.email, person: d.person, role: d.role, verified: d.verified || 'docs', at: todayISO() }; store.set('tn_claims', CLAIMS); } S.user = { type: 'business', email: S.listData.email, name: S.listData.name, plan: S.listData.plan || 'basic' }; store.set('tn_user', S.user); store.set('tn_listing', S.listData); render(); document.getElementById('list-form-area').scrollIntoView(); toast(LAUNCH ? 'Free listing created' : 'Demo payment complete'); }
   if (act === 'clear-filters') { S.catFilter = { country: '', text: '', sort: 'name' }; render(); }
   if (act === 'tab') { S.dashTab = a.dataset.tab; render(); }
-  if (act === 'report') toast('Report sent to moderators (demo)');
   if (act === 'copy') {
     const inp = document.getElementById('share-link');
     const done = () => { S.copied = true; a.textContent = 'Copied'; toast('Link copied'); };
@@ -2684,42 +2689,11 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('submit', e => {
   const f = e.target; e.preventDefault();
-  if (f.id === 'add-form') {
-    const name = f['a-name'].value.trim().replace(/\s+/g, ' ');
-    const web = f['a-web'].value.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');
-    const eN = name.length < 2 || !slug(name), eW = !/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/.test(web);
-    document.getElementById('err-a-name').hidden = !eN; document.getElementById('err-a-web').hidden = !eW;
-    if (eN) { f['a-name'].focus(); return; } if (eW) { f['a-web'].focus(); return; }
-    const W2 = webs2(); const dup = COS.find(c => c.id === 'co-' + slug(name) || c.web === web || W2[c.id] === domOf(web));
-    if (dup) { toast(`${dup.name} is already listed`); navigate(dup.id); return; }
-    const row = [name, web, f['a-cat'].value, f['a-cc'].value, 'No description yet. The owner can add one by claiming this profile.', 1];
-    const c = mkCo(row); ADDED.push(row); store.set('tn_added', ADDED);
-    COS.push(c); BYID[c.id] = c; ensureCat(c.cat, c.catId).items.push(c);
-    S.addPrefill = ''; toast(`${name} added. Now share your experience.`); navigate(c.id); return;
-  }
   if (f.id === 'hero-jobs-form') { const what = f['hj-what'].value.trim(), where = f['hj-where'].value.trim(); S.jobFilter = { q: [what, where].filter(Boolean).join(' '), type: '', mode: '' }; navigate('jobs'); return; }
   if (f.id === 'hero-search-form' && S.heroTab === 'salaries') { const q = f.querySelector('input').value.trim().toLowerCase(); document.querySelectorAll('.sugg').forEach(b => b.hidden = true);
     const m = q && (COS.find(c => c.name.toLowerCase() === q || c.web === q) || COS.find(c => c.name.toLowerCase().startsWith(q)));
     if (m) { S.returnTab = 'salaries'; navigate(m.id); } else runSearch(q); return; }
   if (f.id === 'top-search-form' || f.id === 'hero-search-form' || f.id === 'page-search-form') { const inp = f.querySelector('input'); document.querySelectorAll('.sugg').forEach(b => b.hidden = true); runSearch(inp.value); return; }
-  if (f.id === 'review-form') {
-    if (reviewBlock()) { toast('Company accounts can’t write reviews.'); return; }
-    const c = BYID[curRoute()]; const body = f['r-body'].value.trim();
-    const eR = !S.rating, eB = body.length < 20;
-    document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
-    if (eR) { f.querySelector('[data-n="1"]').focus(); return; } if (eB) { f['r-body'].focus(); return; }
-    const m = f['r-date'].value;
-    if (!S.user || S.user.type !== 'reviewer') {
-      S.draft = { cid: c.id, rating: S.rating, title: f['r-title'].value, body: f['r-body'].value, date: m };
-      S.returnTo = c.id;
-      S.notice = S.user ? 'Business accounts can’t post reviews. Log in with a reviewer account to post this one.' : 'Log in to post your review. Your draft is saved.';
-      go('login'); window.scrollTo(0, 0); return;
-    }
-    const date = m ? new Date(m + '-01T00:00:00').toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Just now';
-    (REVIEWS[c.id] = REVIEWS[c.id] || []).unshift({ name: S.user.name, by: S.user.email, date, rating: S.rating, title: f['r-title'].value.trim(), body, invited: S.invitedFor === c.id || undefined }); S.invitedFor = '';
-    store.set('tn_reviews', REVIEWS); S.rating = 0; S.draft = null; render(); toast('Review posted');
-    const h = document.getElementById('rv-h'); if (h) h.scrollIntoView({ block: 'start' });
-  }
   if (f.id === 'emp-form' || f.id === 'sal-form' || f.id === 'int-form') {
     if (reviewBlock()) { toast('Company accounts can’t write reviews.'); return; }
     const c = BYID[curRoute()]; if (!c || !S.user || S.user.type !== 'reviewer') return;
@@ -2745,21 +2719,6 @@ document.addEventListener('submit', e => {
       done('interviews', { role: v('i-role'), outcome: v('i-outcome'), diff: v('i-diff'), exp: v('i-exp'), process: v('i-process'), questions: v('i-questions') }, 'Interview shared', 'in-h');
     }
   }
-  if (f.id === 'pitch-form') {
-    const v = id => f.querySelector('#' + id).value.trim();
-    const d = { name: v('w-name'), email: v('w-email'), company: v('w-company'), topic: v('w-topic'), title: v('w-title'), outline: v('w-outline'), sample: v('w-sample') };
-    const errs = { 'w-name': !d.name, 'w-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email), 'w-company': !d.company, 'w-topic': !d.topic, 'w-title': !d.title, 'w-outline': d.outline.length < 80, 'w-agree': !f.querySelector('#w-agree').checked };
-    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
-    if (first) { f.querySelector('#' + first).focus(); return; }
-    PITCHES.push({ ...d, at: new Date().toISOString() }); store.set('tn_pitches', PITCHES); S.pitchSent = true; render(); toast('Pitch sent'); window.scrollTo(0, 0);
-  }
-  if (f.id === 'contact-form') {
-    const v = id => f.querySelector('#' + id).value.trim();
-    const errs = { 'c-name': !v('c-name'), 'c-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('c-email')), 'c-msg': v('c-msg').length < 20 };
-    let first = null; Object.entries(errs).forEach(([k, bad]) => { document.getElementById('err-' + k).hidden = !bad; if (bad && !first) first = k; });
-    if (first) { f.querySelector('#' + first).focus(); return; }
-    S.contactSent = true; render(); toast('Message sent'); window.scrollTo(0, 0);
-  }
   if (f.id === 'job-form') {
     const v = id => f.querySelector('#' + id).value.trim();
     const d = { title: v('j-title'), loc: v('j-loc'), type: v('j-type'), mode: v('j-mode'), pay: v('j-pay'), desc: v('j-desc'), apply: v('j-apply') };
@@ -2776,27 +2735,6 @@ document.addEventListener('submit', e => {
     const NE = { sample: false, why, benefits: [...f.querySelectorAll('input[id^="ep-b"]:checked')].map(i => i.value), size: f.querySelector('#ep-size').value, hiring: f.querySelector('#ep-hiring').checked, roles: '' };
     if (S.user && S.user.coId) saveProf(S.user.coId, { employerPage: NE }); else { EMPLOYER = NE; store.set('tn_employer', EMPLOYER); } render(); toast('Employer page saved');
   }
-  if (f.id === 'login-form') {
-    const type = f.dataset.type; const email = f['l-email'].value.trim(); const nameEl = f.querySelector('#l-name'); const name = nameEl ? nameEl.value.trim() : '';
-    const eE = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); const eN = nameEl && !name;
-    document.getElementById('err-l-email').hidden = !eE; if (nameEl) document.getElementById('err-l-name').hidden = !eN;
-    if (eN) { nameEl.focus(); return; } if (eE) { f['l-email'].focus(); return; }
-    const pw = f['l-pass'].value; const eP = pw.length < 8; document.getElementById('err-l-pass').hidden = !eP; if (eP) { f['l-pass'].focus(); return; }
-    finishLogin(type, email, name);
-  }
-  if (f.id === 'code-form') {
-    const type = f.dataset.type; const a = S.auth[type]; const v = f['l-code'].value.replace(/\D/g, '');
-    const bad = v !== a.code; document.getElementById('err-l-code').hidden = !bad; if (bad) { f['l-code'].focus(); return; }
-    finishLogin(type, a.email, a.name);
-  }
-  if (false) { const type = '', a = {}; const biz = type === 'business';
-    const ownListing = biz && S.listData.email && S.listData.email.toLowerCase() === a.email.toLowerCase();
-    S.user = biz ? (ownListing ? { type, email: a.email, name: S.listData.name } : { type, email: a.email, name: '' }) : { type, email: a.email, name: a.name };
-    store.set('tn_user', S.user); S.auth[type] = { step: 1 }; S.notice = '';
-    const back = S.returnTo; S.returnTo = '';
-    toast(back ? (S.returnTab ? 'Logged in. You can post anonymously now.' : 'Logged in. Your draft is ready to post.') : 'Logged in');
-    go(back || (biz ? 'dashboard' : 'my-reviews')); window.scrollTo(0, 0);
-  }
   if (f.id === 'list-form') {
     const v = id => (f[id] ? f[id].value.trim() : '');
     const claim = S.listData.mode === 'claim';
@@ -2809,25 +2747,7 @@ document.addEventListener('submit', e => {
     let first = null; Object.entries(errs).forEach(([k, bad]) => { const el = errEl(k); if (el) el.hidden = !bad; if (bad && !first) first = k; });
     S.listData = d;
     if (first) { f[first].focus(); return; }
-    S.cf = { method: domainMatch(d.email, d.web) ? 'email' : 'website' }; S.listStep = 2; cfRefresh();
-  }
-  if (f.id === 'req-form') {
-    if (claimBlock()) { toast('Delete your reviewer account before managing a company.'); return; }
-    const v = id => f[id].value.trim(); const bad = { 'r-person': !v('r-person'), 'r-email': !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('r-email')) };
-    let first = null; Object.entries(bad).forEach(([k, b]) => { document.getElementById('err-' + k).hidden = !b; if (b && !first) first = k; });
-    if (first) { f[first].focus(); return; }
-    REQS.push({ co: S.reqCo, person: v('r-person'), role: f['r-role'].value, email: v('r-email'), msg: v('r-msg'), at: todayISO() }); store.set('tn_requests', REQS);
-    S.listStep = 'req-done'; cfRefresh(); toast('Request sent (demo)');
-  }
-  if (f.id === 'report-form') {
-    const r = f.querySelector('input[name="rp-reason"]:checked'); document.getElementById('err-rp').hidden = !!r; if (!r) return;
-    const R = store.get('tn_reported', {}); R[f.dataset.key] = { reason: r.value, note: f.querySelector('#rp-note').value.trim(), at: todayISO() }; store.set('tn_reported', R);
-    closeModals(); renderKeep(); toast('Report sent. Our team will review it.'); return;
-  }
-  if (f.id === 'suggest-form') {
-    const note = f.querySelector('#sg-note').value.trim(); document.getElementById('err-sg').hidden = note.length >= 10; if (note.length < 10) { f.querySelector('#sg-note').focus(); return; }
-    const E = store.get('tn_edits', []); E.push({ co: f.dataset.id, what: f.querySelector('#sg-what').value, note, at: todayISO() }); store.set('tn_edits', E);
-    closeModals(); toast('Thanks. We check suggestions within a few days.'); return;
+    S.cf = { method: 'email' }; S.listStep = 2; cfRefresh();
   }
   if (f.id === 'cprof-form' && S.user && S.user.coId) {
     const g = id => f.querySelector('#' + id); const val = id => g(id) ? g(id).value.trim() : '';
@@ -2888,7 +2808,7 @@ document.addEventListener('click', e => {
   if (r === curRoute()) { canonicalUrl(); render(); window.scrollTo(0, 0); } else navigate(r);
 });
 canonicalUrl();
-subscribeMember(s => { syncUser(s); render(); });
+subscribeMember(s => { syncUser(s); render(); loadMine().then(ch => { if (ch) renderKeep(); }).catch(() => {}); });
 loadData().then(changed => {
   if (!changed) return;
   /* fresh data arrived after a cached draw: redraw, unless someone is typing in a form right now */

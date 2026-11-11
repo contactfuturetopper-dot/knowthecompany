@@ -33,8 +33,10 @@ const reviews = [
   { _id: 'r3', _owner: 'm2', _createdDate: '2026-11-03T00:00:00Z', _updatedDate: '2026-11-03T01:00:00Z', company: 'notion.com', type: 'interview', jobTitle: 'Designer', interviewOutcome: 'No offer', interviewDifficulty: 'Hard', interviewExperience: 'Neutral', body: 'Three rounds over two weeks, friendly panel.' },
   { _id: 'r4', _owner: 'm3', _createdDate: '2026-11-04T00:00:00Z', _updatedDate: '2026-11-04T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast', body: 'Delivered in ten minutes, everything fresh and well packed.' },
   { _id: 'r6', _owner: 'm1', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T01:00:00Z', company: 'zepto.com', type: 'customer', displayName: 'Owner', rating: 1, title: 'OWNER REVIEW', body: 'OWNER REVIEW written by a company account, must never show.' },
-  { _id: 'r7', _owner: 'm4', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T00:00:00Z', _publishStatus: 'PUBLISHED', company: 'razorpay.com', type: 'customer', displayName: 'Sneaky', rating: 5, title: 'Posted just now', body: 'Posted by its writer, goes live straight away.', proofChecked: true, workEmailVerified: true, reply: 'FAKE REPLY stored on the review by its writer.' },
+  { _id: 'r7', _owner: 'm7', _createdDate: '2026-11-06T00:00:00Z', _updatedDate: '2026-11-06T00:00:00Z', _publishStatus: 'PUBLISHED', company: 'razorpay.com', type: 'customer', displayName: 'Sneaky', rating: 5, title: 'Posted just now', body: 'Posted by its writer, goes live straight away.', proofChecked: true, workEmailVerified: true, reply: 'FAKE REPLY stored on the review by its writer.' },
   { _id: 'r8', _owner: 'c0f544a7-207e-490b-b7d9-830ef39f49c7', _createdDate: '2026-11-10T00:00:00Z', _updatedDate: '2026-11-10T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Meera J.', rating: 4, title: 'Old but good', body: 'Imported review from email feedback, confirmed with the reviewer.', importedFrom: 'Email or message', originalDate: '2025-03-10' },
+  { _id: 'r9', _owner: 'm4', _createdDate: '2026-10-01T00:00:00Z', _updatedDate: '2026-10-01T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 1, title: 'SECOND REVIEW', body: 'An older second review by the same person, must not count.' },
+  { _id: 'r10', _owner: 'm8', _createdDate: '2026-11-07T00:00:00Z', _updatedDate: '2026-11-07T00:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Huge', rating: 1000, title: 'HUGE RATING', body: 'A rating outside 1 to 5 sent straight to Wix, must not count.' },
   { _id: 'r5', _owner: 'm3', _createdDate: '2026-11-05T00:00:00Z', _updatedDate: '2026-11-05T01:00:00Z', company: 'zeptonow.com', type: 'customer', displayName: 'Ravi', rating: 5, title: 'Fast again', body: 'Delivered in ten minutes, everything fresh and well packed.' }
 ];
 const ownerContent = [
@@ -56,12 +58,13 @@ g.__mock = {
   removeItem: async (col, id) => { inserted.push([col + ' remove', id]); return null; },
   wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); if (/recovery/.test(path)) { inserted.push(['recovery', path]); return {}; } return { dataItem: { data: opts.body.dataItem.data } }; },
   WIX_CLIENT_ID: 'test-client',
+  toItem: x => x, imgSrc: () => '', imgRatio: () => 1,
   member: { member: { id: 'm5', loginEmail: 'asha@example.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
 };
 let src = fs.readFileSync('../app.js', 'utf8');
 const MEMBER_MOCK = { subscribeMember: fn => { globalThis.__memberFn = fn; return () => {}; }, getMemberState: () => globalThis.__mock.member, login: async () => ({ state: 'SUCCESS' }), register: async () => ({ state: 'EMAIL_VERIFICATION_REQUIRED' }), verifyEmail: async () => ({ state: 'SUCCESS' }), logout: async () => {} };
 globalThis.__memberMock = MEMBER_MOCK;
-src = src.replace(/import\s*\{([^}]+)\}\s*from\s*"\/js\/wix\/(items|client|member-store|config)\.js";?/g, (m, names, mod) => {
+src = src.replace(/import\s*\{([^}]+)\}\s*from\s*"\/js\/wix\/(items|items-core|media|client|member-store|config)\.js";?/g, (m, names, mod) => {
   const parts = names.split(',').map(x => x.trim()).filter(Boolean).map(x => { const [a, b] = x.split(/\s+as\s+/); return b ? `${a}: ${b}` : a; });
   const from = mod === 'member-store' ? 'globalThis.__memberMock' : 'globalThis.__mock';
   return `const { ${parts.join(', ')} } = ${from};`;
@@ -83,7 +86,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'FAKE REPLY', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
+  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'FAKE REPLY', 'SECOND REVIEW', 'HUGE RATING', '1000', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
   { const hs = [...app.querySelectorAll('h1,h2,h3,h4,h5,h6')].map(h => +h.tagName[1]); const issues = [];
     if (hs.filter(x => x === 1).length !== 1) issues.push('h1 x' + hs.filter(x => x === 1).length);
@@ -91,6 +94,28 @@ for (const r of routes) {
     if (hs.length && hs[0] !== 1) issues.push('starts h' + hs[0]);
     const can = (g.document.querySelector('link[rel="canonical"]') || {}).href || ''; const here = g.location.origin + g.location.pathname + g.location.hash; if (!can || can !== here) issues.push('canonical=' + can + ' url=' + here);
     if (issues.length) report.push(`   HEADINGS ${r}: ${[...new Set(issues)].join(' ')} [${hs.join('')}]`); }
+}
+// Text snapshots of the fixed pages, as a logged-out visitor sees them. The server puts these inside <main>
+// so search engines and AI crawlers that don't run JavaScript get the whole page (astro/src/lib/page.ts).
+{
+  globalThis.__memberFn({ loggedIn: false, loading: false, member: null, error: null });
+  const SNAP = ['about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'refunds', 'pricing', 'why-list', 'list', 'write-for-us', 'categories', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate'];
+  const KEEP = new Set(['H2', 'H3', 'H4', 'P', 'UL', 'OL', 'LI', 'A', 'STRONG', 'B', 'EM', 'I', 'SECTION', 'DIV', 'SPAN', 'SMALL', 'DL', 'DT', 'DD', 'BLOCKQUOTE', 'TABLE', 'TR', 'TD', 'TH', 'TBODY', 'THEAD', 'BR', 'DETAILS', 'SUMMARY']);
+  const snaps = {};
+  for (const r of SNAP) {
+    g.location.hash = r; g.window.dispatchEvent(new g.window.HashChangeEvent("hashchange")); await new Promise(res => setTimeout(res, 40));
+    const box = app.cloneNode(true);
+    box.querySelectorAll('h1, form, button, input, select, textarea, label, svg, img, script, style, nav.crumbs, .crumbs, [hidden], [aria-hidden="true"], #cookie, .toast').forEach(el => el.remove());
+    const walk = el => { for (const c of [...el.children]) { walk(c); if (!KEEP.has(c.tagName)) c.replaceWith(...c.childNodes); else { for (const at of [...c.attributes]) if (!(c.tagName === 'A' && at.name === 'href')) c.removeAttribute(at.name); if (c.tagName === 'A') { const h = c.getAttribute('href') || ''; if (!/^(\/|https:|mailto:)/.test(h) || h.startsWith('#')) c.replaceWith(...c.childNodes); } } } };
+    walk(box);
+    box.querySelectorAll('div, span, section').forEach(el => { if (!el.textContent.trim()) el.remove(); else el.replaceWith(...el.childNodes); });
+    box.querySelectorAll('p, li, h2, h3, h4').forEach(el => { if (!el.textContent.trim()) el.remove(); });
+    const html = box.innerHTML.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
+    snaps[r] = html;
+  }
+  fs.writeFileSync('../data/page-snapshots.json', JSON.stringify(snaps, null, 1));
+  report.push('page snapshots: ' + Object.entries(snaps).map(([k, v]) => k + ' ' + v.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length + 'w').join(', '));
+  globalThis.__memberFn(globalThis.__mock.member);
 }
 // a few interactions: company tabs and a customer review submission
 g.location.hash = 'co-1password'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 30));
@@ -198,7 +223,7 @@ report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '
   const out = [];
   const DEFAULT_DESC = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   for (const r of [...pages, ...tools, ...posts]) {
-    await go(r);
+    g.location.hash = r; g.window.dispatchEvent(new g.window.HashChangeEvent("hashchange")); await new Promise(res => setTimeout(res, 40));
     const h1el = app.querySelector('h1'); let intro = '';
     if (h1el) { let n = h1el; for (let i = 0; i < 6 && n; i++) { n = n.nextElementSibling || (n.parentElement && n.parentElement.nextElementSibling); if (n && n.tagName === 'P' && n.textContent.trim().length > 30) { intro = n.textContent.trim(); break; } } }
     const [ah1, aintro] = AUTH[r] || [];

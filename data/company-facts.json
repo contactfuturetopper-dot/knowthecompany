@@ -59,9 +59,14 @@
    {
     "fact": "description",
     "url": "https://1password.com/company"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://1password.com/legal/terms-of-service"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "AgileBits Inc."
  },
  "a24films.com": {
   "name": "A24",
@@ -379,9 +384,14 @@
    {
     "fact": "description",
     "url": "https://www.outlookbusiness.com/enterprise/big-idea/blue-collared-workers-might-not-have-fancy-resumes-but-they-have-an-apna-6136"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://apna.co/terms-and-conditions"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Apnatime Tech Private Limited"
  },
  "babbel.com": {
   "name": "Babbel",
@@ -513,9 +523,14 @@
    {
     "fact": "description",
     "url": "https://backmarket.com/impact/en-us"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.backmarket.co.uk/en-gb/legal/other-information"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "JUNG S.A.S."
  },
  "baemin.com": {
   "name": "Baemin",
@@ -536,7 +551,7 @@
   ],
   "markets": "South Korea",
   "description": "Baemin, short for Baedal Minjok, is the delivery app of Woowa Brothers, a company Kim Bong-jin started in Seoul in 2010 as a five-person team, launching the app the same year. It is South Korea's largest food delivery platform and also runs a Baemin Club membership, separate apps for restaurant owners and delivery riders, and a wholesale ingredient store for restaurants. Woowa Brothers is a wholly owned subsidiary of Delivery Hero. Uber agreed in July 2026 to buy Delivery Hero, and the deal, still awaiting regulatory approval, would bring Baemin under Uber.",
-  "status": "Active. Parent Delivery Hero agreed in July 2026 to be acquired by Uber, pending approvals",
+  "status": "Active. Parent Delivery Hero agreed in July 2026 to be acquired by Uber, pending approvals.",
   "links": {
    "appStore": "https://apps.apple.com/kr/app/id378084485"
   },
@@ -664,9 +679,14 @@
    {
     "fact": "description",
     "url": "https://www.bamboohr.com/about-bamboohr/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.bamboohr.com/legal/terms-of-service"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Bamboo HR LLC"
  },
  "bayt.com": {
   "name": "Bayt.com",
@@ -793,9 +813,14 @@
    {
     "fact": "description",
     "url": "https://www.thenationalnews.com/business/markets/2025/10/22/dubizzle-group-postpones-ipo-plans"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://bayut.com/privacy.html"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Bayut Web Publishing FZ-LLC"
  },
  "betterment.com": {
   "name": "Betterment",
@@ -946,7 +971,7 @@
   ],
   "markets": "200+ cities in North America, Europe and the Middle East",
   "description": "Bird was started in Santa Monica, California, in 2017 by Travis VanderZanden, a former Uber and Lyft executive, and rents dockless electric scooters and e-bikes through its app. After a Chapter 11 bankruptcy its assets were sold to the newly formed Third Lane Mobility, which also owns the Spin brand, and the business left bankruptcy in April 2024. Third Lane runs scooter and bike programmes in more than 200 cities and raised $20 million in January 2026 to put about 35,000 more vehicles on the road. Stewart Lyons is Bird's chief executive.",
-  "status": "Active. Emerged from Chapter 11 bankruptcy in April 2024 under new owner Third Lane Mobility",
+  "status": "Active. Emerged from Chapter 11 bankruptcy in April 2024 under new owner Third Lane Mobility.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/birdapp/",
    "x": "https://x.com/birdride",
@@ -1077,9 +1102,14 @@
    {
     "fact": "description",
     "url": "https://www.bitdefender.com/en-us/company/leadership"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://bitdefender.com/site/view/legal-privacy-policy-for-bitdefender-websites.html"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "S.C. BITDEFENDER S.R.L."
  },
  "bitflyer.com": {
   "name": "bitFlyer",
@@ -1150,9 +1180,14 @@
    {
     "fact": "description",
     "url": "https://www.bnnbloomberg.ca/bitflyer-co-founder-yuzo-kano-to-return-as-crypto-exchange-s-ceo-1.1902418"
+   },
+   {
+    "fact": "employees",
+    "url": "https://bitflyer.com/pub/business-report-12th.pdf"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "51-200"
  },
  "bithumb.com": {
   "name": "Bithumb",
@@ -1168,7 +1203,7 @@
   ],
   "markets": "South Korea",
   "description": "Bithumb opened in January 2014 under the name Xcoin, took its current name in July 2015 and operates from Seoul. It runs a spot exchange where customers trade more than 440 digital assets against the Korean won, and also offers automated trading, staking and deposit services. Bithumb Holdings owns 73.56% of the exchange operator. In an August 2026 customer notice the company said it aims to list on the Korean stock market in 2028, after strengthening internal controls and moving to Korean IFRS accounting standards.",
-  "status": "Active. Plans a Korean stock market listing in 2028",
+  "status": "Active. Plans a Korean stock market listing in 2028.",
   "sources": [
    {
     "fact": "founded",
@@ -1213,9 +1248,19 @@
    {
     "fact": "description",
     "url": "https://www.crowdfundinsider.com/2026/08/294833-south-korean-crypto-exchange-bithumb-targets-2028-ipo/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.smarttoday.co.kr/ko-kr/articles/63062"
+   },
+   {
+    "fact": "employees",
+    "url": "https://biz.sbs.co.kr/amp/article/20000309262"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "주식회사 빗썸",
+  "employees": "501-1,000"
  },
  "bitpanda.com": {
   "name": "Bitpanda",
@@ -1238,7 +1283,7 @@
   ],
   "markets": "Europe",
   "description": "Bitpanda was founded in Vienna in 2014 by Eric Demuth, Paul Klanschek and Christian Trummer, and its app lets European retail investors trade crypto, gold and silver, and stocks, with more than 10,000 assets available. It gained a licence under the EU's MiCA rules in 2025, runs Bitpanda Custody for institutions after buying Trustology in 2022, and offers its trading infrastructure to other businesses. The holding company, Bitpanda Group AG, is registered in Zürich, and staff of over 800 work from Vienna, Berlin and Barcelona. A planned Frankfurt listing was put on hold in September 2026, when Trummer became co-chief executive.",
-  "status": "Active. Planned Frankfurt IPO on hold since September 2026",
+  "status": "Active. Planned Frankfurt IPO on hold since September 2026.",
   "sources": [
    {
     "fact": "founded",
@@ -1345,9 +1390,14 @@
    {
     "fact": "description",
     "url": "https://www.globenewswire.com/news-release/2025/11/24/3193772/0/en/Bitso-Accelerates-Its-Onchain-Expansion-With-Upcoming-Perps-Aggregator-and-2026-Token-Launch.html"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://bitso.com/safety"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Nvio Pagos México SAPI de CV"
  },
  "bitvavo.com": {
   "name": "Bitvavo",
@@ -1504,7 +1554,7 @@
   ],
   "markets": "India",
   "description": "boAt is the consumer electronics brand of Imagine Marketing Limited, a Mumbai company incorporated in 2013 whose founding members and promoters are Aman Gupta and Sameer Mehta. Its range covers true wireless earbuds, headphones, speakers, home audio and smartwatches, and has grown to include dashcams, projectors, trimmers and mobile accessories, sold through its website and its own shopping app. The company has published an updated draft red herring prospectus for a planned initial public offering. Dr Pawan Goenka chairs the board, and Mehta serves as an executive director.",
-  "status": "Active. Preparing an IPO (updated draft red herring prospectus published)",
+  "status": "Active. Preparing an IPO (updated draft red herring prospectus published).",
   "sources": [
    {
     "fact": "founded",
@@ -1615,9 +1665,14 @@
    {
     "fact": "description",
     "url": "https://bolt.eu/en/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://bolt.eu/en/careers/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "brainly.com": {
   "name": "Brainly",
@@ -1693,7 +1748,7 @@
    "Real-time payments"
   ],
   "description": "Henrique Dubugras and Pedro Franceschi founded Brex in San Francisco in 2017 after going through Y Combinator. It sells corporate cards, business banking, expense and spend management software and real-time payments, and uses AI agents to automate expense and accounting work. Capital One completed its purchase of Brex in April 2026 for $5.15 billion in stock and cash, and Franceschi stayed on as chief executive. The business still operates under the Brex name within Capital One.",
-  "status": "Acquired by Capital One in April 2026",
+  "status": "Acquired by Capital One in April 2026.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/brexhq/",
    "x": "https://twitter.com/brexHQ",
@@ -1739,9 +1794,14 @@
    {
     "fact": "description",
     "url": "https://www.capitalone.com/about/newsroom/capital-one-completes-acquisition-of-brex/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.brex.com/legal/user-terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Brex LLC"
  },
  "brightermonday.co.ke": {
   "name": "BrighterMonday",
@@ -2006,9 +2066,14 @@
    {
     "fact": "description",
     "url": "https://www.btcmarkets.net/blog/10-years-of-service-to-our-clients-reflecting-on-the-journey"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://abr.business.gov.au/ABN/View/45164093887"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "BTC Markets Pty Ltd"
  },
  "bunq.com": {
   "name": "bunq",
@@ -2068,9 +2133,19 @@
    {
     "fact": "description",
     "url": "https://www.bunq.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.dnb.nl/en/general-news/enforcement-measures-2025/fine-for-bunq-b-v-for-insufficient-customer-due-diligence"
+   },
+   {
+    "fact": "employees",
+    "url": "https://app.welcometothejungle.com/companies/bunq"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "bunq B.V.",
+  "employees": "501-1,000"
  },
  "busuu.com": {
   "name": "Busuu",
@@ -2256,9 +2331,14 @@
    {
     "fact": "description",
     "url": "https://mercado.com.ar/gestion-sustentable/cabify-facturo-us-950-millones-en-2025-y-activo-su-plan-esg-2026-2029"
+   },
+   {
+    "fact": "employees",
+    "url": "https://cabify.com/static/downloads/sustainability-report-2024-es.pdf"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "calm.com": {
   "name": "Calm",
@@ -2317,9 +2397,14 @@
    {
     "fact": "description",
     "url": "https://www.calm.com/careers"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.calm.com/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Calm.com, Inc."
  },
  "cambly.com": {
   "name": "Cambly",
@@ -2382,9 +2467,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/2014/01/27/cambly"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://cambly.com/legal/data_privacy_framework"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Cambly Inc."
  },
  "canonical.com": {
   "name": "Canonical",
@@ -2444,9 +2534,14 @@
    {
     "fact": "description",
     "url": "https://canonical.com/blog/2026/04/23/canonical-releases-ubuntu-26-04-lts-resolute-raccoon/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.phoronix.com/news/Canonical-2024-Annual-Report"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "cardekho.com": {
   "name": "CarDekho",
@@ -2467,7 +2562,7 @@
   ],
   "markets": "India, plus Philippines, Malaysia and UAE through group sites",
   "description": "CarDekho went live in 2008 and was started by Amit Jain and Anurag Jain in Jaipur. It is the main site of CarDekho Group, which also runs BikeDekho, ZigWheels, the vehicle loan platform Rupyy and car subscription brands Revv and Carrum, and holds a stake in InsuranceDekho. The group runs ZigWheels portals in the Philippines, Malaysia and the UAE. It reported consolidated operating revenue of ₹2,795 crore for FY25, and in July 2026 it was reported to be preparing draft papers for an Indian stock market listing.",
-  "status": "Active (IPO planned)",
+  "status": "Active. IPO planned.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/cardekhogroup/",
    "x": "https://twitter.com/CarDekho",
@@ -2662,7 +2757,7 @@
   ],
   "markets": "India, Australia and UAE",
   "description": "CARS24 was founded in 2015 by Vikram Chopra, Mehul Agrawal, Ruchit Agarwal and Gajendra Jangid, and Chopra leads it as chief executive. It buys and sells used cars after inspection and adds loans, warranties and paperwork services such as registration transfers. Outside India it trades in Australia and the UAE. For FY26 it reported adjusted net revenue of ₹1,411 crore and ₹3,220 crore in loans disbursed, and its chief executive has said the company plans to list on Indian stock exchanges.",
-  "status": "Active (IPO planned)",
+  "status": "Active. IPO planned.",
   "sources": [
    {
     "fact": "founded",
@@ -2691,9 +2786,14 @@
    {
     "fact": "description",
     "url": "https://inc42.com/buzz/ipo-bound-cars24-claims-adjusted-ebitda-profitability-in-q4-fy26/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.cars24.com/investor-relations/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Cars24 Services Private Limited"
  },
  "cashfree.com": {
   "name": "Cashfree Payments",
@@ -2779,7 +2879,7 @@
   ],
   "markets": "United States",
   "description": "Casper was founded in New York in 2014 by Philip Krim, Neil Parikh, Jeff Chapin, Gabe Flateman and Luke Sherwin, and began by selling a single mattress online. It listed on the New York Stock Exchange in early 2020 and was taken private by Durational Capital Management in 2022. In 2023 it sold its Canadian business to Sleep Country. Since late 2024 it has been a subsidiary of Carpenter Co., a polyurethane foam manufacturer based in Richmond, Virginia.",
-  "status": "Active (acquired by Carpenter Co. in 2024)",
+  "status": "Active. Acquired by Carpenter Co. in 2024.",
   "sources": [
    {
     "fact": "founded",
@@ -2879,9 +2979,14 @@
    {
     "fact": "founders",
     "url": "https://userresearch.celonis.com/de/press/celonis-raises-1-billion-at-11-billion-valuation-making-it-new-york-s-and-germany-s-most-valuable-startup"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.celonis.com/legal/privacy-notice"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Celonis SE"
  },
  "checkout.com": {
   "name": "Checkout.com",
@@ -2945,9 +3050,14 @@
    {
     "fact": "description",
     "url": "https://www.checkout.com/newsroom/checkout-com-accelerates-towards-full-year-profitability-and-announces-employee-share-buy-back-and-a-new-12bn-valuation"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://checkout.com/legal/terms-and-policies"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Checkout Ltd"
  },
  "chobani.com": {
   "name": "Chobani",
@@ -3158,9 +3268,14 @@
    {
     "fact": "description",
     "url": "https://www.phocuswire.com/Cleartrip-sold-to-Indian-consumer-products-marketplace-Flipkart"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.cleartrip.com/holidays/terms/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Cleartrip Private Limited"
  },
  "codecademy.com": {
   "name": "Codecademy",
@@ -3182,7 +3297,7 @@
   ],
   "markets": "Worldwide",
   "description": "Zach Sims and his co-founder Ryan Bubinski started Codecademy in New York in August 2011, and Skillsoft, which is listed on the New York Stock Exchange, completed its purchase of the company in April 2022. Learners write and run code in the browser and can follow career paths built around projects, code challenges and interview preparation. The company also offers professional certification, bootcamps, workshops and coaching. Paid plans are sold to individuals, students and businesses, and the office is at 600 Broadway in Manhattan.",
-  "status": "Acquired by Skillsoft in 2022",
+  "status": "Acquired by Skillsoft in 2022.",
   "links": {
    "x": "https://twitter.com/Codecademy",
    "instagram": "https://instagram.com/codecademy",
@@ -3230,9 +3345,14 @@
    {
     "fact": "description",
     "url": "https://www.barchart.com/story/news/1184376/skillsoft-reports-financial-results-for-the-fourth-quarter-and-full-year-of-fiscal-2026"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.codecademy.com/policy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Codecademy LLC"
  },
  "coindcx.com": {
   "name": "CoinDCX",
@@ -3352,9 +3472,14 @@
    {
     "fact": "description",
     "url": "https://cointelegraph.com/news/okx-ventures-korea-investment-securities-buy-196-stake-in-coinone"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://cdn.coinone.co.kr/common/report/coinone_assets_2606.pdf"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "주식회사 코인원"
  },
  "coinspot.com.au": {
   "name": "CoinSpot",
@@ -3422,9 +3547,14 @@
    {
     "fact": "description",
     "url": "https://beincrypto.com/coinspot-owner-earns-500-million/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.coinspot.com.au/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Casey Block Services Pty Ltd"
  },
  "coursehero.com": {
   "name": "Course Hero",
@@ -3476,9 +3606,14 @@
    {
     "fact": "description",
     "url": "https://www.learneo.com/news/introducing-learneo-a-platform-of-learning-and-productivity-brands-built-for-an-evolving-knowledge-economy"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.coursehero.com/terms-of-use/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Learneo, Inc."
  },
  "cred.club": {
   "name": "CRED",
@@ -3699,9 +3834,14 @@
    {
     "fact": "description",
     "url": "https://www.cuemath.com/about-us/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.cuemath.com/terms/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Cue Learn Private Limited"
  },
  "curve.com": {
   "name": "Curve",
@@ -3724,7 +3864,7 @@
   ],
   "markets": "UK and Europe",
   "description": "Curve runs a payments app and card for customers in the UK and Europe, operating through Curve UK Limited in London and Curve Europe UAB in Vilnius. Users link the bank cards they already hold and can move a past purchase onto a different card, earn cashback and avoid some foreign exchange fees on spending abroad. Plans range from the free Curve Pay tier to the paid Pay X, Pay Pro and Pay Pro+ subscriptions. Lloyds Banking Group agreed to buy the company in November 2025 and completed the purchase in May 2026.",
-  "status": "Acquired by Lloyds Banking Group in May 2026",
+  "status": "Acquired by Lloyds Banking Group in May 2026.",
   "links": {
    "x": "https://twitter.com/imaginecurve",
    "instagram": "https://www.instagram.com/imaginecurve/"
@@ -3795,7 +3935,7 @@
   ],
   "markets": "110 countries",
   "description": "Darktrace develops cybersecurity software that learns the normal behaviour of an organisation's users and devices and flags or interrupts activity that departs from it. Its ActiveAI Security Platform covers email, networks and cloud environments as well as staff use of AI tools, and the company also sells managed security services. It started in Cambridge in 2013, has more than 2,300 staff and says it works with about 10,000 customers in 110 countries. The US private equity firm Thoma Bravo bought Darktrace for $5.3 billion in October 2024, ending its listing on the London Stock Exchange.",
-  "status": "Taken private by Thoma Bravo in October 2024",
+  "status": "Taken private by Thoma Bravo in October 2024.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/darktrace/",
    "x": "https://x.com/Darktrace",
@@ -4138,7 +4278,7 @@
   ],
   "markets": "UK, US and other countries",
   "description": "Depop began in 2011 at the H-Farm incubator near Venice, where Simon Beckerman built the first version of the app, and moved its base to London in 2012. Sellers run shop profiles and list items with photos, and its audience is young, with nearly 90% of its roughly 7 million active buyers aged under 34 at the end of 2025. It also had more than 3 million active sellers and handles around US$1 billion in gross merchandise sales a year. Etsy bought Depop in 2021, and eBay acquired it from Etsy for about US$1.2 billion in July 2026, keeping the brand and app separate.",
-  "status": "Acquired by eBay from Etsy in July 2026",
+  "status": "Acquired by eBay from Etsy in July 2026.",
   "sources": [
    {
     "fact": "founded",
@@ -4179,9 +4319,14 @@
    {
     "fact": "description",
     "url": "https://www.retail-insight-network.com/news/ebay-completes-acquisition-depop/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001773148"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Depop Limited"
  },
  "dhgate.com": {
   "name": "DHgate",
@@ -4303,9 +4448,14 @@
    {
     "fact": "description",
     "url": "https://valueaddvc.com/blog/discord-ipo-2026-valuation-s1-filing-when-is-it-happening"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://discord.com/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Discord Inc."
  },
  "docker.com": {
   "name": "Docker",
@@ -4430,9 +4580,14 @@
    {
     "fact": "description",
     "url": "https://www.digitalhealth.net/2026/05/french-firm-doctolib-acquires-gp-it-supplier-medicus/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://media.doctolib.com/image/upload/v1776929137/legal/B2C_T_Cs.pdf"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Doctolib SAS"
  },
  "dubizzle.com": {
   "name": "dubizzle",
@@ -4567,9 +4722,14 @@
    {
     "fact": "description",
     "url": "https://dew.spreadprivacy.com/15-years-of-duckduckgo/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://duckduckgo.com/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Duck Duck Go, Inc."
  },
  "ebanx.com": {
   "name": "EBANX",
@@ -4642,9 +4802,14 @@
    {
     "fact": "description",
     "url": "https://business.ebanx.com/en/press-room/press-releases/adding-pix-lifts-global-merchant-revenue-by-up-to-37-in-brazil-ebanx-data-shows"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://ebanx.com/en/legal/customers/privacy-notice"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "EBANX Ltda."
  },
  "emma-sleep.com": {
   "name": "Emma",
@@ -4714,9 +4879,14 @@
    {
     "fact": "description",
     "url": "https://www.emma-sleep.com/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.emma-matratze.de/impressum/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Emma Matratzen GmbH"
  },
  "flexport.com": {
   "name": "Flexport",
@@ -4889,7 +5059,7 @@
   ],
   "markets": "9 European countries",
   "description": "Freenow runs a ride app that books licensed taxis and private hire cars, with eScooters and eBikes also offered in some cities and a business travel service for companies. The service has operated since 2009 and now covers more than 180 cities in the UK, Ireland, Germany, Spain, Italy, France, Greece, Poland and Austria, including pickups at around 50 airports. Lyft, the US ride-hailing company, completed its purchase of Freenow on 31 July 2025, and the app now trades as Freenow by Lyft.",
-  "status": "Acquired by Lyft in July 2025",
+  "status": "Acquired by Lyft in July 2025.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/free-now",
    "instagram": "https://www.instagram.com/freenowbylyft",
@@ -4932,9 +5102,19 @@
    {
     "fact": "description",
     "url": "https://www.lyft.com/blog/posts/lyft-goes-global-freenow-acquisition-complete"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.free-now.com/de/impressum/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.engadget.com/transportation/lyft-completes-its-197-million-acquisition-of-europes-freenow-152420370.html"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Intelligent Apps GmbH",
+  "employees": "501-1,000"
  },
  "freetrade.io": {
   "name": "Freetrade",
@@ -4957,7 +5137,7 @@
   ],
   "markets": "United Kingdom",
   "description": "Freetrade runs a mobile and web investing platform for UK customers, offering stocks and shares ISAs, Junior ISAs, self-invested personal pensions and general accounts on Basic, Standard or Plus plans. Customers can buy UK, US and European shares, ETFs, funds, gilts and Treasury bills. Adam Dodds, Viktor Nebehaj and Davide Fioranelli founded the company in London in 2016, and it opened to customers in 2018 with commission-free share dealing. Freetrade Limited is authorised by the Financial Conduct Authority and has been owned by IG Group since April 2025.",
-  "status": "Acquired by IG Group in April 2025",
+  "status": "Acquired by IG Group in April 2025.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/freetrade/",
    "x": "https://twitter.com/freetrade",
@@ -5004,9 +5184,14 @@
    {
     "fact": "description",
     "url": "https://ffnews.com/newsarticle/tradetech/ig-group-holdings-plc-completes-of-acquisition-of-freetrade/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.financemagnates.com/forex/brokers/freetrade-loss-widens-to-244-million-in-first-year-under-ig-ownership/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "51-200"
  },
  "getyourguide.com": {
   "name": "GetYourGuide",
@@ -5071,9 +5256,19 @@
    {
     "fact": "description",
     "url": "https://www.top100startups.swiss/GetYourGuide-reaches-profitability-and-nears-1-billion-in-revenue"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.lobbyregister.bundestag.de/media/4f/d4/407329/Lobbyregister-Registereintraege-Detailansicht-R007109-2024-11-08_13-47-30.pdf"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.getyourguide.careers/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "GetYourGuide Deutschland GmbH",
+  "employees": "1,001-5,000"
  },
  "glossier.com": {
   "name": "Glossier",
@@ -5132,9 +5327,14 @@
    {
     "fact": "description",
     "url": "https://insideretail.us/glossier-ceo-colin-walsh-discusses-store-shutdowns-and-refocusing-on-hero-products/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.glossier.com/pages/glossier-us-state-privacy-notice"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Glossier, Inc."
  },
  "glovoapp.com": {
   "name": "Glovo",
@@ -5147,7 +5347,7 @@
   ],
   "markets": "21 countries in Europe, Central Asia and Africa",
   "description": "Glovo was founded in Barcelona in 2015 by Oscar Pierre and Sacha Michaud and has been part of the German group Delivery Hero since 2022. Its app connects customers with restaurants, supermarkets and other local shops, and with the couriers who carry their orders, in 21 countries across Europe, Central Asia and Africa. The company employs around 3,000 people. Under Uber's pending takeover of Delivery Hero, announced in July 2026, Glovo's businesses in Spain, Portugal, Poland, Romania and Moldova are due to be sold to the investment firm SSW Partners, with completion expected in the second half of 2027.",
-  "status": "Active. Parent Delivery Hero is subject to a pending takeover by Uber, expected to close in the second half of 2027",
+  "status": "Active. Parent Delivery Hero is subject to a pending takeover by Uber, expected to close in the second half of 2027.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/glovo-app/",
    "appStore": "https://apps.apple.com/app/id951812684",
@@ -5221,6 +5421,10 @@
    {
     "fact": "description",
     "url": "https://www.capital.ro/schimbare-majora-pentru-glovo-romania-cine-preia-afacerea-dupa-decizia-delivery-hero.html"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://lei.bloomberg.com/leis/view/254900104NN37XK6MA89"
    }
   ],
   "checked": "2026-11-11",
@@ -5231,7 +5435,8 @@
    "Sacha Michaud"
   ],
   "parent": "Delivery Hero",
-  "ownership": "Subsidiary of Delivery Hero"
+  "ownership": "Subsidiary of Delivery Hero",
+  "legalName": "Glovoapp23 S.A."
  },
  "gocardless.com": {
   "name": "GoCardless",
@@ -5250,7 +5455,7 @@
   ],
   "markets": "30+ countries",
   "description": "GoCardless collects payments by bank debit and open banking for businesses that bill customers regularly or once, such as subscriptions, memberships, instalments and invoices. Its tools include Success+ for retrying failed payments, Protect+ for fraud screening and more than 350 integrations with accounting and billing software. The London company is regulated by the Financial Conduct Authority, has offices in Australia, France, Latvia and the United States, and says more than 100,000 businesses use it. Mollie completed its acquisition of GoCardless on 1 September 2026, and co-founder Hiroki Takeuchi continues to run the business.",
-  "status": "Acquired by Mollie in September 2026; trades as GoCardless, a Mollie company",
+  "status": "Acquired by Mollie in September 2026. Trades as GoCardless, a Mollie company.",
   "sources": [
    {
     "fact": "founded",
@@ -5295,9 +5500,14 @@
    {
     "fact": "description",
     "url": "https://gocardless.com/blog/mollie-and-gocardless-combine"
+   },
+   {
+    "fact": "employees",
+    "url": "https://tech.eu/2026/04/13/gocardless-sees-revenue-boost-plans-to-cut-around-90-roles/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "501-1,000"
  },
  "gonoise.com": {
   "name": "Noise",
@@ -5533,7 +5743,7 @@
   ],
   "markets": "Worldwide",
   "description": "Grammarly makes an AI writing assistant that suggests corrections and rewrites as people type in more than a million apps and websites, through browser extensions, desktop apps for Windows and Mac, mobile keyboards and add-ins for Microsoft Office and Google Docs. Max Lytvyn, Alex Shevchenko and Dmytro Lider founded the company in 2009, and it sells Free, Pro and Education plans. In 2025 it bought the document tool Coda and the email app Superhuman Mail. In October 2025 the company took the Superhuman name and kept Grammarly as a product in its suite, which reports more than 40 million daily users.",
-  "status": "Company renamed Superhuman in October 2025; Grammarly continues as a product",
+  "status": "Company renamed Superhuman in October 2025. Grammarly continues as a product.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/grammarly",
    "x": "https://x.com/Superhuman",
@@ -5584,9 +5794,19 @@
    {
     "fact": "description",
     "url": "https://superhuman.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.grammarly.com/terms"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.businesswire.com/news/home/20250630889937/en"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Superhuman Platform Inc.",
+  "employees": "1,001-5,000"
  },
  "greythr.com": {
   "name": "greytHR",
@@ -5719,9 +5939,14 @@
    {
     "fact": "description",
     "url": "https://www.gulftalent.com/resources/dubai-jobs-guide"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://gulftalent.com/repository/int/GulfTalent_Terms_of_Service.pdf"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Gulf Talent FZ-LLC"
  },
  "gusto.com": {
   "name": "Gusto",
@@ -5784,9 +6009,14 @@
    {
     "fact": "description",
     "url": "https://gusto.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://apps.apple.com/us/app/gusto-wallet/id1478804271"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Gusto, Inc."
  },
  "headspace.com": {
   "name": "Headspace",
@@ -5807,7 +6037,7 @@
   ],
   "markets": "Worldwide (200 countries and regions)",
   "description": "Headspace began as a meditation app started in 2010 by Andy Puddicombe and Rich Pierson, and now combines guided meditation and sleep content with text-based coaching, licensed therapists and psychiatry. It merged with the teletherapy company Ginger in 2021, and much of its business comes from employers and health plans that offer it to staff and members, including as a replacement for a traditional employee assistance programme. The company says its app has been downloaded more than 105 million times. In September 2026 Headspace became part of Sword Health in an all-cash deal worth up to 300 million US dollars.",
-  "status": "Acquired by Sword Health in September 2026",
+  "status": "Acquired by Sword Health in September 2026.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/headspaceapp",
    "x": "https://twitter.com/Headspace",
@@ -5982,9 +6212,14 @@
    {
     "fact": "description",
     "url": "https://thelogic.co/briefing/rbc-turns-to-hopper-to-power-avion-rewards-travel-platform/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.hopper.com/legal/terms-and-conditions"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Hopper Inc."
  },
  "hostinger.com": {
   "name": "Hostinger",
@@ -6042,9 +6277,14 @@
    {
     "fact": "description",
     "url": "https://www.hostinger.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.hostinger.com/legal/universal-terms-of-service-agreement"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Hostinger International Limited"
  },
  "hudabeauty.com": {
   "name": "Huda Beauty",
@@ -6121,7 +6361,7 @@
   ],
   "markets": "UK, Europe and the United States",
   "description": "Huel was set up by entrepreneur Julian Hearn and former NHS dietitian James Collier and began selling powdered complete meals in 2015. It now also makes ready-to-drink shakes, hot savoury meals, bars, greens powders and functional drinks, sold mainly direct to customers online, with a manufacturing site and warehouse in Milton Keynes. The UK is its largest market, followed by continental Europe and the United States, and revenue reached about £254 million in its tenth financial year. The French food group Danone completed its purchase of Huel in September 2026, with James McMaster as chief executive.",
-  "status": "Acquired by Danone in September 2026",
+  "status": "Acquired by Danone in September 2026.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/huel",
    "x": "https://x.com/huel",
@@ -6275,9 +6515,14 @@
    {
     "fact": "description",
     "url": "https://www.idealista.com/en/news/node/821343"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.idealista.com/ayuda/articulos/legal-statement/?lang=en"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "idealista, S.A.U."
  },
  "immobiliare.it": {
   "name": "Immobiliare.it",
@@ -6394,9 +6639,14 @@
    {
     "fact": "description",
     "url": "https://impossiblefoods.com/media/impossible-foods-leadership-transition"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.impossiblefoods.com/privacy/ccpa"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Impossible Foods Inc."
  },
  "independentreserve.com": {
   "name": "Independent Reserve",
@@ -6555,7 +6805,7 @@
   ],
   "markets": "100+ countries",
   "description": "Instructure develops Canvas, a learning management system that schools, universities and employers use to run courses, set assignments and track grades online. The company was founded in 2008 and is based in Salt Lake City, Utah, with further offices in London and Quezon City. It also owns Mastery Connect for school assessment and Parchment, a service for sending academic transcripts and credentials. Instructure was listed on the New York Stock Exchange until November 2024, when the investment firm KKR, with Dragoneer, completed a 4.8 billion US dollar purchase and took it private. It says its tools reach about 200 million learners.",
-  "status": "Active (taken private by KKR in November 2024)",
+  "status": "Active. Taken private by KKR in November 2024.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/instructure-inc-/",
    "x": "https://twitter.com/Instructure",
@@ -6623,7 +6873,7 @@
   ],
   "markets": "India",
   "description": "Internshala began in 2010 as a blog run by IIT Madras graduate Sarvesh Agrawal and launched its website in 2013, later adding an Android app in 2015. Based in Gurugram, it lists internships and fresher jobs posted by employers, and sells short online trainings and placement courses in subjects such as digital marketing, data science and full stack development. It reports more than 34 million registered users and around 450,000 employers. In February 2026 the edtech company upGrad agreed to acquire it in a mostly stock-swap deal, with Internshala kept as a separate brand under Agrawal.",
-  "status": "Acquired by upGrad in 2026, operating as a separate brand",
+  "status": "Acquired by upGrad in 2026, operating as a separate brand.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/internshala",
    "x": "https://twitter.com/Internshala",
@@ -7023,9 +7273,14 @@
    {
     "fact": "description",
     "url": "https://www.jobberman.com/company/the-african-talent-company"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.jobberman.com/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "JOBBERMAN.com Limited"
  },
  "joinhandshake.com": {
   "name": "Handshake",
@@ -7085,9 +7340,14 @@
    {
     "fact": "description",
     "url": "https://joinhandshake.com/about/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://joinhandshake.com/privacy-policy/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Stryder Corp."
  },
  "kahoot.com": {
   "name": "Kahoot!",
@@ -7110,7 +7370,7 @@
   ],
   "markets": "Worldwide",
   "description": "Kahoot! runs a quiz and learning platform used in schools, universities and companies, where a host builds questions that players answer live on their own devices or work through at their own pace. Morten Versvik, Johan Brand and Jamie Brooker founded it in Oslo in 2012, and it now has more than 600 staff in offices across 11 countries. The group also owns Clever, DragonBox and the language app Drops, among others. Kahoot! was listed on the Oslo Stock Exchange from 2021 until 2024, when Goldman Sachs Asset Management, General Atlantic, KIRKBI and the Kahoot! team took it private.",
-  "status": "Active. Delisted from the Oslo Stock Exchange in 2024 after a take-private deal",
+  "status": "Active. Delisted from the Oslo Stock Exchange in 2024 after a take-private deal.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/kahoot",
    "x": "https://x.com/kahoot",
@@ -7155,9 +7415,14 @@
    {
     "fact": "description",
     "url": "https://kahoot.com/company/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://trust.kahoot.com/privacy-policy/index.html"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Kahoot! AS"
  },
  "keka.com": {
   "name": "Keka",
@@ -7222,9 +7487,14 @@
    {
     "fact": "description",
     "url": "https://www.peoplematters.in/amp/news/funding-investment/hr-tech-startup-keka-raises-whopping-57-million-in-series-a-funding-from-westbridge-capital-35979"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.keka.com/privacy-policy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Keka Technologies Private Limited"
  },
  "klook.com": {
   "name": "Klook",
@@ -7245,7 +7515,7 @@
   ],
   "markets": "Asia Pacific, plus other regions",
   "description": "Klook sells tickets and bookings for tours, attractions, activities and local transport through its website and app, mainly to travellers in Asia Pacific. Ethan Lin, Eric Gnock Fah and Bernie Xiong founded it in Hong Kong in 2014, and Lin is chief executive. Asia Pacific made up nearly 87% of its gross transaction value in 2024, a year in which gross bookings came to $2.5 billion. Klook filed to list on the New York Stock Exchange in November 2025 but withdrew the offering in October 2026 and remains privately held.",
-  "status": "Active. Withdrew its planned US IPO in October 2026",
+  "status": "Active. Withdrew its planned US IPO in October 2026.",
   "links": {
    "x": "https://x.com/klooktravel",
    "instagram": "https://www.instagram.com/klooktravel/",
@@ -7422,9 +7692,14 @@
    {
     "fact": "description",
     "url": "https://techpoint.africa/news/zinox-acquires-konga/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.konga.com/content/about-us"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Konga.com Online Shopping Limited"
  },
  "kraken.com": {
   "name": "Kraken",
@@ -7484,9 +7759,14 @@
    {
     "fact": "description",
     "url": "https://www.financemagnates.com/cryptocurrency/kraken-parent-pushes-ipo-to-q2-2027-at-earliest/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://blockhead.co/2026/05/18/kraken-parent-payward-cuts-150-jobs-after-ai-deployment-ipo-pushed-to-2027/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "kucoin.com": {
   "name": "KuCoin",
@@ -7565,7 +7845,7 @@
   ],
   "markets": "18 markets across Asia, Latin America and EMEA",
   "description": "Lalamove is the international brand of Hong Kong-based Lalatech, which runs an app-based delivery platform matching businesses and individuals with independent drivers of motorcycles, vans and trucks. Chow Shing-yuk founded the business in Hong Kong in 2013 and is chairman and chief executive. Outside mainland China, where the group trades as Huolala, Lalamove lists 18 markets across Asia, Latin America and EMEA, including Japan, Brazil, Türkiye, the UAE and the UK. Across the group, about 2.1 million carriers and 21.3 million merchants used the platform each month on average in 2025.",
-  "status": "Active. Parent Lalatech filed an updated Hong Kong listing application in April 2026 and is not yet listed",
+  "status": "Active. Parent Lalatech filed an updated Hong Kong listing application in April 2026 and is not yet listed.",
   "sources": [
    {
     "fact": "founded",
@@ -7718,7 +7998,7 @@
    "Lime app"
   ],
   "description": "Lime rents out dockless electric scooters and e-bikes that riders find and start through its app for short trips, in about 230 cities across 29 countries. Toby Sun and Brad Bao co-founded the business in 2017 and it is based in San Francisco, with Wayne Ting as chief executive. Its holding company, Neutron Holdings, listed on Nasdaq under the ticker LIME in July 2026, raising about $167 million at $25 a share. Uber holds a 24% stake, and Lime reported revenue of $886.7 million for 2025.",
-  "status": "Active. Listed on Nasdaq in July 2026",
+  "status": "Active. Listed on Nasdaq in July 2026.",
   "sources": [
    {
     "fact": "founders",
@@ -7849,9 +8129,14 @@
    {
     "fact": "description",
     "url": "https://techcentral.co.za/luno-cutting-a-fifth-of-its-workforce-south-africa-not-spared/284237/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://luno.com/legal/privacy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Luno Group Holdings Limited"
  },
  "magoosh.com": {
   "name": "Magoosh",
@@ -7986,9 +8271,14 @@
    {
     "fact": "description",
     "url": "https://www.frenchweb.fr/hopwork-devient-malt-pour-mettre-les-voiles-a-linternational/309644"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.malt.com/about/privacy/policy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Malt Community"
  },
  "masterclass.com": {
   "name": "MasterClass",
@@ -8040,9 +8330,14 @@
    {
     "fact": "description",
     "url": "https://www.bu.edu/cas/magazine/spring16/access-to-genius"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://learn.masterclass.com/guest-pass-offer-terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Yanka Industries, Inc."
  },
  "medium.com": {
   "name": "Medium",
@@ -8093,9 +8388,19 @@
    {
     "fact": "description",
     "url": "https://www.fastcompany.com/91134093/medium-growth-under-tony-stubblebine"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://github.com/Medium/medium-policy/blob/master/terms-of-service.md"
+   },
+   {
+    "fact": "employees",
+    "url": "https://techcrunch.com/2025/07/11/mediums-ceo-explains-what-it-took-to-stop-losing-2-6m-monthly"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "A Medium Corporation",
+  "employees": "51-200"
  },
  "memrise.com": {
   "name": "Memrise",
@@ -8163,9 +8468,14 @@
    {
     "fact": "description",
     "url": "https://www.memrise.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.memrise.com/privacy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Memrise Limited"
  },
  "mercadobitcoin.com.br": {
   "name": "Mercado Bitcoin",
@@ -8235,9 +8545,14 @@
    {
     "fact": "description",
     "url": "https://startups.com.br/cripto/mercado-bitcoin-recebe-autorizacao-do-bc-para-ser-ip/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://mb.com.br/en/termo"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Mercado Bitcoin Serviços Digitais Ltda."
  },
  "mercury.com": {
   "name": "Mercury",
@@ -8333,7 +8648,7 @@
   ],
   "markets": "Europe and the UK, 30+ markets",
   "description": "Mollie was started in Amsterdam in 2004 by Adriaan Mol and grew into a payments provider for European businesses of all sizes, from web shops to software platforms that embed payments. Mollie B.V. is licensed as an electronic money institution by De Nederlandsche Bank, and Mollie UK Ltd is authorised by the Financial Conduct Authority. Alongside card and local payment methods it offers in-person terminals, recurring billing, business accounts and merchant financing. In September 2026 it completed its purchase of the UK direct debit company GoCardless, and the combined group serves more than 350,000 businesses in over 30 markets under chief executive Koen Köppen.",
-  "status": "Active; acquired GoCardless in 2026",
+  "status": "Active. Acquired GoCardless in 2026.",
   "links": {
    "linkedin": "https://nl.linkedin.com/company/molliepayments",
    "x": "https://twitter.com/molliepayments",
@@ -8459,9 +8774,14 @@
    {
     "fact": "description",
     "url": "https://bizhub.vn/momo-e-wallet-aims-to-be-a-regional-super-app-post318488.html"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.momo.vn/tin-tuc/thong-cao-bao-chi/momo-duoc-binh-chon-la-nha-tuyen-dung-yeu-thich-7885"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "monzo.com": {
   "name": "Monzo",
@@ -8613,9 +8933,14 @@
    {
     "fact": "description",
     "url": "https://au.variety.com/2026/digital/news/mubi-lost-subscribers-pr-catastrophe-35178/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://mubi.com/en/terms_of_service"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "MUBI UK Limited"
  },
  "mygreatlearning.com": {
   "name": "Great Learning",
@@ -8638,7 +8963,7 @@
   ],
   "markets": "170+ countries",
   "description": "Great Learning runs online and blended professional programmes in data science, artificial intelligence, cloud computing and management, many of them delivered with university and business school partners. Its Great Learning Academy offers short self-paced courses at no charge. The company was founded in 2013 by Mohan Lakhamraju, Arjun Nair and Hari Krishnan Nair and is based in Bengaluru. BYJU'S bought it in 2021, but the deal was never fully paid, and Mohan Lakhamraju later bought back the Indian business, Great Learning Education Services.",
-  "status": "Active. Acquired by BYJU'S in 2021; the founders later regained control, with the India unit bought back by co-founder Mohan Lakhamraju",
+  "status": "Active. Acquired by BYJU'S in 2021. The founders later regained control, with the India unit bought back by co-founder Mohan Lakhamraju.",
   "links": {
    "linkedin": "https://www.linkedin.com/school/great-learning/",
    "x": "https://twitter.com/Great_Learning",
@@ -8982,9 +9307,14 @@
    {
     "fact": "description",
     "url": "https://www.netlify.com/press/netlify-turns-ai-prompts-into-production-ready-software"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.netlify.com/legal/terms-of-use.md"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Netlify, Inc."
  },
  "ninjavan.co": {
   "name": "Ninja Van",
@@ -9045,9 +9375,14 @@
    {
     "fact": "description",
     "url": "https://www.thestar.com.my/business/business-news/2026/01/14/ninja-van-malaysia-projects-5-10-growth-in-domestic-parcel-volumes-in-2026"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://ninjavan.co/en-sg/standard-delivery-terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Ninja Logistics Pte. Ltd."
  },
  "nobroker.in": {
   "name": "NoBroker",
@@ -9109,9 +9444,14 @@
    {
     "fact": "description",
     "url": "https://inc42.com/features/nobrokers-future-is-beyond-home-listings-but-will-profits-follow/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://nobroker.in/privacy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "NoBroker Technologies Solutions Private Limited"
  },
  "noom.com": {
   "name": "Noom",
@@ -9247,9 +9587,19 @@
    {
     "fact": "description",
     "url": "https://www.gbnews.com/tech/nothing-smartphone-android-headphones-uk-valuation"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://nothing.tech/pages/nothing-x-terms-of-service"
+   },
+   {
+    "fact": "employees",
+    "url": "https://sifted.eu/articles/nothing-to-cut-around-100-jobs-in-cost-cutting-push-reports-say"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Nothing Technology Limited",
+  "employees": "501-1,000"
  },
  "notion.com": {
   "name": "Notion",
@@ -9427,9 +9777,14 @@
    {
     "fact": "description",
     "url": "https://www.odoo.com/contactus"
+   },
+   {
+    "fact": "employees",
+    "url": "https://odoo.com/es/blog/viaje-5/odoo-unveils-its-results-and-ambitious-projects-at-odoo-experience-2025-1857"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "5,001-10,000"
  },
  "olacabs.com": {
   "name": "Ola",
@@ -9447,7 +9802,7 @@
    "Driver subscription plans"
   ],
   "description": "Ola was started in Bengaluru in December 2010 by Bhavish Aggarwal and Ankit Bhati and is run by ANI Technologies, which renamed the business Ola Consumer in 2024. Its app books bike taxis, auto-rickshaws and cabs for city trips, along with outstation journeys, hourly rentals and Ola for Business corporate travel. The company closed its operations in the UK, Australia and New Zealand in 2024 to concentrate on India, and later wound down its ONDC food and commerce services. Drivers now pay a fixed daily or monthly subscription instead of a commission on each ride.",
-  "status": "Active (Ola Cabs renamed Ola Consumer in 2024; international operations closed in 2024)",
+  "status": "Active. Ola Cabs renamed Ola Consumer in 2024. International operations closed in 2024.",
   "links": {
    "x": "https://twitter.com/Olacabs",
    "instagram": "https://www.instagram.com/olacabs",
@@ -9589,9 +9944,14 @@
    {
     "fact": "description",
     "url": "https://www.omio.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.omio.co.uk/terms-of-use"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Omio Corp."
  },
  "ouraring.com": {
   "name": "Oura",
@@ -9615,7 +9975,7 @@
   ],
   "markets": "Worldwide",
   "description": "Oura designs the Oura Ring, a wearable that uses optical heart-rate sensors to measure sleep, activity, stress, heart health and women's health signals, with the results shown in a paid membership app. The company was started in Oulu, Finland, in 2013 and is now headquartered in San Francisco, keeping its EU headquarters in Oulu. It reported 5.7 million paid members in September 2026, after raising $900 million at an $11 billion valuation in 2025. Oura filed to list on Nasdaq in 2026 but postponed the offering that September, citing conditions in the IPO market.",
-  "status": "Active (Nasdaq IPO filed and postponed in September 2026)",
+  "status": "Active. Nasdaq IPO filed and postponed in September 2026.",
   "links": {
    "appStore": "https://apps.apple.com/us/app/oura/id1043837948",
    "playStore": "https://play.google.com/store/apps/details?id=com.ouraring.oura"
@@ -9725,9 +10085,14 @@
    {
     "fact": "description",
     "url": "https://outschool.com/articles/an-update-from-amir-a-leadership-transition-at-outschool"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://outschool.com/pages/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Outschool, Inc."
  },
  "oyorooms.com": {
   "name": "OYO",
@@ -9747,7 +10112,7 @@
   ],
   "markets": "35+ countries",
   "description": "OYO runs a booking app and website for budget and mid-range hotels and vacation homes, and supplies software that partner properties use to manage bookings and prices. Ritesh Agarwal opened the first OYO in Gurugram in 2013, and the business now sits under PRISM, the name its parent Oravel Stays took in 2025. The group's brands include Townhouse, Sunday, Palette, Belvilla, DanCenter and the US chains Motel 6 and Studio 6, with 293,554 storefronts in more than 35 countries at the end of 2025. PRISM filed updated papers with SEBI in 2026 for a planned share listing in India.",
-  "status": "Active (parent PRISM has filed for an IPO in India)",
+  "status": "Active. Parent PRISM has filed for an IPO in India.",
   "links": {
    "appStore": "https://apps.apple.com/app/id988141624",
    "playStore": "https://play.google.com/store/apps/details?id=com.oyo.consumer"
@@ -9859,9 +10224,14 @@
    {
     "fact": "status",
     "url": "https://au.variety.com/2026/biz/global/patreon-cuts-20-percent-of-employees-restructuring-38826/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://support.patreon.com/hc/en-us/articles/46148437741069"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Patreon, Inc."
  },
  "paystack.com": {
   "name": "Paystack",
@@ -9926,9 +10296,14 @@
    {
     "fact": "status",
     "url": "https://www.semafor.com/article/01/20/2026/paystack-eyes-growth-beyond-payments-with-restructuring"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://paystack.com/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Paystack Payments Limited"
  },
  "pedidosya.com": {
   "name": "PedidosYa",
@@ -9996,9 +10371,14 @@
    {
     "fact": "status",
     "url": "https://www.financialcontent.com/article/bizwire-2026-8-27-uber-publishes-offer-document-for-its-takeover-offer-for-delivery-hero"
+   },
+   {
+    "fact": "employees",
+    "url": "https://mercado.com.ar/talento-y-liderazgo/pedidosya-alcanza-el-tercer-puesto-en-el-ranking-great-place-to-work-latinoamerica-2025"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "5,001-10,000"
  },
  "peopleperhour.com": {
   "name": "PeoplePerHour",
@@ -10077,7 +10457,7 @@
   ],
   "markets": "India",
   "description": "Pepperfry was set up in Mumbai in 2011 by former eBay executives Ambareesh Murty and Ashish Shah, and its website went live in January 2012. It sells furniture and home goods online and through a network of more than 100 offline studios. BSE-listed TCC Concept Limited completed its acquisition of a majority stake in December 2025. Pepperfry reported its first profitable quarter in the fourth quarter of FY26.",
-  "status": "Active; acquired by TCC Concept Limited in December 2025",
+  "status": "Active. Acquired by TCC Concept Limited in December 2025.",
   "links": {
    "linkedin": "https://in.linkedin.com/company/pepperfry",
    "appStore": "https://apps.apple.com/us/app/pepperfry-furniture-decor/id972047429",
@@ -10268,9 +10648,14 @@
    {
     "fact": "status",
     "url": "https://www.kotakneo.com/news/ipos/pharmeasy-ipo-plans-return-as-parent-api-holdings-becomes-debt-free/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://pharmeasy.in/legal/terms-and-conditions"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Axelia Solutions Private Limited"
  },
  "plaid.com": {
   "name": "Plaid",
@@ -10333,9 +10718,14 @@
    {
     "fact": "status",
     "url": "https://fintech.global/2026/02/27/fintech-plaid-raises-undisclosed-funding-at-8bn-value"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://plaid.com/legal/terms-of-use"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Plaid Inc."
  },
  "pluralsight.com": {
   "name": "Pluralsight",
@@ -10359,7 +10749,7 @@
   ],
   "markets": "Worldwide",
   "description": "Pluralsight was founded in Utah in 2004 by Aaron Skonnard, Fritz Onion, Keith Brown and Bill Williams, and grew for about nine years without outside funding. It sells technology training to individuals and businesses, with more than 6,500 courses, skill assessments and hands-on labs covering software, cloud, AI and security. The company says over 23,000 organisations use it. Vista Equity Partners bought it in 2021, a lender group led by Blue Owl took control in 2024, and it set up a new headquarters in Westlake, Texas in 2025.",
-  "status": "Active; owned by a lender group led by Blue Owl Capital since 2024",
+  "status": "Active. Owned by a lender group led by Blue Owl Capital since 2024.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/pluralsight",
    "x": "https://x.com/pluralsight",
@@ -10433,7 +10823,7 @@
   ],
   "markets": "United States and Canada",
   "description": "Poshmark was founded in 2011 by Manish Chandra, Chetan Pungaliya, Gautam Golwala and Tracy Sun and is based in Redwood City, California. Sellers list clothing, shoes, accessories and home items from a phone, and buyers can also shop through live selling shows. The company says it has over 130 million members in the US and Canada and that more than 350 million items have sold. South Korea's Naver bought it for $1.2 billion in January 2023, and Naver executive Namsun Kim became chief executive in October 2025.",
-  "status": "Active; acquired by Naver in January 2023",
+  "status": "Active. Acquired by Naver in January 2023.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/poshmark",
    "appStore": "https://apps.apple.com/us/app/poshmark-shop-sell-fashion/id470412147",
@@ -10479,9 +10869,14 @@
    {
     "fact": "status",
     "url": "https://retaildive.com/news/naver-poshmark-acquisition-closes/639879"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://poshmark.com/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Poshmark, Inc."
  },
  "practo.com": {
   "name": "Practo",
@@ -10608,9 +11003,14 @@
    {
     "fact": "status",
     "url": "https://www.prodigygame.com/main-en/about-prodigy"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.prodigygame.com/terms-and-conditions"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Prodigy Education Inc."
  },
  "propertyfinder.ae": {
   "name": "Property Finder",
@@ -10667,9 +11067,14 @@
    {
     "fact": "status",
     "url": "https://www.mubadala.com/en/news/property-finder-announces-170m-investment-led-by-mubadala-with-uae-sovereign-fund-and-beco-capital"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.propertyfinder.com/?p=141"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Propertyfinder FZ-LLC"
  },
  "propertyguru.com.sg": {
   "name": "PropertyGuru",
@@ -10689,7 +11094,7 @@
   ],
   "markets": "Singapore, Malaysia, Thailand and Vietnam",
   "description": "PropertyGuru started in Singapore in 2007 and now runs property listing sites across four Southeast Asian countries. Its brands include PropertyGuru in Singapore and Malaysia, iProperty in Malaysia, DDproperty in Thailand and Batdongsan in Vietnam, alongside tools for agents and the Asia Property Awards. EQT Private Capital Asia bought the group for about $1.1 billion in December 2024 and took it off the New York Stock Exchange. Lewis Ng has been chief executive since March 2025, and the group had more than 1,200 staff at the end of 2025.",
-  "status": "Active; taken private by EQT in December 2024",
+  "status": "Active. Taken private by EQT in December 2024.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/propertyguru/",
    "youtube": "https://www.youtube.com/@propertygurugroup"
@@ -10807,9 +11212,14 @@
    {
     "fact": "status",
     "url": "https://proton.me/about"
+   },
+   {
+    "fact": "employees",
+    "url": "https://proton.me/careers"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "501-1,000"
  },
  "public.com": {
   "name": "Public",
@@ -11058,9 +11468,14 @@
    {
     "fact": "description",
     "url": "https://forbes.com.br/forbes-money/forbes-real-estate/2026/06/quintoandar-investe-bilhoes-inteligencia-artificial/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.quintoandar.com.br/nao-promocao/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "GRPQA LTDA."
  },
  "quizlet.com": {
   "name": "Quizlet",
@@ -11129,9 +11544,14 @@
    {
     "fact": "description",
     "url": "https://www.edtechinnovationhub.com/news/quizlet-acquires-note-taking-app-coconote-launches-new-ai-powered-learning-experience"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://help.quizlet.com/hc/en-us/articles/18095738986381-Quizlet-SMS-terms-and-conditions"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Quizlet, Inc."
  },
  "quora.com": {
   "name": "Quora",
@@ -11190,9 +11610,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/?p=648607"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://apps.apple.com/us/app/quora/id456034437"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Quora, Inc."
  },
  "ramp.com": {
   "name": "Ramp",
@@ -11260,9 +11685,14 @@
    {
     "fact": "description",
     "url": "https://www.bloomberg.com/company/?p=31848"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://community.ramp.com/privacy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Ramp Business Corporation"
  },
  "rapido.bike": {
   "name": "Rapido",
@@ -11404,9 +11834,14 @@
    {
     "fact": "description",
     "url": "https://www.ycombinator.com/companies/rappi"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://about.rappi.com/docs/terminos_y_condiciones.pdf"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "RAPPI S.A.S."
  },
  "razorpay.com": {
   "name": "Razorpay",
@@ -11597,9 +12032,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/2024/09/30/tier-becomes-dott-following-the-merger-of-the-two-micromobility-companies"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://ridedott.com/imprint"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "TIER Mobility SE"
  },
  "rippling.com": {
   "name": "Rippling",
@@ -11659,9 +12099,14 @@
    {
     "fact": "description",
     "url": "https://www.rippling.com/newsroom"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.rippling.com/careers"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "5,001-10,000"
  },
  "satispay.com": {
   "name": "Satispay",
@@ -11761,9 +12206,14 @@
    {
     "fact": "description",
     "url": "https://de.scalable.capital/en/about-us"
+   },
+   {
+    "fact": "employees",
+    "url": "https://de.scalable.capital/en/careers"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "501-1,000"
  },
  "sharechat.com": {
   "name": "ShareChat",
@@ -11854,7 +12304,7 @@
   ],
   "markets": "India, with international shipping to 220+ countries and territories",
   "description": "Shiprocket started in 2017 as a shipping tool for small online sellers and now runs a wider set of services from its Gurugram corporate office, including warehousing and fulfilment, cross-border shipping, a one-click checkout called Fastrr and working-capital lending. It says it serves more than 2.5 lakh online retailers and reaches over 19,000 Indian pin codes through 17-plus courier partners. The company listed its shares on the NSE and BSE on 19 August 2026, debuting at about 35% above its Rs 97 issue price.",
-  "status": "Active. Listed on NSE and BSE in August 2026",
+  "status": "Active. Listed on NSE and BSE in August 2026.",
   "links": {
    "linkedin": "https://in.linkedin.com/company/shiprocket",
    "x": "https://twitter.com/shiprocketindia",
@@ -12047,9 +12497,14 @@
    {
     "fact": "description",
     "url": "https://www.siteground.co.uk/llm-info"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://world.siteground.com/viewtos/siteground_terms_of_service"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "SiteGround Hosting Ltd."
  },
  "skillshare.com": {
   "name": "Skillshare",
@@ -12204,7 +12659,7 @@
   ],
   "markets": "India",
   "description": "Snapdeal was founded in 2010 by Kunal Bahl and Rohit Bansal and now concentrates on lower-priced fashion, home and lifestyle goods for shoppers in smaller towns and cities. In the 2025-26 financial year it delivered to 18,972 pin codes. The marketplace belongs to AceVector, the renamed group company that also owns the Unicommerce e-commerce software business and Stellaro Brands, a consumer brands unit. AceVector listed on the NSE and BSE in October 2026.",
-  "status": "Active. Parent AceVector listed on NSE and BSE in October 2026",
+  "status": "Active. Parent AceVector listed on NSE and BSE in October 2026.",
   "sources": [
    {
     "fact": "founded",
@@ -12308,9 +12763,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/2026/07/22/soundcloud-acquires-decentralized-music-platform-nina-protocol-months-after-its-shutdown/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.soundcloud.com/imprint"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "SoundCloud Global Limited & Co. KG"
  },
  "squarespace.com": {
   "name": "Squarespace",
@@ -12333,7 +12793,7 @@
   ],
   "markets": "Worldwide",
   "description": "Squarespace sells subscription software for building and running websites, with design templates, an AI site builder, domain registration, online stores, invoicing and email marketing in one account. It also owns Acuity Scheduling, an appointment booking tool. Anthony Casalena started the company in his university dorm room at the University of Maryland in 2003 and still runs it. Investment firm Permira took Squarespace private in October 2024 in a deal worth about $7.2 billion, ending its listing on the New York Stock Exchange. It has offices in New York, Dublin and Aveiro in Portugal.",
-  "status": "Active. Taken private by Permira in October 2024",
+  "status": "Active. Taken private by Permira in October 2024.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/squarespace",
    "x": "https://x.com/squarespace",
@@ -12408,7 +12868,7 @@
   ],
   "markets": "India, UAE, Australia and Canada",
   "description": "Square Yards was set up in Gurugram in 2014 by Tanuj Shori and Kanika Gupta Shori and earns most of its money from brokering new and resale homes. Over time it has added Urban Money for mortgages, Azuro for rentals and property management, Interior Company for home interiors, and PropVR for 3D and virtual reality tours. India produced 88% of revenue in the 2025-26 financial year, with the rest from the UAE, Australia and Canada. Group revenue that year was about Rs 2,086 crore, and the company has hired banks for a planned stock market listing.",
-  "status": "Active. Preparing an IPO",
+  "status": "Active. Preparing an IPO.",
   "sources": [
    {
     "fact": "founded",
@@ -12570,9 +13030,14 @@
    {
     "fact": "description",
     "url": "https://stockx.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://stockx.com/lp/promotion-guidelines-and-rules/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "StockX LLC"
  },
  "substack.com": {
   "name": "Substack",
@@ -12853,9 +13318,14 @@
    {
     "fact": "description",
     "url": "https://www.itweb.co.za/article/after-years-of-groundwork-teenage-takealot-targets-profit/KA3WwMdz4w3vrydZ"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://terms-and-policies.takealot.com/terms-conditions/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Takealot Online (RF) (Pty) Ltd"
  },
  "tamara.co": {
   "name": "Tamara",
@@ -12921,9 +13391,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/2023/12/18/saudi-shopping-and-bnpl-platform-tamara-tops-1b-valuation-in-340m-series-c-funding"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://tamara.co/en/terms-and-conditions"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Tamara Finance Company"
  },
  "telegram.org": {
   "name": "Telegram",
@@ -12982,9 +13457,14 @@
    {
     "fact": "description",
     "url": "https://telegram.org/faq"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://telegram.org/privacy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Telegram Messenger Inc."
  },
  "toptal.com": {
   "name": "Toptal",
@@ -13044,9 +13524,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/?p=1220528"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.toptal.com/careers"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "toss.im": {
   "name": "Toss",
@@ -13309,9 +13794,19 @@
    {
     "fact": "description",
     "url": "https://kr-asia.com/in-the-top-flight-everything-you-need-to-know-about-traveloka-part-1-of-2"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.traveloka.com/en-id/termsandconditions"
+   },
+   {
+    "fact": "employees",
+    "url": "https://careers.traveloka.com/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Traveloka Services Pte. Ltd.",
+  "employees": "1,001-5,000"
  },
  "trezor.io": {
   "name": "Trezor",
@@ -13506,9 +14001,14 @@
    {
     "fact": "description",
     "url": "https://turo.com/us/en/careers"
+   },
+   {
+    "fact": "employees",
+    "url": "https://news.bloomberglaw.com/human-resources-news/car-rental-startup-turo-cuts-15-of-workers-after-icing-ipo"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "501-1,000"
  },
  "udacity.com": {
   "name": "Udacity",
@@ -13528,7 +14028,7 @@
   ],
   "markets": "240+ countries",
   "description": "Udacity grew out of a free online version of Stanford's Introduction to Artificial Intelligence course, taught by Sebastian Thrun and Peter Norvig in 2011, and it now operates as part of Accenture. Learners work through projects that are reviewed by a network of more than 700 industry mentors, and the company also sells training programmes to employers and governments. It reports more than 16.9 million registered users in over 240 countries and 205,000 Nanodegree certificates awarded. Degree options now include a Master of Science in AI.",
-  "status": "Active, part of Accenture",
+  "status": "Active. Part of Accenture.",
   "sources": [
    {
     "fact": "founded",
@@ -13586,7 +14086,7 @@
   ],
   "markets": "India",
   "description": "Unacademy started as a YouTube channel in 2010 and became an online learning company in 2015, run by Sorting Hat Technologies from Bengaluru. Its educators teach live and recorded classes for Indian entrance and government exams such as UPSC, JEE, NEET and GATE. upGrad completed its purchase of Unacademy in September 2026 in an all-stock deal valued at just over $200 million. PrepLadder, Graphy and Airlearn continue to run under their own names, and in November 2026 co-founder Gaurav Munjal became executive chairman with Akhilendra Kumar taking over as chief executive.",
-  "status": "Acquired by upGrad in September 2026",
+  "status": "Acquired by upGrad in September 2026.",
   "sources": [
    {
     "fact": "founded",
@@ -13855,7 +14355,7 @@
   ],
   "markets": "India",
   "description": "Urban Ladder started in Bengaluru in 2012 selling furniture online and later opened its own stores in several Indian cities. Its range covers sofas, beds, dining and study furniture, storage, mattresses and home decor such as lighting, rugs and wall art. Reliance Retail bought a 96 per cent stake in 2020 for about Rs 182 crore, and the website now names Reliance Retail Limited as the operating entity. The company was founded by Ashish Goel and Rajiv Srivatsa.",
-  "status": "Active (acquired by Reliance Retail in 2020)",
+  "status": "Active. Acquired by Reliance Retail in 2020.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/urban-ladder/"
   },
@@ -13959,9 +14459,14 @@
    {
     "fact": "status",
     "url": "https://inc42.com/features/vedantu-plugged-leaks-but-will-the-revival-last/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.vedantu.com/privacy-policy"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Vedantu Innovations Private Limited"
  },
  "vercel.com": {
   "name": "Vercel",
@@ -14017,9 +14522,14 @@
    {
     "fact": "status",
     "url": "https://vercel.com/about"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://vercel.com/legal/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Vercel Inc."
  },
  "vinted.com": {
   "name": "Vinted",
@@ -14074,9 +14584,19 @@
    {
     "fact": "status",
     "url": "https://tech.eu/2026/04/09/vinted-s-revenues-top-1bn-but-profits-slide/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.vinted.lt/terms_and_conditions"
+   },
+   {
+    "fact": "employees",
+    "url": "https://company.vinted.com/newsroom/Vinted-delivers-strong-profitable-growth-while-investing"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Vinted, UAB",
+  "employees": "1,001-5,000"
  },
  "voi.com": {
   "name": "Voi",
@@ -14200,9 +14720,14 @@
    {
     "fact": "status",
     "url": "https://www.businesswire.com/news/home/20260407017507/en/"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.vultr.com/legal/tos/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "The Constant Company, LLC"
  },
  "wallapop.com": {
   "name": "Wallapop",
@@ -14217,7 +14742,7 @@
   ],
   "markets": "Spain, Italy and Portugal",
   "description": "Wallapop runs a marketplace app where individuals buy and sell used goods, either collecting nearby or having items shipped. It was founded in Barcelona in 2013, where it is still based, and expanded into Italy in 2021 and Portugal in 2022. The platform has more than 19 million monthly active users. South Korea's NAVER, which already held 29.5 per cent, agreed in August 2025 to buy the remaining 70.5 per cent for €377 million, and the acquisition completed in January 2026.",
-  "status": "Active (acquired by NAVER in January 2026)",
+  "status": "Active. Acquired by NAVER in January 2026.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/wallapop/"
   },
@@ -14253,9 +14778,14 @@
    {
     "fact": "products",
     "url": "https://www.navercorp.com/en/media/pressReleasesDetail?seq=33164"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://about.wallapop.com/en/legal-notice"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Wallapop, S.L.U."
  },
  "wealthsimple.com": {
   "name": "Wealthsimple",
@@ -14314,9 +14844,14 @@
    {
     "fact": "status",
     "url": "https://www.iphoneincanada.ca/2026/10/28/wealthsimple-138-billion-valuation-funding-round/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.wealthsimple.com/en-ca/careers"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "1,001-5,000"
  },
  "webflow.com": {
   "name": "Webflow",
@@ -14396,7 +14931,7 @@
   ],
   "markets": "Worldwide, mainly US",
   "description": "Wellfound runs a hiring marketplace for startups, where companies post jobs free of charge and candidates apply to roles at early-stage and growing technology firms, many of them remote. It began inside AngelList as AngelList Talent and became a separate company, AL Talent, Inc., under the Wellfound name in November 2022, with Amit Matani as chief executive. Paid products include Reach, which sources candidates with AI, and Autopilot, a managed recruiting service. In January 2026 it bought the AI recruiting tool Hirefly, and it says more than 10 million candidates have opted in to the platform.",
-  "status": "Active (renamed from AngelList Talent in 2022)",
+  "status": "Active. Renamed from AngelList Talent in 2022.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/wellfoundhq",
    "x": "https://x.com/wellfoundhq",
@@ -14464,7 +14999,7 @@
   ],
   "markets": "30+ countries",
   "description": "WeWork leases flexible workspace, from hot desks and dedicated desks to private offices, full floors and meeting rooms, with memberships such as All Access and On Demand for people who move between sites. Its website lists around 600 locations in more than 100 cities. The company filed for Chapter 11 in November 2023 and emerged in June 2024 as a private company with Yardi Systems as its majority owner. It is led by chief executive John Santora, a former Cushman & Wakefield executive.",
-  "status": "Active (emerged from Chapter 11 in June 2024, now privately owned)",
+  "status": "Active. Emerged from Chapter 11 in June 2024, now privately owned.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/wework/",
    "x": "https://x.com/WeWork"
@@ -14594,7 +15129,7 @@
   ],
   "markets": "30+ countries",
   "description": "Wolt runs a delivery app for ordering from restaurants, grocery shops and other retailers, and it also operates its own Wolt Market grocery stores, the Wolt+ subscription and Wolt Drive, a delivery service for other businesses. Six co-founders started the company in Helsinki in 2014, and it now works in more than 30 countries and over 1,000 cities. DoorDash completed its acquisition of Wolt in May 2022. The company says it has more than 15,000 employees and over 290,000 courier partners.",
-  "status": "Active (acquired by DoorDash in 2022)",
+  "status": "Active. Acquired by DoorDash in 2022.",
   "links": {
    "linkedin": "https://www.linkedin.com/company/wolt-oy/"
   },
@@ -14634,9 +15169,14 @@
    {
     "fact": "status",
     "url": "https://careers.wolt.com/story"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://explore.wolt.com/en/fin/terms"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Wolt Oy"
  },
  "wordpress.com": {
   "name": "WordPress.com",
@@ -15068,9 +15608,14 @@
    {
     "fact": "description",
     "url": "https://techcrunch.com/2013/12/16/wyzant-lands-21-5m-from-accel-to-take-its-tutoring-marketplace-global-and-mobile"
+   },
+   {
+    "fact": "legalName",
+    "url": "https://www.wyzant.com/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "legalName": "Wyzant, Inc"
  },
  "yemeksepeti.com": {
   "name": "Yemeksepeti",
@@ -15088,7 +15633,7 @@
   ],
   "markets": "Türkiye",
   "description": "Yemeksepeti runs an online ordering service in Türkiye, taking orders for restaurant delivery as well as groceries and everyday products. It was founded in 2001, and co-founder Nevzat Aydın was chief executive when Delivery Hero bought the company in 2015 in a deal reported at $589 million, then described as the largest acquisition in the region's internet sector. In July 2026 Delivery Hero agreed to sell Yemeksepeti to SSW Partners as part of Uber's planned takeover of Delivery Hero. That sale is expected to close in the second half of 2027, subject to regulatory approval.",
-  "status": "Active. Agreed in July 2026 to be sold by Delivery Hero to SSW Partners, pending completion of Uber's takeover of Delivery Hero (expected second half of 2027)",
+  "status": "Active. Agreed in July 2026 to be sold by Delivery Hero to SSW Partners, pending completion of Uber's takeover of Delivery Hero (expected second half of 2027).",
   "sources": [
    {
     "fact": "founded",
@@ -15195,9 +15740,14 @@
    {
     "fact": "description",
     "url": "https://techcentral.co.za/yoco-brings-in-external-ceo-from-european-fintech-sector/281069/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.yoco.com/za/careers/"
    }
   ],
-  "checked": "2026-11-11"
+  "checked": "2026-11-11",
+  "employees": "201-500"
  },
  "yulu.bike": {
   "name": "Yulu",
@@ -15277,7 +15827,7 @@
   ],
   "markets": "India",
   "description": "Zepto runs a quick commerce app in India that delivers groceries, fresh produce, snacks and household items from its own network of dark stores. It was set up by Aadit Palicha and Kaivalya Vohra and is based in Mumbai. According to its IPO filings it operates 1,139 dark stores across 66 cities and employs more than 5,200 permanent staff alongside about 48,000 operating staff. The market regulator SEBI approved its planned share listing on the NSE and BSE in May 2026, after the company moved its domicile from Singapore back to India.",
-  "status": "Active. SEBI approved its IPO in May 2026, shares not yet listed",
+  "status": "Active. SEBI approved its IPO in May 2026, shares not yet listed.",
   "sources": [
    {
     "fact": "founded",
@@ -15417,7 +15967,7 @@
   ],
   "markets": "North America and Europe",
   "description": "Zipcar runs a membership car-sharing service in which members book vehicles through a mobile app and pay only for the time they use. Robin Chase and Antje Danielson founded it in Cambridge, Massachusetts in 2000, and Avis Budget Group completed its purchase of the company in March 2013. Alongside personal memberships it runs Zipcar for Business and Zipcar for Universities programmes, and it says it has more than a million members. In 2026 Zipcar closed its UK operations, and Avis folded the Boston head office into the group's base in northern New Jersey while local services continued.",
-  "status": "Active. Ended UK operations in early 2026",
+  "status": "Active. Ended UK operations in early 2026.",
   "sources": [
    {
     "fact": "founded",

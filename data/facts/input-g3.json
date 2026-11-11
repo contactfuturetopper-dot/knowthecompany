@@ -1,0 +1,271 @@
+[
+ {
+  "website": "free-now.com",
+  "name": "Freenow",
+  "hq": "Hamburg, Germany",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "freetrade.io",
+  "name": "Freetrade",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "getyourguide.com",
+  "name": "GetYourGuide",
+  "hq": "Berlin, Germany",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "glossier.com",
+  "name": "Glossier",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "glovoapp.com",
+  "name": "Glovo",
+  "hq": "Barcelona, Spain",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "gocardless.com",
+  "name": "GoCardless",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "gonoise.com",
+  "name": "Noise",
+  "hq": "Gurugram, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "gopuff.com",
+  "name": "Gopuff",
+  "hq": "Philadelphia, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "gostudent.org",
+  "name": "GoStudent",
+  "hq": "Vienna, Austria",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "grammarly.com",
+  "name": "Grammarly",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "greythr.com",
+  "name": "greytHR",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "gulftalent.com",
+  "name": "GulfTalent",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "gusto.com",
+  "name": "Gusto",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "headspace.com",
+  "name": "Headspace",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "hmd.com",
+  "name": "HMD",
+  "hq": "Espoo, Finland",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "hopper.com",
+  "name": "Hopper",
+  "hq": "Montreal, Canada",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "hostinger.com",
+  "name": "Hostinger",
+  "hq": "Vilnius, Lithuania",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "hudabeauty.com",
+  "name": "Huda Beauty",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "idealista.com",
+  "name": "idealista",
+  "hq": "Madrid, Spain",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "immobiliare.it",
+  "name": "Immobiliare.it",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "impossiblefoods.com",
+  "name": "Impossible Foods",
+  "hq": "Redwood City, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "independentreserve.com",
+  "name": "Independent Reserve",
+  "hq": "Sydney, Australia",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "instructure.com",
+  "name": "Instructure",
+  "hq": "Salt Lake City, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "internshala.com",
+  "name": "Internshala",
+  "hq": "Gurugram, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "italki.com",
+  "name": "italki",
+  "hq": "Hong Kong",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "iyzico.com",
+  "name": "iyzico",
+  "hq": "Istanbul, Turkey",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "jobberman.com",
+  "name": "Jobberman",
+  "hq": "Lagos, Nigeria",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "joinhandshake.com",
+  "name": "Handshake",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "kahoot.com",
+  "name": "Kahoot!",
+  "hq": "Oslo, Norway",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "keka.com",
+  "name": "Keka",
+  "hq": "Hyderabad, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "klook.com",
+  "name": "Klook",
+  "hq": "Hong Kong",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "koho.ca",
+  "name": "KOHO",
+  "hq": "Toronto, Canada",
+  "missing": [
+   "employees"
+  ]
+ }
+]

@@ -44,6 +44,18 @@ for f in sorted(glob.glob(f'{ROOT}/data/facts/batch-*.json')):  # batch-z-* (sec
 OVERRIDES = {'mercadobitcoin.com.br': {'status': 'Active'}}
 for wid, fix in OVERRIDES.items():
     if wid in out: out[wid].update(fix)
+# One style for status notes: "Active" alone, or a sentence like "Active. Acquired by X in 2024." No brackets
+# or semicolons.
+def tidy_status(st):
+    st = st.strip()
+    m = re.match(r'^Active\s*[(;,]\s*(.+?)\)?\.?$', st)
+    if m: st = 'Active. ' + m.group(1)
+    st = re.sub(r';\s*(\w)', lambda k: '. ' + k.group(1).upper(), st)
+    st = re.sub(r'^(Active\. )(\w)', lambda k: k.group(1) + k.group(2).upper(), st)
+    if st != 'Active' and not st.endswith('.'): st += '.'
+    return st
+for rec in out.values():
+    if rec.get('status'): rec['status'] = tidy_status(rec['status'])
 json.dump(dict(sorted(out.items())), open(f'{ROOT}/data/company-facts.json', 'w'), indent=1, ensure_ascii=False)
 print(f'merged facts for {len(out)} companies')
 for p in problems: print('  check:', p)

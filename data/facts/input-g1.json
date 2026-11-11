@@ -1,0 +1,269 @@
+[
+ {
+  "website": "1password.com",
+  "name": "1Password",
+  "hq": "Toronto, Canada",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "a24films.com",
+  "name": "A24",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "acorns.com",
+  "name": "Acorns",
+  "hq": "Irvine, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "andela.com",
+  "name": "Andela",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "apna.co",
+  "name": "apna",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "babbel.com",
+  "name": "Babbel",
+  "hq": "Berlin, Germany",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "backmarket.com",
+  "name": "Back Market",
+  "hq": "Paris, France",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "baemin.com",
+  "name": "Baemin",
+  "hq": "Seoul, South Korea",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "bamboohr.com",
+  "name": "BambooHR",
+  "hq": "Lindon, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "bayt.com",
+  "name": "Bayt.com",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "bayut.com",
+  "name": "Bayut",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "betterment.com",
+  "name": "Betterment",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bharatpe.com",
+  "name": "BharatPe",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bird.co",
+  "name": "Bird",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bitdefender.com",
+  "name": "Bitdefender",
+  "hq": "Bucharest, Romania",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "bitflyer.com",
+  "name": "bitFlyer",
+  "hq": "Tokyo, Japan",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bithumb.com",
+  "name": "Bithumb",
+  "hq": "Seoul, South Korea",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "bitso.com",
+  "name": "Bitso",
+  "hq": "Mexico City, Mexico",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "boat-lifestyle.com",
+  "name": "boAt",
+  "hq": "Mumbai, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bolt.eu",
+  "name": "Bolt",
+  "hq": "Tallinn, Estonia",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "brainly.com",
+  "name": "Brainly",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "brex.com",
+  "name": "Brex",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "brightermonday.co.ke",
+  "name": "BrighterMonday",
+  "hq": "Nairobi, Kenya",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bsky.app",
+  "name": "Bluesky",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "btcmarkets.net",
+  "name": "BTC Markets",
+  "hq": "Melbourne, Australia",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "bunq.com",
+  "name": "bunq",
+  "hq": "Amsterdam, Netherlands",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "busuu.com",
+  "name": "Busuu",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "bybit.com",
+  "name": "Bybit",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "cabify.com",
+  "name": "Cabify",
+  "hq": "Madrid, Spain",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "calm.com",
+  "name": "Calm",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "cambly.com",
+  "name": "Cambly",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "canonical.com",
+  "name": "Canonical",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "employees"
+  ]
+ }
+]

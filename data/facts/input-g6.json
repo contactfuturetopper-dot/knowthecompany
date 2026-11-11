@@ -1,0 +1,269 @@
+[
+ {
+  "website": "toss.im",
+  "name": "Toss",
+  "hq": "Seoul, South Korea",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "traderepublic.com",
+  "name": "Trade Republic",
+  "hq": "Berlin, Germany",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "traveloka.com",
+  "name": "Traveloka",
+  "hq": "Jakarta, Indonesia",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "turo.com",
+  "name": "Turo",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "udacity.com",
+  "name": "Udacity",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "unacademy.com",
+  "name": "Unacademy",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "upbit.com",
+  "name": "Upbit",
+  "hq": "Seoul, South Korea",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "upgrad.com",
+  "name": "upGrad",
+  "hq": "Mumbai, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "upstox.com",
+  "name": "Upstox",
+  "hq": "Mumbai, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "urbanladder.com",
+  "name": "Urban Ladder",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "vedantu.com",
+  "name": "Vedantu",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "vercel.com",
+  "name": "Vercel",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "vinted.com",
+  "name": "Vinted",
+  "hq": "Vilnius, Lithuania",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "vultr.com",
+  "name": "Vultr",
+  "hq": "West Palm Beach, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "wallapop.com",
+  "name": "Wallapop",
+  "hq": "Barcelona, Spain",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "wealthsimple.com",
+  "name": "Wealthsimple",
+  "hq": "Toronto, Canada",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "webflow.com",
+  "name": "Webflow",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "wellfound.com",
+  "name": "Wellfound",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "wework.com",
+  "name": "WeWork",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "withings.com",
+  "name": "Withings",
+  "hq": "Issy-les-Moulineaux, France",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "wolt.com",
+  "name": "Wolt",
+  "hq": "Helsinki, Finland",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "workana.com",
+  "name": "Workana",
+  "hq": "Buenos Aires, Argentina",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "worldremit.com",
+  "name": "WorldRemit",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "wuzzuf.net",
+  "name": "WUZZUF",
+  "hq": "Cairo, Egypt",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "wyzant.com",
+  "name": "Wyzant",
+  "hq": "Chicago, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "yemeksepeti.com",
+  "name": "Yemeksepeti",
+  "hq": "Istanbul, T\u00fcrkiye",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "yoco.com",
+  "name": "Yoco",
+  "hq": "Cape Town, South Africa",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "yulu.bike",
+  "name": "Yulu",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "zerodha.com",
+  "name": "Zerodha",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "zipcar.com",
+  "name": "Zipcar",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "zocdoc.com",
+  "name": "Zocdoc",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "zoopla.co.uk",
+  "name": "Zoopla",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "employees"
+  ]
+ }
+]

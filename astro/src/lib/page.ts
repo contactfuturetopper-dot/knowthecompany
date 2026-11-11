@@ -6,7 +6,12 @@ import meta from "../generated/pages-meta.json";
 import posts from "../generated/posts.json";
 import catIntros from "../generated/cat-intros.json";
 import factsData from "../generated/company-facts.json";
+import snapshots from "../generated/page-snapshots.json";
+/* Full text of the fixed pages as the app draws them for a logged-out visitor (made by test/run.mjs). */
+const SNAPS = snapshots as Record<string, string>;
 import { graph, orgNode, webPage, breadcrumbs, companyNodes, faqNode, type Crumb } from "./schema";
+import { adminTouched, allReviewsElevated, publicReviews, dedupeCompanies } from "./data";
+export { adminTouched };
 
 export const ORIGIN = "https://www.knowthecompany.com";
 const CLIENT_ID = "5783d517-0173-420b-ba45-67e1d2efd460";
@@ -24,6 +29,16 @@ const PAGES = new Map((meta as Meta[]).map(m => [m.route, m]));
 
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 export const slug = (s: unknown) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+/* A company page's meta description: "<Name> reviews from customers and employees." then as many whole
+   sentences of the researched description as fit in 158 characters, or the one-line bio. */
+function coDesc(name: string, c: any, f?: { description?: string }): string {
+  const lead = `${name} reviews from customers and employees.`;
+  const sentences = String(f?.description || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [];
+  let d = lead;
+  for (const x of sentences) { if ((d + " " + x.trim()).length > 158) break; d += " " + x.trim(); }
+  if (d === lead) d = sentences.length ? `${lead} ${sentences[0].trim()}` : `${lead} ${c.bio || ""}`.trim();
+  return trim(d);
+}
 const trim = (d: string) => d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, "") + "…" : d;
 
 /* ---- reading the site's data as a visitor ---- */
@@ -45,6 +60,15 @@ async function query(collection: string, filter: object, limit = 100, offset = 0
   if (!res.ok) throw new Error(`query ${collection} ${res.status}`);
   return ((await res.json()).dataItems || []).map((d: any) => d.data);
 }
+export async function queryAll(collection: string, filter: object): Promise<any[]> {
+  const out: any[] = [];
+  for (let offset = 0; offset < 50_000; offset += 1000) {
+    const page = await query(collection, filter, 1000, offset);
+    out.push(...page);
+    if (page.length < 1000) break;
+  }
+  return out;
+}
 async function categories(): Promise<string[]> {
   const res = await fetch(`${API}/wix-data/v2/items/query-distinct-values`, {
     method: "POST",
@@ -58,7 +82,7 @@ async function categories(): Promise<string[]> {
 /* ---- addresses ---- */
 /* `ld` is this page's structured data (schema.org JSON-LD), added to the shell as one @graph with the
    site's Organization and WebSite. */
-export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; facts?: { id: string; data: Facts } } | { redirect: string };
+export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; facts?: { id: string; data: Facts }; preload?: string } | { redirect: string };
 export type Facts = { name?: string; legalName?: string | null; founded?: string | null; hq?: string | null; founders?: string[]; parent?: string | null; ownership?: string | null; employees?: string | null; products?: string[]; markets?: string | null; description?: string | null; status?: string | null; links?: Record<string, string | null>; sources?: { fact: string; url: string }[]; checked?: string };
 const FACTS = factsData as Record<string, Facts>;
 type Post = { slug: string; cat: string; date: string; title: string; excerpt: string; body: [string, string | string[]][] };
@@ -72,6 +96,8 @@ export function cleanPath(pathname: string): string | null {
   if (p.endsWith(".html")) p = p.slice(0, -5);
   if (p === "/index") p = "/";
   if (p === "/sample") p = "/list";
+  /* Addresses are lowercase; /Company/Razorpay moves to /company/razorpay. */
+  if (/[A-Z]/.test(p) && !p.startsWith("/_") && !p.startsWith("/api/")) p = p.toLowerCase();
   return p === pathname ? null : p || "/";
 }
 
@@ -92,18 +118,19 @@ export async function resolvePage(pathname: string): Promise<Page> {
   m = p.match(/^\/company\/([a-z0-9-]+)$/);
   if (m) {
     try {
-      const [c] = await query("Companies", { slug: { $eq: m[1] } }, 1);
+      const [c] = dedupeCompanies(await query("Companies", { slug: { $eq: m[1] } }, 50));
       if (c) {
         const name = c.title || c._id, cat = c.category || "Other";
-        const title = `${name} reviews · Know The Company`, desc = trim(`${name} reviews from customers and employees. ${c.bio || ""}`);
-        const reviews = await companyReviews(c._id).catch(() => []);
         const f = FACTS[c._id];
+        const title = `${name} reviews · Know The Company`, desc = coDesc(name, c, f);
+        const reviews = await companyReviews(c._id).catch(() => []);
         const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "") + reviewsHtml(name, reviews) + (f ? factsHtml(name, c, f, reviews) : "");
         const crumbs: Crumb[] = [{ name: cat, path: `/category/${slug(cat)}` }, { name, path: p }];
         const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews, f)];
         if (f) ld.push(faqNode(p, faqFor(name, c, f, reviews)));
         /* Every company page is indexed, so people can find a company and review it. */
-        return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld, ...(f ? { facts: { id: c._id, data: f } } : {}) };
+        const logo = /^https:\/\/static\.wixstatic\.com\/[^\s"'<>]+$/.test(String(c.logo || "")) ? String(c.logo) : "";
+        return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld, ...(f ? { facts: { id: c._id, data: f } } : {}), ...(logo ? { preload: logo } : {}) };
       }
       return notFound(p);
     } catch { return unknown(p); }
@@ -131,7 +158,7 @@ export async function resolvePage(pathname: string): Promise<Page> {
 function fromMeta(path: string, m: Meta): Page {
   const desc = m.desc || DEFAULT_DESC;
   const post = m.route.startsWith("blog-") ? POSTS.get(m.route.slice(5)) : undefined;
-  const body = (m.intro ? `<p>${esc(m.intro)}</p>` : "") + (post ? articleHtml(post) : "");
+  const body = SNAPS[m.route] || ((m.intro ? `<p>${esc(m.intro)}</p>` : "") + (post ? articleHtml(post) : ""));
   return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article" } : {}) };
 }
 const PAGE_TYPES: Record<string, string> = { about: "AboutPage", contact: "ContactPage", categories: "CollectionPage", tools: "CollectionPage", blog: "CollectionPage", search: "SearchResultsPage" };
@@ -179,18 +206,35 @@ function pageSchema(path: string, m: Meta, desc: string): object[] {
    updated times. Reviews go live as soon as they are posted, but a reply stored on a review, or a company a
    member inserted with team-only fields filled in, counts only once an admin has touched it. Same rule as
    "trust" in app.js. */
-const ADMIN_ID = "c0f544a7-207e-490b-b7d9-830ef39f49c7";
-const tms = (d: unknown) => { const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d; const t = Date.parse(String(v)); return isNaN(t) ? 0 : t; };
-export const adminTouched = (it: any) => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
-async function companyReviews(companyId: string): Promise<any[]> {
-  const items = (await query("Reviews", { company: { $eq: companyId } }, 1000)).filter(r => r.type !== "interview" && Number(r.rating) > 0);
-  const authors = [...new Set(items.map(r => r._owner).filter(Boolean))];
-  const blocked = new Set<string>();
-  for (let i = 0; i < authors.length; i += 50) {
-    const owners = await query("Companies", { ownerMemberIds: { $hasSome: authors.slice(i, i + 50) } }, 100);
-    owners.filter(adminTouched).forEach(c => (c.ownerMemberIds || []).forEach((id: string) => blocked.add(id)));
+/* All companies, kept for a minute: needed to know who manages which company. */
+let coCache: { at: number; list: any[] } | null = null;
+export async function allCompanies(): Promise<any[]> {
+  if (coCache && Date.now() - coCache.at < 60_000) return coCache.list;
+  const list: any[] = [];
+  for (let offset = 0; offset < 50_000; offset += 100) {
+    const page = await query("Companies", {}, 100, offset);
+    list.push(...page);
+    if (page.length < 100) break;
   }
-  return items.filter(r => !blocked.has(r._owner));
+  coCache = { at: Date.now(), list: dedupeCompanies(list) };
+  return coCache.list;
+}
+/* Raw reviews: read with the project's elevated permission. If that isn't available (local checks), read
+   as a visitor, which returns only what the collection lets visitors see. */
+export async function rawReviews(companyId?: string): Promise<any[]> {
+  try { return await allReviewsElevated(companyId); }
+  catch {
+    const out: any[] = [];
+    for (let offset = 0; offset < 50_000; offset += 1000) {
+      const page = await query("Reviews", companyId ? { company: { $eq: companyId } } : {}, 1000, offset);
+      out.push(...page);
+      if (page.length < 1000) break;
+    }
+    return out;
+  }
+}
+async function companyReviews(companyId: string): Promise<any[]> {
+  return publicReviews(await rawReviews(companyId), await allCompanies());
 }
 /* ---- text versions of the page content, for search engines and AI crawlers that don't run JavaScript ---- */
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -205,10 +249,10 @@ function reviewsHtml(name: string, reviews: any[]): string {
   const customer = sorted.filter(r => (r.type || "customer") === "customer");
   const employee = sorted.filter(r => r.type === "employee");
   const avg = (l: any[]) => (l.reduce((s, r) => s + Number(r.rating), 0) / l.length).toFixed(1);
-  const reply = (r: any) => r.reply && adminTouched(r) ? `<blockquote><p><strong>Reply from ${esc(name)}:</strong> ${esc(r.reply)}</p></blockquote>` : "";
+  const reply = (r: any) => r.reply && r._team ? `<blockquote><p><strong>Reply from ${esc(name)}:</strong> ${esc(r.reply)}</p></blockquote>` : "";
   let html = `<section><h2>Customer reviews of ${esc(name)}</h2>`;
   html += customer.length
-    ? `<p>Rated ${avg(customer)} out of 5 from ${customer.length} customer review${customer.length === 1 ? "" : "s"}.</p>` + customer.slice(0, 20).map(r => { const imp = r.importedFrom && adminTouched(r), when = monthYear(imp && r.originalDate ? r.originalDate : r._createdDate); return `<article><h3>${esc(r.title || "Customer review")}</h3><p>${stars(r.rating)} · ${esc(r.displayName || "Reviewer")}${when ? " · " + when : ""}</p>${imp ? `<p>Imported: shared by ${esc(name)} from its own records, first given via ${esc(r.importedFrom)}. Confirmed with the reviewer before publishing.</p>` : ""}${r.body ? `<p>${esc(r.body)}</p>` : ""}${reply(r)}</article>`; }).join("")
+    ? `<p>Rated ${avg(customer)} out of 5 from ${customer.length} customer review${customer.length === 1 ? "" : "s"}.</p>` + customer.slice(0, 20).map(r => { const imp = r.importedFrom && r._team, when = monthYear(imp && r.originalDate ? r.originalDate : r._createdDate); return `<article><h3>${esc(r.title || "Customer review")}</h3><p>${stars(r.rating)} · ${esc(r.displayName || "Reviewer")}${when ? " · " + when : ""}</p>${imp ? `<p>Imported: shared by ${esc(name)} from its own records, first given via ${esc(r.importedFrom)}. Confirmed with the reviewer before publishing.</p>` : ""}${r.body ? `<p>${esc(r.body)}</p>` : ""}${reply(r)}</article>`; }).join("")
     : `<p>No customer reviews of ${esc(name)} yet. If you have bought from or used ${esc(name)}, you can write the first one.</p>`;
   html += `</section><section><h2>Employee reviews of ${esc(name)}</h2>`;
   if (employee.length) {
@@ -296,6 +340,7 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
     + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
   if (pg.h1) html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
+  if (pg.preload) html = html.replace('<link rel="stylesheet"', () => `<link rel="preload" as="image" href="${esc(pg.preload)}" fetchpriority="high">\n<link rel="stylesheet"`);
   if (pg.facts) html = html.replace("</head>", () => `<script type="application/json" id="co-facts" data-id="${esc(pg.facts!.id)}">${JSON.stringify(pg.facts!.data).replace(/</g, "\\u003c")}</script>\n</head>`);
   if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);
   return html;
@@ -322,12 +367,7 @@ export async function sitemapXml(): Promise<string> {
     urls.push({ loc: routePath(m.route), lastmod: post ? day(post.date) : undefined });
   }
   for (const c of (await categories()).sort()) urls.push({ loc: `/category/${slug(c)}` });
-  const companies: any[] = [];
-  for (let offset = 0; offset < 50_000; offset += 100) {
-    const page = await query("Companies", {}, 100, offset);
-    companies.push(...page);
-    if (page.length < 100) break;
-  }
+  const companies = await allCompanies();
   const seen = new Set<string>();
   for (const c of companies) {
     const s = c.slug || slug(c.title || c._id);

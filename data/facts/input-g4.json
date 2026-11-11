@@ -1,0 +1,273 @@
+[
+ {
+  "website": "konga.com",
+  "name": "Konga",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "kraken.com",
+  "name": "Kraken",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "kucoin.com",
+  "name": "KuCoin",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "lalamove.com",
+  "name": "Lalamove",
+  "hq": "Hong Kong, China",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "luno.com",
+  "name": "Luno",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "magoosh.com",
+  "name": "Magoosh",
+  "hq": "Berkeley, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "malt.com",
+  "name": "Malt",
+  "hq": "Paris, France",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "masterclass.com",
+  "name": "MasterClass",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "medium.com",
+  "name": "Medium",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "memrise.com",
+  "name": "Memrise",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "mercadobitcoin.com.br",
+  "name": "Mercado Bitcoin",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "momo.vn",
+  "name": "MoMo",
+  "hq": "Ho Chi Minh City, Vietnam",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "mubi.com",
+  "name": "MUBI",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "myntra.com",
+  "name": "Myntra",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "namshi.com",
+  "name": "Namshi",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "netlify.com",
+  "name": "Netlify",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "ninjavan.co",
+  "name": "Ninja Van",
+  "hq": "Singapore, Singapore",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "nobroker.in",
+  "name": "NoBroker",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "noom.com",
+  "name": "Noom",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "nothing.tech",
+  "name": "Nothing",
+  "hq": "London, United Kingdom",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "notion.com",
+  "name": "Notion",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "odoo.com",
+  "name": "Odoo",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "olacabs.com",
+  "name": "Ola",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "omio.com",
+  "name": "Omio",
+  "hq": "Berlin, Germany",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "outschool.com",
+  "name": "Outschool",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "oyorooms.com",
+  "name": "OYO",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "patreon.com",
+  "name": "Patreon",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "paystack.com",
+  "name": "Paystack",
+  "hq": "Lagos, Nigeria",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "pedidosya.com",
+  "name": "PedidosYa",
+  "hq": "Montevideo, Uruguay",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "peopleperhour.com",
+  "name": "PeoplePerHour",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "pepperfry.com",
+  "name": "Pepperfry",
+  "hq": "Mumbai, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "pharmeasy.in",
+  "name": "PharmEasy",
+  "hq": "Mumbai, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ }
+]

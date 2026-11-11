@@ -1,0 +1,271 @@
+[
+ {
+  "website": "plaid.com",
+  "name": "Plaid",
+  "hq": null,
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "pluralsight.com",
+  "name": "Pluralsight",
+  "hq": "Westlake, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "poshmark.com",
+  "name": "Poshmark",
+  "hq": "Redwood City, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "practo.com",
+  "name": "Practo",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "prodigygame.com",
+  "name": "Prodigy Education",
+  "hq": "Toronto, Canada",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "propertyfinder.ae",
+  "name": "Property Finder",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "proton.me",
+  "name": "Proton",
+  "hq": "Geneva, Switzerland",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "public.com",
+  "name": "Public",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "purplle.com",
+  "name": "Purplle",
+  "hq": "Mumbai, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "quintoandar.com.br",
+  "name": "QuintoAndar",
+  "hq": "S\u00e3o Paulo, Brazil",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "quizlet.com",
+  "name": "Quizlet",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "quora.com",
+  "name": "Quora",
+  "hq": null,
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "ramp.com",
+  "name": "Ramp",
+  "hq": "New York, United States",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "rappi.com",
+  "name": "Rappi",
+  "hq": "Bogot\u00e1, Colombia",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "redbus.in",
+  "name": "redBus",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "ridedott.com",
+  "name": "Dott",
+  "hq": "Amsterdam, Netherlands",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "rippling.com",
+  "name": "Rippling",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "scalable.capital",
+  "name": "Scalable Capital",
+  "hq": "Munich, Germany",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "sharechat.com",
+  "name": "ShareChat",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "shiprocket.in",
+  "name": "Shiprocket",
+  "hq": "Gurugram, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "simplilearn.com",
+  "name": "Simplilearn",
+  "hq": "Bengaluru, India",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "siteground.com",
+  "name": "SiteGround",
+  "hq": "Sofia, Bulgaria",
+  "missing": [
+   "legalName"
+  ]
+ },
+ {
+  "website": "skillshare.com",
+  "name": "Skillshare",
+  "hq": "New York, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "snapdeal.com",
+  "name": "Snapdeal",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "soundcloud.com",
+  "name": "SoundCloud",
+  "hq": "Berlin, Germany",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "squareyards.com",
+  "name": "Square Yards",
+  "hq": "Gurugram, India",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "stockx.com",
+  "name": "StockX",
+  "hq": "Detroit, United States",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "substack.com",
+  "name": "Substack",
+  "hq": "San Francisco, United States",
+  "missing": [
+   "employees"
+  ]
+ },
+ {
+  "website": "takealot.com",
+  "name": "Takealot",
+  "hq": "Cape Town, South Africa",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "tamara.co",
+  "name": "Tamara",
+  "hq": "Riyadh, Saudi Arabia",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "telegram.org",
+  "name": "Telegram",
+  "hq": "Dubai, United Arab Emirates",
+  "missing": [
+   "legalName",
+   "employees"
+  ]
+ },
+ {
+  "website": "toptal.com",
+  "name": "Toptal",
+  "hq": null,
+  "missing": [
+   "employees"
+  ]
+ }
+]

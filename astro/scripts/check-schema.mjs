@@ -13,16 +13,25 @@ await build({
   plugins: [{ name: "raw", setup(b) {
     b.onResolve({ filter: /\?raw$/ }, a => ({ path: path.resolve(a.resolveDir, a.path.replace(/\?raw$/, "")), namespace: "raw" }));
     b.onLoad({ filter: /.*/, namespace: "raw" }, a => ({ contents: fs.readFileSync(a.path, "utf8"), loader: "text" }));
+  } }, { name: "no-elevation", setup(b) {
+    /* Outside Wix there is no elevated permission: the server falls back to reading as a visitor. */
+    b.onResolve({ filter: /^@wix\/(essentials|data)$/ }, a => ({ path: a.path, namespace: "stub" }));
+    b.onLoad({ filter: /.*/, namespace: "stub" }, () => ({ contents: "export const auth = { elevate: () => () => { throw new Error('no elevation here'); } }; export const items = {};", loader: "js" }));
   } }],
 });
 const companies = [{ _id: "futuretopper.in", title: "Future Topper", slug: "future-topper", category: "Education & E-learning", website: "futuretopper.in", country: "IN", bio: "Exam prep <app>", ownerMemberIds: ["owner1"], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7" },
+  /* A member's copy of an existing company's address: must not take over the page. */
+  { _id: "fake-topper.com", title: "FAKE TAKEOVER", slug: "future-topper", category: "Other", website: "fake-topper.com", country: "IN", bio: "x", ownerMemberIds: [], _owner: "m9", _createdDate: "2026-11-09T00:00:00Z", _updatedDate: "2026-11-09T00:00:00Z" },
   { _id: "1password.com", title: "1Password", slug: "1password", website: "1password.com", category: "Technology & Software", country: "CA", bio: "Password manager.", ownerMemberIds: [], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7", _updatedDate: { $date: "2026-11-01T00:00:00Z" } }];
 const reviews = [
   { _id: "r1", _owner: "m2", _updatedDate: "2026-11-02T09:00:00Z", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Asha", title: "Great", body: "Good notes </script>", _createdDate: { $date: "2026-11-01T10:00:00Z" } },
   { _id: "r2", _owner: "m3", _updatedDate: "2026-11-02T09:00:00Z", company: "futuretopper.in", rating: 4, displayName: "Ravi", body: "Helpful", _createdDate: "2026-10-20T10:00:00Z" },
   { _id: "r3", _owner: "owner1", _updatedDate: "2026-11-03T09:00:00Z", company: "futuretopper.in", type: "customer", rating: 1, displayName: "Owner", body: "self" },
   { _id: "r4", _owner: "m4", _updatedDate: "2026-11-04T09:00:00Z", company: "futuretopper.in", type: "employee", rating: 3 },
-  { _id: "r5", _owner: "m5", _createdDate: "2026-11-05T00:00:00Z", _updatedDate: "2026-11-05T00:00:00Z", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Sneaky", body: "SELF PUBLISHED" },
+  { _id: "r5", _owner: "m5", _createdDate: "2026-11-05T00:00:00Z", _updatedDate: "2026-11-05T00:00:00Z", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Sneaky", body: "SELF PUBLISHED", moderationNote: "INTERNAL NOTE" },
+  /* Not counted: a rating outside 1 to 5, and an older second review by the same member (m5). */
+  { _id: "r6", _owner: "m6", _createdDate: "2026-11-06T00:00:00Z", _updatedDate: "2026-11-06T00:00:00Z", company: "futuretopper.in", type: "customer", rating: 1000, displayName: "Huge", body: "HUGE RATING" },
+  { _id: "r7", _owner: "m5", _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-01T00:00:00Z", company: "futuretopper.in", type: "customer", rating: 1, displayName: "Sneaky", body: "SECOND REVIEW" },
 ];
 /* For the sitemap: 250 companies, so it has to page through them, plus one duplicate slug and one with no slug. */
 const allCompanies = [...companies, ...Array.from({ length: 247 }, (_, i) => ({ _id: `c${i}.com`, title: `Co ${i}`, slug: `co-${i}`, _updatedDate: { $date: "2026-11-01T00:00:00Z" } })),
@@ -85,6 +94,15 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const fp = await resolvePage("/company/1password"), fhtml = renderShell(fp);
   assert.ok(!fp.noindex && fhtml.includes("About 1Password") && fhtml.includes("When was 1Password founded?") && fhtml.includes('id="co-facts" data-id="1password.com"'), "researched facts are on the page");
   assert.ok(fp.ld.some(n => n["@type"] === "FAQPage") && fp.ld.find(n => n["@id"] && n["@id"].endsWith("#company")).foundingDate, "facts in structured data");
+  assert.ok(!main.includes("HUGE RATING") && !main.includes("SECOND REVIEW") && !co.includes("INTERNAL NOTE"), "bad ratings, second reviews and internal notes stay out");
+  assert.ok(!co.includes("FAKE TAKEOVER"), "an older team-made company keeps its address");
+  assert.ok(!co.includes('"m5"') && !co.includes(">m5<"), "no member IDs in the page");
+  assert.ok(fp.desc.startsWith("1Password reviews from customers and employees.") && fp.desc.length <= 158 && fp.desc.length > 70, "company description uses the researched facts: " + fp.desc);
+  assert.deepEqual(await resolvePage("/Company/Future-Topper"), { redirect: "/company/future-topper" }, "uppercase addresses move to lowercase");
+  for (const r of ["/about", "/terms", "/help", "/pricing", "/list", "/categories"]) {
+    const t = (await resolvePage(r)).body.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+    assert.ok(t > 50, `${r} sends its full text (${t} words)`);
+  }
   console.log("PAGE TEXT CHECK: ok");
 }
 
