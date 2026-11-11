@@ -418,11 +418,11 @@ function coCard(c) {
 function listRow(c) {
   return `<article class="listrow">
     ${avatar(c, 56, 18)}
-    <div class="info"><div class="name"><a href="#${c.id}">${esc(c.name)}</a>${scoreOf(c) ? rBadge(c) : ''}</div>
+    <div class="info"><div class="name"><a href="#${c.id}">${esc(c.name)}</a></div>
       <span class="meta" style="font-size:14px">${esc(c.web)} · ${esc(c.country)}</span>
       <p class="bio" style="margin-block:2px">${esc(c.bio)}</p>
       ${ratingLine(c) ? `<span class="meta" style="font-size:14px">${esc(ratingLine(c))}</span>` : ''}</div>
-    <a class="btn o" href="#${c.id}">Write a review</a>
+    ${(() => { const s = scoreOf(c), n = reviewsFor(c.id).length + empData(c.id).reviews.length; return s ? `<div class="lrscore" aria-label="Rated ${s.toFixed(1)} out of 5 from ${n} review${n === 1 ? '' : 's'}"><b>${s.toFixed(1)}</b>${starRow(+s.toFixed(1), 14)}<span>${n} review${n === 1 ? '' : 's'}</span></div>` : '<span class="lrnone">No reviews yet</span>'; })()}
   </article>`;
 }
 const ICONS = {"bank":"<path d=\"M3 10l9-6 9 6\"/><path d=\"M5 10v8M9.5 10v8M14.5 10v8M19 10v8\"/><path d=\"M3 20h18\"/>","code":"<path d=\"M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14\"/>","heart":"<path d=\"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z\"/><path d=\"M8 12h2l1-2 2 4 1-2h2\"/>","shield":"<path d=\"M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z\"/><path d=\"M8.5 12l2.5 2.5 4.5-5\"/>","cup":"<path d=\"M5 9h12v4a6 6 0 0 1-12 0z\"/><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"/><path d=\"M8 3.5v2.5M11 3.5v2.5M14 3.5v2.5\"/>","basket":"<path d=\"M3 10h18l-2 10H5z\"/><path d=\"M8 10l3-6M16 10l-3-6M9 14v3M15 14v3M12 14v3\"/>","car":"<path d=\"M4 15.5l1.7-5.1A2 2 0 0 1 7.6 9h8.8a2 2 0 0 1 1.9 1.4l1.7 5.1V19H4z\"/><path d=\"M4 15.5h16\"/><circle cx=\"8\" cy=\"17.2\" r=\".6\"/><circle cx=\"16\" cy=\"17.2\" r=\".6\"/>","house":"<path d=\"M4 11l8-7 8 7\"/><path d=\"M6 9.5V20h12V9.5\"/><path d=\"M10 20v-5h4v5\"/>","card":"<rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2.5\"/><path d=\"M3 10h18M7 15h3\"/>","factory":"<path d=\"M3 20V11l5 3v-3l5 3V5h4v15\"/><path d=\"M2 20h20M17 9h3v11\"/>","layers":"<path d=\"M12 3l9 5-9 5-9-5z\"/><path d=\"M3 12.5l9 5 9-5\"/><path d=\"M3 16.5l9 5 9-5\"/>","cart":"<path d=\"M3 4h2l2.4 11h10.2L20 7.5H6.3\"/><circle cx=\"9\" cy=\"19.5\" r=\"1.3\"/><circle cx=\"17\" cy=\"19.5\" r=\"1.3\"/>","plane":"<path d=\"M21 15.5v-2l-7.5-4.5V4.5a1.5 1.5 0 0 0-3 0V9L3 13.5v2l7.5-2.3V18l-2 1.5V21l3.5-1 3.5 1v-1.5l-2-1.5v-4.8z\"/>","bolt":"<path d=\"M13 2.5L5 13.5h6l-1 8 8-11h-6z\"/>","bag":"<path d=\"M5.5 8h13l-1 12.5h-11z\"/><path d=\"M9 10V7a3 3 0 0 1 6 0v3\"/>","cap":"<path d=\"M2 9.5l10-5 10 5-10 5z\"/><path d=\"M6 11.5V16c3 2.2 9 2.2 12 0v-4.5M21 10v5\"/>","truck":"<path d=\"M2.5 6h11v10h-11zM13.5 9.5h4.5l3 3.5v3h-7.5\"/><circle cx=\"6.5\" cy=\"17.5\" r=\"1.7\"/><circle cx=\"17\" cy=\"17.5\" r=\"1.7\"/>","shirt":"<path d=\"M8 4L3 7l2 4.5 2-1V20h10v-9.5l2 1L21 7l-5-3a4 4 0 0 1-8 0z\"/>","sparkle":"<path d=\"M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z\"/><path d=\"M18.5 15v5M16 17.5h5\"/>","trend":"<path d=\"M4 20h16\"/><path d=\"M5 15.5l4.5-4.5 3 3L19 7.5\"/><path d=\"M14.5 7.5H19V12\"/>","chip":"<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\"/><rect x=\"9.5\" y=\"9.5\" width=\"5\" height=\"5\" rx=\"1\"/><path d=\"M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5\"/>","scale":"<path d=\"M12 4v16M7 20h10M5 7h14\"/><path d=\"M5 7l-2.5 6a2.5 2.5 0 0 0 5 0zM19 7l-2.5 6a2.5 2.5 0 0 0 5 0z\"/>","person":"<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4.5 20.5a7.5 7.5 0 0 1 15 0\"/>","signal":"<path d=\"M4 10a11.3 11.3 0 0 1 16 0M7 13.5a7 7 0 0 1 10 0M10 17a2.8 2.8 0 0 1 4 0\"/><circle cx=\"12\" cy=\"20\" r=\".8\"/>","play":"<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"3.5\"/><path d=\"M10 9.2l5 2.8-5 2.8z\"/>","phone":"<rect x=\"6.5\" y=\"2.5\" width=\"11\" height=\"19\" rx=\"2.5\"/><path d=\"M10.5 18.5h3\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9S14.6 18.4 12 21c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z\"/>","bed":"<path d=\"M3 19V6M3 14h18v5M21 14a3.5 3.5 0 0 0-3.5-3.5H11V14\"/><circle cx=\"7\" cy=\"11\" r=\"1.6\"/>","news":"<path d=\"M4 5h13v14H6a2 2 0 0 1-2-2z\"/><path d=\"M17 9h3v8a2 2 0 0 1-2 2\"/><path d=\"M7.5 8.5h6M7.5 12h6M7.5 15.5h4\"/>","chat":"<path d=\"M4 5h16v11H9.5L5 20v-4H4z\"/><path d=\"M8 9.5h8M8 12.5h5\"/>","game":"<rect x=\"2.5\" y=\"7\" width=\"19\" height=\"11\" rx=\"5.5\"/><path d=\"M7.5 10.5v4M5.5 12.5h4\"/><circle cx=\"15.5\" cy=\"11.5\" r=\".6\"/><circle cx=\"17.5\" cy=\"13.8\" r=\".6\"/>","server":"<rect x=\"3\" y=\"4\" width=\"18\" height=\"7\" rx=\"2\"/><rect x=\"3\" y=\"13\" width=\"18\" height=\"7\" rx=\"2\"/><path d=\"M7 7.5h.01M7 16.5h.01M11 7.5h6M11 16.5h6\"/>","pin":"<path d=\"M12 21.5s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>","coin":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 7.5h3.8a2.2 2.2 0 0 1 0 4.5H9.5h4.3a2.25 2.25 0 0 1 0 4.5H9.5zM11 6v1.5M11 16.5V18\"/>","rocket":"<path d=\"M12 2.5c3 2.5 4.5 6 4.5 10L14 17h-4l-2.5-4.5C7.5 8.5 9 5 12 2.5z\"/><circle cx=\"12\" cy=\"10\" r=\"1.6\"/><path d=\"M10 17l-1.5 4M14 17l1.5 4M7.5 12.5L5 15v2.5l3-1M16.5 12.5L19 15v2.5l-3-1\"/>","pick":"<path d=\"M14.5 9.5L4 20\"/><path d=\"M6 6.5c4.5-3.5 9.5-3.5 13.5 0-1.5.2-3 .8-4.2 1.7L9.6 9.7C8.8 8.5 7.6 7.4 6 6.5z\"/>","sofa":"<path d=\"M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3\"/><path d=\"M3 12a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3z\"/><path d=\"M5.5 17v2.5M18.5 17v2.5\"/>"};
@@ -720,7 +720,7 @@ function vHome() {
       <div class="wrap">
         <h1 id="hero-h" class="sr">Know the company before you deal with it.</h1>
         <form class="hs3" role="search" id="hero-search-form" autocomplete="off">
-          <div class="hl hl1"><span class="w" aria-hidden="true">Know</span><span class="blank"><label class="sr" for="hero-search">Search companies or websites</label><input id="hero-search" type="search" placeholder="the company" data-suggest="hero" spellcheck="false"><div class="sugg" id="sugg-hero" hidden></div></span></div>
+          <div class="hl hl1"><span class="w" aria-hidden="true">Know</span><span class="blank"><label class="sr" for="hero-search">Search companies or websites</label><input id="hero-search" type="search" placeholder="the company" data-suggest="hero" spellcheck="false"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg><div class="sugg" id="sugg-hero" hidden></div></span></div>
           <button class="go" type="submit">Search</button>
           <div class="hl hl2"><span class="w" aria-hidden="true">before you deal with&nbsp;it.</span></div>
         </form>
@@ -956,9 +956,10 @@ function empCard(r, idx, cid) {
   </article>`;
 }
 function empPanel(c, er) {
-  return `${empSummary(er)}${empGate(c, 'review') || empForm(c)}
+  return `${empSummary(er)}
     <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="er-h"><h2 id="er-h" style="font-size:22px">Employee reviews</h2>
-      ${er.length ? `<div class="rvbar"><span class="meta">${er.length} review${er.length === 1 ? '' : 's'}</span>${sortSel('ersort', S.erSort || 'new')}</div>` + rvSorted(er, S.erSort || 'new').map(([r, i]) => empCard(r, i, c.id)).join('') : `<div class="empty">${PERSON(48)}<b>Be the first to review ${esc(c.name)} as an employee</b><p>Worked there? Share what it's like, anonymously.</p></div>`}</section>`;
+      ${er.length ? `<div class="rvbar"><span class="meta">${er.length} review${er.length === 1 ? '' : 's'}</span>${sortSel('ersort', S.erSort || 'new')}</div>` + rvSorted(er, S.erSort || 'new').map(([r, i]) => empCard(r, i, c.id)).join('') : `<div class="empty">${PERSON(48)}<b>Be the first to review ${esc(c.name)} as an employee</b><p>Worked there? Share what it's like, anonymously.</p></div>`}</section>
+    ${empGate(c, 'review') || empForm(c)}`;
 }
 function salForm(c) {
   return `<form class="box" id="sal-form" style="padding:24px;gap:18px" novalidate>
@@ -1030,6 +1031,9 @@ function vCompany(c) {
   let panel;
   if (tab === 'overview') panel = overviewPanel(c, list, er);
   else if (tab === 'customers') panel = `
+      <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
+        ${list.length ? rvBreakdown(list) + rvList(list, c.id) : `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg><b>Be the first to review ${esc(c.name)}</b><p>Share how they treated you. Good or bad, every review is published the same way.</p></div>`}
+      </section>
       ${reviewBlock() || `<form class="box" id="review-form" style="padding:24px;gap:18px" novalidate>
         <h2 style="font-size:22px">Rate your experience with ${esc(c.name)}</h2>
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px">
@@ -1042,10 +1046,7 @@ function vCompany(c) {
           <div class="field" style="justify-content:flex-end"><p class="meta" style="font-size:14px;padding-bottom:12px">${S.user && S.user.type === 'reviewer' ? `Posting as <b style="color:var(--fg)">${esc(S.user.name)}</b>` : 'You’ll log in as a reviewer before posting.'}</p></div></div>
         <label class="check"><input id="r-first" type="checkbox"><span>This is my own experience. I don’t work for this company or a competitor, and nobody paid me or gave me anything to write it.</span></label><p class="err" id="err-r-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Your review is published as soon as you post it. Reviews that break the <a href="#guidelines">guidelines</a> are taken down.</p>
         <div><button class="btn p lg" type="submit">Post review</button></div>
-      </form>`}
-      <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
-        ${list.length ? rvBreakdown(list) + rvList(list, c.id) : `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg><b>Be the first to review ${esc(c.name)}</b><p>Share how they treated you. Good or bad, every review is published the same way.</p></div>`}
-      </section>`;
+      </form>`}`;
   else if (tab === 'employees') panel = (isVerifiedCo(c) ? workBox(c) : '') + empPanel(c, er);
   else if (tab === 'salaries') panel = salPanel(c, ed.salaries);
   else panel = '';
@@ -2274,7 +2275,7 @@ function setupReveal(h) {
   if (revealIO) { revealIO.disconnect(); revealIO = null; }
   let reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
   if (fresh && !reduce) { const hero = root.querySelector('.hero3'); if (hero) hero.classList.add('play'); }
-  if (!fresh || reduce || !('IntersectionObserver' in window)) return;
+  if (!fresh || reduce || !('IntersectionObserver' in window) || innerWidth < 900 || (navigator.connection && navigator.connection.saveData)) return;
   const done = el => { el.classList.remove('rv', 'in', 'rv-l', 'rv-r', 'rv-z'); el.style.removeProperty('--rv-d'); };
   const show = el => {
     el.classList.add('in');
