@@ -52,7 +52,7 @@ g.__mock = {
   insertItem: async (col, data) => { inserted.push([col, data]); return { _id: 'new', ...data }; },
   updateItem: async (col, item) => { inserted.push([col + ' update', item]); return item; },
   removeItem: async (col, id) => { inserted.push([col + ' remove', id]); return null; },
-  wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); return { dataItem: { data: opts.body.dataItem.data } }; },
+  wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); if (/recovery/.test(path)) { inserted.push(['recovery', path]); return {}; } return { dataItem: { data: opts.body.dataItem.data } }; },
   WIX_CLIENT_ID: 'test-client',
   member: { member: { id: 'm5', loginEmail: 'asha@example.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
 };
@@ -148,6 +148,16 @@ click('[data-act="cur"][data-cur="USD"]'); await new Promise(r => setTimeout(r, 
 const usd = app.textContent;
 report.push('pricing INR first: ' + before + ', after USD: ' + (usd.includes('$9') && usd.includes('$19') && !usd.includes('₹499')));
 click('[data-act="cur"][data-cur="INR"]'); await new Promise(r => setTimeout(r, 40));
+// password reset from the login page (logged out)
+{
+  const keep = g.__mock.member; g.__mock.member = { member: null, loggedIn: false, loading: false, error: null }; globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 40));
+  await go('login');
+  const fl = app.querySelector('[data-act=auth-mode][data-mode=forgot]'); if (fl) fl.click(); await new Promise(r => setTimeout(r, 30));
+  const ff = app.querySelector('#forgot-form'); if (ff) { ff.querySelector('#l-email').value = 'someone@example.com'; ff.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); }
+  await new Promise(r => setTimeout(r, 60));
+  report.push('forgot link: ' + !!fl + ', reset sent: ' + inserted.some(x => x[0] === 'recovery') + ', confirmation shown: ' + app.textContent.includes('Check your email'));
+  g.__mock.member = keep; globalThis.__memberFn(keep); await new Promise(r => setTimeout(r, 40));
+}
 await go('list'); report.push('list in INR: ' + app.textContent.includes('₹999') + ', switch shown: ' + !!app.querySelector('.curswitch'));
 // real page addresses
 await go('categories');

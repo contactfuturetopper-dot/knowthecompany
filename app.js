@@ -1676,6 +1676,15 @@ function vLogin(type, why) {
       <div class="field"><label class="l" for="l-code">Code</label><input id="l-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" class="mono" style="font-size:20px;letter-spacing:.3em"><p class="err" id="err-l-code" hidden>Enter the code from the email.</p></div>
       ${err}<button class="btn p lg" type="submit">Confirm</button>
       <button class="link" type="button" data-act="auth-mode" data-mode="signin" style="align-self:flex-start">Back to log in</button></form>`;
+  else if (a.mode === 'forgot') card = `<form class="authcard" id="forgot-form" novalidate>
+      <h1 style="font-size:26px">Reset your password</h1>
+      <p style="color:var(--muted)">Enter the email you signed up with. We'll send you a link to choose a new password.</p>
+      ${emailF}
+      ${err}<button class="btn p lg" type="submit">Send reset link</button>
+      <button class="link" type="button" data-act="auth-mode" data-mode="signin" style="align-self:flex-start">Back to log in</button></form>`;
+  else if (a.mode === 'forgot-sent') card = `<div class="authcard"><h1 style="font-size:26px">Check your email</h1>
+      <p style="color:var(--muted)">If there's an account for <b style="color:var(--fg)">${esc(a.email || 'that email')}</b>, a link to reset your password is on its way. It can take a few minutes, so check your spam folder too. Once you've chosen a new password, you'll come back here to log in.</p>
+      <button class="link" type="button" data-act="auth-mode" data-mode="signin" style="align-self:flex-start">Back to log in</button></div>`;
   else if (a.mode === 'approval') card = `<div class="authcard"><h1 style="font-size:26px">Thanks, you're signed up</h1><p style="color:var(--muted)">Your account is waiting for approval. We'll email you when it's ready, and then you can log in.</p><button class="link" type="button" data-act="auth-mode" data-mode="signin" style="align-self:flex-start">Back to log in</button></div>`;
   else if (a.mode === 'signup') card = `<form class="authcard" id="signup-form" novalidate>
       <h1 style="font-size:26px">Create your account</h1>
@@ -1695,10 +1704,10 @@ function vLogin(type, why) {
       <p style="color:var(--muted)">${biz ? 'See your company pages, review links and claims.' : 'Post reviews and see everything you have written in one place.'}</p>
       ${socialBtns(biz, 'Continue')}
       ${emailF}
-      <div class="field"><label class="l" for="l-pass">Password</label><input id="l-pass" type="password" autocomplete="current-password" minlength="8"><p class="err" id="err-l-pass" hidden>Enter your password (at least 8 characters).</p></div>
+      <div class="field"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><label class="l" for="l-pass">Password</label><button class="link" type="button" data-act="auth-mode" data-mode="forgot" style="font-size:13px">Forgot password?</button></div><input id="l-pass" type="password" autocomplete="current-password" minlength="8"><p class="err" id="err-l-pass" hidden>Enter your password (at least 8 characters).</p></div>
       ${err}<button class="btn p lg" type="submit">Log in</button>
       <p style="font-size:14px">New here? <button class="link" type="button" data-act="auth-mode" data-mode="signup">Create an account</button></p>
-      <p class="meta" style="font-size:13px">Forgot your password? <a href="#contact">Contact us</a> and we’ll help you reset it.</p></form>`;
+      <p style="font-size:14px"><button class="link" type="button" data-act="auth-mode" data-mode="forgot">Forgot your password?</button></p></form>`;
   return `<div class="wrap"><div class="authwrap">${seg}${note ? `<p class="notice">${esc(note)}</p>` : ''}${card}
     <p class="meta" style="text-align:center;font-size:14px">${biz ? 'Not listed yet? <a href="#list">' + (LAUNCH ? 'List your company free' : 'List your company for [[PB]]') + '</a>' : 'Manage a company? <a href="#business-login">Use company login</a>'}</p></div></div>`;
 }
@@ -2065,10 +2074,28 @@ async function submitClaim() {
 
 document.addEventListener('submit', async e => {
   const f = e.target; const id = f.id;
-  const HANDLED = ['review-form', 'emp-form', 'int-form', 'add-form', 'req-form', 'report-form', 'suggest-form', 'login-form', 'signup-form', 'verify-form', 'contact-form', 'pitch-form'];
+  const HANDLED = ['review-form', 'emp-form', 'int-form', 'add-form', 'req-form', 'report-form', 'suggest-form', 'login-form', 'signup-form', 'verify-form', 'forgot-form', 'contact-form', 'pitch-form'];
   if (!HANDLED.includes(id)) return;
   e.preventDefault(); e.stopImmediatePropagation();
   const v = k => { const el = f.querySelector('#' + k); return el ? el.value.trim() : ''; };
+
+  /* Password reset: Wix emails a link to its reset page, which sends the member back to /login
+     (an allowed redirect address of the site's sign-in app). The reply never says whether the email has
+     an account, so the form can't be used to find out who is registered. */
+  if (id === 'forgot-form') {
+    const email = v('l-email'), bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    document.getElementById('err-l-email').hidden = !bad;
+    if (bad) { f.querySelector('#l-email').focus(); return; }
+    busy(f, true);
+    try {
+      await wixRequest('/_api/iam/recovery/v1/send-email', { body: { email, redirect: { url: location.origin + '/login', clientId: WIX_CLIENT_ID } } });
+    } catch (err) {
+      const msg = String(err && err.message || err);
+      if (!/not.?found|no.?member|doesn.?t exist|404/i.test(msg)) { S.auth = { ...S.auth, email, error: 'We couldn’t send the email just now. Please try again in a minute, or contact us.' }; render(); return; }
+    }
+    S.auth = { mode: 'forgot-sent', email, error: '' }; render();
+    return;
+  }
 
   if (id === 'login-form' || id === 'signup-form' || id === 'verify-form') {
     const email = v('l-email'), pw = (f.querySelector('#l-pass') || {}).value || '';
@@ -2250,7 +2277,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (act === 'cf-submit') { stop(); submitClaim(); return; }
-  if (['rv-helpful', 'go-plus', 'demo-card', 'demo-poster', 'google-login', 'forgot', 'pay', 'cf-send', 'cf-verify', 'cf-check', 'cf-docs', 'report'].includes(act)) { stop(); return; }
+  if (['rv-helpful', 'go-plus', 'demo-card', 'demo-poster', 'google-login', 'pay', 'cf-send', 'cf-verify', 'cf-check', 'cf-docs', 'report'].includes(act)) { stop(); return; }
 });
 
 document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.jfilter === 'q') { S.jobFilter.q = t.value; const r = document.getElementById('job-results'); if (r) r.innerHTML = jobResults(); } });
@@ -2559,7 +2586,6 @@ document.addEventListener('click', e => {
   if (act === 'go-plus') { S.user.plan = 'plus'; S.listData.plusFrom = todayISO(); store.set('tn_user', S.user); store.set('tn_listing', S.listData); render(); toast(LAUNCH ? `Plus trial started for ${PLUS_TRIAL_DAYS} days (demo)` : `Upgraded to Plus (demo)`); return; }
   if (act === 'demo-card') { toast('On the live site this downloads a square image of the review.'); return; }
   if (act === 'google-login') { const type = a.dataset.type; finishLogin(type, type === 'business' ? (S.listData.email || 'owner@brightline.example') : 'priya.s@gmail.com', type === 'business' ? '' : 'Priya S.'); toast('Signed in with Google (demo)'); return; }
-  if (act === 'forgot') { toast('On the live site we email you a link to reset your password.'); return; }
   if (act === 'demo-poster') { toast('On the live site this downloads a printable A4 poster.'); return; }
   if (act === 'demo-contact') { e.preventDefault(); toast(`On the live site this opens ${a.dataset.what === 'call' ? 'a phone call' : a.dataset.what === 'email' ? 'an email' : 'a WhatsApp chat'} with the company.`); return; }
   if (act === 'to-form') { e.preventDefault(); document.getElementById('list-form-area').scrollIntoView({ behavior: 'smooth' }); const f = document.getElementById('b-name'); if (f) f.focus({ preventScroll: true }); }
