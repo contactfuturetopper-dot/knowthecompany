@@ -764,7 +764,7 @@ header.top .searchpanel .hsearch{flex:1;max-width:none}
 .cogrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px 32px;align-items:start;margin-top:-58px;position:relative;padding-bottom:30px}
 .coid{display:flex;flex-direction:column;gap:12px;min-width:0;padding-left:8px}
 .cologo{width:112px;height:112px;flex:none;border-radius:26px;border:5px solid var(--surface);box-shadow:var(--shadow-md);background:var(--card);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800}
-.cologo img{width:100%;height:100%;object-fit:cover;display:block}
+.cologo img{width:100%;height:100%;object-fit:contain;display:block;padding:12%;background:#fff}
 .coname{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-top:4px}
 .coname h1{font-size:clamp(28px,3.6vw,40px);font-weight:800;letter-spacing:-0.03em}
 .cometa{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:14px}
@@ -1026,3 +1026,7 @@ footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-siz
 .lrnone{font-size:13px;font-weight:600;color:var(--soft);background:var(--surface);border-radius:999px;padding:6px 12px}
 @media (max-width:560px){.lrscore{flex-direction:row;align-items:center;gap:8px;min-width:0}.lrscore b{font-size:20px}}
 @media (min-width:981px){.hs3{font-size:clamp(44px,7.4vw,100px)}}
+
+/* official company logos in lists and cards */
+.avatar.logo{background:#fff;border:1px solid var(--line);overflow:hidden;padding:0;flex:none;display:inline-flex;align-items:center;justify-content:center}
+.avatar.logo img{width:100%;height:100%;object-fit:contain;padding:14%;display:block}

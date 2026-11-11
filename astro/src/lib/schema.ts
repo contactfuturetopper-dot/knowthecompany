@@ -83,6 +83,7 @@ export function companyNodes(path: string, c: any, reviews: any[], f?: any) {
     ...(c.bio ? { description: c.bio } : {}),
     ...(c.country && c.country !== "WW" ? { address: { "@type": "PostalAddress", addressCountry: c.country } } : {}),
     ...(c.category ? { knowsAbout: c.category } : {}),
+    ...(/^https:\/\/static\.wixstatic\.com\//.test(String(c.logo || "")) ? { logo: c.logo, image: c.logo } : {}),
   };
   if (f) {
     if (f.description) org.description = f.description;

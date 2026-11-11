@@ -71,7 +71,9 @@ COUNTRY.WW = 'Online / worldwide';
 const ADMIN_ID = 'c0f544a7-207e-490b-b7d9-830ef39f49c7';
 const tms = d => { const v = d && typeof d === 'object' && !(d instanceof Date) && '$date' in d ? d.$date : d; const t = v instanceof Date ? v.getTime() : Date.parse(v); return isNaN(t) ? 0 : t; };
 const adminTouched = it => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
-const trustedCo = it => adminTouched(it) ? it : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null };
+const trustedCo = it => adminTouched(it) ? it : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null, logo: '' };
+/* The company's logo: its official icon, imported by the team into the site's media library, or one its owners set. */
+const logoOf = c => { const u = String((c && c.raw && c.raw.logo) || ''); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; };
 
 /* ---------- companies, from the Wix CMS (collection "Companies") ---------- */
 const mkCo = raw => { const it = trustedCo(raw); return {
@@ -400,7 +402,7 @@ const scoreOf = c => { const l = reviewsFor(c.id), er = empData(c.id).reviews; c
 const rBadge = c => { const s = scoreOf(c); return s ? `<span class="rbadge" aria-label="Rated ${s.toFixed(1)} out of 5">${s.toFixed(1)}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${IC.star}</svg></span>` : '<span class="rbadge none">Not rated</span>'; };
 const qStats = c => { const ed = empData(c.id); const items = [['customers', reviewsFor(c.id).length + ed.reviews.length, 'Reviews']].filter(x => x[1]); if (!items.length) return ''; return `<div class="qstats" style="grid-template-columns:repeat(${items.length},1fr)">${items.map(([k, n, l]) => `<a href="#${c.id}" data-act="cotab-link" data-tab="${k}"><b>${n}</b><span>${l}</span></a>`).join('')}</div>`; };
 const toneOf = s => { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6 + 1; };
-const avatar = (c, size = 48, fs = 16) => { const k = toneOf(c.name); return `<span class="avatar" aria-hidden="true" style="width:${size}px;height:${size}px;font-size:${fs}px;border-radius:${Math.round(size * .28)}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; };
+const avatar = (c, size = 48, fs = 16) => { const k = toneOf(c.name), L = logoOf(c); if (L) return `<span class="avatar logo" aria-hidden="true" style="width:${size}px;height:${size}px;border-radius:${Math.round(size * .28)}px"><img src="${esc(L)}" alt="" loading="lazy" decoding="async"></span>`; return `<span class="avatar" aria-hidden="true" style="width:${size}px;height:${size}px;font-size:${fs}px;border-radius:${Math.round(size * .28)}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; };
 function ratingLine(c) {
   const list = reviewsFor(c.id), er = empData(c.id).reviews; const parts = [];
   if (list.length) parts.push(`Customers ${avgOf(list).toFixed(1)} ★ (${list.length})`);
@@ -1244,8 +1246,8 @@ const cprof = c => { const r = (c && c.raw) || {};
     photos: (r.photos || []).map(x => typeof x === 'string' ? { src: x } : x).filter(x => x && x.src), updates: (r.updates || []).filter(u => u && u.text) }; };
 const icn = (k, s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k] || ICONS.layers}</svg>`;
 const MAIL_I = '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/>';
-function coLogo(c, size) { const P = CLAIMS[c.id] ? cprof(c) : {}; const k = toneOf(c.name);
-  return P.logo ? `<span class="cologo" style="width:${size}px;height:${size}px"><img src="${P.logo}" alt="${esc(c.name)} logo"></span>` : `<span class="cologo" aria-hidden="true" style="width:${size}px;height:${size}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; }
+function coLogo(c, size) { const L = logoOf(c); const k = toneOf(c.name);
+  return L ? `<span class="cologo" style="width:${size}px;height:${size}px"><img src="${esc(L)}" alt="${esc(c.name)} logo" loading="lazy" decoding="async"></span>` : `<span class="cologo" aria-hidden="true" style="width:${size}px;height:${size}px;background:var(--t${k});color:var(--t${k}i)">${esc(initials(c.name))}</span>`; }
 function overviewPanel(c, list, er) {
   const P = cprof(c); const plus = coPlan(c) === 'plus'; const nm = esc(c.name);
   const facts = [['Founded', P.founded], ['Team size', P.size], ['Headquarters', P.hq], ['Opening hours', P.hours]].filter(x => x[1]);

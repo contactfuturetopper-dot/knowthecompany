@@ -25,6 +25,7 @@ const companies = csv.slice(1).map(l => { const r = Object.fromEntries(hdr.map((
 // one verified Plus company to exercise the owner-written sections
 // A company a member inserted with team-only fields filled in; nobody on the team has edited it.
 companies.push({ _id: 'fakeco.com', title: 'Fakeco', slug: 'fakeco', website: 'fakeco.com', category: 'Fintech & Banking', country: 'IN', bio: 'Inserted by a member.', addedBy: 'reviewer', claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', ownerMemberIds: ['m9'], employerPage: { why: 'FAKE EMPLOYER PAGE text that must never show.', benefits: [], hiring: true }, _owner: 'm9', _createdDate: '2026-11-09T00:00:00Z', _updatedDate: '2026-11-09T00:00:00Z' });
+companies.find(c => c._id === 'razorpay.com').logo = 'https://static.wixstatic.com/media/c0f544_test~mv2.png';
 Object.assign(companies.find(c => c._id === 'razorpay.com'), { claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', about: 'About text', founded: '2014', teamSize: '201–1,000 people', services: ['Payments'], phone: '+91 80000 00000', publicEmail: 'x@y.z', employerPage: { why: 'Why work here text, long enough.', benefits: ['Health insurance'], size: '201–1,000 people', hiring: true }, ownerMemberIds: ['m1'] });
 const reviews = [
   { _id: 'r1', _owner: 'm4', _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T01:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 4, title: 'Quick settlements', body: 'Payments settled in two days and support answered quickly.' },
@@ -123,6 +124,7 @@ globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 60)
 await go('co-1password');
 report.push('company account review form hidden: ' + !app.querySelector('#review-form') + ', block shown: ' + app.textContent.includes('Company accounts can’t write reviews'));
 await go('co-razorpay'); app.querySelector('[data-act=cotab][data-tab=customers]').click(); await new Promise(r => setTimeout(r, 40));
+report.push('logo shown: ' + !!app.querySelector('.cologo img[src*="wixstatic"]'));
 report.push('imported label: ' + app.textContent.includes('First given via Email or message in Mar 2025'));
 report.push('tab: ' + (app.querySelector('[role=tab][aria-selected=true]') || {}).textContent + ', r1 shown: ' + app.textContent.includes('Quick settlements') + ', new review live: ' + app.textContent.includes('Posted just now') + ', its own proof label shown: ' + (app.innerHTML.match(/Proof checked<\/span>/g) || []).length);
 await go('co-fakeco');
