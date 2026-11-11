@@ -1623,8 +1623,6 @@ function renderNav(active) {
   const empMenu = empLinks().map(([k, l, d, href, extra]) => `<a href="${href}" ${extra}><span class="mi">${nI(k, 18)}</span><span><b>${l}</b><small>${d}</small></span></a>`).join('');
   nav.innerHTML = `<a href="#categories" data-nav="categories">Companies</a>
     <details class="dd${active === 'tools' ? ' on' : ''}"><summary class="car">Tools</summary><div class="ddmenu wide">${toolsMenu}</div></details>
-
-    <a href="#blog" data-nav="blog">Blog</a>
     <details class="dd${active === 'list' || active === 'dashboard' ? ' on' : ''}"><summary class="car">For employers</summary><div class="ddmenu">${empMenu}</div></details>`;
   nav.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === active) a.setAttribute('aria-current', 'page'); });
   const ns = notifs(), unseen = Math.max(0, ns.length - (store.get('tn_seen', 0) || 0));
