@@ -1,7 +1,17 @@
 ---
 // Every address on the site comes here. Files in public/ (app.js, site.css, the Wix modules, badge.html,
 // auth-callback.html) are served before this page and never reach it.
-import { resolvePage, renderShell } from "../lib/page";
+import { resolvePage, renderShell, sitemapXml, SITEMAP_PATH } from "../lib/page";
+
+if (Astro.url.pathname === SITEMAP_PATH) {
+  try {
+    return new Response(await sitemapXml(), {
+      headers: { "Content-Type": "application/xml; charset=utf-8", "Cache-Control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" },
+    });
+  } catch {
+    return new Response("Sitemap unavailable, try again shortly.", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8", "Retry-After": "300" } });
+  }
+}
 
 const page = await resolvePage(Astro.url.pathname);
 if ("redirect" in page) return Astro.redirect(page.redirect + Astro.url.search, 301);

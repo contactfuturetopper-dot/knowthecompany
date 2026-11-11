@@ -22,6 +22,9 @@ const reviews = [
   { _id: "r3", _owner: "owner1", company: "futuretopper.in", type: "customer", rating: 1, displayName: "Owner", body: "self" },
   { _id: "r4", _owner: "m4", company: "futuretopper.in", type: "employee", rating: 3 },
 ];
+/* For the sitemap: 250 companies, so it has to page through them, plus one duplicate slug and one with no slug. */
+const allCompanies = [...companies, ...Array.from({ length: 247 }, (_, i) => ({ _id: `c${i}.com`, title: `Co ${i}`, slug: `co-${i}`, _updatedDate: { $date: "2026-11-01T00:00:00Z" } })),
+  { _id: "dup.com", title: "Dup", slug: "co-1" }, { _id: "a-b.com", title: "A & B" }];
 globalThis.fetch = async (url, init) => {
   const body = init && init.body ? JSON.parse(init.body) : {};
   const ok = d => ({ ok: true, json: async () => d });
@@ -31,12 +34,13 @@ globalThis.fetch = async (url, init) => {
   if (body.dataCollectionId === "Companies") {
     if (f.slug) return ok({ dataItems: companies.filter(c => c.slug === f.slug.$eq).map(data => ({ data })) });
     if (f.category) return ok({ dataItems: companies.filter(c => c.category === f.category.$eq).map(data => ({ data })) });
+    if (!Object.keys(f).length) { const { limit, offset } = body.query.paging; return ok({ dataItems: allCompanies.slice(offset, offset + limit).map(data => ({ data })) }); }
     if (f.ownerMemberIds) return ok({ dataItems: companies.filter(c => c.ownerMemberIds.some(id => f.ownerMemberIds.$hasSome.includes(id))).map(data => ({ data })) });
   }
   if (body.dataCollectionId === "Reviews") return ok({ dataItems: reviews.filter(r => r.company === f.company.$eq).map(data => ({ data })) });
   throw new Error("unexpected " + url + JSON.stringify(body));
 };
-const { resolvePage, renderShell } = await import(out);
+const { resolvePage, renderShell, sitemapXml, SITEMAP_PATH } = await import(out);
 for (const p of ["/", "/company/future-topper", "/category/education-and-e-learning", "/blog/reply-to-negative-reviews", "/tools/hike", "/tools", "/blog", "/about", "/pricing", "/nope"]) {
   const pg = await resolvePage(p);
   const html = renderShell(pg);
@@ -59,4 +63,19 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const nf = renderShell(await resolvePage("/nope"));
   assert.ok(!nf.includes("ld-json"), "no structured data on a missing page");
   console.log("SCHEMA CHECK: ok");
+}
+
+/* Sitemap: every company once, public pages only, valid XML escaping, and not at an address Wix takes over. */
+{
+  assert.ok(!SITEMAP_PATH.endsWith("sitemap.xml"), "Wix answers any address ending in sitemap.xml itself");
+  const xml = await sitemapXml();
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+  assert.equal(new Set(locs).size, locs.length, "no duplicate URLs");
+  for (const want of ["/", "/pricing", "/tools/hike", "/blog/reply-to-negative-reviews", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
+    assert.ok(locs.includes("https://www.knowthecompany.com" + want), "sitemap has " + want);
+  for (const not of ["/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
+    assert.ok(!locs.includes("https://www.knowthecompany.com" + not), "sitemap leaves out " + not);
+  assert.ok(xml.includes("<lastmod>2026-11-01</lastmod>"));
+  assert.ok(!/&(?!amp;|lt;|gt;|quot;|#39;)/.test(xml), "XML is escaped");
+  console.log(`SITEMAP CHECK: ok (${locs.length} URLs)`);
 }

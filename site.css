@@ -733,7 +733,7 @@ header.top .searchpanel .hsearch{flex:1;max-width:none}
 .bbar a,.bbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;background:none;border:0;font-family:inherit;padding:6px 0;cursor:pointer}
 .bbar [aria-current="page"]{color:var(--accent)}
 .bbar .c{width:46px;height:46px;border-radius:15px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-20px;box-shadow:0 8px 18px -6px rgba(15,23,42,.45)}
-.bbar .rv{color:var(--accent)}
+.bbar .bb-rev{color:var(--accent)}
 .nav{margin-left:auto;gap:4px 4px}
 @media (max-width:720px){header.top .wrap{gap:10px 16px}.nav{flex-wrap:nowrap;overflow-x:auto;width:100%;margin-left:0;gap:4px;scrollbar-width:none;padding-bottom:2px}.nav::-webkit-scrollbar{display:none}.nav a{white-space:nowrap}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -852,6 +852,10 @@ header.top .searchpanel .hsearch{flex:1;max-width:none}
 .rv.rv-r{transform:translate3d(36px,0,0)}
 .rv.rv-z{transform:scale(.85)}
 .rv.in{opacity:1;transform:none}
+/* Sideways entrances start off-screen; on narrow screens that made the page wider than the phone, so
+   they rise up instead. The page also never scrolls sideways (clip, unlike hidden, keeps sticky bars working). */
+@media (max-width:900px){.rv.rv-l,.rv.rv-r{transform:translate3d(0,28px,0)}}
+html,body{overflow-x:clip}
 .scrollbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;background:#A3E635;transform:scaleX(0);transform-origin:0 50%;pointer-events:none}
 header.top{transition:box-shadow .25s ease}
 header.top.scrolled{box-shadow:0 6px 18px -12px rgba(15,23,42,.45)}

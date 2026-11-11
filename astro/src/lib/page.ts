@@ -34,11 +34,11 @@ async function visitorToken(): Promise<string> {
   token = { value: d.access_token, until: Date.now() + (d.expires_in || 3600) * 1000 };
   return token.value;
 }
-async function query(collection: string, filter: object, limit = 100): Promise<any[]> {
+async function query(collection: string, filter: object, limit = 100, offset = 0): Promise<any[]> {
   const res = await fetch(`${API}/wix-data/v2/items/query`, {
     method: "POST",
     headers: { Authorization: await visitorToken(), "Content-Type": "application/json" },
-    body: JSON.stringify({ dataCollectionId: collection, query: { filter, paging: { limit, offset: 0 } } }),
+    body: JSON.stringify({ dataCollectionId: collection, query: { filter, paging: { limit, offset } } }),
   });
   if (!res.ok) throw new Error(`query ${collection} ${res.status}`);
   return ((await res.json()).dataItems || []).map((d: any) => d.data);
@@ -195,4 +195,43 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   if (pg.h1 && pg.path !== "/") html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
   if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);
   return html;
+}
+
+/* ---- sitemap ----
+   Wix answers /sitemap.xml itself (and any address ending in sitemap.xml) with a sitemap of its own
+   editor pages, which this headless site doesn't have. Ours lives at SITEMAP_PATH; it is submitted in
+   Search Console and listed in robots.txt. It holds every page meant for search: the home page, the
+   public fixed pages, tools, blog posts, categories and companies. */
+export const SITEMAP_PATH = "/sitemap-ktc.xml";
+const SITEMAP_SKIP = [...NOINDEX_ROUTES, "jobs"];
+const routePath = (r: string) => r.startsWith("tool-") ? `/tools/${r.slice(5)}` : r.startsWith("blog-") ? `/blog/${r.slice(5)}` : `/${r}`;
+const day = (d: unknown) => {
+  const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d;
+  const t = typeof v === "string" ? new Date(v) : null;
+  return t && !isNaN(t.getTime()) ? t.toISOString().slice(0, 10) : undefined;
+};
+export async function sitemapXml(): Promise<string> {
+  const urls: { loc: string; lastmod?: string }[] = [{ loc: "/" }];
+  for (const m of PAGES.values()) {
+    if (SITEMAP_SKIP.includes(m.route)) continue;
+    const post = m.route.startsWith("blog-") ? POSTS.get(m.route.slice(5)) : undefined;
+    urls.push({ loc: routePath(m.route), lastmod: post ? day(post.date) : undefined });
+  }
+  for (const c of (await categories()).sort()) urls.push({ loc: `/category/${slug(c)}` });
+  const companies: any[] = [];
+  for (let offset = 0; offset < 50_000; offset += 100) {
+    const page = await query("Companies", {}, 100, offset);
+    companies.push(...page);
+    if (page.length < 100) break;
+  }
+  const seen = new Set<string>();
+  for (const c of companies) {
+    const s = c.slug || slug(c.title || c._id);
+    if (!s || seen.has(s)) continue;
+    seen.add(s);
+    urls.push({ loc: `/company/${s}`, lastmod: day(c._updatedDate) });
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    urls.map(u => `  <url><loc>${esc(ORIGIN + u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}</url>`).join("\n") +
+    `\n</urlset>\n`;
 }
