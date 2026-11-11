@@ -923,7 +923,11 @@ body{font-feature-settings:normal}
 .curswitch button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .curswitch button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-0.01em;line-height:1.3}
-/* Wordmark on two lines: "Know The" over "Company", the same height as the mark beside it. */
-.brand b.wm{display:flex;flex-direction:column;font-size:19px!important;line-height:.95;letter-spacing:-0.02em}
-.brand .mark{height:40px}
-@media (max-width:400px){.brand b.wm{font-size:17px!important}}
+/* Wordmark on two lines: "Know the" in an editorial serif (Fraunces, "the" in lime italic) over a heavy
+   "Company" in Bricolage Grotesque, together the height of the mark beside it. */
+.brand b.wm{display:flex;flex-direction:column;line-height:.92;gap:1px}
+.brand b.wm .k{font:500 18px/1 "Fraunces",Georgia,serif;letter-spacing:-0.01em;color:var(--slate,#334155);font-variation-settings:"opsz" 30}
+.brand b.wm .k i{font-style:italic;font-weight:600;color:var(--lime-ink)}
+.brand b.wm .c{font:800 26px/0.95 "Bricolage Grotesque","Schibsted Grotesk",system-ui,sans-serif;letter-spacing:-0.04em;font-variation-settings:"opsz" 48}
+.brand .mark{height:42px}
+@media (max-width:400px){.brand b.wm .k{font-size:15px}.brand b.wm .c{font-size:22px}}
