@@ -102,7 +102,8 @@ export async function resolvePage(pathname: string): Promise<Page> {
         const crumbs: Crumb[] = [{ name: cat, path: `/category/${slug(cat)}` }, { name, path: p }];
         const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews, f)];
         if (f) ld.push(faqNode(p, faqFor(name, c, f, reviews)));
-        return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld, ...(f ? { facts: { id: c._id, data: f } } : {}) };
+        /* Too thin to index until it has a review or researched facts (same rule as setMeta in app.js). */
+        return { status: 200, path: p, title, desc, h1: name, body, noindex: !reviews.length && !f, ld, ...(f ? { facts: { id: c._id, data: f } } : {}) };
       }
       return notFound(p);
     } catch { return unknown(p); }
@@ -327,10 +328,17 @@ export async function sitemapXml(): Promise<string> {
     companies.push(...page);
     if (page.length < 100) break;
   }
+  /* Only company pages worth indexing: ones with researched facts or at least one review. */
+  const reviewed = new Set<string>();
+  for (let offset = 0; offset < 50_000; offset += 100) {
+    const page = await query("Reviews", {}, 100, offset);
+    page.forEach(r => { if (r.type !== "interview" && Number(r.rating) > 0) reviewed.add(typeof r.company === "object" && r.company ? r.company._id : r.company); });
+    if (page.length < 100) break;
+  }
   const seen = new Set<string>();
   for (const c of companies) {
     const s = c.slug || slug(c.title || c._id);
-    if (!s || seen.has(s)) continue;
+    if (!s || seen.has(s) || !(FACTS[c._id] || reviewed.has(c._id))) continue;
     seen.add(s);
     urls.push({ loc: `/company/${s}`, lastmod: day(c._updatedDate) });
   }

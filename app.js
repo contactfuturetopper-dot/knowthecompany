@@ -291,7 +291,7 @@ function factsSection(c, list, er) {
   const links = [['Website', 'https://' + c.web]].concat(FACT_LINKS.map(([k, l]) => [l, safeUrl((f.links || {})[k])])).filter(l => l[1]);
   const srcs = [...new Map((f.sources || []).filter(x => safeUrl(x.url)).map(x => [x.url, x])).values()];
   const checked = f.checked ? new Date(f.checked + 'T00:00:00').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : '';
-  return `<section class="box facts" aria-labelledby="facts-h"><h2 id="facts-h" style="font-size:22px">About ${esc(c.name)}</h2>
+  return `<section class="box cofacts" aria-labelledby="facts-h"><h2 id="facts-h" style="font-size:22px">About ${esc(c.name)}</h2>
     ${f.status && f.status !== 'Active' ? `<p class="factnote">${esc(f.status)}</p>` : ''}
     ${f.description ? `<p class="lead2">${esc(f.description)}</p>` : ''}
     ${f.products && f.products.length ? `<div><h3>Products and services</h3><ul class="factchips">${f.products.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
@@ -2437,7 +2437,7 @@ function setMeta(h) {
   /* Social sharing tags follow the page too (the server writes them for the first page load). */
   [['og:title', document.title], ['og:description', m.content], ['og:url', cl.href], ['twitter:title', document.title], ['twitter:description', m.content]].forEach(([k2, v]) => { const t = document.querySelector(`meta[property="${k2}"],meta[name="${k2}"]`); if (t) t.content = v; });
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
-  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length);
+  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length && !FACTS[c.wid]); /* a company page with no reviews and no researched facts is too thin to index */
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
   let s = document.getElementById('ldjson'); if (s) s.remove();
   if (c && !document.getElementById('ld-json')) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };

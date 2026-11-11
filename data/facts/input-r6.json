@@ -1,0 +1,121 @@
+[
+ {
+  "title": "Oura",
+  "website": "ouraring.com",
+  "category": "Consumer Electronics",
+  "country": "FI",
+  "bio": "Oura makes a smart ring that tracks sleep, heart rate, activity and other health metrics through a companion app."
+ },
+ {
+  "title": "Outschool",
+  "website": "outschool.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online marketplace offering live small-group video classes and tutoring for children and teenagers taught by independent teachers."
+ },
+ {
+  "title": "OYO",
+  "website": "oyorooms.com",
+  "category": "Travel & Hospitality",
+  "country": "IN",
+  "bio": "Indian hospitality company listing budget hotels and homes for booking online."
+ },
+ {
+  "title": "QuintoAndar",
+  "website": "quintoandar.com.br",
+  "category": "Real Estate",
+  "country": "BR",
+  "bio": "QuintoAndar is a Brazilian property platform for renting and buying homes, handling listings, visits, contracts and payments online."
+ },
+ {
+  "title": "Quizlet",
+  "website": "quizlet.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online learning platform where students create and study digital flashcards, practice tests and learning games."
+ },
+ {
+  "title": "Quora",
+  "website": "quora.com",
+  "category": "Social Media & Entertainment",
+  "country": "US",
+  "bio": "Question-and-answer website where users ask questions and share answers and knowledge on a wide range of topics."
+ },
+ {
+  "title": "Ramp",
+  "website": "ramp.com",
+  "category": "Fintech & Banking",
+  "country": "US",
+  "bio": "Ramp provides corporate cards and finance automation software for expense management, bill payments and accounting for businesses."
+ },
+ {
+  "title": "Rapido",
+  "website": "rapido.bike",
+  "category": "Mobility & Logistics",
+  "country": "IN",
+  "bio": "Indian app for booking bike taxis, autos and cabs."
+ },
+ {
+  "title": "Rappi",
+  "website": "rappi.com",
+  "category": "Food & Delivery",
+  "country": "CO",
+  "bio": "Latin American delivery app for restaurant food, groceries, pharmacy items and other errands, with payment services."
+ },
+ {
+  "title": "Razorpay",
+  "website": "razorpay.com",
+  "category": "Fintech & Banking",
+  "country": "IN",
+  "bio": "Indian payment gateway that helps businesses accept online payments by UPI, card and net banking."
+ },
+ {
+  "title": "redBus",
+  "website": "redbus.in",
+  "category": "Travel & Hospitality",
+  "country": "IN",
+  "bio": "Online bus ticket booking platform covering intercity bus operators in India and several other countries."
+ },
+ {
+  "title": "Rippling",
+  "website": "rippling.com",
+  "category": "Jobs & Freelancing",
+  "country": "US",
+  "bio": "Rippling offers software that combines payroll, HR, benefits, IT device management and spend management for businesses."
+ },
+ {
+  "title": "Satispay",
+  "website": "satispay.com",
+  "category": "Fintech & Banking",
+  "country": "IT",
+  "bio": "Satispay is a mobile payment app that lets users pay in shops and online and send money, linked directly to a bank account."
+ },
+ {
+  "title": "Scalable Capital",
+  "website": "scalable.capital",
+  "category": "Stock Brokers & Investing",
+  "country": "DE",
+  "bio": "Scalable Capital is a German investment platform offering a broker for stocks and ETFs as well as managed digital portfolios."
+ },
+ {
+  "title": "Starling Bank",
+  "website": "starlingbank.com",
+  "category": "Fintech & Banking",
+  "country": "GB",
+  "bio": "British digital bank offering personal, joint and business current accounts managed through a mobile app."
+ },
+ {
+  "title": "StockX",
+  "website": "stockx.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "US",
+  "bio": "StockX is an American online marketplace for reselling sneakers, streetwear, collectibles and electronics, with item verification before shipping."
+ },
+ {
+  "title": "Substack",
+  "website": "substack.com",
+  "category": "Social Media & Entertainment",
+  "country": "US",
+  "bio": "Platform that lets writers and creators publish newsletters, podcasts and video and charge readers for subscriptions."
+ }
+]

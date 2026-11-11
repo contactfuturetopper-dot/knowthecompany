@@ -1,0 +1,121 @@
+[
+ {
+  "title": "Great Learning",
+  "website": "mygreatlearning.com",
+  "category": "Education & E-learning",
+  "country": "IN",
+  "bio": "Indian online education company offering professional courses in data science, artificial intelligence and management with university partners, plus free courses."
+ },
+ {
+  "title": "greytHR",
+  "website": "greythr.com",
+  "category": "Jobs & Freelancing",
+  "country": "IN",
+  "bio": "greytHR provides cloud-based HR and payroll software for small and medium-sized businesses in India and other countries."
+ },
+ {
+  "title": "GulfTalent",
+  "website": "gulftalent.com",
+  "category": "Jobs & Freelancing",
+  "country": "AE",
+  "bio": "GulfTalent is an online recruitment platform listing professional jobs in the Gulf countries and connecting employers with experienced candidates."
+ },
+ {
+  "title": "Gusto",
+  "website": "gusto.com",
+  "category": "Jobs & Freelancing",
+  "country": "US",
+  "bio": "Gusto provides online payroll, benefits and HR software for small and medium-sized businesses in the United States."
+ },
+ {
+  "title": "JetBrains",
+  "website": "jetbrains.com",
+  "category": "Technology & Software",
+  "country": "CZ",
+  "bio": "JetBrains makes software development tools, including IntelliJ IDEA, PyCharm and other code editors, and created the Kotlin programming language."
+ },
+ {
+  "title": "Jimdo",
+  "website": "jimdo.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "DE",
+  "bio": "German website builder that helps small businesses create and host websites and online stores using templates."
+ },
+ {
+  "title": "Jobberman",
+  "website": "jobberman.com",
+  "category": "Jobs & Freelancing",
+  "country": "NG",
+  "bio": "Jobberman is an online job platform in Nigeria and Ghana that connects job seekers with employers and offers recruitment services."
+ },
+ {
+  "title": "Kahoot!",
+  "website": "kahoot.com",
+  "category": "Education & E-learning",
+  "country": "NO",
+  "bio": "Norwegian learning platform that lets teachers, trainers and users create and play game-based quizzes in classrooms, workplaces and at home."
+ },
+ {
+  "title": "Keka",
+  "website": "keka.com",
+  "category": "Jobs & Freelancing",
+  "country": "IN",
+  "bio": "Keka provides HR and payroll software covering attendance, leave, performance reviews and hiring for businesses in India and abroad."
+ },
+ {
+  "title": "Klook",
+  "website": "klook.com",
+  "category": "Travel & Hospitality",
+  "country": "HK",
+  "bio": "Booking platform for tours, attractions, activities and local transport."
+ },
+ {
+  "title": "KOHO",
+  "website": "koho.ca",
+  "category": "Fintech & Banking",
+  "country": "CA",
+  "bio": "KOHO is a Canadian financial app offering a prepaid card, spending account, savings, credit building and budgeting tools."
+ },
+ {
+  "title": "Konga",
+  "website": "konga.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "NG",
+  "bio": "Konga is a Nigerian online marketplace selling electronics, phones, fashion and household goods with delivery across Nigeria."
+ },
+ {
+  "title": "Kraken",
+  "website": "kraken.com",
+  "category": "Crypto Exchanges",
+  "country": "US",
+  "bio": "US cryptocurrency exchange for trading crypto assets."
+ },
+ {
+  "title": "KuCoin",
+  "website": "kucoin.com",
+  "category": "Crypto Exchanges",
+  "country": "Global",
+  "bio": "Cryptocurrency exchange listing a wide range of coins."
+ },
+ {
+  "title": "Lalamove",
+  "website": "lalamove.com",
+  "category": "Mobility & Logistics",
+  "country": "HK",
+  "bio": "Hong Kong-based on-demand delivery app that connects customers with drivers of motorcycles, vans and trucks for same-day deliveries."
+ },
+ {
+  "title": "Ledger",
+  "website": "ledger.com",
+  "category": "Crypto Exchanges",
+  "country": "FR",
+  "bio": "Ledger makes hardware wallets and companion software that let users store cryptocurrency private keys offline and manage digital assets."
+ },
+ {
+  "title": "Lime",
+  "website": "li.me",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Electric scooter and bike sharing service available in many cities."
+ }
+]

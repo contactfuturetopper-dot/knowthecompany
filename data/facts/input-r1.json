@@ -1,0 +1,121 @@
+[
+ {
+  "title": "Back Market",
+  "website": "backmarket.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "FR",
+  "bio": "Back Market is a French online marketplace selling refurbished smartphones, laptops, tablets and other electronics from professional sellers."
+ },
+ {
+  "title": "Baemin",
+  "website": "baemin.com",
+  "category": "Food & Delivery",
+  "country": "KR",
+  "bio": "South Korean food delivery app run by Woowa Brothers for ordering restaurant meals, groceries and convenience goods."
+ },
+ {
+  "title": "BambooHR",
+  "website": "bamboohr.com",
+  "category": "Jobs & Freelancing",
+  "country": "US",
+  "bio": "BambooHR provides HR software for small and medium-sized businesses, covering employee records, hiring, onboarding, time off and payroll."
+ },
+ {
+  "title": "Bayt",
+  "website": "bayt.com",
+  "category": "Jobs & Freelancing",
+  "country": "AE",
+  "bio": "Bayt.com is an online job site serving the Middle East and North Africa, connecting job seekers with employers across the region."
+ },
+ {
+  "title": "Bayut",
+  "website": "bayut.com",
+  "category": "Real Estate",
+  "country": "AE",
+  "bio": "Bayut is a UAE property portal listing apartments, villas and commercial properties for sale and rent."
+ },
+ {
+  "title": "Betterment",
+  "website": "betterment.com",
+  "category": "Stock Brokers & Investing",
+  "country": "US",
+  "bio": "Betterment is a robo-adviser that builds and manages diversified investment portfolios automatically, and also offers retirement and cash accounts."
+ },
+ {
+  "title": "BharatPe",
+  "website": "bharatpe.com",
+  "category": "Fintech & Banking",
+  "country": "IN",
+  "bio": "BharatPe provides QR code payments, card machines and business loans for merchants and small shopkeepers in India."
+ },
+ {
+  "title": "Bird",
+  "website": "bird.co",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Micromobility company renting shared electric scooters and e-bikes through its app in cities in North America and Europe."
+ },
+ {
+  "title": "Bitdefender",
+  "website": "bitdefender.com",
+  "category": "Technology & Software",
+  "country": "RO",
+  "bio": "Bitdefender makes antivirus and cybersecurity software for consumers and businesses, including endpoint protection and threat detection services."
+ },
+ {
+  "title": "bitFlyer",
+  "website": "bitflyer.com",
+  "category": "Crypto Exchanges",
+  "country": "JP",
+  "bio": "bitFlyer is a Japanese cryptocurrency exchange that lets users buy, sell and trade bitcoin and other digital assets."
+ },
+ {
+  "title": "Bithumb",
+  "website": "bithumb.com",
+  "category": "Crypto Exchanges",
+  "country": "KR",
+  "bio": "Bithumb is a South Korean cryptocurrency exchange offering trading of digital assets against the Korean won."
+ },
+ {
+  "title": "Bitpanda",
+  "website": "bitpanda.com",
+  "category": "Crypto Exchanges",
+  "country": "AT",
+  "bio": "Bitpanda is an Austrian investment platform where users can buy and sell cryptocurrencies, precious metals and other assets."
+ },
+ {
+  "title": "Bitso",
+  "website": "bitso.com",
+  "category": "Crypto Exchanges",
+  "country": "MX",
+  "bio": "Bitso is a Latin American cryptocurrency platform for buying, selling and holding digital assets and making cross-border transfers."
+ },
+ {
+  "title": "Bitvavo",
+  "website": "bitvavo.com",
+  "category": "Crypto Exchanges",
+  "country": "NL",
+  "bio": "Bitvavo is a Dutch cryptocurrency exchange that lets European users buy, sell and store digital assets with euros."
+ },
+ {
+  "title": "BlaBlaCar",
+  "website": "blablacar.com",
+  "category": "Mobility & Logistics",
+  "country": "FR",
+  "bio": "French carpooling and bus platform for long-distance travel."
+ },
+ {
+  "title": "Bluesky",
+  "website": "bsky.app",
+  "category": "Social Media & Entertainment",
+  "country": "US",
+  "bio": "Decentralized social network for short posts built on the open AT Protocol, with customizable feeds and moderation."
+ },
+ {
+  "title": "boAt",
+  "website": "boat-lifestyle.com",
+  "category": "Consumer Electronics",
+  "country": "IN",
+  "bio": "boAt sells wireless earbuds, headphones, speakers and smartwatches aimed at Indian consumers."
+ }
+]

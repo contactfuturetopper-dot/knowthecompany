@@ -1,0 +1,121 @@
+[
+ {
+  "title": "Bolt",
+  "website": "bolt.eu",
+  "category": "Mobility & Logistics",
+  "country": "EE",
+  "bio": "Estonian mobility app for rides, scooters and food delivery in Europe and Africa."
+ },
+ {
+  "title": "Brainly",
+  "website": "brainly.com",
+  "category": "Education & E-learning",
+  "country": "PL",
+  "bio": "Online learning community based in Poland where students ask homework questions and get answers from peers, experts and AI tools."
+ },
+ {
+  "title": "Brex",
+  "website": "brex.com",
+  "category": "Fintech & Banking",
+  "country": "US",
+  "bio": "Brex offers corporate cards, business accounts and spend management software for startups and growing companies."
+ },
+ {
+  "title": "BrighterMonday",
+  "website": "brightermonday.co.ke",
+  "category": "Jobs & Freelancing",
+  "country": "KE",
+  "bio": "BrighterMonday is an online job site in Kenya where employers advertise vacancies and job seekers search for work."
+ },
+ {
+  "title": "Brilliant",
+  "website": "brilliant.org",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online learning platform offering interactive lessons and problem-solving courses in mathematics, science, data and computer science."
+ },
+ {
+  "title": "Checkout.com",
+  "website": "checkout.com",
+  "category": "Fintech & Banking",
+  "country": "GB",
+  "bio": "Checkout.com is a payment processing company that helps online businesses accept card and alternative payments in multiple currencies."
+ },
+ {
+  "title": "Chobani",
+  "website": "chobani.com",
+  "category": "Consumer Brands",
+  "country": "US",
+  "bio": "American food company making Greek yogurt, oat milk, coffee creamers and ready-to-drink coffee products."
+ },
+ {
+  "title": "ClassDojo",
+  "website": "classdojo.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American school communication app that connects teachers, students and parents to share classroom updates, messages and student progress."
+ },
+ {
+  "title": "Cleartrip",
+  "website": "cleartrip.com",
+  "category": "Travel & Hospitality",
+  "country": "IN",
+  "bio": "Indian online travel agency for booking flights, hotels and buses, owned by Flipkart."
+ },
+ {
+  "title": "Codecademy",
+  "website": "codecademy.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online platform offering interactive courses in programming languages, web development and data science that run in the browser."
+ },
+ {
+  "title": "CoinDCX",
+  "website": "coindcx.com",
+  "category": "Crypto Exchanges",
+  "country": "IN",
+  "bio": "Indian cryptocurrency exchange."
+ },
+ {
+  "title": "Coinone",
+  "website": "coinone.co.kr",
+  "category": "Crypto Exchanges",
+  "country": "KR",
+  "bio": "Coinone is a South Korean cryptocurrency exchange where users can buy, sell and trade digital assets with Korean won."
+ },
+ {
+  "title": "CoinSpot",
+  "website": "coinspot.com.au",
+  "category": "Crypto Exchanges",
+  "country": "AU",
+  "bio": "CoinSpot is an Australian cryptocurrency exchange where users can buy, sell and swap a wide range of digital assets."
+ },
+ {
+  "title": "Course Hero",
+  "website": "coursehero.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online study platform where students access course-specific study guides, practice problems and documents shared by other learners."
+ },
+ {
+  "title": "CRED",
+  "website": "cred.club",
+  "category": "Fintech & Banking",
+  "country": "IN",
+  "bio": "CRED is an Indian app that lets members pay credit card bills, rent and utilities and access rewards and credit products."
+ },
+ {
+  "title": "Crypto.com",
+  "website": "crypto.com",
+  "category": "Crypto Exchanges",
+  "country": "SG",
+  "bio": "Crypto trading app with a debit card and exchange."
+ },
+ {
+  "title": "Cuemath",
+  "website": "cuemath.com",
+  "category": "Education & E-learning",
+  "country": "IN",
+  "bio": "Cuemath is an Indian education company offering live online maths tutoring for school-age children in India and other countries."
+ }
+]

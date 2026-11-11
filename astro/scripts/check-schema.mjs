@@ -15,7 +15,8 @@ await build({
     b.onLoad({ filter: /.*/, namespace: "raw" }, a => ({ contents: fs.readFileSync(a.path, "utf8"), loader: "text" }));
   } }],
 });
-const companies = [{ _id: "futuretopper.in", title: "Future Topper", slug: "future-topper", category: "Education & E-learning", website: "futuretopper.in", country: "IN", bio: "Exam prep <app>", ownerMemberIds: ["owner1"], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7" }];
+const companies = [{ _id: "futuretopper.in", title: "Future Topper", slug: "future-topper", category: "Education & E-learning", website: "futuretopper.in", country: "IN", bio: "Exam prep <app>", ownerMemberIds: ["owner1"], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7" },
+  { _id: "1password.com", title: "1Password", slug: "1password", website: "1password.com", category: "Technology & Software", country: "CA", bio: "Password manager.", ownerMemberIds: [], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7", _updatedDate: { $date: "2026-11-01T00:00:00Z" } }];
 const reviews = [
   { _id: "r1", _owner: "m2", _updatedDate: "2026-11-02T09:00:00Z", company: "futuretopper.in", type: "customer", rating: 5, displayName: "Asha", title: "Great", body: "Good notes </script>", _createdDate: { $date: "2026-11-01T10:00:00Z" } },
   { _id: "r2", _owner: "m3", _updatedDate: "2026-11-02T09:00:00Z", company: "futuretopper.in", rating: 4, displayName: "Ravi", body: "Helpful", _createdDate: "2026-10-20T10:00:00Z" },
@@ -38,7 +39,7 @@ globalThis.fetch = async (url, init) => {
     if (!Object.keys(f).length) { const { limit, offset } = body.query.paging; return ok({ dataItems: allCompanies.slice(offset, offset + limit).map(data => ({ data })) }); }
     if (f.ownerMemberIds) return ok({ dataItems: companies.filter(c => c.ownerMemberIds.some(id => f.ownerMemberIds.$hasSome.includes(id))).map(data => ({ data })) });
   }
-  if (body.dataCollectionId === "Reviews") return ok({ dataItems: reviews.filter(r => r.company === f.company.$eq).map(data => ({ data })) });
+  if (body.dataCollectionId === "Reviews") { if (!f.company) { const { limit, offset } = body.query.paging; return ok({ dataItems: reviews.slice(offset, offset + limit).map(data => ({ data })) }); } return ok({ dataItems: reviews.filter(r => r.company === f.company.$eq).map(data => ({ data })) }); }
   throw new Error("unexpected " + url + JSON.stringify(body));
 };
 const { resolvePage, renderShell, sitemapXml, SITEMAP_PATH } = await import(out);
@@ -81,6 +82,9 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const cat = await resolvePage("/category/education-and-e-learning");
   assert.ok(cat.desc.startsWith("Reviews of online courses") && cat.body.includes("Reviews of online courses"), "category intro");
   assert.equal((await resolvePage("/blog")).status, 404, "no blog while there are no posts");
+  const fp = await resolvePage("/company/1password"), fhtml = renderShell(fp);
+  assert.ok(!fp.noindex && fhtml.includes("About 1Password") && fhtml.includes("When was 1Password founded?") && fhtml.includes('id="co-facts" data-id="1password.com"'), "researched facts are on the page");
+  assert.ok(fp.ld.some(n => n["@type"] === "FAQPage") && fp.ld.find(n => n["@id"] && n["@id"].endsWith("#company")).foundingDate, "facts in structured data");
   console.log("PAGE TEXT CHECK: ok");
 }
 
@@ -90,11 +94,11 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const xml = await sitemapXml();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
   assert.equal(new Set(locs).size, locs.length, "no duplicate URLs");
-  for (const want of ["/", "/pricing", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
+  for (const want of ["/", "/pricing", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper"])
     assert.ok(locs.includes("https://www.knowthecompany.com" + want), "sitemap has " + want);
-  for (const not of ["/blog", "/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
+  for (const not of ["/company/co-246", "/company/a-and-b", "/blog", "/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
     assert.ok(!locs.includes("https://www.knowthecompany.com" + not), "sitemap leaves out " + not);
-  assert.ok(xml.includes("<lastmod>2026-11-01</lastmod>"));
+  assert.ok(locs.includes("https://www.knowthecompany.com/company/1password") && xml.includes("<lastmod>2026-11-01</lastmod>"), "a company with researched facts is listed");
   assert.ok(!/&(?!amp;|lt;|gt;|quot;|#39;)/.test(xml), "XML is escaped");
   console.log(`SITEMAP CHECK: ok (${locs.length} URLs)`);
 }

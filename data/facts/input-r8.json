@@ -1,0 +1,93 @@
+[
+ {
+  "title": "Workana",
+  "website": "workana.com",
+  "category": "Jobs & Freelancing",
+  "country": "AR",
+  "bio": "Workana is a freelance marketplace focused on Latin America where companies hire remote professionals for programming, design and marketing work."
+ },
+ {
+  "title": "WorldRemit",
+  "website": "worldremit.com",
+  "category": "Fintech & Banking",
+  "country": "GB",
+  "bio": "WorldRemit is an online money transfer service for sending funds abroad to bank accounts, mobile money wallets and cash pickup locations."
+ },
+ {
+  "title": "WP Engine",
+  "website": "wpengine.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "American managed WordPress hosting company providing hosting, staging, security and performance tools for WordPress and WooCommerce sites."
+ },
+ {
+  "title": "Wuzzuf",
+  "website": "wuzzuf.net",
+  "category": "Jobs & Freelancing",
+  "country": "EG",
+  "bio": "Wuzzuf is an Egyptian online recruitment platform where employers post jobs and professionals and graduates apply for positions."
+ },
+ {
+  "title": "Wyzant",
+  "website": "wyzant.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online marketplace where students find and book independent tutors for in-person or online lessons in academic and other subjects."
+ },
+ {
+  "title": "Yemeksepeti",
+  "website": "yemeksepeti.com",
+  "category": "Food & Delivery",
+  "country": "TR",
+  "bio": "Turkish online food ordering app for restaurant delivery, groceries and other products, owned by Delivery Hero."
+ },
+ {
+  "title": "Yoco",
+  "website": "yoco.com",
+  "category": "Fintech & Banking",
+  "country": "ZA",
+  "bio": "Yoco provides card machines, point-of-sale software and payment tools that help small businesses in South Africa accept card payments."
+ },
+ {
+  "title": "Yulu",
+  "website": "yulu.bike",
+  "category": "Mobility & Logistics",
+  "country": "IN",
+  "bio": "Indian shared electric two-wheeler service renting e-bikes and scooters through an app in Indian cities."
+ },
+ {
+  "title": "Zepto",
+  "website": "zeptonow.com",
+  "category": "Food & Delivery",
+  "country": "IN",
+  "bio": "Indian quick-commerce app delivering groceries, fruit and vegetables, snacks and household essentials from dark stores within minutes."
+ },
+ {
+  "title": "Zerodha",
+  "website": "zerodha.com",
+  "category": "Stock Brokers & Investing",
+  "country": "IN",
+  "bio": "Indian discount stock broker for stocks, mutual funds and derivatives."
+ },
+ {
+  "title": "Zipcar",
+  "website": "zipcar.com",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Car-sharing service that lets members rent cars by the hour or day from reserved spots, owned by Avis Budget Group."
+ },
+ {
+  "title": "Zocdoc",
+  "website": "zocdoc.com",
+  "category": "Health & Wellness",
+  "country": "US",
+  "bio": "American online service that lets patients search for doctors by specialty and insurance, read reviews and book appointments online."
+ },
+ {
+  "title": "Zoopla",
+  "website": "zoopla.co.uk",
+  "category": "Real Estate",
+  "country": "GB",
+  "bio": "British property website for sales and rentals."
+ }
+]

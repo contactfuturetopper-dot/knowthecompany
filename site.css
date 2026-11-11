@@ -937,9 +937,9 @@ footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-siz
 @media (max-width:400px){.brand b.wm .k{font-size:15px}.brand b.wm .c{font-size:22px}}
 
 /* ---------- company facts ---------- */
-.facts{gap:18px}
-.facts h3{font-size:15px;margin:0 0 10px;color:var(--fg)}
-.facts .lead2{font-size:16px;line-height:1.65;color:var(--fg)}
+.cofacts{gap:18px}
+.cofacts h3{font-size:15px;margin:0 0 10px;color:var(--fg)}
+.cofacts .lead2{font-size:16px;line-height:1.65;color:var(--fg)}
 .factnote{background:#FFF4D6;color:#7A4B00;border-radius:10px;padding:10px 14px;font-weight:600;font-size:14px}
 .factchips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .factchips li{font-size:14px;font-weight:600;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
@@ -954,8 +954,8 @@ footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-siz
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{cursor:pointer;font-weight:700;padding:14px 4px;list-style-position:outside}
 .faq p{padding:0 4px 14px;line-height:1.6}
-.facts .srcs summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
-.facts .srcs ul{margin:8px 0 0;padding-left:18px;font-size:13px;display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
+.cofacts .srcs summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+.cofacts .srcs ul{margin:8px 0 0;padding-left:18px;font-size:13px;display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
 
 /* ---------- 404 ---------- */
 .nf{background:var(--surface);border-bottom:1px solid var(--line)}
