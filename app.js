@@ -775,6 +775,7 @@ function vHome() {
   return `<section class="hero3" aria-labelledby="hero-h">
       <div class="wrap">
         <h1 id="hero-h" class="sr">Know the company before you deal with it.</h1>
+        <p class="hstars"><span class="stars" aria-hidden="true">${[1,2,3,4,5].map(() => STAR(true, 22)).join('')}</span><span>Honest reviews from customers and employees</span></p>
         <form class="hs3" role="search" id="hero-search-form" autocomplete="off">
           <div class="hl hl1"><span class="w" aria-hidden="true">Know</span><span class="blank"><label class="sr" for="hero-search">Search companies or websites</label><input id="hero-search" type="search" placeholder="the company" data-suggest="hero" spellcheck="false"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg><div class="sugg" id="sugg-hero" hidden></div></span></div>
           <button class="go" type="submit">Search</button>

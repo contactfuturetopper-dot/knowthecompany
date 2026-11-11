@@ -1051,3 +1051,23 @@ footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-siz
 /* official company logos in lists and cards */
 .avatar.logo{background:#fff;border:1px solid var(--line);overflow:hidden;padding:0;flex:none;display:inline-flex;align-items:center;justify-content:center}
 .avatar.logo img{width:100%;height:100%;object-fit:contain;padding:14%;display:block}
+
+/* ---------- home hero: light, warm and star-led, so it reads as a review site at a glance ---------- */
+.hero3{background:linear-gradient(180deg,#FFF6DD 0%,#FFFBEF 55%,#FFFFFF 100%);color:var(--fg);border-bottom:1px solid #F3E7C4}
+.hero3 .hstars{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 clamp(18px,3vh,28px);font-size:15px;font-weight:600;color:var(--muted)}
+.hero3 .hstars .stars{display:inline-flex;gap:2px}
+.hs3 .blank{background:#fff;border:2px solid #E7DCBC;box-shadow:0 10px 30px -18px rgba(120,90,10,.45)}
+.hs3 .blank:focus-within{border-color:var(--star-line);background:#fff}
+.hs3 .blank input{color:var(--fg);caret-color:var(--fg)}
+.hs3 .blank input::placeholder{color:#7C8696}
+.hs3 .blank .bi{color:var(--soft)}
+.hs3 .go{background:var(--accent);color:#fff}
+.hs3 .go:hover{background:var(--accent-hover)}
+.hs3 .go:focus-visible{outline:3px solid var(--star-line);outline-offset:3px}
+.hero3 .hsub{color:var(--muted)}
+.nbands{border-top-color:rgba(120,90,10,.14);border-bottom-color:rgba(120,90,10,.14)}
+.nbt a{color:rgba(15,23,42,.62)}
+.nb.b .nbt a{color:rgba(15,23,42,.40)}
+.nbt a:hover,.nb.b .nbt a:hover{color:var(--star-line);-webkit-text-stroke-color:var(--star-line)}
+.hfoot p{color:var(--muted)}
+.hfoot a{color:var(--fg)}
