@@ -94,9 +94,9 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const xml = await sitemapXml();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
   assert.equal(new Set(locs).size, locs.length, "no duplicate URLs");
-  for (const want of ["/", "/pricing", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper"])
+  for (const want of ["/", "/pricing", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
     assert.ok(locs.includes("https://www.knowthecompany.com" + want), "sitemap has " + want);
-  for (const not of ["/company/co-246", "/company/a-and-b", "/blog", "/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
+  for (const not of ["/blog", "/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
     assert.ok(!locs.includes("https://www.knowthecompany.com" + not), "sitemap leaves out " + not);
   assert.ok(locs.includes("https://www.knowthecompany.com/company/1password") && xml.includes("<lastmod>2026-11-01</lastmod>"), "a company with researched facts is listed");
   assert.ok(!/&(?!amp;|lt;|gt;|quot;|#39;)/.test(xml), "XML is escaped");

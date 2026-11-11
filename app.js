@@ -81,7 +81,7 @@ const mkCo = raw => { const it = trustedCo(raw); return {
 }; };
 /* Keeps the whole site out of search engines until launch. Set to false to let pages be indexed
    (and remove the robots meta tag in index.html). */
-const SITE_NOINDEX = true;
+const SITE_NOINDEX = false; /* the site is open to search engines (launched 11 Nov 2026) */
 let COS = [], CATS = [], BYID = {}, BYWID = {}, CATBYID = {}, FORM_CATS = [];
 /* Every category a company can pick when it's listed or added. Categories already in use are merged in,
    and "Other" always comes last. */
@@ -2437,7 +2437,7 @@ function setMeta(h) {
   /* Social sharing tags follow the page too (the server writes them for the first page load). */
   [['og:title', document.title], ['og:description', m.content], ['og:url', cl.href], ['twitter:title', document.title], ['twitter:description', m.content]].forEach(([k2, v]) => { const t = document.querySelector(`meta[property="${k2}"],meta[name="${k2}"]`); if (t) t.content = v; });
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
-  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || (c && !reviewsFor(c.id).length && !empData(c.id).reviews.length && !FACTS[c.wid]); /* a company page with no reviews and no researched facts is too thin to index */
+  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-'); /* every company page is indexed, so people can find a company and review it */
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
   let s = document.getElementById('ldjson'); if (s) s.remove();
   if (c && !document.getElementById('ld-json')) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
