@@ -39,4 +39,13 @@ writeFileSync(join(gen, "posts.json"), JSON.stringify(posts, null, 1));
 const intros = literal("CAT_INTROS", "{", "}");
 if (Object.keys(intros).length < 5) throw new Error("category intros look wrong");
 writeFileSync(join(gen, "cat-intros.json"), JSON.stringify(intros, null, 1));
-console.log(`synced app files into public/ and src/generated/ (${posts.length} blog posts, ${Object.keys(intros).length} category intros)`);
+// Researched company facts: the whole set for the server, and one small file per company for the browser.
+let facts = {};
+try { facts = JSON.parse(readFileSync(join(root, "data", "company-facts.json"), "utf8")); } catch (e) { if (e.code !== "ENOENT") throw e; }
+writeFileSync(join(gen, "company-facts.json"), JSON.stringify(facts));
+mkdirSync(join(pub, "facts"), { recursive: true });
+for (const [id, f] of Object.entries(facts)) {
+  if (!/^[a-z0-9.-]+$/.test(id)) throw new Error("unexpected company id in facts: " + id);
+  writeFileSync(join(pub, "facts", id + ".json"), JSON.stringify(f));
+}
+console.log(`synced app files into public/ and src/generated/ (${posts.length} blog posts, ${Object.keys(intros).length} category intros, facts for ${Object.keys(facts).length} companies)`);

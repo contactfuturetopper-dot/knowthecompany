@@ -70,7 +70,7 @@ const websiteUrl = (w: unknown) => {
 
 /** A reviewed company: an Organization with its customer rating and latest reviews, plus an
     EmployerAggregateRating when employees have rated it. Ratings are left out until there is a review. */
-export function companyNodes(path: string, c: any, reviews: any[]) {
+export function companyNodes(path: string, c: any, reviews: any[], f?: any) {
   const id = `${ORIGIN}${path}#company`;
   const customer = reviews.filter(r => (r.type || "customer") === "customer");
   const employee = reviews.filter(r => r.type === "employee");
@@ -84,6 +84,19 @@ export function companyNodes(path: string, c: any, reviews: any[]) {
     ...(c.country && c.country !== "WW" ? { address: { "@type": "PostalAddress", addressCountry: c.country } } : {}),
     ...(c.category ? { knowsAbout: c.category } : {}),
   };
+  if (f) {
+    if (f.description) org.description = f.description;
+    if (f.legalName) org.legalName = f.legalName;
+    if (f.founded) org.foundingDate = f.founded;
+    if (f.founders && f.founders.length) org.founder = f.founders.map((n: string) => ({ "@type": "Person", name: n }));
+    if (f.hq) { const parts = String(f.hq).split(",").map((x: string) => x.trim()); org.address = { "@type": "PostalAddress", addressLocality: parts[0], ...(parts.length > 1 ? { addressCountry: parts[parts.length - 1] } : {}) }; }
+    if (f.parent) org.parentOrganization = { "@type": "Organization", name: f.parent };
+    const band = String(f.employees || "").replace(/[\s,]/g, "").match(/^(\d+)[-–](\d+)$|^(\d+)\+$/);
+    if (band) org.numberOfEmployees = band[3] ? { "@type": "QuantitativeValue", minValue: Number(band[3]) } : { "@type": "QuantitativeValue", minValue: Number(band[1]), maxValue: Number(band[2]) };
+    const same = Object.values(f.links || {}).filter((u: any) => /^https:\/\//.test(String(u || "")));
+    if (same.length) org.sameAs = same;
+    if (f.products && f.products.length) org.makesOffer = f.products.slice(0, 6).map((p: string) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: p } }));
+  }
   if (customer.length) {
     org.aggregateRating = { "@type": "AggregateRating", ratingValue: avg(customer), reviewCount: customer.length, ratingCount: customer.length, bestRating: 5, worstRating: 1 };
     org.review = [...customer]
@@ -110,6 +123,12 @@ export function companyNodes(path: string, c: any, reviews: any[]) {
     worstRating: 1,
   });
   return out;
+}
+
+/** A list of questions and answers shown on the page. */
+export function faqNode(path: string, qa: [string, string][]) {
+  return { "@type": "FAQPage", "@id": `${ORIGIN}${path}#faq`, isPartOf: { "@id": `${ORIGIN}${path}#webpage` },
+    mainEntity: qa.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
 }
 
 /** The whole @graph as text that is safe inside a <script> tag. */

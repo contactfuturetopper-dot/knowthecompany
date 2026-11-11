@@ -247,6 +247,60 @@ function applyOwner(items) {
     for (const [k, raw] of Object.entries(OWN_KEYS)) if (d[k] !== undefined) c.raw[raw] = d[k];
   }
 }
+/* ---------- researched company facts ----------
+   Founding year, headquarters, founders, owner, size, products, markets and official links, gathered from
+   public sources by the Know The Company team and kept in data/company-facts.json. The build writes one small
+   file per company to /facts/<website>.json; the server also puts the company's facts into the first page it
+   sends, so that page doesn't wait for them. */
+const FACTS = {};
+async function loadFacts(c) {
+  if (!c || FACTS[c.wid] !== undefined) return;
+  const pre = document.getElementById('co-facts');
+  if (pre && pre.dataset.id === c.wid) { try { FACTS[c.wid] = JSON.parse(pre.textContent); return; } catch (e) {} }
+  FACTS[c.wid] = null;
+  try {
+    const r = await fetch('/facts/' + encodeURIComponent(c.wid) + '.json');
+    if (!r.ok) return;
+    FACTS[c.wid] = await r.json();
+    if (curRoute() === c.id) renderKeep();
+  } catch (e) {}
+}
+const bandText = b => { const m = String(b || '').replace(/\s/g, '').match(/^([\d,]+)[-–]([\d,]+)$/); return m ? `between ${m[1]} and ${m[2]}` : /\+$/.test(b) ? `more than ${String(b).replace(/\+$/, '')}` : String(b || ''); };
+const listAnd = a => a.length < 2 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+const FACT_LINKS = [['linkedin', 'LinkedIn'], ['x', 'X'], ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['youtube', 'YouTube'], ['appStore', 'App Store'], ['playStore', 'Google Play']];
+const safeUrl = u => /^https:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? u : '';
+/* Questions people ask about a company, answered from its facts and its reviews here. */
+function factFaq(c, f, list, er) {
+  const q = [], n = c.name;
+  q.push([`What does ${n} do?`, `${(f.description || c.bio || '').split(/(?<=\.)\s/)[0]}${f.products && f.products.length ? ` Its main products and services include ${listAnd(f.products.slice(0, 4))}.` : ''}`]);
+  if (f.founded) q.push([`When was ${n} founded?`, `${n} was founded in ${f.founded}${f.founders && f.founders.length ? ` by ${listAnd(f.founders)}` : ''}.`]);
+  if (f.hq) q.push([`Where is ${n} based?`, `${n} is headquartered in ${f.hq}.${f.markets ? ` It operates in ${f.markets}.` : ''}`]);
+  if (f.parent) q.push([`Who owns ${n}?`, `${n} is owned by ${f.parent}.`]);
+  else if (/^Public/.test(f.ownership || '')) q.push([`Is ${n} a public company?`, `Yes. ${n} is publicly listed${(f.ownership.match(/\(([^)]+)\)/) || [])[1] ? ` (${f.ownership.match(/\(([^)]+)\)/)[1]})` : ''}.`]);
+  else if (f.ownership === 'Private') q.push([`Is ${n} a public company?`, `No. ${n} is a privately held company.`]);
+  if (f.employees) q.push([`How many people work at ${n}?`, `Public sources put ${n}'s team at ${bandText(f.employees)} people.`]);
+  q.push([`What do customers and employees say about ${n}?`, list.length || er.length
+    ? [list.length ? `Customers rate ${n} ${avgOf(list).toFixed(1)} out of 5 from ${list.length} review${list.length === 1 ? '' : 's'}.` : '', er.length ? `Employees rate it ${avgOf(er).toFixed(1)} out of 5 from ${er.length} review${er.length === 1 ? '' : 's'}.` : ''].filter(Boolean).join(' ')
+    : `There are no reviews of ${n} on Know The Company yet. If you have used ${n} or worked there, you can write the first one.`]);
+  return q;
+}
+function factsSection(c, list, er) {
+  const f = FACTS[c.wid]; if (!f) return '';
+  const rows = [['Founded', f.founded], ['Headquarters', f.hq], [f.founders && f.founders.length > 1 ? 'Founders' : 'Founder', (f.founders || []).join(', ')], ['Owned by', f.parent], ['Ownership', f.parent ? '' : f.ownership], ['Employees', f.employees], ['Operates in', f.markets], ['Legal name', f.legalName]].filter(r => r[1]);
+  const links = [['Website', 'https://' + c.web]].concat(FACT_LINKS.map(([k, l]) => [l, safeUrl((f.links || {})[k])])).filter(l => l[1]);
+  const srcs = [...new Map((f.sources || []).filter(x => safeUrl(x.url)).map(x => [x.url, x])).values()];
+  const checked = f.checked ? new Date(f.checked + 'T00:00:00').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : '';
+  return `<section class="box facts" aria-labelledby="facts-h"><h2 id="facts-h" style="font-size:22px">About ${esc(c.name)}</h2>
+    ${f.status && f.status !== 'Active' ? `<p class="factnote">${esc(f.status)}</p>` : ''}
+    ${f.description ? `<p class="lead2">${esc(f.description)}</p>` : ''}
+    ${f.products && f.products.length ? `<div><h3>Products and services</h3><ul class="factchips">${f.products.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
+    ${rows.length ? `<div><h3>At a glance</h3><dl class="factgrid">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>` : ''}
+    <div><h3>Official links</h3><p class="factlinks">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="nofollow noopener">${esc(l)}</a>`).join('')}</p></div>
+    <div><h3>Questions about ${esc(c.name)}</h3><div class="faq">${factFaq(c, f, list, er).map(([qq, a]) => `<details><summary>${esc(qq)}</summary><p>${esc(a)}</p></details>`).join('')}</div></div>
+    <p class="meta" style="font-size:13px">These facts come from public sources${checked ? ` and were checked in ${checked}` : ''}. They are not written or paid for by ${esc(c.name)}. <button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:13px">Suggest an edit</button></p>
+    ${srcs.length ? `<details class="srcs"><summary>Sources (${srcs.length})</summary><ul>${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="nofollow noopener">${esc(x.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').slice(0, 70))}</a></li>`).join('')}</ul></details>` : ''}
+  </section>`;
+}
 /* Photos and the cover banner are larger, so they load only when a company page or the dashboard needs them. */
 async function loadMedia(c) {
   if (!c || MEDIA[c.wid] || !(c.raw.ownerMemberIds || []).length) return;
@@ -976,7 +1030,7 @@ function vCompany(c) {
   <div class="cotabbar"><div class="wrap"><div class="cotabs" role="tablist" aria-label="Reviews of ${esc(c.name)}">${tabsDef.map(([key, label]) => `<button type="button" role="tab" id="tab-${key}" aria-controls="co-panel" aria-selected="${tab === key}" tabindex="${tab === key ? 0 : -1}" data-act="cotab" data-tab="${key}">${label}${counts[key] ? `<span class="n">${counts[key]}</span>` : ''}</button>`).join('')}</div></div></div>
 
   <div class="wrap" style="padding-top:32px"><div class="layout">
-    <div class="mainc" style="gap:24px" role="tabpanel" id="co-panel" aria-labelledby="tab-${tab}">${panel}</div>
+    <div class="mainc" style="gap:24px"><div role="tabpanel" id="co-panel" aria-labelledby="tab-${tab}" style="display:flex;flex-direction:column;gap:24px">${panel}</div>${factsSection(c, list, er)}</div>
     <aside class="side">
       ${tab === 'employees' ? `<div class="box soft"><h2>Your identity stays private</h2><p>Employees choose whether to post anonymously or with their name. Emails are never shown, and ${esc(c.name)} can't see who wrote an anonymous review. We share a reviewer's identity only when a valid court order requires it.</p></div>` : ''}
       ${coSide(c)}
@@ -2285,7 +2339,7 @@ function render() {
   else if (CATBYID[h]) { html = vCategory(CATBYID[h]); nav = 'categories'; }
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
-  else if (BYID[h]) { loadMedia(BYID[h]); html = vCompany(BYID[h]); }
+  else if (BYID[h]) { loadMedia(BYID[h]); loadFacts(BYID[h]); html = vCompany(BYID[h]); }
   else html = `<div class="wrap"><div class="empty" style="margin-top:40px"><h1 style="font-size:20px">Page not found</h1><p>That link doesn't match a company or category.</p><a class="btn p" href="#home">Go to the homepage</a></div></div>`;
   if (S.user && S.myClaims === undefined) loadMyClaims();
   app.innerHTML = `<div class="view">${curText(html)}</div>`;

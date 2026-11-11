@@ -1,0 +1,205 @@
+[
+ {
+  "title": "Handshake",
+  "website": "joinhandshake.com",
+  "category": "Jobs & Freelancing",
+  "country": "US",
+  "bio": "Handshake is a career platform that connects college students and recent graduates with employers offering internships and entry-level jobs."
+ },
+ {
+  "title": "Headspace",
+  "website": "headspace.com",
+  "category": "Health & Wellness",
+  "country": "US",
+  "bio": "American mental wellness app offering guided meditation, sleep content and access to coaching and therapy for individuals and employers."
+ },
+ {
+  "title": "HMD",
+  "website": "hmd.com",
+  "category": "Consumer Electronics",
+  "country": "FI",
+  "bio": "HMD makes smartphones and feature phones under its own brand and has produced Nokia-branded phones under license."
+ },
+ {
+  "title": "Hopper",
+  "website": "hopper.com",
+  "category": "Travel & Hospitality",
+  "country": "CA",
+  "bio": "Mobile travel booking app that predicts flight and hotel prices and sells flights, hotels and rental cars."
+ },
+ {
+  "title": "Hostinger",
+  "website": "hostinger.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "LT",
+  "bio": "Web hosting company offering shared, cloud and VPS hosting plus a website builder."
+ },
+ {
+  "title": "Huda Beauty",
+  "website": "hudabeauty.com",
+  "category": "Consumer Brands",
+  "country": "AE",
+  "bio": "Dubai-based cosmetics brand selling eyeshadow palettes, false lashes, foundation, lip products and setting powder."
+ },
+ {
+  "title": "Huel",
+  "website": "huel.com",
+  "category": "Consumer Brands",
+  "country": "GB",
+  "bio": "British company selling nutritionally complete powdered meals, ready-to-drink shakes, hot meals and snack bars, mainly online."
+ },
+ {
+  "title": "Idealista",
+  "website": "idealista.com",
+  "category": "Real Estate",
+  "country": "ES",
+  "bio": "Idealista is a property portal for buying and renting homes, offices and other property in Spain, Italy and Portugal."
+ },
+ {
+  "title": "Immobiliare.it",
+  "website": "immobiliare.it",
+  "category": "Real Estate",
+  "country": "IT",
+  "bio": "Immobiliare.it is an Italian property portal listing homes and commercial properties for sale and rent."
+ },
+ {
+  "title": "Impossible Foods",
+  "website": "impossiblefoods.com",
+  "category": "Consumer Brands",
+  "country": "US",
+  "bio": "American company that makes plant-based meat substitutes, including Impossible burgers, sausages, nuggets and ground beef alternatives."
+ },
+ {
+  "title": "Independent Reserve",
+  "website": "independentreserve.com",
+  "category": "Crypto Exchanges",
+  "country": "AU",
+  "bio": "Independent Reserve is a cryptocurrency exchange serving customers in Australia, New Zealand and Singapore for buying and selling digital assets."
+ },
+ {
+  "title": "inDrive",
+  "website": "indrive.com",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Ride-hailing app where passengers propose a fare and drivers accept or counter, also offering intercity rides and deliveries."
+ },
+ {
+  "title": "Instructure",
+  "website": "instructure.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American education technology company that makes the Canvas learning management system used by schools and universities to run courses online."
+ },
+ {
+  "title": "Internshala",
+  "website": "internshala.com",
+  "category": "Jobs & Freelancing",
+  "country": "IN",
+  "bio": "Internshala is an Indian platform where students and recent graduates find internships and fresher jobs and take online training courses."
+ },
+ {
+  "title": "italki",
+  "website": "italki.com",
+  "category": "Education & E-learning",
+  "country": "HK",
+  "bio": "Online marketplace that connects language learners with independent teachers for paid one-to-one video lessons in many languages."
+ },
+ {
+  "title": "iyzico",
+  "website": "iyzico.com",
+  "category": "Fintech & Banking",
+  "country": "TR",
+  "bio": "iyzico provides online payment processing for merchants and a digital wallet for shoppers in Turkey."
+ },
+ {
+  "title": "JetBrains",
+  "website": "jetbrains.com",
+  "category": "Technology & Software",
+  "country": "CZ",
+  "bio": "JetBrains makes software development tools, including IntelliJ IDEA, PyCharm and other code editors, and created the Kotlin programming language."
+ },
+ {
+  "title": "Jimdo",
+  "website": "jimdo.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "DE",
+  "bio": "German website builder that helps small businesses create and host websites and online stores using templates."
+ },
+ {
+  "title": "Jobberman",
+  "website": "jobberman.com",
+  "category": "Jobs & Freelancing",
+  "country": "NG",
+  "bio": "Jobberman is an online job platform in Nigeria and Ghana that connects job seekers with employers and offers recruitment services."
+ },
+ {
+  "title": "Kahoot!",
+  "website": "kahoot.com",
+  "category": "Education & E-learning",
+  "country": "NO",
+  "bio": "Norwegian learning platform that lets teachers, trainers and users create and play game-based quizzes in classrooms, workplaces and at home."
+ },
+ {
+  "title": "Keka",
+  "website": "keka.com",
+  "category": "Jobs & Freelancing",
+  "country": "IN",
+  "bio": "Keka provides HR and payroll software covering attendance, leave, performance reviews and hiring for businesses in India and abroad."
+ },
+ {
+  "title": "Klook",
+  "website": "klook.com",
+  "category": "Travel & Hospitality",
+  "country": "HK",
+  "bio": "Booking platform for tours, attractions, activities and local transport."
+ },
+ {
+  "title": "KOHO",
+  "website": "koho.ca",
+  "category": "Fintech & Banking",
+  "country": "CA",
+  "bio": "KOHO is a Canadian financial app offering a prepaid card, spending account, savings, credit building and budgeting tools."
+ },
+ {
+  "title": "Konga",
+  "website": "konga.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "NG",
+  "bio": "Konga is a Nigerian online marketplace selling electronics, phones, fashion and household goods with delivery across Nigeria."
+ },
+ {
+  "title": "Kraken",
+  "website": "kraken.com",
+  "category": "Crypto Exchanges",
+  "country": "US",
+  "bio": "US cryptocurrency exchange for trading crypto assets."
+ },
+ {
+  "title": "KuCoin",
+  "website": "kucoin.com",
+  "category": "Crypto Exchanges",
+  "country": "Global",
+  "bio": "Cryptocurrency exchange listing a wide range of coins."
+ },
+ {
+  "title": "Lalamove",
+  "website": "lalamove.com",
+  "category": "Mobility & Logistics",
+  "country": "HK",
+  "bio": "Hong Kong-based on-demand delivery app that connects customers with drivers of motorcycles, vans and trucks for same-day deliveries."
+ },
+ {
+  "title": "Ledger",
+  "website": "ledger.com",
+  "category": "Crypto Exchanges",
+  "country": "FR",
+  "bio": "Ledger makes hardware wallets and companion software that let users store cryptocurrency private keys offline and manage digital assets."
+ },
+ {
+  "title": "Lime",
+  "website": "li.me",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Electric scooter and bike sharing service available in many cities."
+ }
+]

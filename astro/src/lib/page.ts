@@ -5,7 +5,8 @@ import shell from "../generated/shell.html?raw";
 import meta from "../generated/pages-meta.json";
 import posts from "../generated/posts.json";
 import catIntros from "../generated/cat-intros.json";
-import { graph, orgNode, webPage, breadcrumbs, companyNodes, type Crumb } from "./schema";
+import factsData from "../generated/company-facts.json";
+import { graph, orgNode, webPage, breadcrumbs, companyNodes, faqNode, type Crumb } from "./schema";
 
 export const ORIGIN = "https://www.knowthecompany.com";
 const CLIENT_ID = "5783d517-0173-420b-ba45-67e1d2efd460";
@@ -57,7 +58,9 @@ async function categories(): Promise<string[]> {
 /* ---- addresses ---- */
 /* `ld` is this page's structured data (schema.org JSON-LD), added to the shell as one @graph with the
    site's Organization and WebSite. */
-export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string } | { redirect: string };
+export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; facts?: { id: string; data: Facts } } | { redirect: string };
+export type Facts = { name?: string; legalName?: string | null; founded?: string | null; hq?: string | null; founders?: string[]; parent?: string | null; ownership?: string | null; employees?: string | null; products?: string[]; markets?: string | null; description?: string | null; status?: string | null; links?: Record<string, string | null>; sources?: { fact: string; url: string }[]; checked?: string };
+const FACTS = factsData as Record<string, Facts>;
 type Post = { slug: string; cat: string; date: string; title: string; excerpt: string; body: [string, string | string[]][] };
 const catIntro = (name: string) => (catIntros as Record<string, string>)[name] || `Customer and employee reviews of ${name} companies: how they treat the people they serve and the people who work for them.`;
 const POSTS = new Map((posts as Post[]).map(p => [p.slug, p]));
@@ -94,10 +97,12 @@ export async function resolvePage(pathname: string): Promise<Page> {
         const name = c.title || c._id, cat = c.category || "Other";
         const title = `${name} reviews · Know The Company`, desc = trim(`${name} reviews from customers and employees. ${c.bio || ""}`);
         const reviews = await companyReviews(c._id).catch(() => []);
-        const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "") + reviewsHtml(name, reviews);
+        const f = FACTS[c._id];
+        const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "") + reviewsHtml(name, reviews) + (f ? factsHtml(name, c, f, reviews) : "");
         const crumbs: Crumb[] = [{ name: cat, path: `/category/${slug(cat)}` }, { name, path: p }];
-        const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews)];
-        return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld };
+        const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews, f)];
+        if (f) ld.push(faqNode(p, faqFor(name, c, f, reviews)));
+        return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld, ...(f ? { facts: { id: c._id, data: f } } : {}) };
       }
       return notFound(p);
     } catch { return unknown(p); }
@@ -215,6 +220,40 @@ const monthIso = (d: unknown) => { const v = d && typeof d === "object" && "$dat
 function articleHtml(post: Post): string {
   return (post.body || []).map(([k, v]) => k === "h" ? `<h2>${esc(v)}</h2>` : k === "ul" ? `<ul>${(v as string[]).map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : `<p>${esc(v)}</p>`).join("");
 }
+const bandText = (b: string) => { const m = b.replace(/\s/g, "").match(/^([\d,]+)[-–]([\d,]+)$/); return m ? `between ${m[1]} and ${m[2]}` : /\+$/.test(b) ? `more than ${b.replace(/\+$/, "")}` : b; };
+const listAnd = (a: string[]) => a.length < 2 ? (a[0] || "") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+const safeUrl = (u: unknown) => /^https:\/\/[^\s"'<>]+$/i.test(String(u || "")) ? String(u) : "";
+const LINK_NAMES: [string, string][] = [["linkedin", "LinkedIn"], ["x", "X"], ["instagram", "Instagram"], ["facebook", "Facebook"], ["youtube", "YouTube"], ["appStore", "App Store"], ["playStore", "Google Play"]];
+/** Questions people ask about a company, answered from its facts and its reviews (same as factFaq in app.js). */
+function faqFor(name: string, c: any, f: Facts, reviews: any[]): [string, string][] {
+  const q: [string, string][] = [];
+  const customer = reviews.filter(r => (r.type || "customer") === "customer"), employee = reviews.filter(r => r.type === "employee");
+  const avg = (l: any[]) => (l.reduce((s, r) => s + Number(r.rating), 0) / l.length).toFixed(1);
+  q.push([`What does ${name} do?`, `${String(f.description || c.bio || "").split(/(?<=\.)\s/)[0]}${f.products && f.products.length ? ` Its main products and services include ${listAnd(f.products.slice(0, 4))}.` : ""}`]);
+  if (f.founded) q.push([`When was ${name} founded?`, `${name} was founded in ${f.founded}${f.founders && f.founders.length ? ` by ${listAnd(f.founders)}` : ""}.`]);
+  if (f.hq) q.push([`Where is ${name} based?`, `${name} is headquartered in ${f.hq}.${f.markets ? ` It operates in ${f.markets}.` : ""}`]);
+  const tick = (f.ownership || "").match(/\(([^)]+)\)/);
+  if (f.parent) q.push([`Who owns ${name}?`, `${name} is owned by ${f.parent}.`]);
+  else if (/^Public/.test(f.ownership || "")) q.push([`Is ${name} a public company?`, `Yes. ${name} is publicly listed${tick ? ` (${tick[1]})` : ""}.`]);
+  else if (f.ownership === "Private") q.push([`Is ${name} a public company?`, `No. ${name} is a privately held company.`]);
+  if (f.employees) q.push([`How many people work at ${name}?`, `Public sources put ${name}'s team at ${bandText(f.employees)} people.`]);
+  q.push([`What do customers and employees say about ${name}?`, customer.length || employee.length
+    ? [customer.length ? `Customers rate ${name} ${avg(customer)} out of 5 from ${customer.length} review${customer.length === 1 ? "" : "s"}.` : "", employee.length ? `Employees rate it ${avg(employee)} out of 5 from ${employee.length} review${employee.length === 1 ? "" : "s"}.` : ""].filter(Boolean).join(" ")
+    : `There are no reviews of ${name} on Know The Company yet. If you have used ${name} or worked there, you can write the first one.`]);
+  return q;
+}
+function factsHtml(name: string, c: any, f: Facts, reviews: any[]): string {
+  const rows = [["Founded", f.founded], ["Headquarters", f.hq], [f.founders && f.founders.length > 1 ? "Founders" : "Founder", (f.founders || []).join(", ")], ["Owned by", f.parent], ["Ownership", f.parent ? "" : f.ownership], ["Employees", f.employees], ["Operates in", f.markets], ["Legal name", f.legalName]].filter(r => r[1]) as [string, string][];
+  const links = [["Website", `https://${c.website || c._id}`], ...LINK_NAMES.map(([k, l]) => [l, safeUrl((f.links || {})[k])])].filter(l => l[1]);
+  let h = `<section><h2>About ${esc(name)}</h2>`;
+  if (f.status && f.status !== "Active") h += `<p>${esc(f.status)}</p>`;
+  if (f.description) h += `<p>${esc(f.description)}</p>`;
+  if (f.products && f.products.length) h += `<h3>Products and services</h3><ul>${f.products.map(p => `<li>${esc(p)}</li>`).join("")}</ul>`;
+  if (rows.length) h += `<h3>At a glance</h3><dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+  h += `<h3>Official links</h3><ul>${links.map(([l, u]) => `<li><a href="${esc(u)}" rel="nofollow noopener">${esc(l)}</a></li>`).join("")}</ul>`;
+  h += `<h3>Questions about ${esc(name)}</h3>${faqFor(name, c, f, reviews).map(([q, a]) => `<h4>${esc(q)}</h4><p>${esc(a)}</p>`).join("")}`;
+  return h + `<p>These facts come from public sources${f.checked ? `, checked ${esc(f.checked)}` : ""}. They are not written or paid for by ${esc(name)}.</p></section>`;
+}
 const TOOL_LINKS: [string, string][] = (meta as Meta[]).filter(m => m.route.startsWith("tool-")).map(m => [`/tools/${m.route.slice(5)}`, m.h1]);
 async function homeBody(): Promise<string> {
   const cats = await categories().catch(() => [] as string[]);
@@ -256,6 +295,7 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
     + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
   if (pg.h1) html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
+  if (pg.facts) html = html.replace("</head>", () => `<script type="application/json" id="co-facts" data-id="${esc(pg.facts!.id)}">${JSON.stringify(pg.facts!.data).replace(/</g, "\\u003c")}</script>\n</head>`);
   if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);
   return html;
 }

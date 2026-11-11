@@ -1,0 +1,205 @@
+[
+ {
+  "title": "Luno",
+  "website": "luno.com",
+  "category": "Crypto Exchanges",
+  "country": "GB",
+  "bio": "Luno is a cryptocurrency exchange and wallet app that lets users buy, sell and store bitcoin and other digital assets."
+ },
+ {
+  "title": "Magoosh",
+  "website": "magoosh.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online test preparation company that offers video lessons and practice questions for the GRE, GMAT, LSAT, SAT and other exams."
+ },
+ {
+  "title": "Malt",
+  "website": "malt.com",
+  "category": "Jobs & Freelancing",
+  "country": "FR",
+  "bio": "Malt is a European freelance marketplace that connects companies with independent consultants in technology, design, marketing and other fields."
+ },
+ {
+  "title": "MasterClass",
+  "website": "masterclass.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American subscription streaming platform offering video classes taught by well-known experts in cooking, writing, business, music and other subjects."
+ },
+ {
+  "title": "Medium",
+  "website": "medium.com",
+  "category": "Social Media & Entertainment",
+  "country": "US",
+  "bio": "Online publishing platform where writers post articles and stories, and readers can follow authors through a paid membership."
+ },
+ {
+  "title": "Memrise",
+  "website": "memrise.com",
+  "category": "Education & E-learning",
+  "country": "GB",
+  "bio": "British language learning app that teaches vocabulary and conversation skills using videos of native speakers and interactive practice."
+ },
+ {
+  "title": "Mercado Bitcoin",
+  "website": "mercadobitcoin.com.br",
+  "category": "Crypto Exchanges",
+  "country": "BR",
+  "bio": "Mercado Bitcoin is a Brazilian platform for buying, selling and trading cryptocurrencies and other digital assets with Brazilian reais."
+ },
+ {
+  "title": "Mercury",
+  "website": "mercury.com",
+  "category": "Fintech & Banking",
+  "country": "US",
+  "bio": "Mercury offers online business banking, including checking accounts, cards and payment tools, aimed at startups and small companies."
+ },
+ {
+  "title": "Mollie",
+  "website": "mollie.com",
+  "category": "Fintech & Banking",
+  "country": "NL",
+  "bio": "Mollie provides online payment processing for businesses in Europe, supporting cards, bank transfers and local payment methods."
+ },
+ {
+  "title": "MoMo",
+  "website": "momo.vn",
+  "category": "Fintech & Banking",
+  "country": "VN",
+  "bio": "MoMo is a Vietnamese mobile wallet app for money transfers, bill payments, mobile top-ups, shopping and financial services."
+ },
+ {
+  "title": "Monzo",
+  "website": "monzo.com",
+  "category": "Fintech & Banking",
+  "country": "GB",
+  "bio": "British app-based bank offering current accounts, savings pots, budgeting tools, loans and business accounts managed from a smartphone."
+ },
+ {
+  "title": "MUBI",
+  "website": "mubi.com",
+  "category": "Social Media & Entertainment",
+  "country": "GB",
+  "bio": "Curated film streaming service, distributor and production company focused on independent, classic and international cinema."
+ },
+ {
+  "title": "Myntra",
+  "website": "myntra.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "IN",
+  "bio": "Indian online fashion and beauty store, owned by Flipkart."
+ },
+ {
+  "title": "N26",
+  "website": "n26.com",
+  "category": "Fintech & Banking",
+  "country": "DE",
+  "bio": "N26 is a Berlin-based mobile bank offering current accounts, debit cards, savings and budgeting features to customers in Europe."
+ },
+ {
+  "title": "Namshi",
+  "website": "namshi.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "AE",
+  "bio": "Namshi is an online fashion retailer in the Middle East selling clothing, shoes, beauty products and accessories from many brands."
+ },
+ {
+  "title": "Netlify",
+  "website": "netlify.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "Cloud platform for building, deploying and hosting websites and web applications with continuous deployment and serverless functions."
+ },
+ {
+  "title": "Ninja Van",
+  "website": "ninjavan.co",
+  "category": "Mobility & Logistics",
+  "country": "SG",
+  "bio": "Singapore-based parcel delivery company providing last-mile delivery services for online sellers across Southeast Asia."
+ },
+ {
+  "title": "NoBroker",
+  "website": "nobroker.in",
+  "category": "Real Estate",
+  "country": "IN",
+  "bio": "NoBroker is an Indian property platform that connects owners with tenants and buyers directly and offers home services."
+ },
+ {
+  "title": "Noise",
+  "website": "gonoise.com",
+  "category": "Consumer Electronics",
+  "country": "IN",
+  "bio": "Noise sells smartwatches, wireless earbuds and smart rings in India."
+ },
+ {
+  "title": "Noom",
+  "website": "noom.com",
+  "category": "Health & Wellness",
+  "country": "US",
+  "bio": "American health app that offers weight management programmes based on behaviour change, food logging and coaching, plus access to prescription options."
+ },
+ {
+  "title": "Nothing",
+  "website": "nothing.tech",
+  "category": "Consumer Electronics",
+  "country": "GB",
+  "bio": "Nothing makes smartphones, wireless earbuds and headphones with transparent design elements, plus the CMF sub-brand of budget devices."
+ },
+ {
+  "title": "Notion",
+  "website": "notion.com",
+  "category": "Technology & Software",
+  "country": "US",
+  "bio": "Notion makes a connected workspace app for notes, documents, wikis, databases and project management."
+ },
+ {
+  "title": "Nuvei",
+  "website": "nuvei.com",
+  "category": "Fintech & Banking",
+  "country": "CA",
+  "bio": "Nuvei provides payment processing technology that lets businesses accept card, digital wallet and local payments online and in person."
+ },
+ {
+  "title": "Odoo",
+  "website": "odoo.com",
+  "category": "Technology & Software",
+  "country": "BE",
+  "bio": "Odoo develops open source business management software with apps for accounting, sales, inventory, websites and other operations."
+ },
+ {
+  "title": "Ola",
+  "website": "olacabs.com",
+  "category": "Mobility & Logistics",
+  "country": "IN",
+  "bio": "Indian ride-hailing app for booking cabs, autos and bikes."
+ },
+ {
+  "title": "Omio",
+  "website": "omio.com",
+  "category": "Travel & Hospitality",
+  "country": "DE",
+  "bio": "Berlin-based travel booking platform that compares and sells train, bus, flight and ferry tickets."
+ },
+ {
+  "title": "Oura",
+  "website": "ouraring.com",
+  "category": "Consumer Electronics",
+  "country": "FI",
+  "bio": "Oura makes a smart ring that tracks sleep, heart rate, activity and other health metrics through a companion app."
+ },
+ {
+  "title": "Outschool",
+  "website": "outschool.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online marketplace offering live small-group video classes and tutoring for children and teenagers taught by independent teachers."
+ },
+ {
+  "title": "OYO",
+  "website": "oyorooms.com",
+  "category": "Travel & Hospitality",
+  "country": "IN",
+  "bio": "Indian hospitality company listing budget hotels and homes for booking online."
+ }
+]

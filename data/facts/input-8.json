@@ -1,0 +1,205 @@
+[
+ {
+  "title": "upGrad",
+  "website": "upgrad.com",
+  "category": "Education & E-learning",
+  "country": "IN",
+  "bio": "Indian online higher education platform offering degrees and certificates."
+ },
+ {
+  "title": "Upstox",
+  "website": "upstox.com",
+  "category": "Stock Brokers & Investing",
+  "country": "IN",
+  "bio": "Indian online stock broker for stocks, mutual funds and derivatives."
+ },
+ {
+  "title": "Urban Ladder",
+  "website": "urbanladder.com",
+  "category": "Consumer Brands",
+  "country": "IN",
+  "bio": "Indian online furniture and decor store."
+ },
+ {
+  "title": "Vedantu",
+  "website": "vedantu.com",
+  "category": "Education & E-learning",
+  "country": "IN",
+  "bio": "Indian online tutoring company offering live classes for school students and coaching for entrance exams such as JEE and NEET."
+ },
+ {
+  "title": "Vercel",
+  "website": "vercel.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "Cloud platform for deploying and hosting frontend web applications, and the company behind the Next.js framework."
+ },
+ {
+  "title": "Vinted",
+  "website": "vinted.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "LT",
+  "bio": "Vinted is a Lithuanian online marketplace where people buy and sell secondhand clothing, accessories and household items."
+ },
+ {
+  "title": "Voi",
+  "website": "voi.com",
+  "category": "Mobility & Logistics",
+  "country": "SE",
+  "bio": "Swedish micromobility company renting shared electric scooters and e-bikes through an app in European cities."
+ },
+ {
+  "title": "Vultr",
+  "website": "vultr.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "American cloud infrastructure provider offering virtual machines, bare metal servers, GPUs, storage and Kubernetes in many locations."
+ },
+ {
+  "title": "Wallapop",
+  "website": "wallapop.com",
+  "category": "E-commerce & Marketplaces",
+  "country": "ES",
+  "bio": "Wallapop is a Spanish app for buying and selling secondhand goods locally or with shipping, from furniture and electronics to clothing."
+ },
+ {
+  "title": "Wealthsimple",
+  "website": "wealthsimple.com",
+  "category": "Stock Brokers & Investing",
+  "country": "CA",
+  "bio": "Wealthsimple is a Canadian financial app offering self-directed trading, managed investing, tax filing and cash accounts."
+ },
+ {
+  "title": "Webflow",
+  "website": "webflow.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "Visual website building platform that lets designers create, host and manage responsive websites without writing code."
+ },
+ {
+  "title": "Wellfound",
+  "website": "wellfound.com",
+  "category": "Jobs & Freelancing",
+  "country": "US",
+  "bio": "Wellfound, formerly AngelList Talent, is a job platform where startups post roles and candidates apply for jobs at early-stage companies."
+ },
+ {
+  "title": "WeWork",
+  "website": "wework.com",
+  "category": "Real Estate",
+  "country": "US",
+  "bio": "WeWork provides flexible coworking spaces, private offices and meeting rooms for individuals and companies in cities worldwide."
+ },
+ {
+  "title": "Withings",
+  "website": "withings.com",
+  "category": "Consumer Electronics",
+  "country": "FR",
+  "bio": "Withings makes connected health devices, including smart scales, hybrid smartwatches, blood pressure monitors and sleep trackers."
+ },
+ {
+  "title": "Wolt",
+  "website": "wolt.com",
+  "category": "Food & Delivery",
+  "country": "FI",
+  "bio": "Finnish delivery platform for ordering food from restaurants and products from grocery and retail stores through its app."
+ },
+ {
+  "title": "WordPress.com",
+  "website": "wordpress.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "Hosted website and blogging platform run by Automattic, built on the open-source WordPress software with managed hosting plans."
+ },
+ {
+  "title": "Workana",
+  "website": "workana.com",
+  "category": "Jobs & Freelancing",
+  "country": "AR",
+  "bio": "Workana is a freelance marketplace focused on Latin America where companies hire remote professionals for programming, design and marketing work."
+ },
+ {
+  "title": "WorldRemit",
+  "website": "worldremit.com",
+  "category": "Fintech & Banking",
+  "country": "GB",
+  "bio": "WorldRemit is an online money transfer service for sending funds abroad to bank accounts, mobile money wallets and cash pickup locations."
+ },
+ {
+  "title": "WP Engine",
+  "website": "wpengine.com",
+  "category": "Web Hosting & Website Builders",
+  "country": "US",
+  "bio": "American managed WordPress hosting company providing hosting, staging, security and performance tools for WordPress and WooCommerce sites."
+ },
+ {
+  "title": "Wuzzuf",
+  "website": "wuzzuf.net",
+  "category": "Jobs & Freelancing",
+  "country": "EG",
+  "bio": "Wuzzuf is an Egyptian online recruitment platform where employers post jobs and professionals and graduates apply for positions."
+ },
+ {
+  "title": "Wyzant",
+  "website": "wyzant.com",
+  "category": "Education & E-learning",
+  "country": "US",
+  "bio": "American online marketplace where students find and book independent tutors for in-person or online lessons in academic and other subjects."
+ },
+ {
+  "title": "Yemeksepeti",
+  "website": "yemeksepeti.com",
+  "category": "Food & Delivery",
+  "country": "TR",
+  "bio": "Turkish online food ordering app for restaurant delivery, groceries and other products, owned by Delivery Hero."
+ },
+ {
+  "title": "Yoco",
+  "website": "yoco.com",
+  "category": "Fintech & Banking",
+  "country": "ZA",
+  "bio": "Yoco provides card machines, point-of-sale software and payment tools that help small businesses in South Africa accept card payments."
+ },
+ {
+  "title": "Yulu",
+  "website": "yulu.bike",
+  "category": "Mobility & Logistics",
+  "country": "IN",
+  "bio": "Indian shared electric two-wheeler service renting e-bikes and scooters through an app in Indian cities."
+ },
+ {
+  "title": "Zepto",
+  "website": "zeptonow.com",
+  "category": "Food & Delivery",
+  "country": "IN",
+  "bio": "Indian quick-commerce app delivering groceries, fruit and vegetables, snacks and household essentials from dark stores within minutes."
+ },
+ {
+  "title": "Zerodha",
+  "website": "zerodha.com",
+  "category": "Stock Brokers & Investing",
+  "country": "IN",
+  "bio": "Indian discount stock broker for stocks, mutual funds and derivatives."
+ },
+ {
+  "title": "Zipcar",
+  "website": "zipcar.com",
+  "category": "Mobility & Logistics",
+  "country": "US",
+  "bio": "Car-sharing service that lets members rent cars by the hour or day from reserved spots, owned by Avis Budget Group."
+ },
+ {
+  "title": "Zocdoc",
+  "website": "zocdoc.com",
+  "category": "Health & Wellness",
+  "country": "US",
+  "bio": "American online service that lets patients search for doctors by specialty and insurance, read reviews and book appointments online."
+ },
+ {
+  "title": "Zoopla",
+  "website": "zoopla.co.uk",
+  "category": "Real Estate",
+  "country": "GB",
+  "bio": "British property website for sales and rentals."
+ }
+]

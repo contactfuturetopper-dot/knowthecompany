@@ -3,3 +3,6 @@ test/app.test.mjs
 .DS_Store
 test/package-lock.json
 test/test-output.txt
+
+# research output in progress; merged into data/company-facts.json when done
+data/facts/batch-*.json
