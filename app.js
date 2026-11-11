@@ -426,7 +426,7 @@ const S = { heroTab: 'companies', jobFilter: { q: '', type: '', mode: '' }, jobP
 /* A review draft survives a sign-in that leaves the site (Google, Facebook): it is kept in this tab's session
    storage until the review is posted. */
 const setDraft = d => { S.draft = d; try { if (d) sessionStorage.setItem('ktc_draft', JSON.stringify(d)); else sessionStorage.removeItem('ktc_draft'); } catch (e) {} };
-try { const d = JSON.parse(sessionStorage.getItem('ktc_draft') || 'null'); if (d && d.cid) S.draft = { ...d, applied: false }; } catch (e) {}
+try { const d = JSON.parse(sessionStorage.getItem('ktc_draft') || 'null'); if (d && d.cid) S.draft = d; } catch (e) {}
 function syncUser(s) {
   const m = s.member || {};
   S.memberLoading = !!s.loading;
@@ -2468,7 +2468,9 @@ function render() {
     renderNav(''); return;
   }
   let html, nav = '';
-  if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) S.rating = S.draft.rating;
+  /* A saved draft fills the review form on every draw of its company page until it is posted (a page can be
+     drawn several times while data and the sign-in load). */
+  if (BYID[h] && S.draft && S.draft.cid === h && !S.rating) S.rating = S.draft.rating;
   if (h === 'home' || h === '') html = vHome();
   else if (h === 'categories') { html = vCategories(); nav = 'categories'; }
   else if (h === 'search') html = vSearch();
@@ -2509,7 +2511,7 @@ function render() {
   if (TOOLBYID[h]) runTool();
   if (S.scrollTo) { const id = S.scrollTo; S.scrollTo = ''; setTimeout(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 60); }
   const sp = document.getElementById('searchpanel'); if (sp) sp.hidden = true;
-  if (BYID[h] && S.draft && S.draft.cid === h && !S.draft.applied) { const g = document.getElementById('review-form'); if (g) { g['r-title'].value = S.draft.title; g['r-body'].value = S.draft.body; g['r-date'].value = S.draft.date || ''; S.draft.applied = true; } }
+  if (BYID[h] && S.draft && S.draft.cid === h) { const g = document.getElementById('review-form'); if (g && !g['r-title'].value && !g['r-body'].value) { g['r-title'].value = S.draft.title || ''; g['r-body'].value = S.draft.body || ''; g['r-date'].value = S.draft.date || ''; } }
   setMeta(h);
   const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : PAGE_TITLES[h] ? `${PAGE_TITLES[h]} · Know The Company` : h === 'home' ? 'Know The Company · Customer and employee reviews of startups' : !isRoute(h) ? 'Page not found · Know The Company' : 'Know The Company · Customer and employee reviews of startups';
 }
