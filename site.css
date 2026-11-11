@@ -923,3 +923,7 @@ body{font-feature-settings:normal}
 .curswitch button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .curswitch button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-0.01em;line-height:1.3}
+/* Wordmark on two lines: "Know The" over "Company", the same height as the mark beside it. */
+.brand b.wm{display:flex;flex-direction:column;font-size:19px!important;line-height:.95;letter-spacing:-0.02em}
+.brand .mark{height:40px}
+@media (max-width:400px){.brand b.wm{font-size:17px!important}}
