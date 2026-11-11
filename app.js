@@ -1,7 +1,7 @@
 import { queryItems, insertItem, updateItem, removeItem } from "/js/wix/items.js";
 import { toItem } from "/js/wix/items-core.js";
 import { imgSrc, imgRatio } from "/js/wix/media.js";
-import { wixRequest } from "/js/wix/client.js";
+import { wixRequest, accessToken } from "/js/wix/client.js";
 import { WIX_CLIENT_ID } from "/js/wix/config.js";
 import { subscribeMember, getMemberState, login as memberLogin, register as memberRegister, verifyEmail as memberVerify, logout as memberLogout } from "/js/wix/member-store.js";
 
@@ -1633,11 +1633,11 @@ function vDashboard() {
   const empty = !mine.length && claims && !claims.length;
   const sel = mine.find(c => c.id === S.dashCo) || mine[0];
   if (sel) { S.user.coId = sel.id; S.user.plan = coPlan(sel); loadMedia(sel); }
-  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews']];
+  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews'], ['plan', 'Plan and payments']];
   const tab = TABS.some(t => t[0] === S.dashTab) ? S.dashTab : 'overview';
   const pick = mine.length > 1 ? `<div class="field" style="max-width:360px"><label class="l" for="dash-co">Company</label><select id="dash-co" data-dashco>${mine.map(c => `<option value="${c.id}" ${c === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : '';
   const tabs = sel ? `<nav style="display:flex;flex-wrap:wrap;gap:8px" aria-label="Dashboard sections">${TABS.map(([k, l]) => `<a class="btn ${k === tab ? 'p' : 'g'}" href="#dashboard" data-act="dash-tab" data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>` : '';
-  const body = !sel ? '' : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
+  const body = !sel ? '' : tab === 'plan' ? planPanel(sel) : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
   return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
     <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><a class="btn o" href="#list">Claim or add a company</a></div>
     ${pick}${tabs}${body}
@@ -2050,6 +2050,65 @@ async function insertCompany(data) {
    another platform. Each goes into ReviewImports (members can add, only the team can read anyone else's
    or change them). The team emails the reviewer to confirm they wrote it and are happy for it to appear,
    then publishes it in Reviews with importedFrom and originalDate set, and it shows labelled "Imported". */
+/* ---------- plan and payments (Razorpay autopay) ----------
+   The server (astro/src/pages/api/pay/[action].ts) checks the owner, creates a yearly Razorpay subscription
+   and confirms it. This panel shows the plan and opens Razorpay Checkout. Paying never changes a rating. */
+const PAY = { company: '', loading: false, data: null, err: '', busy: '' };
+async function payApi(action, body) {
+  const res = await fetch('/api/pay/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: await accessToken() }, body: JSON.stringify(body) });
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(d.error || 'Something went wrong. Please try again.');
+  return d;
+}
+async function loadPay(c, force) {
+  if (!force && (PAY.company === c.wid && (PAY.data || PAY.loading))) return;
+  Object.assign(PAY, { company: c.wid, loading: true, err: '' });
+  try { PAY.data = await payApi('status', { company: c.wid }); } catch (e) { PAY.data = null; PAY.err = e.message; }
+  PAY.loading = false;
+  if (curRoute() === 'dashboard') renderKeep();
+}
+let rzpLoad = null;
+const loadCheckout = () => rzpLoad || (rzpLoad = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://checkout.razorpay.com/v1/checkout.js'; s.onload = ok; s.onerror = () => { rzpLoad = null; no(new Error('Couldn’t load Razorpay. Check your connection and try again.')); }; document.head.appendChild(s); }));
+async function startAutopay(c, plan) {
+  PAY.busy = plan; PAY.err = ''; renderKeep();
+  try {
+    const [d] = await Promise.all([payApi('subscribe', { company: c.wid, plan, currency: curNow() }), loadCheckout()]);
+    await new Promise((resolve, reject) => {
+      const rz = new window.Razorpay({
+        key: d.key, subscription_id: d.subscriptionId, name: 'Know The Company', description: `${d.name} for ${d.company}`,
+        image: location.origin + '/icon-192.png', prefill: d.prefill || {}, notes: { company: c.wid }, theme: { color: '#1E293B' },
+        handler: async r => { try { await payApi('verify', { company: c.wid, subscriptionId: r.razorpay_subscription_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }); resolve(); } catch (e) { reject(e); } },
+        modal: { ondismiss: () => reject(new Error('')) },
+      });
+      rz.on('payment.failed', r => reject(new Error((r && r.error && r.error.description) || 'The payment didn’t go through.')));
+      rz.open();
+    });
+    toast(plan === 'plus' ? 'Plus is on. Thank you.' : 'Autopay is set up. Thank you.', 4000);
+    await loadData(true); await loadPay(c, true);
+  } catch (e) { PAY.err = e.message; }
+  PAY.busy = ''; renderKeep();
+}
+function planPanel(c) {
+  loadPay(c);
+  const d = PAY.company === c.wid ? PAY.data : null;
+  const P = CUR_PRICES[curNow()];
+  const fmt = iso => iso ? fmtDate(String(iso).slice(0, 10)) : '';
+  const live = d ? d.billing.filter(b => ['authenticated', 'active', 'pending', 'cancelling'].includes(b.status)) : [];
+  const plusLive = live.find(b => b.plan === 'plus' && b.status !== 'cancelling'), basicLive = live.find(b => b.plan === 'basic' && b.status !== 'cancelling');
+  const isPlus = d ? d.plan === 'plus' : coPlan(c) === 'plus';
+  const btn = (plan, label) => `<button class="btn ${plan === 'plus' ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" ${PAY.busy ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening Razorpay…' : label}</button>`;
+  const rows = live.map(b => `<div class="cfrow"><div class="t"><b>${b.plan === 'plus' ? 'Plus' : 'Basic'} autopay</b><small>${b.status === 'cancelling' ? `Cancelled. Runs until ${esc(fmt(b.currentEnd))}` : b.status === 'active' ? `Paid until ${esc(fmt(b.currentEnd))}, then renews` : b.startAt ? `First charge on ${esc(fmt(b.startAt))}` : 'Set up'}</small></div></div>`).join('');
+  return `<section class="box" style="gap:16px">
+    <div class="toolbar"><h2>Plan and payments</h2><span class="pill ${isPlus ? 'ok' : 'un'}">${isPlus ? 'Plus' : 'Basic'} plan</span></div>
+    ${PAY.loading && !d ? '<p class="meta">Loading…</p>' : ''}
+    ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}
+    ${!isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Plus, ${P.PP} a year</h3><p>Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.${LAUNCH ? ` Your first ${PLUS_TRIAL_DAYS} days are free; the first charge is on day ${PLUS_TRIAL_DAYS + 1}.` : ''}</p>${btn('plus', LAUNCH ? `Start Plus free for ${PLUS_TRIAL_DAYS} days` : `Get Plus for ${P.PP} a year`)}</div>` : ''}
+    ${!isPlus && !basicLive && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Basic, ${P.PB} a year</h3><p>${LAUNCH ? `Basic is free for your first year. Set up autopay now so your page stays live after that; nothing is charged until the free year ends.` : 'Keep your verified listing with yearly autopay.'}</p>${btn('basic', LAUNCH ? 'Set up autopay for later' : `Pay ${P.PB} a year`)}</div>` : ''}
+    ${live.some(b => b.status !== 'cancelling') ? `<p class="meta">Autopay renews every year. Cancel any time: an autopay that hasn’t charged yet ends straight away, and a paid year runs to its end. <button class="link" type="button" data-act="pay-cancel">Cancel autopay</button></p>` : ''}
+    ${PAY.err ? `<p class="err" role="alert">${esc(PAY.err)}</p>` : ''}
+    <p class="meta">Payments are handled by Razorpay. Cards, UPI and netbanking that support autopay can be used. Paying never changes your ratings or reviews. See <a href="#refunds">refunds and cancellations</a>.</p>
+  </section>`;
+}
 const IMPORT_SOURCES = ['Our website', 'Email or message', 'Survey or feedback form', 'Google', 'Another review site', 'In person or on paper', 'Other'];
 const IMPORT_STATUS = { pending: ['un', 'Being checked'], confirmed: ['un', 'Confirmed, publishing soon'], published: ['ok', 'Published'], rejected: ['cat', 'Not published'] };
 async function loadMyImports(c) {
@@ -2611,6 +2670,8 @@ document.addEventListener('click', e => {
   if (act === 'close-modal-go') { if (a.dataset.sheet === 'dash-tab') S.dashTab = a.dataset.tab; if (a.dataset.sheet === 'goto-plans') S.scrollTo = 'plans'; closeModals(); if (routeOfHref(a.getAttribute('href')) === curRoute()) { e.preventDefault(); render(); } return; }
   if (act === 'pick-co') { const as = (document.querySelector('input[name="pk-as"]:checked') || {}).value || 'customers'; closeModals(); if (curRoute() === a.dataset.id) { S.coTab = as; render(); } else { S.returnTab = as; navigate(a.dataset.id); } return; }
   if (act === 'cur') { store.set('ktc_cur', a.dataset.cur); renderKeep(); return; }
+  if (act === 'pay-start') { const c = BYID[S.user && S.user.coId]; if (c) startAutopay(c, a.dataset.plan === 'plus' ? 'plus' : 'basic'); return; }
+  if (act === 'pay-cancel') { const c = BYID[S.user && S.user.coId]; if (!c || !window.confirm('Cancel autopay for ' + c.name + '?')) return; (async () => { PAY.err = ''; try { await payApi('cancel', { company: c.wid }); toast('Autopay cancelled.'); await loadData(true); await loadPay(c, true); } catch (e) { PAY.err = e.message; renderKeep(); } })(); return; }
   if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (curRoute() === 'dashboard') { e.preventDefault(); render(); } return; }
   if (act === 'goto-plans') { S.scrollTo = 'plans'; if (curRoute() === 'list') { e.preventDefault(); render(); } return; }
   if (act === 'add-cat') { S.addCat = a.dataset.cat; return; }

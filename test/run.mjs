@@ -168,6 +168,8 @@ report.push('past reviews tab: form ' + !!app.querySelector('#import-form'));
     set('im-name', 'Meera J.'); set('im-email', 'meera@example.com'); set('im-rating', '4'); set('im-date', '2025-03-10'); set('im-body', 'Settlements were quick and support answered within the hour.'); imf.querySelector('#im-ok').checked = true;
     imf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
   report.push('past review sent: ' + JSON.stringify(inserted.filter(x => x[0] === 'ReviewImports').map(x => [x[1].company, x[1].status, x[1].rating]))); }
+click('[data-act="dash-tab"][data-tab="plan"]'); await new Promise(r => setTimeout(r, 80));
+report.push('plan tab: ' + /Plan and payments/.test(app.textContent) + ', plus offer: ' + !!app.querySelector('[data-act="pay-start"][data-plan="plus"]') + ', basic autopay offer: ' + !!app.querySelector('[data-act="pay-start"][data-plan="basic"]'));
 click('[data-act="dash-tab"][data-tab="page"]'); await new Promise(r => setTimeout(r, 40));
 const pf = app.querySelector('#cprof-form'); report.push('company page form: ' + !!pf + ', photos shown: ' + app.querySelectorAll('.gallery img').length);
 if (pf) { pf.querySelector('#cp-about').value = 'We build payment tools for small and growing businesses across India and abroad.'; pf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }

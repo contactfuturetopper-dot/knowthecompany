@@ -65,6 +65,21 @@ jobs:
         working-directory: astro
         run: npm run check
 
+      - name: Razorpay keys
+        working-directory: astro
+        env:
+          WIX_API_KEY: ${{ secrets.WIX_API_KEY }}
+          # Keys for listing payments, from repository secrets of the same names, stored on Wix's servers.
+          # Optional: without them the site says payments aren't switched on yet. Values never appear in logs.
+          RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
+          RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
+          RAZORPAY_WEBHOOK_SECRET: ${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
+        run: |
+          npx wix login --api-key "$WIX_API_KEY"
+          for k in RAZORPAY_KEY_ID RAZORPAY_KEY_SECRET RAZORPAY_WEBHOOK_SECRET; do
+            if [ -n "${!k}" ]; then npx wix env set --key="$k" --value="${!k}" >/dev/null && echo "$k set"; else echo "$k not set (payments stay off)"; fi
+          done
+
       - name: Build
         working-directory: astro
         run: |

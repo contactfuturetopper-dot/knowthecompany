@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import wix from "@wix/astro";
 import wixPages from "@wix/astro-pages";
 import wixHostingAdapter from "@wix/astro-wix-hosting-adapter";
@@ -12,4 +12,14 @@ export default defineConfig({
   security: { checkOrigin: false },
   adapter: wixHostingAdapter(),
   output: "server",
+  // Razorpay keys for listing payments (src/lib/pay.ts). Set on Wix's servers with `wix env set`, never in
+  // the code; the publish workflow does it from the repository secrets of the same names. Until they are
+  // set, the payment buttons say payments aren't switched on yet.
+  env: {
+    schema: {
+      RAZORPAY_KEY_ID: envField.string({ context: "server", access: "secret", optional: true }),
+      RAZORPAY_KEY_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
+      RAZORPAY_WEBHOOK_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
+    },
+  },
 });
