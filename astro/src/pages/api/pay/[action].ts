@@ -13,7 +13,6 @@ export const POST: APIRoute = async ({ params, request }) => {
   const action = params.action;
   try {
     if (action === "webhook") return await webhook(request);
-    if (!payReady()) return json(OFF, 503);
     const me = await memberFrom(request);
     if (!me) return json({ error: "Please log in again." }, 401);
     const body = await request.json().catch(() => ({}));
@@ -22,14 +21,16 @@ export const POST: APIRoute = async ({ params, request }) => {
 
     if (action === "status") {
       const rows = await billingFor(company._id);
-      return json({ plan: company.plan === "plus" ? "plus" : "basic", planEndsAt: company.planEndsAt || "", billing: rows.slice(0, 5).map(billingView) });
+      return json({ ready: payReady(), plan: company.plan === "plus" ? "plus" : "basic", planEndsAt: company.planEndsAt || "", billing: rows.slice(0, 5).map(billingView) });
     }
+    /* Everything below talks to Razorpay, so it needs the keys. */
+    if (!payReady()) return json(OFF, 503);
 
     if (action === "subscribe") {
       const plan = body.plan === "plus" ? "plus" : "basic";
       const currency = body.currency === "USD" ? "USD" : "INR";
       const live = (await billingFor(company._id)).find(b => LIVE.includes(b.status) && b.plan === plan);
-      if (live) return json({ error: `Autopay for ${PLAN_NAMES[plan]} is already set up for this company.` }, 409);
+      if (live) return json({ error: `${PLAN_NAMES[plan]} is already set up for this company.` }, 409);
       let planId: string;
       try { planId = await planIdFor(plan, currency); }
       catch (e: any) { return json({ error: currency === "USD" ? "Paying in US dollars isn’t available yet. Please choose rupees." : "Couldn’t prepare the payment. Please try again." }, 502); }
@@ -67,7 +68,7 @@ export const POST: APIRoute = async ({ params, request }) => {
 
     if (action === "cancel") {
       const live = (await billingFor(company._id)).filter(b => LIVE.includes(b.status));
-      if (!live.length) return json({ error: "There’s no autopay to cancel." }, 404);
+      if (!live.length) return json({ error: "There’s no plan renewal to cancel." }, 404);
       for (const b of live) {
         /* An autopay that hasn't charged yet ends now. One that has charged runs to the end of the paid year. */
         const started = b.status === "active";

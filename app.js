@@ -2088,10 +2088,13 @@ async function insertCompany(data) {
 /* ---------- plan and payments (Razorpay autopay) ----------
    The server (astro/src/pages/api/pay/[action].ts) checks the owner, creates a yearly Razorpay subscription
    and confirms it. This panel shows the plan and opens Razorpay Checkout. Paying never changes a rating. */
-const PAY = { company: '', loading: false, data: null, err: '', busy: '' };
+const PAY = { company: '', loading: false, data: null, err: '', busy: '', off: false };
+/* The plan panel sits on the dashboard and on the claim and list pages. */
+const payRedraw = () => { if (curRoute() === 'dashboard') renderKeep(); else if (['claim', 'list'].includes(curRoute())) cfRefresh(false); };
 async function payApi(action, body) {
   const res = await fetch('/api/pay/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: await accessToken() }, body: JSON.stringify(body) });
   const d = await res.json().catch(() => ({}));
+  if (res.status === 503) PAY.off = true;
   if (!res.ok) throw new Error(d.error || 'Something went wrong. Please try again.');
   return d;
 }
@@ -2099,15 +2102,15 @@ async function loadPay(c, force) {
   /* One load per company: after an error, wait for a button press or a page change rather than retrying
      on every draw. */
   if (!force && PAY.company === c.wid && (PAY.data || PAY.loading || PAY.err)) return;
-  Object.assign(PAY, { company: c.wid, loading: true, err: '' });
-  try { PAY.data = await payApi('status', { company: c.wid }); } catch (e) { PAY.data = null; PAY.err = e.message; }
+  Object.assign(PAY, { company: c.wid, loading: true, err: '', off: false });
+  try { PAY.data = await payApi('status', { company: c.wid }); PAY.off = PAY.data.ready === false; } catch (e) { PAY.data = null; PAY.err = e.message; }
   PAY.loading = false;
-  if (curRoute() === 'dashboard') renderKeep();
+  payRedraw();
 }
 let rzpLoad = null;
 const loadCheckout = () => rzpLoad || (rzpLoad = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://checkout.razorpay.com/v1/checkout.js'; s.onload = ok; s.onerror = () => { rzpLoad = null; no(new Error('Couldn’t load Razorpay. Check your connection and try again.')); }; document.head.appendChild(s); }));
 async function startAutopay(c, plan) {
-  PAY.busy = plan; PAY.err = ''; renderKeep();
+  PAY.busy = plan; PAY.err = ''; payRedraw();
   try {
     const [d] = await Promise.all([payApi('subscribe', { company: c.wid, plan, currency: curNow() }), loadCheckout()]);
     await new Promise((resolve, reject) => {
@@ -2120,10 +2123,10 @@ async function startAutopay(c, plan) {
       rz.on('payment.failed', r => reject(new Error((r && r.error && r.error.description) || 'The payment didn’t go through.')));
       rz.open();
     });
-    toast(plan === 'plus' ? 'Plus is on. Thank you.' : 'Autopay is set up. Thank you.', 4000);
+    toast(plan === 'plus' ? 'Plus is on. Thank you.' : 'Basic is set up. Thank you.', 4000);
     await loadData(true); await loadPay(c, true);
   } catch (e) { PAY.err = e.message; }
-  PAY.busy = ''; renderKeep();
+  PAY.busy = ''; payRedraw();
 }
 function planPanel(c, inClaim) {
   loadPay(c);
@@ -2133,18 +2136,20 @@ function planPanel(c, inClaim) {
   const live = d ? d.billing.filter(b => ['authenticated', 'active', 'pending', 'cancelling'].includes(b.status)) : [];
   const plusLive = live.find(b => b.plan === 'plus' && b.status !== 'cancelling'), basicLive = live.find(b => b.plan === 'basic' && b.status !== 'cancelling');
   const isPlus = d ? d.plan === 'plus' : coPlan(c) === 'plus';
-  const btn = (plan, label) => `<button class="btn ${plan === 'plus' ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" data-wid="${esc(c.wid)}" ${PAY.busy ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening Razorpay…' : label}</button>`;
-  const rows = live.map(b => `<div class="cfrow"><div class="t"><b>${b.plan === 'plus' ? 'Plus' : 'Basic'} autopay</b><small>${b.status === 'cancelling' ? `Cancelled. Runs until ${esc(fmt(b.currentEnd))}` : b.status === 'active' ? `Paid until ${esc(fmt(b.currentEnd))}, then renews` : b.startAt ? `First charge on ${esc(fmt(b.startAt))}` : 'Set up'}</small></div></div>`).join('');
+  /* Payments not switched on yet: show the plans, but no buttons that can't work. */
+  const off = PAY.company === c.wid && (PAY.off || (d && d.ready === false));
+  const btn = (plan, label) => off ? '' : `<button class="btn ${plan === 'plus' ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" data-wid="${esc(c.wid)}" ${PAY.busy || PAY.loading ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening…' : label}</button>`;
+  const rows = live.map(b => `<div class="cfrow"><div class="t"><b>${b.plan === 'plus' ? 'Plus' : 'Basic'} plan</b><small>${b.status === 'cancelling' ? `Won’t renew. Runs until ${esc(fmt(b.currentEnd))}` : b.status === 'active' ? `Paid until ${esc(fmt(b.currentEnd))}` : b.startAt ? `Free until ${esc(fmt(b.startAt))}` : 'Set up'}</small></div></div>`).join('');
+  const box = (h, sub, body, button) => `<div class="box soft" style="gap:10px"><h3>${h}</h3>${sub ? `<p><b>${sub}</b></p>` : ''}<p>${body}</p>${button}</div>`;
   return `<section class="box" style="gap:16px">
     <div class="toolbar"><h2>${inClaim ? 'Choose your plan' : 'Plan and payments'}</h2><span class="pill ${isPlus ? 'ok' : 'un'}">${isPlus ? 'Plus' : 'Basic'} plan</span></div>
-    ${PAY.loading && !d ? '<p class="meta">Loading…</p>' : ''}
     ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}
-    ${!isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Plus, ${P.PP} a year</h3><p>Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.${LAUNCH ? ` Your first ${PLUS_TRIAL_DAYS} days are free; the first charge is on day ${PLUS_TRIAL_DAYS + 1}.` : ''}</p>${btn('plus', LAUNCH ? `Start Plus free for ${PLUS_TRIAL_DAYS} days` : `Get Plus for ${P.PP} a year`)}</div>` : ''}
-    ${isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Keep Plus with autopay, ${P.PP} a year</h3><p>${d && d.planEndsAt ? `Your Plus plan runs until ${esc(fmt(d.planEndsAt))}. ` : ''}Set up yearly autopay so it carries on without a gap. Nothing is charged before then.</p>${btn('plus', 'Set up autopay for Plus')}</div>` : ''}
-    ${!isPlus && !basicLive && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Basic, ${P.PB} a year</h3><p>${LAUNCH ? `Basic is free for your first year. Set up autopay now so your page stays live after that; nothing is charged until the free year ends.` : 'Keep your verified listing with yearly autopay.'}</p>${btn('basic', LAUNCH ? 'Set up autopay for later' : `Pay ${P.PB} a year`)}</div>` : ''}
-    ${live.some(b => b.status !== 'cancelling') ? `<p class="meta">Autopay renews every year. Cancel any time: an autopay that hasn’t charged yet ends straight away, and a paid year runs to its end. <button class="link" type="button" data-act="pay-cancel" data-wid="${esc(c.wid)}">Cancel autopay</button></p>` : ''}
-    ${PAY.err ? `<p class="err" role="alert">${esc(PAY.err)}</p>` : ''}
-    <p class="meta">Payments are handled by Razorpay. Cards, UPI and netbanking that support autopay can be used. Paying never changes your ratings or reviews. See <a href="#refunds">refunds and cancellations</a>.</p>
+    ${!isPlus && !plusLive ? box('Plus', LAUNCH ? `Free for your first month, then ${P.PP} a year` : `${P.PP} a year`, 'Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.', btn('plus', LAUNCH ? 'Start Plus free' : 'Choose Plus')) : ''}
+    ${isPlus && !plusLive ? box('Plus', d && d.planEndsAt ? `Yours until ${esc(fmt(d.planEndsAt))}, then ${P.PP} a year` : `${P.PP} a year`, 'Keep replying as a verified company, your photos, updates and employer page without a break.', btn('plus', 'Continue with Plus')) : ''}
+    ${!isPlus && !basicLive && !plusLive ? box('Basic', LAUNCH ? `Free for your first year, then ${P.PB} a year` : `${P.PB} a year`, 'Your verified company page, with your details kept up to date.', btn('basic', LAUNCH ? 'Start Basic free' : 'Choose Basic')) : ''}
+    ${off ? `<p class="meta"><b>Plan sign-up opens very soon.</b> ${inClaim ? 'Your claim is saved. ' : ''}You’ll be able to choose a plan here, from your dashboard, once it’s open.</p>` : ''}
+    ${PAY.err && !off ? `<p class="err" role="alert">${esc(PAY.err)}</p>` : ''}
+    <p class="meta">Nothing is charged during the free period. After it, plans renew yearly by autopay through Razorpay (cards, UPI and netbanking), and you can cancel any time${live.some(b => b.status !== 'cancelling') ? ` <button class="link" type="button" data-act="pay-cancel" data-wid="${esc(c.wid)}">here</button>` : ''}. Paying never changes your ratings or reviews. See <a href="#refunds">refunds and cancellations</a>.</p>
   </section>`;
 }
 const IMPORT_SOURCES = ['Our website', 'Email or message', 'Survey or feedback form', 'Google', 'Another review site', 'In person or on paper', 'Other'];
@@ -2753,7 +2758,7 @@ document.addEventListener('click', e => {
       S.checking = false; if (curRoute() === 'dashboard') renderKeep(); else cfRefresh(false); })(); return; }
   if (act === 'claim-plan') { S.dashPlanWid = S.dashPlanWid === a.dataset.wid ? '' : a.dataset.wid; renderKeep(); return; }
   if (act === 'pay-start') { const c = BYWID[a.dataset.wid]; if (c) startAutopay(c, a.dataset.plan === 'plus' ? 'plus' : 'basic'); return; }
-  if (act === 'pay-cancel') { const c = BYWID[a.dataset.wid]; if (!c || !window.confirm('Cancel autopay for ' + c.name + '?')) return; (async () => { PAY.err = ''; try { await payApi('cancel', { company: c.wid }); toast('Autopay cancelled.'); await loadData(true); await loadPay(c, true); } catch (e) { PAY.err = e.message; renderKeep(); } })(); return; }
+  if (act === 'pay-cancel') { const c = BYWID[a.dataset.wid]; if (!c || !window.confirm('Stop ' + c.name + '’s plan from renewing?')) return; (async () => { PAY.err = ''; try { await payApi('cancel', { company: c.wid }); toast('Your plan won’t renew.'); await loadData(true); await loadPay(c, true); } catch (e) { PAY.err = e.message; payRedraw(); } })(); return; }
   if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (curRoute() === 'dashboard') { e.preventDefault(); render(); } return; }
   if (act === 'goto-plans') { S.scrollTo = 'plans'; if (curRoute() === 'list') { e.preventDefault(); render(); } return; }
   if (act === 'add-cat') { S.addCat = a.dataset.cat; return; }
