@@ -2107,10 +2107,6 @@ const POSTS = [
     "AI answers change from one day to the next, and the same question can get a different answer twice in a row. Ask each question twice, keep the sheet and compare month by month. One wrong answer is noise. The same wrong fact three months running points to a source you need to fix."
    ],
    [
-    "note",
-    "Know The Company lets AI search tools read every company page, and each page shows reviews from both customers and employees. You can [claim your company page](/claim) to correct your details and reply to reviews, or [list your company](/list) if it is not here yet."
-   ],
-   [
     "faq",
     [
      [
@@ -2248,11 +2244,7 @@ const POSTS = [
    ],
    [
     "p",
-    "[Our robots.txt](https://www.knowthecompany.com/robots.txt) allows every crawler, AI search and training crawlers included. We block one bot, PetalBot, and ask two SEO crawlers to slow down. We also publish an [llms.txt summary](https://www.knowthecompany.com/llms.txt) of the site for AI tools. We made that choice because reviews are only useful if people can find them, wherever they search."
-   ],
-   [
-    "note",
-    "Every company page on Know The Company can be read by ChatGPT, Perplexity, Gemini and Copilot. [List your company](/list) for free, or [claim your page](/claim) if it is already here."
+    "Our robots.txt allows every crawler, AI search and training crawlers included. We block one bot, PetalBot, and ask two SEO crawlers to slow down. We also publish an llms.txt summary of the site for AI tools. We made that choice because reviews are only useful if people can find them, wherever they search."
    ],
    [
     "faq",
@@ -2439,10 +2431,6 @@ const POSTS = [
     "It also changes what AI tools say about you. When ChatGPT, Perplexity or Gemini summarise a company, they often repeat the themes customers mention most, such as refunds, delivery or staff behaviour. Our guide to [what AI tools repeat from your reviews](/blog/what-ai-tools-repeat-from-your-reviews) explains how."
    ],
    [
-    "note",
-    "On Know The Company, verified companies can reply publicly to both customer and employee reviews. We never remove a review because a company asks, but you can report any review that breaks our guidelines. [Claim your company page](/claim) to start replying."
-   ],
-   [
     "faq",
     [
      [
@@ -2591,10 +2579,6 @@ const POSTS = [
    [
     "p",
     "In the Indian survey, 31% of respondents said they use AI tools to research employers. When a candidate asks ChatGPT what it is like to work for you, the answer can only draw on reviews the tool can read. When we read the rules review sites publish for AI crawlers, we found most large sites let AI search tools in, but a few keep them away from employee review pages. The details are in our article on [which review sites AI tools can read](/blog/which-review-sites-can-ai-read)."
-   ],
-   [
-    "note",
-    "On Know The Company, employee reviews are anonymous, and companies can reply to them once verified. Every company page shows customer and employee reviews side by side, and AI search tools can read them. [List your company](/list) or [claim your page](/claim) to reply to your employees."
    ],
    [
     "faq",
@@ -2746,7 +2730,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Companies on our Business plan can send review invitations by email. Before sending, the company confirms it has permission to contact everyone on its list. We keep only a scrambled code of each address, never the address itself, so we can stop anyone being invited twice within 90 days. Every invitation has a link to stop all future invitations, from any company, and we honour it permanently. You can see the [plans and pricing](/pricing) for details."
+    "Companies on our Business plan can send review invitations by email. Before sending, the company confirms it has permission to contact everyone on its list. We keep only a scrambled code of each address, never the address itself, so we can stop anyone being invited twice within 90 days. Every invitation has a link to stop all future invitations, from any company, and we honour it permanently."
    ],
    [
     "faq",
@@ -2880,10 +2864,6 @@ const POSTS = [
     ]
    ],
    [
-    "note",
-    "Know The Company lets AI search tools read every company page. If your company is listed, [claim your page](/claim) to correct your details, or [list your company](/list) if you are not here yet."
-   ],
-   [
     "faq",
     [
      [
@@ -2998,10 +2978,6 @@ const POSTS = [
    [
     "p",
     "Reviewers and AI tools both give more weight to what is recent. A burst of complaints from three years ago, followed by two years of steady improvement, reads very differently from complaints that are still arriving. Replies that date the fix (\"Since March, refunds are processed within five days\") help readers and tools see the timeline."
-   ],
-   [
-    "note",
-    "Every company page on Know The Company shows customer and employee reviews side by side, and AI search tools can read them. [Claim your company page](/claim) to reply to reviews."
    ],
    [
     "faq",
@@ -3140,10 +3116,6 @@ const POSTS = [
     ]
    ],
    [
-    "note",
-    "Know The Company's own pages follow this checklist: every company page can be read without JavaScript and is open to AI search tools. [List your company](/list) to add a page that AI tools can read."
-   ],
-   [
     "faq",
     [
      [
@@ -3244,10 +3216,6 @@ const POSTS = [
    [
     "p",
     "If you collect customer contact details for this, check the data protection rules where you operate. Our article on [India's DPDP Rules and review requests](/blog/dpdp-rules-review-requests) is one example of how these laws apply."
-   ],
-   [
-    "note",
-    "Know The Company's Business plan sends review invitations by email, and the company confirms it is inviting its whole customer list, not a hand-picked one. Anyone invited is not asked again for 90 days, and anyone can opt out of all invitations. See [plans and pricing](/pricing)."
    ],
    [
     "faq",
@@ -3368,10 +3336,6 @@ const POSTS = [
     "One fake review among dozens of genuine ones does little harm. The strongest defence is a steady flow of real reviews from all your customers, so a single fake one is outweighed. Ask everyone, as we explain in [why asking only happy customers for reviews backfires](/blog/asking-only-happy-customers-for-reviews)."
    ],
    [
-    "note",
-    "On Know The Company, companies can reply to reviews once verified, and anyone can report a review that breaks our guidelines. We never remove a review simply because a company disagrees with it. [Claim your company page](/claim) to reply."
-   ],
-   [
     "faq",
     [
      [
@@ -3475,10 +3439,6 @@ const POSTS = [
    [
     "p",
     "Candidates expect companies to have bad periods. What they judge is the response. A page with a cluster of angry reviews from one month, honest replies underneath and better reviews after, tells them the company owns its mistakes. A page where the angry reviews sit unanswered, or are buried under suspicious praise, tells them the opposite. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) covers this in more detail."
-   ],
-   [
-    "note",
-    "On Know The Company, employee reviews are anonymous and verified companies can reply to them. We never remove an employee review because a company asks. [Claim your company page](/claim) to reply."
    ],
    [
     "faq",
@@ -3592,10 +3552,6 @@ const POSTS = [
    [
     "p",
     "The best encouragement for the next round is visible action on the last one. Reply to reviews that raise real issues, say what changed and share the changes internally too. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) has examples of replies that work."
-   ],
-   [
-    "note",
-    "On Know The Company, employee reviews are anonymous, and verified companies can reply to them and share their employee review link. [List your company](/list) to get your link."
    ],
    [
     "faq",
@@ -3773,7 +3729,7 @@ function vBlog() {
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
 function listCard(where) {
-  return `<div class="listcard ${where}"><p class="lc-eye">For businesses</p><h2>List your company for free</h2>
+  return `<div class="listcard ${where}"><img class="lc-img" src="/images/banner/list-your-company.webp" alt="Shop owner celebrating a five-star review as his business appears on the map" width="720" height="480" loading="lazy" decoding="async"><p class="lc-eye">For businesses</p><h2>List your company for free</h2>
     <ul class="ticks">${['Verified company page','Reply to customer and employee reviews','Readable by Google and AI search tools'].map(t => `<li>${TICK('var(--gold)')}<span>${t}</span></li>`).join('')}</ul>
     <a class="btn gold" href="#list">List your company</a>
     <p class="lc-note">${LAUNCH ? `Basic is free for your first year when you join before ${LAUNCH_END}.` : 'Plans from [[PB]] a year.'}</p></div>`;
@@ -3793,7 +3749,6 @@ function vPost(p) {
       ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="800" fetchpriority="high" style="width:100%;height:auto;border-radius:16px;margin-top:22px;aspect-ratio:3/2;object-fit:cover">` : ''}
       <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
       ${body}
-      <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From [[PB]] a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>
     </article><aside class="postside">${listCard('side')}</aside></div>
     <section class="sec"><div class="sechead"><h2 style="font-size:24px">More from the blog</h2><a href="#blog" style="font-weight:700">All articles</a></div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${more.map(postCard).join('')}</div></section></div>`;
 }

@@ -242,6 +242,7 @@ details p{margin-top:10px;color:var(--muted);line-height:1.6}
 .postside{display:none}
 .listcard{background:var(--deep);color:var(--deep-fg);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px}
 .listcard h2{font-size:22px;font-weight:800;line-height:1.2;color:var(--deep-fg);margin:0}
+.listcard .lc-img{display:block;width:100%;height:auto;aspect-ratio:3/2;border-radius:12px;margin:0 0 4px}
 .listcard .lc-eye{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0}
 .listcard .ticks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
 .listcard .ticks li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45;color:var(--deep-muted)}
