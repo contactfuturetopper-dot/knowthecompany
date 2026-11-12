@@ -204,8 +204,9 @@ report.push('team link shown: ' + !!(app.querySelector('#biz-link') && app.query
   click('[data-act="biz-report"]'); await new Promise(r => setTimeout(r, 40)); report.push('monthly report rows: ' + (csv.trim().split('\n').length - 1) + ', header ok: ' + csv.includes('Customer average'));
   click('[data-act="biz-export"]'); await new Promise(r => setTimeout(r, 40)); report.push('export has reviews: ' + csv.includes('Quick settlements')); }
 await go('co-razorpay'); report.push('branches on public page: ' + /Branches/.test(app.textContent) + ' ' + app.textContent.includes('12 Sanjay Place, Agra'));
-await go('pricing'); report.push('pricing shows Business: ' + /Business listing/.test(app.textContent) + ', price: ' + app.textContent.includes('₹14,999'));
-await go('list'); report.push('list page Business card: ' + !!app.querySelector('[data-act="pick-plan"][data-plan="business"]') + ', perks: ' + app.textContent.includes('Up to 5 team logins'));
+await go('pricing'); report.push('pricing page: cards ' + app.querySelectorAll('.plans .price').length + ', price: ' + app.textContent.includes('₹14,999') + ', perks: ' + app.textContent.includes('Up to 5 team logins') + ', h1: ' + (app.querySelector('h1') || {}).textContent);
+click('[data-act="pick-plan"][data-plan="business"]'); await new Promise(r => setTimeout(r, 80));
+report.push('choosing Business opens: ' + g.location.pathname + g.location.hash + (app.textContent.includes('Plans from free') ? ', list page has pricing link' : ', NO pricing link on list page') + ', no plan cards on list page: ' + !app.querySelector('.plans'));
 await go('dashboard');
 click('[data-act="dash-tab"][data-tab="page"]'); await new Promise(r => setTimeout(r, 40));
 const pf = app.querySelector('#cprof-form'); report.push('company page form: ' + !!pf + ', photos shown: ' + app.querySelectorAll('.gallery img').length);

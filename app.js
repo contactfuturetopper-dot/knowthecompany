@@ -14,7 +14,7 @@ const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ
    own title, description and canonical tag, and the app reads the page from the address. Old links
    still work: /#route and /page.html addresses are moved to the clean one. */
 const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'claim', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
-const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', claim: 'Claim your company page', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Pricing', refunds: 'Refunds and cancellations' };
+const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', claim: 'Claim your company page', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Plans and pricing', refunds: 'Refunds and cancellations' };
 const PATH_KINDS = [['company', 'co-'], ['category', 'cat-'], ['blog', 'blog-'], ['tools', 'tool-']];
 function routeOfPath(path) {
   let p = path; try { p = decodeURIComponent(path); } catch (e) {}
@@ -156,7 +156,7 @@ const PAGE_DESCS = {
   help: 'Help for reviewers, employees and companies: writing a review, staying anonymous as an employee, claiming a company page and paid plans.',
   terms: 'The terms for using Know The Company: who can write reviews, what they must be, company pages, paid listings and what we can remove.',
   privacy: 'How Know The Company collects, uses and protects your data: what we collect, what we never do with it, cookies, and your rights.',
-  pricing: 'Know The Company pricing. Reading and writing reviews is free. Companies pay for listing tools in INR or USD, and paying never changes a rating.',
+  pricing: 'Know The Company plans and pricing: Basic, Plus and Business listings. Reading and writing reviews is free. Companies pay for listing tools in INR or USD, and paying never changes a rating.',
   refunds: 'Refunds and cancellations for paid Know The Company listings: how autopay works, how to cancel a plan and when a refund applies.',
   'tool-offer': 'Compare two job offers side by side on salary, bonus, benefits and costs, and see which one is worth more each year. Free, no sign-up.',
   'tool-hike': 'Salary hike calculator: work out your new salary from a percentage hike, or the hike behind a new offer, in any currency. Free, no sign-up.',
@@ -1601,24 +1601,7 @@ function vList() {
       <div class="out" aria-live="polite">${calcOut(S.calcSale || 1500)}</div>
     </div></section>
 
-    <section class="wrap sec" id="plans"><div class="sechead" style="justify-content:center;text-align:center"><div><p class="eyebrow">Plans</p><h2>Pick a plan</h2><p>Every plan is reviewed and rated exactly the same way.</p><div style="display:flex;justify-content:center;margin-top:14px">${curSwitch()}</div></div></div>
-      <div class="plans">
-        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>[[PB]]</b><span style="color:var(--muted)">a year</span>'}</div>
-          <p class="meta" style="font-size:14px">${LAUNCH ? `Then [[PB]] a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DB]]</span>
-          <ul>${BASIC_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
-          <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="basic">${LAUNCH ? 'Start free' : 'Choose Basic'}</a></div>
-        <div class="price plus"><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>[[PP]]</b><span style="color:var(--muted)">a year</span></div>
-          <p class="meta" style="font-size:14px">${LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. Or stay on Basic.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DP]]</span>
-          <p class="sub">Everything in Basic, plus:</p>
-          <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
-          <a class="btn p lg" href="#list" data-act="pick-plan" data-plan="plus">${LAUNCH ? `Try Plus free for ${PLUS_TRIAL_DAYS} days` : 'Choose Plus'}</a></div>
-        <div class="price"><span class="eyebrow">Business</span><span class="pill un" style="align-self:flex-start">For growing teams and several branches</span><div class="amt"><b>[[PZ]]</b><span style="color:var(--muted)">a year</span></div>
-          <p class="meta" style="font-size:14px">Renews yearly by autopay. Cancel any time.</p><span class="daily">[[DZ]]</span>
-          <p class="sub">Everything in Plus, plus:</p>
-          <ul>${BUSINESS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
-          <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="business">Choose Business</a></div>
-      </div>
-      <p class="meta" style="text-align:center;margin-top:16px">Job posts are coming soon. Companies in India pay in rupees, and companies outside India pay in US dollars.</p></section>
+    <section class="wrap sec"><div class="box soft" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 420px"><h2 style="font-size:22px">Plans from free</h2><p>${LAUNCH ? 'Basic is free for your first year.' : 'Basic is [[PB]] a year.'} Plus is [[PP]] a year, and Business, for teams and several branches, is [[PZ]] a year. Every plan is reviewed and rated exactly the same way.</p></div><a class="btn p lg" href="#pricing">See plans and pricing</a></div></section>
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
 }
@@ -1883,7 +1866,7 @@ function empLinks() {
     ['claim', 'Claim your company page', 'Your company is already listed', '#claim', ''],
     ['pen', 'List your company', 'Your company isn’t on the site yet', '#list', ''],
     ['grid', 'Company dashboard', 'Your pages, review links and claims', S.user ? '#dashboard' : '#business-login', ''],
-    ['plans', 'Plans and pricing', 'Basic and Plus', '#list', 'data-act="goto-plans"']];
+    ['plans', 'Plans and pricing', 'Basic, Plus and Business', '#pricing', '']];
 }
 function notifs() {
   const u = S.user; if (!u) return [];
@@ -2107,18 +2090,43 @@ function vPrivacy() {
     ['Contact', 'Privacy questions: knowthecompanysupport@gmail.com. Grievance officer: Nimish Chhabra, knowthecompanysupport@gmail.com.']]);
 }
 
+/* The three listing plans as cards. Choosing one opens the listing form with that plan picked. */
+function planCards() {
+  return `<div class="plans">
+        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>[[PB]]</b><span style="color:var(--muted)">a year</span>'}</div>
+          <p class="meta" style="font-size:14px">${LAUNCH ? `Then [[PB]] a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DB]]</span>
+          <ul>${BASIC_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
+          <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="basic">${LAUNCH ? 'Start free' : 'Choose Basic'}</a></div>
+        <div class="price plus"><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>[[PP]]</b><span style="color:var(--muted)">a year</span></div>
+          <p class="meta" style="font-size:14px">${LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. Or stay on Basic.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DP]]</span>
+          <p class="sub">Everything in Basic, plus:</p>
+          <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
+          <a class="btn p lg" href="#list" data-act="pick-plan" data-plan="plus">${LAUNCH ? `Try Plus free for ${PLUS_TRIAL_DAYS} days` : 'Choose Plus'}</a></div>
+        <div class="price"><span class="eyebrow">Business</span><span class="pill un" style="align-self:flex-start">For growing teams and several branches</span><div class="amt"><b>[[PZ]]</b><span style="color:var(--muted)">a year</span></div>
+          <p class="meta" style="font-size:14px">Renews yearly by autopay. Cancel any time.</p><span class="daily">[[DZ]]</span>
+          <p class="sub">Everything in Plus, plus:</p>
+          <ul>${BUSINESS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
+          <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="business">Choose Business</a></div>
+      </div>`;
+}
+const PLAN_FAQS = [
+  ['Which plan should I choose?', `Start with Basic if you want a verified page and to reply to reviews. Choose Plus if you want customers to call, WhatsApp or visit your website straight from your page. Choose Business if you want to invite every customer to review you, follow your ratings month by month, show several branches or give your team their own logins.`],
+  ['Is there a free period?', LAUNCH ? `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus is free for its first ${PLUS_TRIAL_DAYS} days. Business is charged from the day you choose it.` : 'Some offers include a free period. Business is charged from the day you choose it.'],
+  ['How do I pay, and can I cancel?', 'Plans renew once a year by autopay through Razorpay, using a card, UPI or netbanking. You can cancel any time from your dashboard, and a year you have paid for runs to its end.'],
+  ['Can I move between plans?', 'Yes. Move up from your dashboard whenever you like. Moving up stops the lower plan’s autopay, so you never pay for two plans at once.'],
+  ['Does paying change my rating?', 'No. Paying never changes your rating, the order of reviews or how reviews are checked, and no plan lets you hide or remove a review.'],
+  ['Can I get a refund?', 'Yes, within 14 days of paying, for any reason. Our refunds and cancellations policy has the details.'],
+];
 function vPricing() {
-  const plan = (name, price, note, perks) => `<div class="box" style="gap:12px"><div class="toolbar"><h2 style="font-size:21px">${name}</h2><b style="font-size:21px">${price}</b></div><p class="meta" style="font-size:14px">${note}</p><ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">${perks.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`;
-  return `<div class="wrap" style="max-width:900px">${crumbs([['Home','#home'],['Pricing']])}
-    <div class="pagehead"><h1>Pricing</h1><p>Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating.</p><div style="margin-top:6px">${curSwitch()}</div></div>
-    <div style="display:flex;flex-direction:column;gap:16px">
-      ${plan('For reviewers', 'Free', 'Always free. No payment is ever asked for.', ['Read every review', 'Write customer and employee reviews', 'Use all free career and company tools'])}
-      ${plan('Basic listing', '[[PB]] a year', LAUNCH ? `Free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year by autopay. Cancel any time.` : 'Billed yearly by autopay. Cancel any time.', BASIC_PERKS)}
-      ${plan('Plus listing', '[[PP]] a year', LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. You are charged only if you set up autopay, and you can cancel any time.` : 'Billed yearly by autopay. Cancel any time.', ['Everything in Basic', ...PLUS_PERKS])}
-      ${plan('Business listing', '[[PZ]] a year', 'Billed yearly by autopay from the day you choose it. Cancel any time.', ['Everything in Plus', ...BUSINESS_PERKS])}
-      ${JOBS_ON ? plan('Extra job post', `₹${EXTRA_JOB} a post`, `${FREE_JOBS} posts a month are included with every listing. Each post stays live for ${JOB_DAYS} days.`, ['For real vacancies only', 'Employers must never charge applicants a fee']) : ''}
-      <div class="box soft"><p style="color:var(--fg)">Companies in India pay in Indian rupees, and companies outside India pay in US dollars. Use the switch at the top to see either.${OPERATOR.taxNote ? ' ' + esc(OPERATOR.taxNote) : ''} A listing is a digital service that starts once your company is verified; nothing is shipped. Read our <a href="#refunds">refunds and cancellations policy</a> and <a href="#terms">terms of use</a> before you pay.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn p" href="#list">List your company</a><a class="btn g" href="#contact">Ask a question</a></div></div></div></div>`;
+  return `<div class="wrap">${crumbs([['Home','#home'],['For employers','#list'],['Plans and pricing']])}
+    <div class="pagehead" style="text-align:center;align-items:center"><h1>Plans and pricing</h1><p>Reading and writing reviews is free for everyone. Companies pay only for listing tools, and paying never changes a rating.</p><div style="margin-top:6px;display:flex;justify-content:center">${curSwitch()}</div></div>
+    <section class="sec" style="padding-top:8px">${planCards()}
+      <p class="meta" style="text-align:center;margin-top:16px">Companies in India pay in rupees, and companies outside India pay in US dollars.${OPERATOR.taxNote ? ' ' + esc(OPERATOR.taxNote) : ''} A listing is a digital service that starts once your company is verified.</p></section>
+    <section class="sec"><div class="box soft" style="flex-direction:row;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between"><div style="flex:1 1 420px;display:flex;flex-direction:column;gap:6px"><h2 style="font-size:22px">For reviewers, always free</h2><p>Read every review, write customer and employee reviews, and use all the free career and company tools. Nobody is ever asked to pay.</p></div><a class="btn g lg" href="#add">Write a review</a></div></section>
+    <section class="sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
+    <section class="sec" style="max-width:900px;margin:0 auto"><div class="sechead"><div><p class="eyebrow">Questions</p><h2>About plans and payments</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${PLAN_FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
+      <p class="meta" style="margin-top:14px">Read our <a href="#refunds">refunds and cancellations policy</a> and <a href="#terms">terms</a>, or <a href="#contact">ask us a question</a>.</p></section>
+  </div>`;
 }
 function vRefunds() {
   return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
@@ -2984,6 +2992,7 @@ document.addEventListener('click', e => {
   if (act === 'cf-edit') { S.listStep = 1; S.cf.codeSent = false; cfRefresh(); return; }
   if (act === 'cf-back-verify') { S.listStep = 2; cfRefresh(); return; }
   if (act === 'cf-method') { S.cf.method = a.dataset.m; cfRefresh(false); return; }
+  if (act === 'pick-plan' && curRoute() !== 'list') { e.preventDefault(); S.listData = { ...(S.listData || {}), plan: a.dataset.plan }; S.flow = 'list'; S.scrollTo = 'list-form-area'; navigate('list'); return; }
   if (act === 'pick-plan') { e.preventDefault(); S.listData = { ...S.listData, plan: a.dataset.plan }; render(); const el = document.getElementById('list-form-area'); el.scrollIntoView({ behavior: 'smooth' }); const r = document.querySelector(`input[name=plan][value=${a.dataset.plan}]`); if (r) r.checked = true; return; }
   if (act === 'to-form') { e.preventDefault(); document.getElementById('list-form-area').scrollIntoView({ behavior: 'smooth' }); const f = document.getElementById('b-name'); if (f) f.focus({ preventScroll: true }); }
   if (act === 'list-back') { S.listStep = 1; render(); document.getElementById('list-form-area').scrollIntoView(); }
