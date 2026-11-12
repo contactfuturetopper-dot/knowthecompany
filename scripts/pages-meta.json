@@ -190,30 +190,30 @@
  {
   "route": "blog-check-your-company-in-chatgpt-perplexity-gemini",
   "title": "Check what ChatGPT and Perplexity say about your company · Know The Company",
-  "desc": "A five-minute check for Indian businesses: what to ask ChatGPT, Perplexity and Gemini about your company, what to note down and how to fix wrong answers.",
+  "desc": "A five-minute check for any business: what to ask ChatGPT, Perplexity and Gemini about your company, what to note down and how to fix wrong answers.",
   "h1": "How to check what ChatGPT, Perplexity and Gemini say about your company",
   "intro": "Customers and job seekers now ask AI tools about a company before they buy or apply. Here is the five-minute check we use to see what those tools say, and how to fix what they get wrong."
  },
  {
   "route": "blog-which-review-sites-can-ai-read",
   "title": "Which review sites can ChatGPT and Perplexity read? · Know The Company",
-  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, AmbitionBox, Justdial and MouthShut on 12 November 2026. Here is which AI tools each one lets in.",
+  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, Indeed, G2, Clutch, Tripadvisor and more on 12 November 2026. Here is which AI tools each lets in.",
   "h1": "Which review sites can ChatGPT and Perplexity actually read? We checked",
-  "intro": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of five review sites popular in India."
+  "intro": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of nine well-known review sites."
  },
  {
   "route": "blog-how-to-reply-to-a-bad-review",
   "title": "How to reply to a bad review, with examples · Know The Company",
-  "desc": "How to reply to a negative review, with four example replies for Indian businesses: a late delivery, a coaching refund, rude staff and a review that looks…",
-  "h1": "How to reply to a bad review: examples for Indian businesses",
+  "desc": "How to reply to a negative review, with four example replies you can adapt: a late delivery, a refund dispute, rude staff and a review that looks fake.",
+  "h1": "How to reply to a bad review: examples you can adapt",
   "intro": "Your reply to a bad review is read by everyone who reads the review after it. Here is a simple way to write one, what never to do and four replies you can adapt."
  },
  {
   "route": "blog-what-candidates-read-in-employee-reviews",
   "title": "What job candidates read in your employee reviews · Know The Company",
-  "desc": "Nearly half of Indian tech professionals check Glassdoor or AmbitionBox before applying. What they look for in employee reviews, and how to reply.",
+  "desc": "Most candidates check employee reviews before they apply. What they look for, the patterns they notice and how employers should reply.",
   "h1": "What candidates read in your employee reviews before they apply",
-  "intro": "Nearly half of India's tech professionals check employee reviews before they apply, and former employees are the source they trust most. Here is what candidates look for, and how to respond."
+  "intro": "More than half of job seekers say negative reviews would put them off applying, and former employees are the source they trust most. Here is what candidates look for, and how to respond."
  },
  {
   "route": "blog-dpdp-rules-review-requests",
@@ -221,5 +221,61 @@
   "desc": "India's DPDP Rules take full effect in May 2027. What they mean for businesses that email, SMS or WhatsApp customers for reviews, with a checklist.",
   "h1": "Asking customers for reviews? What India's DPDP Rules mean for you",
   "intro": "Most of India's data protection duties for businesses apply from May 2027, and review requests are covered. Here is what changes when you email, SMS or WhatsApp customers for a review."
+ },
+ {
+  "route": "blog-why-ai-gets-your-company-wrong",
+  "title": "Why AI tools get your company wrong, and how to fix it · Know The Company",
+  "desc": "ChatGPT, Perplexity and Gemini often describe companies wrongly. The six most common causes, and what you can do about each one.",
+  "h1": "Why AI tools get your company wrong, and how to fix it",
+  "intro": "AI tools describe companies with confidence even when the facts are wrong. Most mistakes come from six causes, and each one has a practical fix."
+ },
+ {
+  "route": "blog-what-ai-tools-repeat-from-your-reviews",
+  "title": "What AI tools repeat from your reviews · Know The Company",
+  "desc": "AI tools read what reviews say about refunds, delivery and service as well as the rating. How that shapes AI answers about your company, and what to do.",
+  "h1": "What AI tools repeat from your reviews, beyond the star rating",
+  "intro": "When ChatGPT or Perplexity describes your company, it quotes what customers keep saying in their reviews, not only your average rating. Here is what that means for you."
+ },
+ {
+  "route": "blog-make-your-website-easy-for-ai-to-read",
+  "title": "How to make your website easy for AI tools to read · Know The Company",
+  "desc": "A plain guide for business owners: robots.txt, pages that work without JavaScript, structured data, llms.txt and the facts AI tools look for on your website.",
+  "h1": "How to make your website easy for AI tools to read: a plain guide",
+  "intro": "AI search tools can only use what they can read. A plain guide to the settings, page structure and facts that make your website readable by ChatGPT, Perplexity and Gemini."
+ },
+ {
+  "route": "blog-asking-only-happy-customers-for-reviews",
+  "title": "Why asking only happy customers for reviews backfires · Know The Company",
+  "desc": "Sending review requests only to happy customers breaks Google's rules, misleads buyers and makes your page less believable. How to ask everyone instead.",
+  "h1": "Why asking only happy customers for reviews backfires",
+  "intro": "Sending review links only to customers you expect to be happy is common, against the rules and easy to spot. Here is why it backfires and how to ask everyone instead."
+ },
+ {
+  "route": "blog-fake-or-competitor-review",
+  "title": "What to do about a fake or competitor review · Know The Company",
+  "desc": "How to spot a fake review, reply without making it worse, report it with evidence and decide whether legal action is worth it. A step-by-step guide.",
+  "h1": "What to do about a fake or competitor review",
+  "intro": "A review from someone who was never your customer is infuriating. Here is how to check whether it is really fake, reply calmly, report it properly and when to consider legal advice."
+ },
+ {
+  "route": "blog-negative-employee-reviews-after-layoffs",
+  "title": "Handling negative employee reviews after layoffs · Know The Company",
+  "desc": "Layoffs and poor pay reviews bring a wave of negative employee reviews. What to do in the first week, the first month and after, without making it worse.",
+  "h1": "Handling a wave of negative employee reviews after layoffs or a tough review cycle",
+  "intro": "After layoffs or a disappointing round of pay reviews, negative employee reviews tend to arrive in a rush. What to do in the first week, the first month and afterwards."
+ },
+ {
+  "route": "blog-how-to-ask-employees-for-reviews",
+  "title": "How to ask employees for reviews the right way · Know The Company",
+  "desc": "When, how and whom to ask for employee reviews, with a message you can copy. Keep reviews honest and anonymous, and avoid the mistakes that make them…",
+  "h1": "How to ask employees for reviews without making them uncomfortable",
+  "intro": "Asking employees for reviews is fine. Asking the wrong way produces reviews nobody believes. When to ask, who should ask, a message you can copy and the mistakes to avoid."
+ },
+ {
+  "route": "blog-fake-review-laws-around-the-world",
+  "title": "Fake review laws in the US, UK, EU and India · Know The Company",
+  "desc": "What the FTC's review rule, the UK's DMCC Act, the EU Omnibus Directive and India's IS 19000 standard mean for businesses that collect and show reviews.",
+  "h1": "Fake review laws around the world: the US, UK, EU and India",
+  "intro": "Fake reviews are now illegal in many countries, and so are some common ways of hiding bad ones. A plain summary of the rules in the US, UK, EU and India, and what they mean for your business."
  }
 ]

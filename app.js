@@ -1928,17 +1928,19 @@ const BLOG_CATS = ['Reviews & reputation', 'Customer experience', 'Startup growt
 const POSTS = [
  {
   "slug": "check-your-company-in-chatgpt-perplexity-gemini",
+  "image": "/images/blog/check-your-company-in-chatgpt-perplexity-gemini.webp",
+  "imageAlt": "Business owner comparing what ChatGPT, Perplexity and Google say about his company on a laptop",
   "cat": "Startup growth",
   "date": "2026-11-12",
   "tone": 1,
   "title": "How to check what ChatGPT, Perplexity and Gemini say about your company",
   "seo": "Check what ChatGPT and Perplexity say about your company",
-  "desc": "A five-minute check for Indian businesses: what to ask ChatGPT, Perplexity and Gemini about your company, what to note down and how to fix wrong answers.",
+  "desc": "A five-minute check for any business: what to ask ChatGPT, Perplexity and Gemini about your company, what to note down and how to fix wrong answers.",
   "excerpt": "Customers and job seekers now ask AI tools about a company before they buy or apply. Here is the five-minute check we use to see what those tools say, and how to fix what they get wrong.",
   "body": [
    [
     "p",
-    "Before someone calls you, places an order or applies for a job with you, there is a fair chance they have already asked an AI tool about your company. In What Talent Wants 2026, a survey of 2,000 tech, product and data professionals in India [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), 31% said they use AI tools to research an employer before applying. Customers do the same before they spend money."
+    "Before someone calls you, places an order or applies for a job with you, there is a fair chance they have already asked an AI tool about your company. In one 2026 survey of 2,000 tech professionals, What Talent Wants 2026 [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), 31% said they use AI tools to research an employer before applying. Customers do the same before they spend money."
    ],
    [
     "p",
@@ -2162,13 +2164,15 @@ const POSTS = [
  },
  {
   "slug": "which-review-sites-can-ai-read",
+  "image": "/images/blog/which-review-sites-can-ai-read.webp",
+  "imageAlt": "Business owner checking which review sites AI tools such as ChatGPT and Gemini can read",
   "cat": "Reviews & reputation",
   "date": "2026-11-12",
   "tone": 2,
   "title": "Which review sites can ChatGPT and Perplexity actually read? We checked",
   "seo": "Which review sites can ChatGPT and Perplexity read?",
-  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, AmbitionBox, Justdial and MouthShut on 12 November 2026. Here is which AI tools each one lets in.",
-  "excerpt": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of five review sites popular in India.",
+  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, Indeed, G2, Clutch, Tripadvisor and more on 12 November 2026. Here is which AI tools each lets in.",
+  "excerpt": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of nine well-known review sites.",
   "body": [
    [
     "p",
@@ -2176,7 +2180,7 @@ const POSTS = [
    ],
    [
     "p",
-    "On 12 November 2026 we read the robots.txt files of five review sites that Indian businesses and job seekers use, plus our own. We run a review site, so we have an interest here. That is why every finding below links to the file itself, so you can check it."
+    "On 12 November 2026 we read the robots.txt files of nine well-known review sites, covering customer reviews, employee reviews, software, agencies and travel, plus our own. We run a review site, so we have an interest here. That is why every finding below links to the file itself, so you can check it."
    ],
    [
     "h",
@@ -2219,7 +2223,39 @@ const POSTS = [
    ],
    [
     "p",
-    "[Glassdoor India's robots.txt](https://www.glassdoor.co.in/robots.txt) groups GPTBot, Google-Extended and ClaudeBot under a heading about partly blocking AI bots. They are kept out of everything except the About and employers sections. CCBot is blocked completely. OAI-SearchBot and PerplexityBot are not named, so they follow the general rules, which leave many review and salary pages open. In short, ChatGPT search and Perplexity may read Glassdoor reviews, while the training crawlers named in the file may not."
+    "[Glassdoor's robots.txt](https://www.glassdoor.co.in/robots.txt) (we read the India site, glassdoor.co.in) groups GPTBot, Google-Extended and ClaudeBot under a heading about partly blocking AI bots. They are kept out of everything except the About and employers sections. CCBot is blocked completely. OAI-SearchBot and PerplexityBot are not named, so they follow the general rules, which leave many review and salary pages open. ChatGPT search and Perplexity may read Glassdoor reviews. The training crawlers named in the file may not."
+   ],
+   [
+    "h3",
+    "Indeed"
+   ],
+   [
+    "p",
+    "[Indeed's robots.txt](https://www.indeed.com/robots.txt) is the most deliberate of the nine. It sorts AI crawlers into two groups. Training crawlers, GPTBot, ClaudeBot and CCBot, are blocked from all company pages under /cmp/, where the employee reviews live. Retrieval crawlers, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended and Claude-SearchBot, may read those pages, apart from a few areas such as the write-a-review form. Indeed wants its reviews quoted in answers but not used to train models."
+   ],
+   [
+    "h3",
+    "G2"
+   ],
+   [
+    "p",
+    "[G2's robots.txt](https://www.g2.com/robots.txt) names GPTBot, ClaudeBot and CCBot and blocks them from product review pages. OAI-SearchBot and PerplexityBot are not named, so the general rules apply, and those leave the main review pages open. Bingbot has its own group and is allowed. For software companies, G2 reviews can reach ChatGPT search, Perplexity and Copilot."
+   ],
+   [
+    "h3",
+    "Clutch"
+   ],
+   [
+    "p",
+    "[Clutch's robots.txt](https://clutch.co/robots.txt) does not name a single AI crawler. One set of rules applies to everyone, and it blocks only filtered and sorted views of profiles. Agency profiles and their reviews are open to every AI tool, which fits Hall's finding that Clutch dominates AI answers about agencies."
+   ],
+   [
+    "h3",
+    "Tripadvisor"
+   ],
+   [
+    "p",
+    "[Tripadvisor's robots.txt](https://www.tripadvisor.com/robots.txt) blocks GPTBot, ClaudeBot, CCBot and Google-Extended from the whole site, with one odd exception for a single Dallas restaurants page. OAI-SearchBot and ChatGPT-User have their own group with only two narrow patterns blocked. PerplexityBot is kept out of the forums only. Hotels, restaurants and attractions on Tripadvisor can reach ChatGPT search and Perplexity, and cannot be used to train those models."
    ],
    [
     "h3",
@@ -2227,11 +2263,7 @@ const POSTS = [
    ],
    [
     "p",
-    "[AmbitionBox's robots.txt](https://www.ambitionbox.com/robots.txt) puts GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended, ClaudeBot, CCBot and Bingbot in one group and disallows the whole site to them. The only exceptions are its blog, FAQ, awards pages and community guidelines. Googlebot is allowed."
-   ],
-   [
-    "p",
-    "So AmbitionBox reviews can appear in Google Search, and possibly in Google's AI Overviews, which are built on the same index. ChatGPT search, Perplexity's crawler and Bing are asked to stay away from the review pages. Perplexity-User may still fetch a page if someone pastes the link, since it generally ignores robots.txt."
+    "[AmbitionBox's robots.txt](https://www.ambitionbox.com/robots.txt), an employee review site widely used in India, puts GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended, ClaudeBot, CCBot and Bingbot in one group and disallows the whole site to them, except its blog, FAQ, awards pages and community guidelines. Googlebot is allowed. Its reviews can appear in Google Search and possibly in Google's AI Overviews, which use the same index, while ChatGPT search, Perplexity's crawler and Bing are asked to stay away."
    ],
    [
     "h3",
@@ -2239,15 +2271,7 @@ const POSTS = [
    ],
    [
     "p",
-    "[Justdial's robots.txt](https://www.justdial.com/robots.txt) blocks OAI-SearchBot, ChatGPT-User and GPTBot from the entire site. PerplexityBot and Bingbot are not named, so the general rules apply and most listing pages stay open to them. Justdial ratings are therefore unlikely to feed ChatGPT search answers directly, but can feed Perplexity and Bing."
-   ],
-   [
-    "h3",
-    "MouthShut"
-   ],
-   [
-    "p",
-    "[MouthShut's robots.txt](https://www.mouthshut.com/robots.txt) contains two sections managed through Cloudflare that contradict each other for GPTBot, CCBot and Google-Extended: one allows them and one blocks them. ClaudeBot is blocked in both. The search crawlers are not named, and the general section declares \"search=yes, ai-train=no\". Search tools are welcome, training is not, and which rule a training crawler follows depends on how it reads the file."
+    "[Justdial's robots.txt](https://www.justdial.com/robots.txt), a large local business directory, blocks OAI-SearchBot, ChatGPT-User and GPTBot from the entire site. PerplexityBot and Bingbot are not named, so the general rules apply and most listing pages stay open to them."
    ],
    [
     "h3",
@@ -2259,25 +2283,32 @@ const POSTS = [
    ],
    [
     "h",
+    "The pattern"
+   ],
+   [
+    "p",
+    "Most large review sites now draw the same line. They let AI search tools read their pages, so their reviews get quoted and linked, and they block the crawlers that collect training data. Indeed, Tripadvisor, Glassdoor and G2 all work this way in slightly different forms. Two sites in our sample go further and keep AI search tools out as well: AmbitionBox for most of them and Justdial for ChatGPT."
+   ],
+   [
+    "h",
     "What this means for your company"
    ],
    [
     "ul",
     [
      "Reviews on a site that blocks a tool's search crawler are unlikely to appear in that tool's answers, however many you have there.",
-     "AmbitionBox employee reviews help you in Google but are unlikely to reach ChatGPT search, Perplexity's crawler or Copilot.",
-     "Justdial ratings are unlikely to reach ChatGPT search.",
-     "Trustpilot company pages, Glassdoor reviews and Know The Company pages are open to the main AI search crawlers.",
+     "Blocking training crawlers does not keep a site out of AI answers. It only stops the content being used to train future models.",
+     "Most of the big international review sites are readable by ChatGPT search and Perplexity today.",
      "AI tools can still mention a blocked site if another page quotes it, or show it as a plain link."
     ]
    ],
    [
     "p",
-    "We are not suggesting you abandon any site. Google Business Profile still matters most for local searches, and a candidate checking AmbitionBox directly will still see your reviews there. The point is coverage. If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
+    "We are not suggesting you abandon any site. Google Business Profile still matters most for local searches, and a candidate who opens a review site directly will still see your reviews there. The point is coverage. If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
    ],
    [
     "p",
-    "A sensible spread for most Indian businesses is Google Business Profile, the review site most used in your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. Ask once, and rotate which link you send."
+    "A sensible spread for most businesses is Google Business Profile, the review site that leads your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. Ask once, and rotate which link you send."
    ],
    [
     "h",
@@ -2294,7 +2325,7 @@ const POSTS = [
    ],
    [
     "p",
-    "These files change without notice, and both Trustpilot's and MouthShut's show signs of recent edits. We will recheck these five sites and update this article when they change."
+    "These files change without notice. Trustpilot's has clearly changed since mid-2025. We will recheck these sites and update this article when they change."
    ],
    [
     "faq",
@@ -2308,8 +2339,8 @@ const POSTS = [
       "It is a request, not a lock. The large AI companies say their search crawlers follow it. User-triggered fetchers such as ChatGPT-User and Perplexity-User may not, because a person asked for the page."
      ],
      [
-      "Do Google's AI Overviews use AmbitionBox reviews?",
-      "AI Overviews draw on Google's normal search index, and AmbitionBox allows Googlebot. Whether a given answer quotes AmbitionBox depends on the question."
+      "Why do review sites block training crawlers but allow search crawlers?",
+      "Search crawlers send visitors back through links in AI answers. Training crawlers take the content to build models and send nothing back. Many sites accept the first and refuse the second."
      ],
      [
       "Which review site is best for appearing in ChatGPT?",
@@ -2337,8 +2368,20 @@ const POSTS = [
       "https://www.justdial.com/robots.txt"
      ],
      [
-      "MouthShut robots.txt (read 12 November 2026)",
-      "https://www.mouthshut.com/robots.txt"
+      "Indeed robots.txt (read 12 November 2026)",
+      "https://www.indeed.com/robots.txt"
+     ],
+     [
+      "G2 robots.txt (read 12 November 2026)",
+      "https://www.g2.com/robots.txt"
+     ],
+     [
+      "Clutch robots.txt (read 12 November 2026)",
+      "https://clutch.co/robots.txt"
+     ],
+     [
+      "Tripadvisor robots.txt (read 12 November 2026)",
+      "https://www.tripadvisor.com/robots.txt"
      ],
      [
       "OpenAI: Overview of OpenAI crawlers",
@@ -2362,12 +2405,14 @@ const POSTS = [
  },
  {
   "slug": "how-to-reply-to-a-bad-review",
+  "image": "/images/blog/how-to-reply-to-a-bad-review.webp",
+  "imageAlt": "Customer service manager replying to a one-star review from his laptop",
   "cat": "Customer experience",
   "date": "2026-11-12",
   "tone": 3,
-  "title": "How to reply to a bad review: examples for Indian businesses",
+  "title": "How to reply to a bad review: examples you can adapt",
   "seo": "How to reply to a bad review, with examples",
-  "desc": "How to reply to a negative review, with four example replies for Indian businesses: a late delivery, a coaching refund, rude staff and a review that looks fake.",
+  "desc": "How to reply to a negative review, with four example replies you can adapt: a late delivery, a refund dispute, rude staff and a review that looks fake.",
   "excerpt": "Your reply to a bad review is read by everyone who reads the review after it. Here is a simple way to write one, what never to do and four replies you can adapt.",
   "body": [
    [
@@ -2417,10 +2462,10 @@ const POSTS = [
     "ul",
     [
      "**Do not call the reviewer a liar,** even if you suspect it. Say you cannot find the order and invite them to contact you. Readers can draw their own conclusions.",
-     "**Do not share personal details.** No order numbers, phone numbers, addresses or anything about their purchase they did not mention. It breaks their trust, and under India's data protection law it is personal data you hold for a specific purpose.",
+     "**Do not share personal details.** No order numbers, phone numbers, addresses or anything about their purchase they did not mention. It breaks their trust, and data protection laws such as the EU and UK GDPR treat it as personal data you hold for a specific purpose.",
      "**Do not offer money or discounts in exchange for changing or deleting the review.** Google tells businesses not to offer deals in replies, and paying to change reviews is against the rules of every serious review site.",
      "**Do not paste the same reply under every complaint.** Copied replies show you did not read any of them.",
-     "**Do not threaten legal action over an honest opinion.** It rarely works, and the threat often becomes a bigger story than the review."
+     "**Do not threaten legal action over an honest opinion.** It rarely works, the threat often becomes a bigger story than the review, and in the US the Federal Trade Commission's review rule treats using legal threats to suppress negative reviews as a violation."
     ]
    ],
    [
@@ -2429,15 +2474,15 @@ const POSTS = [
    ],
    [
     "h3",
-    "1. A late delivery from an online store"
+    "1. A late delivery from an online shop"
    ],
    [
     "quote",
-    "Review: \"Ordered a kurta set for Diwali. Came six days late, after the festival. No updates, nobody answered on WhatsApp. Waste of money.\""
+    "Review: \"Ordered a birthday present for my mum two weeks early. It arrived three days after her birthday. No updates, nobody answered my emails. Waste of money.\""
    ],
    [
     "quote",
-    "Reply: \"I'm sorry, Priya. Missing Diwali is exactly what you ordered early to avoid, and we didn't tell you it was delayed. Our courier partner held parcels in Delhi for four days, and we should have messaged every affected customer. We've refunded your delivery charge and now send an update whenever a parcel is held. If you'd like to return the set, please email me at the address on our website and I'll arrange a pickup. Rohan, founder\""
+    "Reply: \"I'm sorry, Sarah. Missing a birthday is exactly what you ordered early to avoid, and we didn't tell you it was delayed. Our courier held parcels at their depot for four days, and we should have emailed every affected customer. We've refunded your delivery charge and now send an update whenever a parcel is held. If you'd like to return the item, please email me at the address on our website and I'll arrange a collection. Daniel, founder\""
    ],
    [
     "p",
@@ -2445,19 +2490,19 @@ const POSTS = [
    ],
    [
     "h3",
-    "2. A refund dispute with a coaching institute"
+    "2. A refund dispute over a course"
    ],
    [
     "quote",
-    "Review: \"Paid full fees for the NEET crash course. Batch timings changed twice in the first week. Asked for a refund, they said no refunds. Cheaters.\""
+    "Review: \"Paid in full for the exam prep course. Class times changed twice in the first week. Asked for a refund, they said no refunds. Avoid.\""
    ],
    [
     "quote",
-    "Reply: \"Thank you for raising this, and I'm sorry the timings changed twice. That was our scheduling error, not something you agreed to. Our refund policy allows refunds within seven days of joining. Your request came on day nine, but because the change was ours, we'll make an exception. Please call our office and ask for me, and we'll process it this week. Anita Sharma, centre head\""
+    "Reply: \"Thank you for raising this, and I'm sorry the class times changed twice. That was our scheduling error, not something you agreed to. Our refund policy allows refunds within seven days of joining. Your request came on day nine, but because the change was ours, we'll make an exception. Please call our office and ask for me, and we'll process it this week. Anita, centre manager\""
    ],
    [
     "p",
-    "Why it works: it does not hide behind the policy, it explains the policy in one line and it fixes the specific case. Notice that the reply never mentions the student's name, phone number or fees paid."
+    "Why it works: it does not hide behind the policy, it explains the policy in one line and it fixes the specific case. Notice that the reply never mentions the student's name, contact details or how much they paid."
    ],
    [
     "h3",
@@ -2469,7 +2514,7 @@ const POSTS = [
    ],
    [
     "quote",
-    "Reply: \"I'm sorry your father was kept waiting without an explanation. That's not how we want anyone treated, least of all an older patient. The doctor was delayed by an emergency that morning, but the front desk should have told every patient waiting. I've spoken to the team, and we now announce delays as soon as we know about them. I'd like to hear more about your visit. Please call me on the clinic number. Dr Mehta\""
+    "Reply: \"I'm sorry your father was kept waiting without an explanation. That's not how we want anyone treated, least of all an older patient. The doctor was delayed by an emergency that morning, but the front desk should have told every patient waiting. I've spoken to the team, and we now announce delays as soon as we know about them. I'd like to hear more about your visit. Please call me on the clinic number. Dr Okafor\""
    ],
    [
     "p",
@@ -2489,7 +2534,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Why it works: it stays calm, tells readers you checked and leaves the door open. Separately, report the review to the site if it breaks their rules, for example if it was written by a competitor or by someone who was never a customer."
+    "Why it works: it stays calm, tells readers you checked and leaves the door open. Separately, report the review to the site if it breaks their rules. Our guide on [what to do about a fake or competitor review](/blog/fake-or-competitor-review) covers the next steps."
    ],
    [
     "h",
@@ -2517,7 +2562,7 @@ const POSTS = [
    ],
    [
     "p",
-    "It also changes what AI tools say about you. When ChatGPT, Perplexity or Gemini summarise a company, they often repeat the themes customers mention most, such as refunds, delivery or staff behaviour. Our guide to [checking what AI tools say about your company](/blog/check-your-company-in-chatgpt-perplexity-gemini) shows how to see this for yourself."
+    "It also changes what AI tools say about you. When ChatGPT, Perplexity or Gemini summarise a company, they often repeat the themes customers mention most, such as refunds, delivery or staff behaviour. Our guide to [what AI tools repeat from your reviews](/blog/what-ai-tools-repeat-from-your-reviews) explains how."
    ],
    [
     "note",
@@ -2552,6 +2597,10 @@ const POSTS = [
       "https://support.google.com/business/answer/3474122?hl=en-GB"
      ],
      [
+      "Benesch Law: FTC turns up enforcement under the Consumer Review Rule, April 2026",
+      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
+     ],
+     [
       "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
       "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
      ]
@@ -2561,13 +2610,15 @@ const POSTS = [
  },
  {
   "slug": "what-candidates-read-in-employee-reviews",
+  "image": "/images/blog/what-candidates-read-in-employee-reviews.webp",
+  "imageAlt": "Job seeker reading a company's employee reviews on a laptop before applying",
   "cat": "Startup growth",
   "date": "2026-11-12",
   "tone": 4,
   "title": "What candidates read in your employee reviews before they apply",
   "seo": "What job candidates read in your employee reviews",
-  "desc": "Nearly half of Indian tech professionals check Glassdoor or AmbitionBox before applying. What they look for in employee reviews, and how to reply.",
-  "excerpt": "Nearly half of India's tech professionals check employee reviews before they apply, and former employees are the source they trust most. Here is what candidates look for, and how to respond.",
+  "desc": "Most candidates check employee reviews before they apply. What they look for, the patterns they notice and how employers should reply.",
+  "excerpt": "More than half of job seekers say negative reviews would put them off applying, and former employees are the source they trust most. Here is what candidates look for, and how to respond.",
   "body": [
    [
     "p",
@@ -2575,7 +2626,7 @@ const POSTS = [
    ],
    [
     "p",
-    "In What Talent Wants 2026, a survey of 2,000 tech, product and data professionals across India [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), 92% said they research employers on LinkedIn before applying, 81% visit the company website and careers page and nearly half check Glassdoor or AmbitionBox. Asked whom they trust most, 48% picked former employees, ahead of current employees' LinkedIn posts at 44% and company websites at 39%. Only 23% picked posts by leadership."
+    "In [Monster's 2026 survey](https://www.monster.com/career-advice/research/job-search-dealbreakers) of more than 1,000 employed workers in the US, 56% said negative company reviews or a poor reputation would make them least likely to apply. A survey of 2,000 tech, product and data professionals in India, What Talent Wants 2026 [reported by HRKatha](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), found nearly half check employee review sites before applying. Asked whom they trust most, 48% picked former employees, ahead of current employees' LinkedIn posts at 44% and company websites at 39%. Only 23% picked posts by leadership."
    ],
    [
     "p",
@@ -2591,15 +2642,15 @@ const POSTS = [
    ],
    [
     "p",
-    "Comments about managers come up more than almost anything else. Candidates look for words like micromanage, supportive or takes credit, and whether they are tied to a team or function. The same survey found 56% of respondents rate a prospective manager's profile as very important before accepting an offer."
+    "Comments about managers come up more than almost anything else. Candidates look for words like micromanage, supportive or takes credit, and whether they are tied to a team or function. In the same Indian survey, 56% rated a prospective manager's profile as very important before accepting an offer."
    ],
    [
     "h3",
-    "Salary on time and honest appraisals"
+    "Pay on time and honest reviews of performance"
    ],
    [
     "p",
-    "\"Salary credited late\" in one review is a warning. In three reviews it is a decision. Candidates also look at what reviewers say about appraisal cycles: whether increments matched what was promised, whether ratings felt fixed in advance and whether promotions happened on time."
+    "\"Salary paid late\" in one review is a warning. In three reviews it is a decision. Candidates also look at what reviewers say about performance reviews: whether pay rises matched what was promised, whether ratings felt decided in advance and whether promotions happened on time."
    ],
    [
     "h3",
@@ -2607,7 +2658,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Reviews are where candidates find out whether \"flexible hours\" means flexible or always available. Mentions of weekend calls, late-night client meetings or unpaid overtime get noticed, especially by people with families."
+    "Reviews are where candidates find out whether \"flexible hours\" means flexible or always available. Mentions of weekend calls, late-night meetings with clients in other time zones or unpaid overtime get noticed, especially by people with families."
    ],
    [
     "h3",
@@ -2615,7 +2666,7 @@ const POSTS = [
    ],
    [
     "p",
-    "This one is particular to India and it matters a lot. Candidates read what reviewers say about notice periods, buyouts, full and final settlement and relieving letters. A company that delays a relieving letter by two months will hear about it in reviews, and candidates read that as a sign of how they will be treated on the way out."
+    "Candidates read what reviewers say about notice periods, final pay, references and paperwork. Some of this is now law in many places. India's Code on Wages, in force since November 2025, requires final wages within two working days of an employee leaving, and many US states set their own deadlines for a final pay cheque. A company that drags its feet on final pay will hear about it in reviews, and candidates read that as a sign of how they will be treated on the way out."
    ],
    [
     "h3",
@@ -2623,7 +2674,7 @@ const POSTS = [
    ],
    [
     "p",
-    "After a round of layoffs, the newest reviews carry most of the weight. Candidates want to know whether cuts were handled with notice and severance, or by a calendar invite at 9 in the morning."
+    "After a round of layoffs, the newest reviews carry most of the weight. Candidates want to know whether cuts were handled with notice and fair severance, or by a calendar invite at nine in the morning. Our guide to [handling a wave of negative employee reviews](/blog/negative-employee-reviews-after-layoffs) covers what to do if that is you."
    ],
    [
     "h",
@@ -2632,7 +2683,7 @@ const POSTS = [
    [
     "ul",
     [
-     "**Dates.** A complaint from 2021 matters less than one from last month. Candidates scroll to the newest reviews first.",
+     "**Dates.** A complaint from four years ago matters less than one from last month. Candidates scroll to the newest reviews first.",
      "**Repetition.** One reviewer complaining about a manager is a personality clash. Five is a pattern.",
      "**Your replies.** Whether the company replies at all, and whether the reply sounds like a person or a policy document.",
      "**Sudden bursts of praise.** Twenty five-star reviews in one week, all short and similar, look organised. Candidates trust the whole page less afterwards."
@@ -2650,8 +2701,8 @@ const POSTS = [
     "ul",
     [
      "**Never try to identify the writer,** in the reply or inside the company. If staff believe reviews are traced, the honest ones stop and the page fills with polite ones nobody believes.",
-     "**Answer the substance.** If the review says appraisals were delayed, say when the cycle will close this year.",
-     "**Be specific about changes.** \"We've moved to monthly salary credit on the 1st, without exception\" beats \"We take employee feedback seriously\".",
+     "**Answer the substance.** If the review says performance reviews were delayed, say when the cycle will close this year.",
+     "**Be specific about changes.** \"Salaries are now paid on the 1st of every month, without exception\" beats \"We take employee feedback seriously\".",
      "**Write like a person.** Sign with a name and role, such as the head of people or a co-founder.",
      "**Do not argue with a former employee in public,** even if you remember things differently."
     ]
@@ -2662,24 +2713,19 @@ const POSTS = [
    ],
    [
     "quote",
-    "Review: \"Good learning, but my full and final settlement took three months and nobody answered my emails.\""
+    "Review: \"Good learning, but my final pay took three months and nobody answered my emails.\""
    ],
    [
     "quote",
-    "Reply: \"Thank you for writing this, and I'm sorry. Three months is far too long, and not replying to your emails was worse. Since September, settlements are paid within 30 days of the last working day, and every leaver has one named contact in HR. If anything from your own settlement is still pending, please write to me directly. Neha, head of people\""
+    "Reply: \"Thank you for writing this, and I'm sorry. Three months is far too long, and not replying to your emails was worse. Since September, final pay goes out within a week of the last working day, or sooner where the law requires it, and every leaver has one named contact in HR. If anything is still outstanding for you, please write to me directly. Neha, head of people\""
    ],
    [
     "h",
     "Getting more honest reviews"
    ],
    [
-    "ul",
-    [
-     "Ask everyone, including people who are leaving. Reviews collected only from top performers read as hand-picked, and candidates can tell.",
-     "Share the review link in the exit process, as part of the paperwork.",
-     "Do not ask in team meetings or with a manager standing nearby. People write differently when they feel watched.",
-     "Never reward reviews with gifts, leave or points. Rewards produce glowing reviews that candidates discount, and review sites can remove them."
-    ]
+    "p",
+    "Ask everyone, including people who are leaving, and never reward reviews. Our guide on [how to ask employees for reviews without making them uncomfortable](/blog/how-to-ask-employees-for-reviews) has a full plan and a message you can copy."
    ],
    [
     "h",
@@ -2687,7 +2733,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The same survey found 31% of Indian tech professionals use AI tools to research employers. When a candidate asks ChatGPT what it is like to work for you, the answer can only draw on reviews the tool can read. When we read the rules review sites publish for AI crawlers, we found that some keep ChatGPT search and Perplexity's crawler away from their employee review pages. The details are in our article on [which review sites AI tools can read](/blog/which-review-sites-can-ai-read)."
+    "In the Indian survey, 31% of respondents said they use AI tools to research employers. When a candidate asks ChatGPT what it is like to work for you, the answer can only draw on reviews the tool can read. When we read the rules review sites publish for AI crawlers, we found most large sites let AI search tools in, but a few keep them away from employee review pages. The details are in our article on [which review sites AI tools can read](/blog/which-review-sites-can-ai-read)."
    ],
    [
     "note",
@@ -2698,7 +2744,7 @@ const POSTS = [
     [
      [
       "Do candidates really read employee reviews?",
-      "Yes. In What Talent Wants 2026, nearly half of 2,000 Indian tech professionals said they check Glassdoor or AmbitionBox before applying, and former employees were the source they trusted most."
+      "Yes. In Monster's 2026 survey of US workers, 56% said negative reviews or a poor reputation would make them least likely to apply, and in a 2026 survey of Indian tech professionals former employees were the source they trusted most."
      ],
      [
       "Should we reply to every employee review?",
@@ -2718,8 +2764,16 @@ const POSTS = [
     "src",
     [
      [
+      "Monster: Job search dealbreakers report, 2026",
+      "https://www.monster.com/career-advice/research/job-search-dealbreakers"
+     ],
+     [
       "HRKatha: India's tech professionals have already decided before you call them (What Talent Wants 2026), October 2026",
       "https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/"
+     ],
+     [
+      "LiveLaw: Two working days, the Code on Wages and an employee's final settlement, October 2026",
+      "https://www.livelaw.in/articles/two-working-days-code-wages-employee-final-settlement-552780"
      ]
     ]
    ]
@@ -2727,6 +2781,8 @@ const POSTS = [
  },
  {
   "slug": "dpdp-rules-review-requests",
+  "image": "/images/blog/dpdp-rules-review-requests.webp",
+  "imageAlt": "Shop owner asking a customer for a review on a tablet, with data protection symbols and India's Parliament in the background",
   "cat": "Rules & compliance",
   "date": "2026-11-12",
   "tone": 5,
@@ -2891,6 +2947,1114 @@ const POSTS = [
     ]
    ]
   ]
+ },
+ {
+  "slug": "why-ai-gets-your-company-wrong",
+  "cat": "Startup growth",
+  "date": "2026-11-12",
+  "tone": 6,
+  "title": "Why AI tools get your company wrong, and how to fix it",
+  "seo": "Why AI tools get your company wrong, and how to fix it",
+  "desc": "ChatGPT, Perplexity and Gemini often describe companies wrongly. The six most common causes, and what you can do about each one.",
+  "excerpt": "AI tools describe companies with confidence even when the facts are wrong. Most mistakes come from six causes, and each one has a practical fix.",
+  "body": [
+   [
+    "p",
+    "Ask an AI tool about a small or mid-sized company and you will often get a confident paragraph with one or two things wrong: an old address, a product that was discontinued, a founder who left or details borrowed from a different company with a similar name. You cannot edit an AI answer directly. You can change what it is built from."
+   ],
+   [
+    "p",
+    "If you have not looked yet, start with our [five-minute check of what ChatGPT, Perplexity and Gemini say about your company](/blog/check-your-company-in-chatgpt-perplexity-gemini). This article is the next step: why the mistakes happen and how to fix each kind."
+   ],
+   [
+    "h",
+    "1. Another company has a similar name"
+   ],
+   [
+    "p",
+    "This is the most common mix-up for smaller firms. If a better-known company in another country shares your name, the tools may blend the two, giving you its founding date, its headcount or its reviews."
+   ],
+   [
+    "ul",
+    [
+     "Use your full legal or trading name consistently, plus your city or country, on every profile you control.",
+     "Make your About page say plainly what you are and are not: \"We are a payroll software company in Manchester, not connected to the logistics firm of the same name.\" A sentence like that is easy for a tool to quote.",
+     "Link your official profiles to each other and to your website, so they point to one clear identity."
+    ]
+   ],
+   [
+    "h",
+    "2. The tool is reading old pages"
+   ],
+   [
+    "p",
+    "Directories, old press coverage and abandoned profiles keep stating facts that were true five years ago. AI search tools read them because they are still online."
+   ],
+   [
+    "ul",
+    [
+     "Search your company name with the old fact in quotes, for example your previous address, to find the pages still carrying it.",
+     "Claim and update every profile you can, including Google Business Profile, Bing Places, LinkedIn and the main review sites in your industry.",
+     "For directories you cannot control, use their correction or removal form. It is slow, but it works more often than people expect."
+    ]
+   ],
+   [
+    "h",
+    "3. Your own website says too little"
+   ],
+   [
+    "p",
+    "Many company websites are full of slogans and short on facts. If your site never states when you started, what you sell and where you operate, the tools fill the gap from somewhere else."
+   ],
+   [
+    "p",
+    "Write the facts in plain sentences somewhere obvious: what you do, who for, where, since when and who runs the company. Keep a short page of key facts and keep it current. Our guide on [making your website easy for AI tools to read](/blog/make-your-website-easy-for-ai-to-read) covers the technical side."
+   ],
+   [
+    "h",
+    "4. The tools cannot see your website at all"
+   ],
+   [
+    "p",
+    "Two problems are common. Some sites block AI crawlers by accident, for example through a security setting. Cloudflare, which protects a large share of websites, began blocking AI crawlers by default for new sites in July 2025, as [Nieman Lab reported](https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/). Other sites only show their text after JavaScript runs in the browser. A study by Vercel in December 2024 found that none of the major AI crawlers, including OpenAI's and Perplexity's, execute JavaScript, so they see an empty page."
+   ],
+   [
+    "p",
+    "Check your robots.txt and your security settings for OAI-SearchBot, PerplexityBot and Bingbot, and ask your developer whether your main pages show their text without JavaScript."
+   ],
+   [
+    "h",
+    "5. The tool has nothing recent to go on"
+   ],
+   [
+    "p",
+    "When there is little current information about a company, AI tools lean on whatever older material exists, or say very little. Fresh, specific mentions help: recent reviews from customers and employees, an up-to-date profile on the review sites in your industry and occasional news or articles that mention you. Trustpilot and SEER Interactive's 2026 study found brands with no claimed profile on Trustpilot were almost never cited in AI answers, while active profiles were cited far more often. Trustpilot sells these services, so treat the exact figures with care, but the direction is plain."
+   ],
+   [
+    "h",
+    "6. The tool simply makes it up"
+   ],
+   [
+    "p",
+    "Sometimes there is no wrong source to fix. The tool fills a gap with something plausible, such as a founding year or a headcount. This happens most when there is little written about you anywhere. The fix is the same as for cause five: give the tools accurate facts in places they read."
+   ],
+   [
+    "p",
+    "You can also use the feedback buttons. ChatGPT, Perplexity and Gemini all let you mark an answer as wrong. One report changes little on its own, but it costs nothing."
+   ],
+   [
+    "h",
+    "What does not work"
+   ],
+   [
+    "ul",
+    [
+     "**Stuffing your site with AI-friendly phrases.** Tools look for consistent facts across several independent sources. Repeating your own claims more loudly does not add a source.",
+     "**Paying for fake reviews or fake articles.** Beyond the legal risk, AI tools increasingly cross-check sources, and review sites remove fake reviews in bulk.",
+     "**Expecting overnight results.** Fixes on your own site can show within days. Fixes that depend on other sites updating take weeks or months."
+    ]
+   ],
+   [
+    "note",
+    "Know The Company lets AI search tools read every company page. If your company is listed, [claim your page](/claim) to correct your details, or [list your company](/list) if you are not here yet."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Can I contact OpenAI or Google to correct an answer about my company?",
+      "There is no general correction service for businesses. Use the feedback buttons in each tool, and fix the sources the answer was built from."
+     ],
+     [
+      "How long does it take for AI answers to change?",
+      "Changes on your own website can be picked up within days once the crawlers revisit. Changes that depend on directories, review sites or news articles usually take weeks or months."
+     ],
+     [
+      "Why does ChatGPT say something different from Perplexity?",
+      "They read different sources and build answers differently. Perplexity shows its sources clearly, which makes it the easiest place to find the page behind a wrong fact."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Vercel: The rise of the AI crawler, December 2024",
+      "https://vercel.com/blog/the-rise-of-the-ai-crawler"
+     ],
+     [
+      "Nieman Lab: Cloudflare will block AI scraping by default, July 2025",
+      "https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/"
+     ],
+     [
+      "OpenAI: Overview of OpenAI crawlers",
+      "https://developers.openai.com/api/docs/bots"
+     ],
+     [
+      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
+      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "what-ai-tools-repeat-from-your-reviews",
+  "cat": "Reviews & reputation",
+  "date": "2026-11-12",
+  "tone": 1,
+  "title": "What AI tools repeat from your reviews, beyond the star rating",
+  "seo": "What AI tools repeat from your reviews",
+  "desc": "AI tools read what reviews say about refunds, delivery and service as well as the rating. How that shapes AI answers about your company, and what to do.",
+  "excerpt": "When ChatGPT or Perplexity describes your company, it quotes what customers keep saying in their reviews, not only your average rating. Here is what that means for you.",
+  "body": [
+   [
+    "p",
+    "A star rating is a single number. A page of reviews is hundreds of sentences about late parcels, helpful staff, hidden fees and quick refunds. When an AI tool summarises a company, it uses both, and the sentences often matter more."
+   ],
+   [
+    "h",
+    "What the research shows"
+   ],
+   [
+    "p",
+    "In 2026 Trustpilot and SEER Interactive analysed more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode. Three findings matter here:"
+   ],
+   [
+    "ul",
+    [
+     "59% of AI recommendations included a star rating or score as evidence.",
+     "When the tools cited reviews, they summarised recurring themes, such as customer service, shipping and delivery, product quality, refunds and whether a company seemed legitimate.",
+     "Brands with an active review profile were cited far more often than brands with none."
+    ]
+   ],
+   [
+    "p",
+    "Trustpilot sells review services, so read [the study](https://business.trustpilot.com/marketing/what-ai-says-about-your-brand) with that in mind. The pattern also matches what you see by asking the tools yourself: answers tend to read like \"customers praise X but often mention Y\"."
+   ],
+   [
+    "h",
+    "Why themes matter more than the average"
+   ],
+   [
+    "p",
+    "Picture two companies, both rated 4.2. In the first, the complaints are spread across many small issues. In the second, a third of the negative reviews mention refunds taking months. A person skimming the stars sees two identical companies. An AI tool reading the text will mention refund delays for the second, and anyone asking \"is it safe to buy from them?\" will hear about it."
+   ],
+   [
+    "p",
+    "So the useful question about your reviews is less \"what is our rating?\" and more \"what would someone conclude if they read fifty of them in a row?\""
+   ],
+   [
+    "h",
+    "Find your themes"
+   ],
+   [
+    "ol",
+    [
+     "Export or copy your last 100 reviews from each site you use.",
+     "Read them in one sitting and tag each with the topics it mentions: delivery, price, quality, staff, refunds, communication and anything specific to your business.",
+     "Count the tags separately for positive and negative reviews.",
+     "Ask ChatGPT and Perplexity \"What do customers say about [your company]?\" and compare their summary with your count."
+    ]
+   ],
+   [
+    "p",
+    "If the AI summary leans on a complaint that appears in only a handful of old reviews, the newer reviews may not be on sites the tools can read. Our check of [which review sites AI tools can read](/blog/which-review-sites-can-ai-read) shows how to find out."
+   ],
+   [
+    "h",
+    "Change the themes by changing the experience"
+   ],
+   [
+    "p",
+    "There is no shortcut that survives. If refunds are slow, speed up refunds. When the fix is in place, three things help the new reality show up:"
+   ],
+   [
+    "ul",
+    [
+     "**Reply to the reviews that raised it,** saying what changed and when. People reading the page see the reply alongside the complaint.",
+     "**Keep asking every customer for a review,** so recent reviews reflect the new process. Asking only happy customers backfires, as we explain in [why asking only happy customers for reviews backfires](/blog/asking-only-happy-customers-for-reviews).",
+     "**Encourage detail.** \"How was delivery, and did the product match the description?\" invites a more useful review than \"Rate us!\""
+    ]
+   ],
+   [
+    "h",
+    "Make your strengths specific too"
+   ],
+   [
+    "p",
+    "Themes work in your favour as well. If customers repeatedly mention that your support team answers on weekends, that becomes part of how AI tools describe you. Mentioning it in your own replies and on your website gives the tools a consistent picture from several sources."
+   ],
+   [
+    "h",
+    "Dates matter"
+   ],
+   [
+    "p",
+    "Reviewers and AI tools both give more weight to what is recent. A burst of complaints from three years ago, followed by two years of steady improvement, reads very differently from complaints that are still arriving. Replies that date the fix (\"Since March, refunds are processed within five days\") help readers and tools see the timeline."
+   ],
+   [
+    "note",
+    "Every company page on Know The Company shows customer and employee reviews side by side, and AI search tools can read them. [Claim your company page](/claim) to reply to reviews."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Do AI tools read review replies from the company?",
+      "AI tools read the pages their crawlers can access, and replies are usually on the same page as the review. There is no public data on how much weight replies carry, but readers see them either way."
+     ],
+     [
+      "Will a higher star rating change what AI says about us?",
+      "It helps, but the text of reviews shapes the description. A higher rating with the same recurring complaint will usually still mention the complaint."
+     ],
+     [
+      "How many reviews does AI need to describe us?",
+      "There is no fixed number. The Trustpilot and SEER study found AI tools cited brands with active review profiles far more often than brands without one."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
+      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "make-your-website-easy-for-ai-to-read",
+  "cat": "Startup growth",
+  "date": "2026-11-12",
+  "tone": 2,
+  "title": "How to make your website easy for AI tools to read: a plain guide",
+  "seo": "How to make your website easy for AI tools to read",
+  "desc": "A plain guide for business owners: robots.txt, pages that work without JavaScript, structured data, llms.txt and the facts AI tools look for on your website.",
+  "excerpt": "AI search tools can only use what they can read. A plain guide to the settings, page structure and facts that make your website readable by ChatGPT, Perplexity and Gemini.",
+  "body": [
+   [
+    "p",
+    "You do not need to be technical to follow this guide, but you may need your web developer for two or three steps. Each section says what to check, why it matters and what to ask for."
+   ],
+   [
+    "h",
+    "1. Let the AI search crawlers in"
+   ],
+   [
+    "p",
+    "Each AI company uses named crawlers, and your robots.txt file decides which ones may visit. Open yourdomain.com/robots.txt and look for these names:"
+   ],
+   [
+    "ul",
+    [
+     "**OAI-SearchBot**, which finds pages for ChatGPT search. [OpenAI says](https://developers.openai.com/api/docs/bots) sites that block it will not appear in ChatGPT search answers.",
+     "**PerplexityBot**, which finds pages for Perplexity's answers, according to [Perplexity's documentation](https://docs.perplexity.ai/guides/bots).",
+     "**Googlebot** and **Bingbot**, the ordinary search crawlers. Google's AI Overviews and AI Mode are built on Google's search index, and Microsoft's Copilot draws on Bing."
+    ]
+   ],
+   [
+    "p",
+    "If any of these sits under a line saying \"Disallow: /\", that tool is being told to stay away. Training crawlers such as GPTBot are a separate choice. Blocking them keeps your content out of model training without removing you from AI search."
+   ],
+   [
+    "p",
+    "Check your security settings too. Cloudflare began blocking AI crawlers by default for new sites in July 2025, as [Nieman Lab reported](https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/), so a site can be blocked without anything showing in robots.txt."
+   ],
+   [
+    "h",
+    "2. Make sure your text is in the page"
+   ],
+   [
+    "p",
+    "Many modern websites send the browser an almost empty page and build the content with JavaScript. People never notice, but a [December 2024 study by Vercel](https://vercel.com/blog/the-rise-of-the-ai-crawler) found that none of the major AI crawlers, including OpenAI's, Anthropic's and Perplexity's, run JavaScript. Google's crawler does, which is why such sites can rank on Google and still be invisible to ChatGPT."
+   ],
+   [
+    "p",
+    "To test it, open a page, right-click and choose View page source. If you can find your headings and paragraphs in that source, crawlers can read them. If you only see code and an empty container, ask your developer about server-side rendering or pre-rendering for your main pages."
+   ],
+   [
+    "h",
+    "3. State your key facts in plain sentences"
+   ],
+   [
+    "p",
+    "AI tools answer questions such as what you do, where you are, how much you charge and how to contact you. Make those answers easy to find:"
+   ],
+   [
+    "ul",
+    [
+     "An About page that says what you do, for whom, where, since when and who runs the company.",
+     "Prices or price ranges in text, if you publish them, rather than inside images or PDFs.",
+     "Contact details and address in text on a contact page, matching your Google Business Profile exactly.",
+     "A short frequently asked questions section that answers the questions customers actually ask."
+    ]
+   ],
+   [
+    "h",
+    "4. Add structured data"
+   ],
+   [
+    "p",
+    "Structured data is a small block of code, usually in the JSON-LD format from schema.org, that labels facts on a page: your organisation's name, logo, address, phone number and opening hours, or the questions and answers on an FAQ page. Search engines use it, and it removes guesswork for any tool reading the page. Ask your developer for Organization and, if you have premises, LocalBusiness markup. It is usually an hour's work."
+   ],
+   [
+    "h",
+    "5. Keep a sitemap and use the search consoles"
+   ],
+   [
+    "p",
+    "A sitemap lists your pages so crawlers can find them. Submit it in Google Search Console and Bing Webmaster Tools. Bing also supports IndexNow, a simple way to tell it straight away when a page changes. These are free and help every search tool that builds on those indexes."
+   ],
+   [
+    "h",
+    "6. Consider an llms.txt file, but do not expect much"
+   ],
+   [
+    "p",
+    "llms.txt is a proposed plain-text file, described at [llmstxt.org](https://llmstxt.org/), that summarises a site for AI tools. It is cheap to add and harmless. None of the major AI companies has said it uses llms.txt to decide what to show, so treat it as a small extra and put your effort into the steps above."
+   ],
+   [
+    "h",
+    "7. Remember the rest of the web"
+   ],
+   [
+    "p",
+    "Your website is only one source. AI answers draw heavily on reviews, directories and articles about you. Growfusely's July 2026 analysis of software questions found companies' own pages made up roughly 12% to 24% of citations, with independent articles and review sites making up most of the rest, according to [their write-up](https://growfusely.com/blog/ai-citation-analysis-b2b-software/). A readable website is the foundation. What others say about you is the rest of the building."
+   ],
+   [
+    "h",
+    "A quick checklist"
+   ],
+   [
+    "ol",
+    [
+     "OAI-SearchBot, PerplexityBot, Googlebot and Bingbot are not blocked in robots.txt.",
+     "Your security service is not blocking AI crawlers by default.",
+     "Your main pages show their text in the page source.",
+     "Your About and contact pages state the key facts in plain sentences.",
+     "Organization or LocalBusiness structured data is in place.",
+     "Your sitemap is submitted to Google and Bing.",
+     "Your name, address and phone number match on every profile."
+    ]
+   ],
+   [
+    "note",
+    "Know The Company's own pages follow this checklist: every company page can be read without JavaScript and is open to AI search tools. [List your company](/list) to add a page that AI tools can read."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Should I block GPTBot?",
+      "That is a choice about model training. Blocking GPTBot does not remove you from ChatGPT search, which uses OAI-SearchBot."
+     ],
+     [
+      "Does Google use llms.txt?",
+      "Google has not said it uses llms.txt for Search or AI Overviews. Your normal pages and structured data matter far more."
+     ],
+     [
+      "My site is built with a website builder. Do I need to do anything?",
+      "Most website builders produce pages crawlers can read. Check robots.txt and your security settings, and make sure your key facts are written in text."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "OpenAI: Overview of OpenAI crawlers",
+      "https://developers.openai.com/api/docs/bots"
+     ],
+     [
+      "Perplexity: Perplexity crawlers",
+      "https://docs.perplexity.ai/guides/bots"
+     ],
+     [
+      "Vercel: The rise of the AI crawler, December 2024",
+      "https://vercel.com/blog/the-rise-of-the-ai-crawler"
+     ],
+     [
+      "Nieman Lab: Cloudflare will block AI scraping by default, July 2025",
+      "https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/"
+     ],
+     [
+      "llmstxt.org: The /llms.txt file",
+      "https://llmstxt.org/"
+     ],
+     [
+      "Growfusely: AI citation analysis for B2B software, July 2026",
+      "https://growfusely.com/blog/ai-citation-analysis-b2b-software/"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "asking-only-happy-customers-for-reviews",
+  "cat": "Customer experience",
+  "date": "2026-11-12",
+  "tone": 3,
+  "title": "Why asking only happy customers for reviews backfires",
+  "seo": "Why asking only happy customers for reviews backfires",
+  "desc": "Sending review requests only to happy customers breaks Google's rules, misleads buyers and makes your page less believable. How to ask everyone instead.",
+  "excerpt": "Sending review links only to customers you expect to be happy is common, against the rules and easy to spot. Here is why it backfires and how to ask everyone instead.",
+  "body": [
+   [
+    "p",
+    "It usually starts innocently. A customer says something nice at the till, so you send them the review link. A customer who complained gets an apology instead. After a year, your review page is full of five-star reviews from your happiest customers, and it no longer describes the business that everyone else experiences."
+   ],
+   [
+    "p",
+    "This practice has a name, review gating, and it causes more trouble than it is worth."
+   ],
+   [
+    "h",
+    "It breaks the rules"
+   ],
+   [
+    "p",
+    "Google's policy for reviews on Maps bans it directly. Under rating manipulation, the [policy](https://support.google.com/contributionpolicy/answer/7400114?hl=EN) says businesses may not \"discourage or prohibit negative reviews, or selectively solicit positive reviews from customers\". In April 2026 Google added two more lines, banning businesses from setting staff a quota of reviews to collect or asking staff to get reviews with specific content, as [PPC Land reported](https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/)."
+   ],
+   [
+    "p",
+    "Other rules point the same way. India's review standard, IS 19000:2022, says invitations to review should go to all known purchasers, or be chosen by an objective process that avoids bias. In the US, the Federal Trade Commission's review rule treats suppressing negative reviews while implying the reviews shown are complete as a violation, with penalties of up to $53,088 per violation, according to [Benesch Law's April 2026 summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/). Our overview of [fake review laws around the world](/blog/fake-review-laws-around-the-world) covers the UK and EU too."
+   ],
+   [
+    "h",
+    "The classic version: the satisfaction filter"
+   ],
+   [
+    "p",
+    "Some review tools ask customers \"How happy were you, from 1 to 5?\" and then send only the 4s and 5s to Google, while the 1s and 2s go to a private feedback form. It feels clever. It is exactly the selective solicitation Google's policy prohibits, and it leaves the people with the most useful feedback unheard in public."
+   ],
+   [
+    "h",
+    "It makes your page less believable"
+   ],
+   [
+    "p",
+    "Buyers are not naive. A page of short, glowing five-star reviews with no complaints at all reads as curated. A rating of 4.6 with a few honest three-star reviews, each answered properly, reads as real. The occasional bad review, handled well, is evidence that the good ones are genuine."
+   ],
+   [
+    "h",
+    "It hides the problems you most need to hear about"
+   ],
+   [
+    "p",
+    "The customers you would rather not ask are the ones who can tell you why people leave. Filtering them out of public reviews usually means filtering them out of your attention as well. The complaint you never heard about keeps happening to other customers."
+   ],
+   [
+    "h",
+    "It catches up with you in AI answers"
+   ],
+   [
+    "p",
+    "AI tools build their picture from many sources, not only your favourite review site. If one site shows only praise while forums, other review sites and employee reviews tell a mixed story, the AI summary will reflect the mix, and the polished page loses credibility. We explain how in [what AI tools repeat from your reviews](/blog/what-ai-tools-repeat-from-your-reviews)."
+   ],
+   [
+    "h",
+    "How to ask everyone"
+   ],
+   [
+    "ol",
+    [
+     "**Make the request automatic.** Send it to every customer after delivery or after their visit, triggered by your order system rather than by a person deciding who deserves a link.",
+     "**Use the same message for everyone.** Ask for an honest review, good or bad. Do not ask about satisfaction first.",
+     "**Ask once.** One request and perhaps one reminder. Repeated chasing annoys people and skews towards the most patient customers.",
+     "**Never reward reviews.** Rewards are banned by Google and by most review sites, and in several countries by law.",
+     "**Do not tell staff to collect a number of reviews,** or to ask customers to mention them by name.",
+     "**Reply to the critical reviews.** Our guide on [how to reply to a bad review](/blog/how-to-reply-to-a-bad-review) has examples."
+    ]
+   ],
+   [
+    "p",
+    "If you collect customer contact details for this, check the data protection rules where you operate. Our article on [India's DPDP Rules and review requests](/blog/dpdp-rules-review-requests) is one example of how these laws apply."
+   ],
+   [
+    "note",
+    "Know The Company's Business plan sends review invitations by email, and the company confirms it is inviting its whole customer list, not a hand-picked one. Anyone invited is not asked again for 90 days, and anyone can opt out of all invitations. See [plans and pricing](/pricing)."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Is it allowed to ask customers for reviews at all?",
+      "Yes. Google and most review sites encourage businesses to ask customers for reviews, as long as they ask without incentives and without filtering who gets asked."
+     ],
+     [
+      "Can I send unhappy customers to a private feedback form?",
+      "You can offer a private feedback form to everyone, but you cannot use it to divert unhappy customers away from public reviews while sending happy ones to the review site."
+     ],
+     [
+      "What if we only have contact details for some customers?",
+      "Ask everyone you can reach in the same way. The problem is choosing who to ask based on how happy you think they are."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Google Maps: Prohibited and restricted content (user contributed content policy)",
+      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
+     ],
+     [
+      "PPC Land: Google tightens Maps review policy, staff names and quotas now banned, April 2026",
+      "https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/"
+     ],
+     [
+      "MediaNama: Summary of the BIS standard for online reviews, IS 19000:2022",
+      "https://www.medianama.com/2022/12/223-summary-bis-standard-online-reviews-e-commerce/"
+     ],
+     [
+      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
+      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "fake-or-competitor-review",
+  "cat": "Reviews & reputation",
+  "date": "2026-11-12",
+  "tone": 4,
+  "title": "What to do about a fake or competitor review",
+  "seo": "What to do about a fake or competitor review",
+  "desc": "How to spot a fake review, reply without making it worse, report it with evidence and decide whether legal action is worth it. A step-by-step guide.",
+  "excerpt": "A review from someone who was never your customer is infuriating. Here is how to check whether it is really fake, reply calmly, report it properly and when to consider legal advice.",
+  "body": [
+   [
+    "p",
+    "Every business with enough reviews eventually gets one that seems to come from nowhere: no matching order, details that do not fit or suspicious timing that lines up with a competitor's launch. Some really are fake. Some are genuine customers using a nickname. The steps below help you tell the difference and respond in a way that does not backfire."
+   ],
+   [
+    "h",
+    "Step 1: Check before you accuse"
+   ],
+   [
+    "p",
+    "Look for an order, booking or visit that matches. Customers often review under a nickname, a family member's account or a different email. Then look for the usual signs of a fake:"
+   ],
+   [
+    "ul",
+    [
+     "Details that do not match your business, such as a product you do not sell or a branch that does not exist.",
+     "A reviewer profile with no history, or a history of reviewing only you and your competitors.",
+     "Several similar reviews arriving within a few days, often with similar wording.",
+     "A review that praises a named competitor while criticising you.",
+     "A message soon afterwards offering to \"remove\" the review for a fee. That is a scam, and often the source of the review."
+    ]
+   ],
+   [
+    "h",
+    "Step 2: Reply calmly"
+   ],
+   [
+    "p",
+    "Even if you are sure it is fake, reply as if it might be real. Readers cannot see your records, and a furious reply looks worse than the review. Keep it short:"
+   ],
+   [
+    "quote",
+    "\"We're sorry to read this. We can't find any order or visit matching this review, so we can't see what went wrong. Please contact us on the number on our website so we can look into it. Maya, owner\""
+   ],
+   [
+    "p",
+    "That reply tells readers you checked, gives a real customer a route to you and gives a fake reviewer nothing to argue with. Our guide on [how to reply to a bad review](/blog/how-to-reply-to-a-bad-review) has more examples."
+   ],
+   [
+    "h",
+    "Step 3: Report it with evidence"
+   ],
+   [
+    "p",
+    "Every serious review site has a way to flag a review. Reports with specific evidence succeed far more often than \"this is fake\"."
+   ],
+   [
+    "ul",
+    [
+     "Say which rule it breaks. Google's [content policy](https://support.google.com/contributionpolicy/answer/7400114?hl=EN), for example, bans reviews posted \"on a competitor's place or business to undermine that business' or product's reputation\" and reviews written with a conflict of interest, including by current or former employees.",
+     "Explain what you checked: no matching order in your system between the dates, no customer by that name, the reviewer's other reviews.",
+     "Attach evidence where the site allows it, such as a screenshot of an extortion message.",
+     "Keep a record of the review, the date you reported it and the site's response."
+    ]
+   ],
+   [
+    "p",
+    "On Know The Company, you can report a review from the review itself. We check reports against our guidelines and keep a record of what we decided and why."
+   ],
+   [
+    "h",
+    "Step 4: Do not fight fake with fake"
+   ],
+   [
+    "p",
+    "The tempting response is to ask friends for five-star reviews to drown it out. It breaks the rules of every review site, and in several countries it is illegal for businesses to post or commission fake reviews. Review sites also detect bursts of new positive reviews, and a cluster of removed reviews damages your page more than one fake complaint."
+   ],
+   [
+    "h",
+    "Step 5: Consider legal advice for serious cases"
+   ],
+   [
+    "p",
+    "If a competitor is behind a campaign of false reviews, or someone is demanding money to remove them, it may be worth talking to a lawyer. In many countries a false statement of fact that harms a business can be defamation, while a genuine negative opinion is protected. In India, for instance, the defamation offence now sits in section 356 of the Bharatiya Nyaya Sanhita. Fake reviews posted by businesses also fall under consumer protection law in several places, which our overview of [fake review laws around the world](/blog/fake-review-laws-around-the-world) explains."
+   ],
+   [
+    "p",
+    "Legal action is slow and expensive, and it can draw attention to the review. Keep it for clear, serious cases with evidence."
+   ],
+   [
+    "h",
+    "What usually works best"
+   ],
+   [
+    "p",
+    "One fake review among dozens of genuine ones does little harm. The strongest defence is a steady flow of real reviews from all your customers, so a single fake one is outweighed. Ask everyone, as we explain in [why asking only happy customers for reviews backfires](/blog/asking-only-happy-customers-for-reviews)."
+   ],
+   [
+    "note",
+    "On Know The Company, companies can reply to reviews once verified, and anyone can report a review that breaks our guidelines. We never remove a review simply because a company disagrees with it. [Claim your company page](/claim) to reply."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Can I get a review removed because it is negative?",
+      "No. Review sites remove reviews that break their rules, such as fake reviews, conflicts of interest or abuse. A genuine negative review stays."
+     ],
+     [
+      "How long do review sites take to act on a report?",
+      "It varies by site, from a few days to several weeks. Clear evidence speeds it up."
+     ],
+     [
+      "Should I name the competitor in my reply?",
+      "No. You probably cannot prove it publicly, and naming them invites a public argument. Put your evidence in the report to the review site."
+     ],
+     [
+      "Someone offered to remove our bad reviews for a fee. Should I pay?",
+      "No. Legitimate review sites do not sell removals, and these offers are usually scams. Report the message to the review site and keep a copy."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Google Maps: Prohibited and restricted content (user contributed content policy)",
+      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
+     ],
+     [
+      "Repulex: Are fake reviews illegal in India? The law on buying, posting and removing reviews, September 2026",
+      "https://www.repulex.com/blog/are-fake-reviews-illegal-in-india"
+     ],
+     [
+      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
+      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "negative-employee-reviews-after-layoffs",
+  "cat": "Startup growth",
+  "date": "2026-11-12",
+  "tone": 5,
+  "title": "Handling a wave of negative employee reviews after layoffs or a tough review cycle",
+  "seo": "Handling negative employee reviews after layoffs",
+  "desc": "Layoffs and poor pay reviews bring a wave of negative employee reviews. What to do in the first week, the first month and after, without making it worse.",
+  "excerpt": "After layoffs or a disappointing round of pay reviews, negative employee reviews tend to arrive in a rush. What to do in the first week, the first month and afterwards.",
+  "body": [
+   [
+    "p",
+    "It happens to good companies too. A round of layoffs, a pay freeze or a performance review cycle that left people feeling cheated, and within days your employee review page fills with one-star reviews. Candidates will read them for years. How you respond in the first few weeks decides whether they read a company that handled a hard moment badly, or one that handled it honestly."
+   ],
+   [
+    "h",
+    "The first week: do not make it worse"
+   ],
+   [
+    "ul",
+    [
+     "**Do not ask current employees to post positive reviews.** A burst of five-star reviews right after layoffs is obvious to every reader, and review sites treat organised reviews as manipulation. Google's review policy, for example, bans reviews written with a conflict of interest, including by current or former employees.",
+     "**Do not try to identify the writers.** Even a rumour that HR is matching reviews to people will destroy trust with the staff you kept.",
+     "**Do not argue in public.** Former employees are angry, sometimes unfairly. A defensive reply looks worse than the review."
+    ]
+   ],
+   [
+    "h",
+    "The first month: answer the substance"
+   ],
+   [
+    "p",
+    "Read every review and group them by what they actually complain about. After layoffs, the themes are usually predictable:"
+   ],
+   [
+    "ul",
+    [
+     "How people were told: by email, in a group call, with no warning.",
+     "Severance, notice and final pay.",
+     "References, paperwork and help finding new work.",
+     "Whether leadership was honest beforehand.",
+     "For people who stayed: workload and job security."
+    ]
+   ],
+   [
+    "p",
+    "Then reply, but not to every review with the same paragraph. Write one honest reply for each theme and adapt it. Where you made mistakes, say so. Where you fixed something, say exactly what."
+   ],
+   [
+    "quote",
+    "\"You're right that people should not have found out in a group video call, and I'm sorry. Everyone affected received notice pay and severance, and anyone whose final pay was delayed past the deadline will receive it this week. We've also set up a referral list with partner companies. If anything is still unresolved for you, write to me directly. Priya, chief people officer\""
+   ],
+   [
+    "p",
+    "Check the legal deadlines where you operate. Rules on final pay vary widely. India's Code on Wages, in force since November 2025, requires final wages within two working days of an employee leaving, and many US states set their own deadlines. Missing them turns a hard decision into a legal problem, and it shows up in reviews."
+   ],
+   [
+    "h",
+    "Afterwards: let the new reviews tell the story"
+   ],
+   [
+    "p",
+    "In three to six months, the reviews that matter will be from people who stayed. Once things have settled, ask everyone in the same way to share an honest review, with no pressure and no reward. Our guide on [how to ask employees for reviews](/blog/how-to-ask-employees-for-reviews) has the details. If the company has genuinely improved, the newer reviews will show it, and candidates read the newest reviews first."
+   ],
+   [
+    "h",
+    "Pay and performance review cycles"
+   ],
+   [
+    "p",
+    "A disappointing pay review cycle produces the same rush on a smaller scale. The complaints are usually about fairness more than money: ratings decided in advance, a fixed number of low ratings per team or promised increases that did not arrive. The response is the same. Reply to the themes, explain plainly what will be different next cycle and then make sure it is."
+   ],
+   [
+    "h",
+    "What candidates take from it"
+   ],
+   [
+    "p",
+    "Candidates expect companies to have bad periods. What they judge is the response. A page with a cluster of angry reviews from one month, honest replies underneath and better reviews after, tells them the company owns its mistakes. A page where the angry reviews sit unanswered, or are buried under suspicious praise, tells them the opposite. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) covers this in more detail."
+   ],
+   [
+    "note",
+    "On Know The Company, employee reviews are anonymous and verified companies can reply to them. We never remove an employee review because a company asks. [Claim your company page](/claim) to reply."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Should we reply to every negative review after layoffs?",
+      "Reply to the main themes and to reviews with specific claims, adapting each reply. Identical replies under every review look automated."
+     ],
+     [
+      "Can we ask a review site to remove reviews from laid-off employees?",
+      "Not because they are negative. Former employees are entitled to review. Report only reviews that break the site's rules, for example threats or personal attacks."
+     ],
+     [
+      "How long until the rating recovers?",
+      "It depends on what happens next. If the company genuinely improves and keeps asking everyone for reviews, newer reviews usually start to outweigh the wave within a few months."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Google Maps: Prohibited and restricted content (user contributed content policy)",
+      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
+     ],
+     [
+      "LiveLaw: Two working days, the Code on Wages and an employee's final settlement, October 2026",
+      "https://www.livelaw.in/articles/two-working-days-code-wages-employee-final-settlement-552780"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "how-to-ask-employees-for-reviews",
+  "cat": "Startup growth",
+  "date": "2026-11-12",
+  "tone": 6,
+  "title": "How to ask employees for reviews without making them uncomfortable",
+  "seo": "How to ask employees for reviews the right way",
+  "desc": "When, how and whom to ask for employee reviews, with a message you can copy. Keep reviews honest and anonymous, and avoid the mistakes that make them worthless.",
+  "excerpt": "Asking employees for reviews is fine. Asking the wrong way produces reviews nobody believes. When to ask, who should ask, a message you can copy and the mistakes to avoid.",
+  "body": [
+   [
+    "p",
+    "Employee reviews are only useful to candidates if they are honest, and they are only honest if people feel free to write what they think. Most companies that ask for reviews get that wrong in small ways: the manager asks, the timing is awkward or there is a hint that someone will check. Here is a way to ask that keeps the reviews believable."
+   ],
+   [
+    "h",
+    "Ask everyone"
+   ],
+   [
+    "p",
+    "Ask every employee, not only your star performers or the team that just won an award. Reviews collected only from favourites read as hand-picked, and candidates can tell. Google's own review policy bans selectively asking for positive reviews, and while it is written for customer reviews, the principle holds for employee reviews too."
+   ],
+   [
+    "h",
+    "Pick good moments"
+   ],
+   [
+    "ul",
+    [
+     "**After the first three months,** when new joiners have a real view.",
+     "**At work anniversaries,** as part of a routine note from HR.",
+     "**When people leave,** as part of the exit process. Leavers are often the most candid reviewers, and their reviews carry weight with candidates.",
+     "**Not during a crisis.** Straight after layoffs or a pay freeze, a request looks like damage control. Wait until things have settled."
+    ]
+   ],
+   [
+    "h",
+    "Let HR ask, not managers"
+   ],
+   [
+    "p",
+    "A request from a line manager feels like an instruction, and people write differently for someone who writes their appraisal. Send the request from HR or the founder, to everyone, in writing. Never ask in a team meeting, never set a deadline and never ask people to confirm they have done it."
+   ],
+   [
+    "h",
+    "Make anonymity real"
+   ],
+   [
+    "ul",
+    [
+     "Use a review site where employees can post without their name showing.",
+     "Say clearly that nobody in the company will try to identify who wrote what, and mean it.",
+     "Do not track who clicked the link. If your email tool tracks clicks, turn it off for this message."
+    ]
+   ],
+   [
+    "h",
+    "Never reward reviews"
+   ],
+   [
+    "p",
+    "No gifts, extra leave, points or prize draws for writing a review. Rewards produce glowing reviews candidates discount, and many review sites remove incentivised reviews. In the US, the Federal Trade Commission's review rule bans incentives that depend on a review being positive, according to [Benesch Law's summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/)."
+   ],
+   [
+    "h",
+    "A message you can copy"
+   ],
+   [
+    "quote",
+    "\"Hi everyone,\nWe'd like more people to know what it's really like to work here, so we're asking every member of the team to consider writing an honest, anonymous review on [review site link].\nGood or bad, please write what you actually think. Nobody here will try to find out who wrote what, there's no deadline and you don't need to tell anyone whether you've done it.\nWe read every review, and we'll reply to the ones that raise something we can fix.\nThanks,\n[Name], [role]\""
+   ],
+   [
+    "h",
+    "What to avoid"
+   ],
+   [
+    "ul",
+    [
+     "Asking people to mention specific benefits, teams or managers by name. Google now bans businesses from asking staff to collect reviews with specific content, as [PPC Land reported](https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/) in April 2026.",
+     "Review sessions where everyone writes reviews at their desks at the same time.",
+     "Sending the request only to teams with high engagement scores.",
+     "Asking repeatedly. Once, plus once at anniversaries and exits, is enough."
+    ]
+   ],
+   [
+    "h",
+    "Then show you read them"
+   ],
+   [
+    "p",
+    "The best encouragement for the next round is visible action on the last one. Reply to reviews that raise real issues, say what changed and share the changes internally too. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) has examples of replies that work."
+   ],
+   [
+    "note",
+    "On Know The Company, employee reviews are anonymous, and verified companies can reply to them and share their employee review link. [List your company](/list) to get your link."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Is it allowed to ask employees for reviews?",
+      "Yes, as long as you ask everyone, do not pressure anyone and offer no reward. Some review sites have specific rules, so check them before you ask."
+     ],
+     [
+      "Should managers share the review link with their teams?",
+      "Better not. A request from a manager feels like an instruction. Let HR or the founder send it to everyone."
+     ],
+     [
+      "What if the reviews come back negative?",
+      "Then you have learnt something useful. Reply honestly, fix what you can and say so in your replies. Candidates trust a mixed page with good replies more than a perfect one."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Google Maps: Prohibited and restricted content (user contributed content policy)",
+      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
+     ],
+     [
+      "PPC Land: Google tightens Maps review policy, staff names and quotas now banned, April 2026",
+      "https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/"
+     ],
+     [
+      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
+      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "fake-review-laws-around-the-world",
+  "cat": "Rules & compliance",
+  "date": "2026-11-12",
+  "tone": 1,
+  "title": "Fake review laws around the world: the US, UK, EU and India",
+  "seo": "Fake review laws in the US, UK, EU and India",
+  "desc": "What the FTC's review rule, the UK's DMCC Act, the EU Omnibus Directive and India's IS 19000 standard mean for businesses that collect and show reviews.",
+  "excerpt": "Fake reviews are now illegal in many countries, and so are some common ways of hiding bad ones. A plain summary of the rules in the US, UK, EU and India, and what they mean for your business.",
+  "body": [
+   [
+    "p",
+    "A few years ago, buying reviews or quietly hiding the bad ones was mostly a question of a review site's rules. Now it is a legal question in several large markets, with real penalties. If you sell to customers in more than one country, the rules below may all apply to you."
+   ],
+   [
+    "note",
+    "This is a plain-language summary, not legal advice. Laws change, so check the current position with a lawyer for your situation."
+   ],
+   [
+    "h",
+    "United States: the FTC's Consumer Review Rule"
+   ],
+   [
+    "p",
+    "The Federal Trade Commission's rule on consumer reviews and testimonials took effect on 21 October 2024. According to [Benesch Law's April 2026 summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/), it bans:"
+   ],
+   [
+    "ul",
+    [
+     "Fake reviews, including reviews from people who do not exist or did not use the product, and reviews generated by AI.",
+     "Incentives that depend on a review being positive. Disclosing the incentive does not fix it.",
+     "Reviews by officers, managers, employees or relatives without a clear disclosure of the relationship.",
+     "Company-controlled review sites presented as independent.",
+     "Suppressing reviews, through legal threats or intimidation, or by hiding negative reviews while implying the ones shown are all there are.",
+     "Buying or selling fake followers, views or other signs of social media influence."
+    ]
+   ],
+   [
+    "p",
+    "Penalties reach up to $53,088 per violation. The FTC sent warning letters to nearly a dozen companies at the end of 2025."
+   ],
+   [
+    "h",
+    "United Kingdom: the DMCC Act"
+   ],
+   [
+    "p",
+    "Under the Digital Markets, Competition and Consumers Act 2024, fake reviews and concealed incentivised reviews became banned practices from April 2025, deemed unfair in all cases. The Competition and Markets Authority can now enforce consumer law directly and fine businesses up to 10% of global turnover, according to [Taylor Wessing's March 2026 analysis](https://www.taylorwessing.com/en/insights-and-events/insights/2026/03/the-cma-steps-up-its-fight-against-fake-reviews). The CMA reviewed more than 100 review publishers, sent advisory letters to 54 firms and opened five investigations into how negative reviews are treated, inflated reviews and incentivised reviews."
+   ],
+   [
+    "h",
+    "European Union: the Omnibus Directive"
+   ],
+   [
+    "p",
+    "Since 28 May 2022, the EU's Omnibus Directive has required businesses that show consumer reviews to tell consumers whether and how they check that reviews come from people who actually used or bought the product. Submitting fake reviews, commissioning them or misrepresenting reviews is banned as an unfair commercial practice. Each EU country enforces it through its own consumer authorities."
+   ],
+   [
+    "h",
+    "India: IS 19000 and consumer protection law"
+   ],
+   [
+    "p",
+    "India's Bureau of Indian Standards published IS 19000:2022, a standard for online consumer reviews, in November 2022. It applies to any organisation that publishes consumer reviews, including sellers and independent review sites. As [MediaNama's summary](https://www.medianama.com/2022/12/223-summary-bis-standard-online-reviews-e-commerce/) sets out, it asks review platforms to:"
+   ],
+   [
+    "ul",
+    [
+     "Verify that review authors are real, for example by email or phone confirmation.",
+     "Send review invitations to all known purchasers, or select them by an objective process.",
+     "Publish positive and negative reviews alike, without editing them, and not hold reviews back while talking to the seller.",
+     "Not knowingly publish bought reviews or reviews from the seller's own staff, and mark any rewarded reviews.",
+     "Let businesses reply to reviews free of charge."
+    ]
+   ],
+   [
+    "p",
+    "The standard was voluntary at launch. A [September 2026 legal guide by Repulex](https://www.repulex.com/blog/are-fake-reviews-illegal-in-india) notes that a 2024 draft order to make it mandatory had not been finalised. Fake reviews are already caught by binding law, though. The Consumer Protection Act 2019 treats false claims about goods or services as unfair trade practices, and the E-Commerce Rules 2020 bar marketplace sellers from posing as consumers to post reviews."
+   ],
+   [
+    "h",
+    "What this means for a business"
+   ],
+   [
+    "p",
+    "The details differ, but the rules point in the same direction everywhere:"
+   ],
+   [
+    "ol",
+    [
+     "Never buy reviews, write your own or ask staff to post reviews without disclosing who they are.",
+     "Never make an incentive depend on a review being positive. Safer still, do not offer incentives at all, since most review sites ban them anyway.",
+     "Ask all your customers for reviews, not just the ones you expect to be happy. Our guide on [why asking only happy customers for reviews backfires](/blog/asking-only-happy-customers-for-reviews) explains how.",
+     "If you show reviews on your own website, show the negative ones too, and say how you check them.",
+     "Never threaten customers to get a review removed.",
+     "Treat AI-written reviews as fake reviews. The FTC rule names them explicitly."
+    ]
+   ],
+   [
+    "h",
+    "How we approach it at Know The Company"
+   ],
+   [
+    "p",
+    "Reviewers sign in before they write a review. We publish positive and negative reviews the same way and do not edit them, and we never remove a review because a company asks. Companies cannot pay to change their rating. Review invitations on our Business plan go to the company's whole customer list, never a hand-picked one."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Do these laws apply to small businesses?",
+      "Yes. None of these rules has a general exemption for small businesses. Enforcement so far has focused on larger companies and review platforms, but the rules apply to everyone."
+     ],
+     [
+      "Are AI-written reviews illegal?",
+      "In the US, the FTC rule explicitly covers fake reviews generated by AI. Elsewhere, a review that misrepresents a real customer's experience is treated as fake, however it was written."
+     ],
+     [
+      "Can I still ask customers for reviews?",
+      "Yes. All of these rules allow businesses to ask customers for reviews. What they ban is faking reviews, buying positive ones and hiding negative ones."
+     ],
+     [
+      "Is IS 19000 mandatory in India?",
+      "As of September 2026 it was still voluntary, according to Repulex's legal guide, though a 2024 draft proposed making it mandatory. Check the current position before relying on it."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
+      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
+     ],
+     [
+      "Taylor Wessing: The CMA steps up its fight against fake reviews, March 2026",
+      "https://www.taylorwessing.com/en/insights-and-events/insights/2026/03/the-cma-steps-up-its-fight-against-fake-reviews"
+     ],
+     [
+      "MediaNama: Summary of the BIS standard for online reviews, IS 19000:2022",
+      "https://www.medianama.com/2022/12/223-summary-bis-standard-online-reviews-e-commerce/"
+     ],
+     [
+      "Repulex: Are fake reviews illegal in India? The law on buying, posting and removing reviews, September 2026",
+      "https://www.repulex.com/blog/are-fake-reviews-illegal-in-india"
+     ]
+    ]
+   ]
+  ]
  }
 ];
 POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].flat().join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
@@ -2904,7 +4068,7 @@ const postBlock = ([k, v]) => k === 'h' ? `<h2>${esc(v)}</h2>` : k === 'h3' ? `<
   : k === 'note' ? `<div class="box soft" style="margin:22px 0"><p>${inl(v)}</p></div>` : k === 'quote' ? `<blockquote>${v.split('\n').map(x => `<p>${inl(x)}</p>`).join('')}</blockquote>`
   : k === 'faq' ? `<h2>Frequently asked questions</h2>${v.map(([q, a]) => `<h3>${esc(q)}</h3><p>${inl(a)}</p>`).join('')}`
   : k === 'src' ? `<h2>Sources</h2><ul class="sources">${v.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('')}</ul>` : `<p>${inl(v)}</p>`;
-const postCard = p => `<a class="postcard" href="#${p.id}">${p.image ? `<img class="cover" src="${esc(p.image)}" alt="" loading="lazy" style="object-fit:cover;width:100%;aspect-ratio:16/9;height:auto">` : `<span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>`}
+const postCard = p => `<a class="postcard" href="#${p.id}">${p.image ? `<img class="cover" src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="800" loading="lazy" style="object-fit:cover;width:100%;aspect-ratio:3/2;height:auto;padding:0">` : `<span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>`}
   <div class="postmeta"><span>${fmtDate(p.date)}</span><span>${p.read} min read</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></a>`;
 
 function vBlog() {
@@ -2925,7 +4089,7 @@ function vPost(p) {
       <p class="eyebrow">${esc(p.cat)}</p>
       <h1 style="font-size:clamp(30px,4.2vw,44px);font-weight:800;line-height:1.12;margin-top:10px">${esc(p.title)}</h1>
       <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span>${p.updated && p.updated !== p.date ? `<span>·</span><span>Updated ${fmtDate(p.updated)}</span>` : ''}</div>
-      ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="675" style="width:100%;height:auto;border-radius:16px;margin-top:22px;aspect-ratio:16/9;object-fit:cover">` : ''}
+      ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="800" fetchpriority="high" style="width:100%;height:auto;border-radius:16px;margin-top:22px;aspect-ratio:3/2;object-fit:cover">` : ''}
       <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
       ${body}
       <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From [[PB]] a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>

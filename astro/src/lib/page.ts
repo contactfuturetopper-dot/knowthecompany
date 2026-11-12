@@ -84,7 +84,7 @@ async function categories(): Promise<string[]> {
 /* ---- addresses ---- */
 /* `ld` is this page's structured data (schema.org JSON-LD), added to the shell as one @graph with the
    site's Organization and WebSite. */
-export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; ogImage?: string; facts?: { id: string; data: Facts }; preload?: string } | { redirect: string };
+export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; ogImage?: string; ogImageAlt?: string; facts?: { id: string; data: Facts }; preload?: string } | { redirect: string };
 export type Facts = { name?: string; legalName?: string | null; founded?: string | null; hq?: string | null; founders?: string[]; parent?: string | null; ownership?: string | null; employees?: string | null; products?: string[]; markets?: string | null; description?: string | null; status?: string | null; links?: Record<string, string | null>; sources?: { fact: string; url: string }[]; checked?: string };
 const FACTS = factsData as Record<string, Facts>;
 type Post = { slug: string; cat: string; date: string; updated?: string; title: string; seo?: string; desc?: string; excerpt: string; image?: string; imageAlt?: string; body: [string, any][] };
@@ -168,9 +168,10 @@ export async function resolvePage(pathname: string): Promise<Page> {
 function fromMeta(path: string, m: Meta): Page {
   const desc = m.desc || DEFAULT_DESC;
   const post = m.route.startsWith("blog-") ? POSTS.get(m.route.slice(5)) : undefined;
-  const list = m.route === "blog" ? [...POSTS.values()].sort((a, b) => b.date.localeCompare(a.date)).map(p => `<article><h2><a href="/blog/${esc(p.slug)}">${esc(p.title)}</a></h2><p>${esc(p.cat)} · ${esc(p.date)}</p><p>${esc(p.excerpt)}</p></article>`).join("") : "";
-  const body = SNAPS[m.route] || ((m.intro ? `<p>${esc(m.intro)}</p>` : "") + list + (post ? articleHtml(post) : ""));
-  return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article", ...(post.image ? { ogImage: post.image } : {}) } : {}) };
+  const list = m.route === "blog" ? [...POSTS.values()].sort((a, b) => b.date.localeCompare(a.date)).map(p => `<article>${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt || p.title)}" width="1200" height="800" loading="lazy">` : ""}<h2><a href="/blog/${esc(p.slug)}">${esc(p.title)}</a></h2><p>${esc(p.cat)} · ${esc(p.date)}</p><p>${esc(p.excerpt)}</p></article>`).join("") : "";
+  const hero = post && post.image ? `<img src="${esc(post.image)}" alt="${esc(post.imageAlt || post.title)}" width="1200" height="800">` : "";
+  const body = SNAPS[m.route] || (hero + (m.intro ? `<p>${esc(m.intro)}</p>` : "") + list + (post ? articleHtml(post) : ""));
+  return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article", ...(post.image ? { ogImage: ORIGIN + post.image, ogImageAlt: post.imageAlt || post.title } : {}) } : {}) };
 }
 const PAGE_TYPES: Record<string, string> = { about: "AboutPage", contact: "ContactPage", categories: "CollectionPage", tools: "CollectionPage", blog: "CollectionPage", search: "SearchResultsPage" };
 /* Structured data for the fixed pages: the page itself, its breadcrumb trail, and what it is about. */
@@ -183,7 +184,7 @@ function pageSchema(path: string, m: Meta, desc: string): object[] {
     if (post) out.push({
       "@type": "BlogPosting", "@id": `${ORIGIN}${path}#article`, headline: post.title, description: post.excerpt,
       datePublished: post.date, dateModified: post.updated || post.date, articleSection: post.cat, inLanguage: "en-IN",
-      ...(post.image ? { image: { "@type": "ImageObject", url: post.image, width: 1200, height: 675 } } : {}),
+      ...(post.image ? { image: { "@type": "ImageObject", url: ORIGIN + post.image, width: 1200, height: 800, caption: post.imageAlt || post.title } } : {}),
       wordCount: JSON.stringify(post.body).split(/\s+/).length,
       author: { "@id": `${ORIGIN}/#organization` }, publisher: { "@id": `${ORIGIN}/#organization` },
       mainEntityOfPage: { "@id": `${ORIGIN}${path}#webpage` }, isPartOf: { "@id": `${ORIGIN}/blog#blog` },
@@ -391,7 +392,7 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   const url = `${ORIGIN}${pg.path}`, shareTitle = pg.title.replace(/ · Know The Company$/, "");
   const og = [
     ["og:site_name", "Know The Company"], ["og:type", pg.ogType || "website"], ["og:url", url], ["og:title", shareTitle], ["og:description", pg.desc],
-    ["og:image", pg.ogImage || `${ORIGIN}/og-image.png`], ["og:image:width", "1200"], ["og:image:height", pg.ogImage ? "675" : "630"], ["og:image:alt", pg.ogImage ? shareTitle : "Know The Company: customer and employee reviews of startups and growing companies"], ["og:locale", "en_IN"],
+    ["og:image", pg.ogImage || `${ORIGIN}/og-image.png`], ["og:image:width", "1200"], ["og:image:height", pg.ogImage ? "800" : "630"], ["og:image:alt", pg.ogImage ? (pg.ogImageAlt || shareTitle) : "Know The Company: customer and employee reviews of startups and growing companies"], ["og:locale", "en_IN"],
   ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join("\n")
     + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", pg.ogImage || `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
