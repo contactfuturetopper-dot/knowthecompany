@@ -119,7 +119,20 @@ const CAT_INTROS = {
   'Food & Delivery': 'Reviews of food and grocery delivery apps: order accuracy, delivery times and refunds, and how riders and staff are treated.',
   'Consumer Brands': 'Reviews of direct-to-consumer brands in food, beauty and home: product quality, delivery and returns, and life inside the company.',
   'Health & Wellness': 'Reviews of health apps, doctor booking platforms, online pharmacies and wellbeing services: quality of care, privacy, billing and support.',
-  'Consumer Electronics': 'Reviews of phone, audio and wearable brands: build quality, warranty claims and service centres, and what employees say about working there.'
+  'Consumer Electronics': 'Reviews of phone, audio and wearable brands: build quality, warranty claims and service centres, and what employees say about working there.',
+  'IT Services & Consulting': 'Reviews of IT services and consulting firms: what clients say about delivery and support, and what engineers say about projects, appraisals, bench time and work-life balance.',
+  'Accounting & Tax': 'Reviews of accounting, GST billing and tax filing software and services: accuracy, ease of use, pricing and support, plus what their teams say about working there.',
+  'Insurance': 'Reviews of insurers and insurance marketplaces: buying a policy, claim settlement, renewals and support, and how the companies treat their staff.',
+  'Beauty & Personal Care': 'Reviews of skincare, makeup and grooming brands: product quality, delivery, returns and support, and what it is like to work for them.',
+  'Fashion & Apparel': 'Reviews of clothing and fashion brands: fit, quality, delivery, returns and refunds, and how the brands treat their teams.',
+  'Jewellery & Accessories': 'Reviews of jewellery and accessories brands: product quality, certification, delivery and after-sales service, and what employees say.',
+  'Home & Furniture': 'Reviews of mattress, furniture and home brands: product quality, delivery, installation, returns and warranty claims, and life inside the company.',
+  'Groceries & Retail': 'Reviews of grocery delivery and retail apps: freshness, delivery times, refunds and support, plus what delivery partners and staff say.',
+  'Food & Beverage Brands': 'Reviews of packaged food, snack and drink brands: taste, ingredients, delivery and support, and how the brands treat their teams.',
+  'Home Services & Repairs': 'Reviews of home services apps and companies: cleaning, repairs, salon and appliance service, pricing, punctuality, and what service partners say.',
+  'Sports & Fitness': 'Reviews of gyms, fitness studios and workout apps: trainers, facilities, memberships and cancellations, and what it is like to work there.',
+  'Pharmacy & Medicines': 'Reviews of online pharmacies and medicine delivery apps: genuine medicines, delivery, refunds and support, and how they treat their staff.',
+  'Automotive': 'Reviews of vehicle makers and automotive companies, including electric scooters: build quality, service centres, software updates and support, and what employees say.',
 };
 const catIntro = name => CAT_INTROS[name] || `Customer and employee reviews of ${name} companies: how they treat the people they serve and the people who work for them.`;
 /* Search descriptions for the fixed pages. */
