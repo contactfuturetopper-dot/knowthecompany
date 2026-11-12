@@ -3729,7 +3729,7 @@ function vBlog() {
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
 function listCard(where) {
-  return `<div class="listcard ${where}"><img class="lc-img" src="/images/banner/list-your-company.webp" alt="Shop owner celebrating a five-star review as his business appears on the map" width="720" height="480" loading="lazy" decoding="async"><p class="lc-eye">For businesses</p><h2>List your company for <span class="lc-free">FREE</span></h2>
+  return `<div class="listcard ${where}"><img class="lc-img" src="/images/banner/list-your-company-2.webp" alt="Founder celebrating a five-star review as his company appears on the map" width="720" height="480" loading="lazy" decoding="async"><p class="lc-eye">For businesses</p><h2>List your company for <span class="lc-free">FREE</span></h2>
     <ul class="ticks">${['Verified company page','Reply to customer and employee reviews','Readable by Google and AI search tools'].map(t => `<li>${TICK('var(--gold)')}<span>${t}</span></li>`).join('')}</ul>
     <a class="btn gold" href="#list">List your company</a>
     <p class="lc-note">${LAUNCH ? `Basic is free for your first year when you join before ${LAUNCH_END}.` : 'Plans from [[PB]] a year.'}</p></div>`;
