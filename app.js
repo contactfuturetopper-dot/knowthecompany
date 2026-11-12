@@ -1969,9 +1969,9 @@ function vHelp() {
 /* ---------- who runs the site ----------
    Razorpay checks that the business named here matches the KYC documents.
    Fill these in before applying. Empty fields are simply not shown. */
-const OPERATOR = { legalName: '', address: '', phone: '', taxNote: '' };
+const OPERATOR = { legalName: 'Kautilya Upadhyay', address: 'Agra, Uttar Pradesh, India', phone: '', taxNote: '' };
 const opName = () => OPERATOR.legalName || 'Know The Company';
-const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this site</h2><p>Know The Company is run by <b style="color:var(--fg)">${esc(OPERATOR.legalName)}</b>.${OPERATOR.address ? `<br>Registered office: ${esc(OPERATOR.address)}` : ''}${OPERATOR.phone ? `<br>Phone: <span style="user-select:all;color:var(--fg)">${esc(OPERATOR.phone)}</span>` : ''}</p></div>` : '';
+const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this site</h2><p>Know The Company is run by <b style="color:var(--fg)">${esc(OPERATOR.legalName)}</b>.${OPERATOR.address ? `<br>Address: ${esc(OPERATOR.address)}` : ''}${OPERATOR.phone ? `<br>Phone: <span style="user-select:all;color:var(--fg)">${esc(OPERATOR.phone)}</span>` : ''}</p></div>` : '';
 
 /* ---------- currency switch ----------
    Plan prices show in rupees or US dollars. Visitors outside India's time zone start in dollars, and the
@@ -2028,7 +2028,7 @@ function vRefunds() {
     ['5. Refunds', ['Change your mind within 14 days of paying, and we refund the full amount. No reason is needed.', 'After 14 days, fees for the current year are not refundable, except where the law requires a refund.', 'If you were charged twice, or charged for an order that failed, we refund the extra amount in full.', 'If we suspend a listing because it broke our terms, for example by trying to manipulate reviews, the fee is not refunded.']],
     ['6. How refunds are paid', ['Refunds go back to the payment method you used. We start the refund within 5 working days of approving it.', 'Your bank or card provider may take another 5 to 7 working days to show it in your account.']],
     ['7. Refunds never affect reviews', 'Paying, cancelling or getting a refund never changes a company’s ratings, review order or moderation, and cancelling never removes reviews.'],
-    ['8. Contact', [`Refund and cancellation requests: knowthecompanysupport@gmail.com. Include your company name and the date you paid.${OPERATOR.phone ? ` Phone: ${esc(OPERATOR.phone)}.` : ''}`, ...(OPERATOR.address ? [`Registered office: ${esc(OPERATOR.address)}.`] : []), 'If you are not happy with how we handled your request, write to our grievance officer, Nimish Chhabra, at knowthecompanysupport@gmail.com.']]]);
+    ['8. Contact', [`Refund and cancellation requests: knowthecompanysupport@gmail.com. Include your company name and the date you paid.${OPERATOR.phone ? ` Phone: ${esc(OPERATOR.phone)}.` : ''}`, ...(OPERATOR.address ? [`Address: ${esc(OPERATOR.address)}.`] : []), 'If you are not happy with how we handled your request, write to our grievance officer, Nimish Chhabra, at knowthecompanysupport@gmail.com.']]]);
 }
 
 /* ---------- live actions: everything a visitor saves goes to Wix ---------- */
