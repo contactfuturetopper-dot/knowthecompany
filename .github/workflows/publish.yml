@@ -52,6 +52,9 @@ jobs:
 
       - name: Test every page of the app
         working-directory: test
+        # India's time zone, so the text version of each page (data/page-snapshots.json) shows rupee prices.
+        env:
+          TZ: Asia/Kolkata
         run: |
           npm install --no-audit --no-fund
           npm test | tee test-output.txt
