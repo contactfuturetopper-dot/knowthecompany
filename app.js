@@ -2033,7 +2033,7 @@ const POSTS = [
    [
     "ul",
     [
-     "Trustpilot and SEER Interactive analysed more than 800,000 AI answers across ChatGPT, Gemini, Perplexity and Google AI Mode. Review and trust sites were the second most cited type of source, and 59% of AI recommendations included a star rating as evidence. Brands with no claimed profile on Trustpilot were almost never cited. Trustpilot sells review services, so read [the study](https://business.trustpilot.com/marketing/what-ai-says-about-your-brand) with that in mind.",
+     "A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode found that review and trust sites were the second most cited type of source, and 59% of AI recommendations included a star rating as evidence. Brands with no active review profile were rarely cited.",
      "Growfusely checked 1,739 citations for business software questions in July 2026. Review platforms made up about 7%, companies' own pages roughly 12% to 24% and independent articles most of the rest. Their [write-up](https://growfusely.com/blog/ai-citation-analysis-b2b-software/) is worth reading if you sell software."
     ]
    ],
@@ -2130,35 +2130,6 @@ const POSTS = [
       "Changes on your own site can be picked up within days once the crawlers revisit. Changes that depend on new reviews or new articles take months. Recheck monthly rather than daily."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "HRKatha: India's tech professionals have already decided before you call them (What Talent Wants 2026), October 2026",
-      "https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/"
-     ],
-     [
-      "OpenAI: Overview of OpenAI crawlers",
-      "https://developers.openai.com/api/docs/bots"
-     ],
-     [
-      "Perplexity: Perplexity crawlers",
-      "https://docs.perplexity.ai/guides/bots"
-     ],
-     [
-      "PPC Land: Google gives site owners a toggle to exit AI Overviews and AI Mode",
-      "https://ppc.land/google-gives-site-owners-a-toggle-to-exit-ai-overviews-and-ai-mode/"
-     ],
-     [
-      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
-      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
-     ],
-     [
-      "Growfusely: AI citation analysis for B2B software, July 2026",
-      "https://growfusely.com/blog/ai-citation-analysis-b2b-software/"
-     ]
-    ]
    ]
   ]
  },
@@ -2169,18 +2140,18 @@ const POSTS = [
   "cat": "Reviews & reputation",
   "date": "2026-11-12",
   "tone": 2,
-  "title": "Which review sites can ChatGPT and Perplexity actually read? We checked",
-  "seo": "Which review sites can ChatGPT and Perplexity read?",
-  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, Indeed, G2, Clutch, Tripadvisor and more on 12 November 2026. Here is which AI tools each lets in.",
-  "excerpt": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of nine well-known review sites.",
+  "title": "Can ChatGPT and Perplexity read your reviews? How to check any review site",
+  "seo": "Can ChatGPT read your reviews? How to check",
+  "desc": "Some review sites tell AI tools to stay away, so reviews there may never reach a ChatGPT or Perplexity answer. How to check any site in two minutes.",
+  "excerpt": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. Here is how to check any site in two minutes.",
   "body": [
    [
     "p",
-    "When someone asks ChatGPT or Perplexity whether a company is any good, the tool goes looking for reviews. But every website can publish a file called robots.txt that tells crawlers which pages they may visit. Some review sites use it to keep AI tools out. If yours does, the reviews your customers wrote there may never make it into an AI answer."
+    "When someone asks ChatGPT or Perplexity whether a company is any good, the tool goes looking for reviews. But every website can publish a file called robots.txt that tells crawlers which pages they may visit. Some review sites use it to keep AI tools out. If the sites your customers use do that, the reviews they wrote there may never make it into an AI answer."
    ],
    [
     "p",
-    "On 12 November 2026 we read the robots.txt files of nine well-known review sites, covering customer reviews, employee reviews, software, agencies and travel, plus our own. We run a review site, so we have an interest here. That is why every finding below links to the file itself, so you can check it."
+    "In November 2026 we read the robots.txt files of a range of large review sites, covering customer reviews, employee reviews, software, agencies, travel and local listings. This guide explains what we found and how to check any site yourself."
    ],
    [
     "h",
@@ -2203,112 +2174,39 @@ const POSTS = [
    ],
    [
     "h",
-    "What we found"
+    "What review sites actually do"
+   ],
+   [
+    "p",
+    "Across the sites we read, three approaches came up again and again."
    ],
    [
     "h3",
-    "Trustpilot"
+    "1. Open to everyone"
    ],
    [
     "p",
-    "[Trustpilot's robots.txt](https://www.trustpilot.com/robots.txt) names GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Google-Extended, ClaudeBot, CCBot and Bingbot, and gives them all the same rules. Company pages, the ones at trustpilot.com/review/ followed by a website address, are open to them. Individual review pages under /reviews/, search pages and filtered views are closed. Any crawler not named in the file is blocked from the whole site."
-   ],
-   [
-    "p",
-    "This has changed. [A study by Hall](https://usehall.com/guides/review-platform-ai-citation-analysis) of AI citations from mid-2025 listed Trustpilot as blocking AI crawlers entirely. Today the company pages are open to the main AI search tools, and Trustpilot's own 2026 research with SEER Interactive found it was the review site AI tools cited most often."
+    "Some sites do not name a single AI crawler. One set of rules applies to every bot, usually blocking only search results and filtered views. Profiles and reviews on these sites are open to every AI tool."
    ],
    [
     "h3",
-    "Glassdoor"
+    "2. Search yes, training no"
    ],
    [
     "p",
-    "[Glassdoor's robots.txt](https://www.glassdoor.co.in/robots.txt) (we read the India site, glassdoor.co.in) groups GPTBot, Google-Extended and ClaudeBot under a heading about partly blocking AI bots. They are kept out of everything except the About and employers sections. CCBot is blocked completely. OAI-SearchBot and PerplexityBot are not named, so they follow the general rules, which leave many review and salary pages open. ChatGPT search and Perplexity may read Glassdoor reviews. The training crawlers named in the file may not."
+    "This is now the most common approach among large review sites. They block the training crawlers, such as GPTBot, ClaudeBot and CCBot, and let the search crawlers in, either by naming them or by leaving them under the general rules. Their reviews can be quoted and linked in ChatGPT search and Perplexity answers, but are not meant to be used to train future models. One large jobs and employee review site we read sorted AI crawlers into exactly these two groups by name."
    ],
    [
     "h3",
-    "Indeed"
+    "3. AI search blocked too"
    ],
    [
     "p",
-    "[Indeed's robots.txt](https://www.indeed.com/robots.txt) is the most deliberate of the nine. It sorts AI crawlers into two groups. Training crawlers, GPTBot, ClaudeBot and CCBot, are blocked from all company pages under /cmp/, where the employee reviews live. Retrieval crawlers, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended and Claude-SearchBot, may read those pages, apart from a few areas such as the write-a-review form. Indeed wants its reviews quoted in answers but not used to train models."
-   ],
-   [
-    "h3",
-    "G2"
+    "A smaller group keeps AI search crawlers out as well. One employee review site we read disallowed its whole site to OAI-SearchBot, PerplexityBot and Bingbot together, while still letting Googlebot in, so its reviews can show in Google Search but are asked to stay out of ChatGPT search, Perplexity and Bing. A large local business directory blocked OpenAI's crawlers from the entire site while leaving Perplexity and Bing alone."
    ],
    [
     "p",
-    "[G2's robots.txt](https://www.g2.com/robots.txt) names GPTBot, ClaudeBot and CCBot and blocks them from product review pages. OAI-SearchBot and PerplexityBot are not named, so the general rules apply, and those leave the main review pages open. Bingbot has its own group and is allowed. For software companies, G2 reviews can reach ChatGPT search, Perplexity and Copilot."
-   ],
-   [
-    "h3",
-    "Clutch"
-   ],
-   [
-    "p",
-    "[Clutch's robots.txt](https://clutch.co/robots.txt) does not name a single AI crawler. One set of rules applies to everyone, and it blocks only filtered and sorted views of profiles. Agency profiles and their reviews are open to every AI tool, which fits Hall's finding that Clutch dominates AI answers about agencies."
-   ],
-   [
-    "h3",
-    "Tripadvisor"
-   ],
-   [
-    "p",
-    "[Tripadvisor's robots.txt](https://www.tripadvisor.com/robots.txt) blocks GPTBot, ClaudeBot, CCBot and Google-Extended from the whole site, with one odd exception for a single Dallas restaurants page. OAI-SearchBot and ChatGPT-User have their own group with only two narrow patterns blocked. PerplexityBot is kept out of the forums only. Hotels, restaurants and attractions on Tripadvisor can reach ChatGPT search and Perplexity, and cannot be used to train those models."
-   ],
-   [
-    "h3",
-    "AmbitionBox"
-   ],
-   [
-    "p",
-    "[AmbitionBox's robots.txt](https://www.ambitionbox.com/robots.txt), an employee review site widely used in India, puts GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended, ClaudeBot, CCBot and Bingbot in one group and disallows the whole site to them, except its blog, FAQ, awards pages and community guidelines. Googlebot is allowed. Its reviews can appear in Google Search and possibly in Google's AI Overviews, which use the same index, while ChatGPT search, Perplexity's crawler and Bing are asked to stay away."
-   ],
-   [
-    "h3",
-    "Justdial"
-   ],
-   [
-    "p",
-    "[Justdial's robots.txt](https://www.justdial.com/robots.txt), a large local business directory, blocks OAI-SearchBot, ChatGPT-User and GPTBot from the entire site. PerplexityBot and Bingbot are not named, so the general rules apply and most listing pages stay open to them."
-   ],
-   [
-    "h3",
-    "Know The Company"
-   ],
-   [
-    "p",
-    "[Our robots.txt](https://www.knowthecompany.com/robots.txt) allows every crawler, AI search and training crawlers included. We block one bot, PetalBot, and ask two SEO crawlers to slow down. We also publish an [llms.txt summary](https://www.knowthecompany.com/llms.txt) of the site for AI tools. We made that choice because reviews are only useful if people can find them, wherever they search."
-   ],
-   [
-    "h",
-    "The pattern"
-   ],
-   [
-    "p",
-    "Most large review sites now draw the same line. They let AI search tools read their pages, so their reviews get quoted and linked, and they block the crawlers that collect training data. Indeed, Tripadvisor, Glassdoor and G2 all work this way in slightly different forms. Two sites in our sample go further and keep AI search tools out as well: AmbitionBox for most of them and Justdial for ChatGPT."
-   ],
-   [
-    "h",
-    "What this means for your company"
-   ],
-   [
-    "ul",
-    [
-     "Reviews on a site that blocks a tool's search crawler are unlikely to appear in that tool's answers, however many you have there.",
-     "Blocking training crawlers does not keep a site out of AI answers. It only stops the content being used to train future models.",
-     "Most of the big international review sites are readable by ChatGPT search and Perplexity today.",
-     "AI tools can still mention a blocked site if another page quotes it, or show it as a plain link."
-    ]
-   ],
-   [
-    "p",
-    "We are not suggesting you abandon any site. Google Business Profile still matters most for local searches, and a candidate who opens a review site directly will still see your reviews there. The point is coverage. If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
-   ],
-   [
-    "p",
-    "A sensible spread for most businesses is Google Business Profile, the review site that leads your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. Ask once, and rotate which link you send."
+    "These rules change. One large customer review site we read had been reported in mid-2025 as blocking AI crawlers entirely. By November 2026 its company pages were open to the main AI search tools. Whatever you read today, check again in six months."
    ],
    [
     "h",
@@ -2320,12 +2218,41 @@ const POSTS = [
      "Open the site's address followed by /robots.txt, for example example.com/robots.txt.",
      "Search the page for the crawler names above, such as OAI-SearchBot or PerplexityBot.",
      "Read the lines under each name. \"Disallow: /\" means the whole site is closed to that crawler. \"Allow\" lines open specific sections again.",
-     "If a crawler is not named, the rules under \"User-agent: *\" apply to it."
+     "If a crawler is not named, the rules under \"User-agent: *\" apply to it.",
+     "Check the paths that matter. A site may block most pages but leave company profile pages open, or the other way round. Look for the part of the address where your company's reviews sit."
+    ]
+   ],
+   [
+    "h",
+    "What this means for your company"
+   ],
+   [
+    "ul",
+    [
+     "Reviews on a site that blocks a tool's search crawler are unlikely to appear in that tool's answers, however many you have there.",
+     "Blocking training crawlers does not keep a site out of AI answers. It only stops the content being used to train future models.",
+     "AI tools can still mention a blocked site if another page quotes it, or show it as a plain link."
     ]
    ],
    [
     "p",
-    "These files change without notice. Trustpilot's has clearly changed since mid-2025. We will recheck these sites and update this article when they change."
+    "None of this means you should abandon a site your customers already use. Google Business Profile still matters most for local searches, and a candidate who opens a review site directly will still see your reviews there. The point is coverage. If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
+   ],
+   [
+    "p",
+    "A sensible spread for most businesses is Google Business Profile, the review site that leads your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. Ask once, and rotate which link you send."
+   ],
+   [
+    "h",
+    "Where Know The Company stands"
+   ],
+   [
+    "p",
+    "[Our robots.txt](https://www.knowthecompany.com/robots.txt) allows every crawler, AI search and training crawlers included. We block one bot, PetalBot, and ask two SEO crawlers to slow down. We also publish an [llms.txt summary](https://www.knowthecompany.com/llms.txt) of the site for AI tools. We made that choice because reviews are only useful if people can find them, wherever they search."
+   ],
+   [
+    "note",
+    "Every company page on Know The Company can be read by ChatGPT, Perplexity, Gemini and Copilot. [List your company](/list) for free, or [claim your page](/claim) if it is already here."
    ],
    [
     "faq",
@@ -2344,60 +2271,7 @@ const POSTS = [
      ],
      [
       "Which review site is best for appearing in ChatGPT?",
-      "There is no single answer. Hall's study found AI tools favour whichever site leads each industry, such as Clutch for agencies and TripAdvisor for travel. Check that the leading site in your industry lets AI search crawlers in."
-     ]
-    ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Trustpilot robots.txt (read 12 November 2026)",
-      "https://www.trustpilot.com/robots.txt"
-     ],
-     [
-      "Glassdoor India robots.txt (read 12 November 2026)",
-      "https://www.glassdoor.co.in/robots.txt"
-     ],
-     [
-      "AmbitionBox robots.txt (read 12 November 2026)",
-      "https://www.ambitionbox.com/robots.txt"
-     ],
-     [
-      "Justdial robots.txt (read 12 November 2026)",
-      "https://www.justdial.com/robots.txt"
-     ],
-     [
-      "Indeed robots.txt (read 12 November 2026)",
-      "https://www.indeed.com/robots.txt"
-     ],
-     [
-      "G2 robots.txt (read 12 November 2026)",
-      "https://www.g2.com/robots.txt"
-     ],
-     [
-      "Clutch robots.txt (read 12 November 2026)",
-      "https://clutch.co/robots.txt"
-     ],
-     [
-      "Tripadvisor robots.txt (read 12 November 2026)",
-      "https://www.tripadvisor.com/robots.txt"
-     ],
-     [
-      "OpenAI: Overview of OpenAI crawlers",
-      "https://developers.openai.com/api/docs/bots"
-     ],
-     [
-      "Perplexity: Perplexity crawlers",
-      "https://docs.perplexity.ai/guides/bots"
-     ],
-     [
-      "Hall: Review platform citation analysis across ChatGPT, Perplexity, AI Overviews and Copilot",
-      "https://usehall.com/guides/review-platform-ai-citation-analysis"
-     ],
-     [
-      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
-      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+      "There is no single answer. AI tools tend to favour whichever site leads each industry. Check that the leading site in yours lets AI search crawlers in, using the steps above."
      ]
     ]
    ]
@@ -2588,23 +2462,6 @@ const POSTS = [
       "Reply calmly, say you cannot find a record and invite them to contact you. Then report it to the review site with whatever evidence you have."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Google Business Profile Help: Tips to reply to reviews",
-      "https://support.google.com/business/answer/3474122?hl=en-GB"
-     ],
-     [
-      "Benesch Law: FTC turns up enforcement under the Consumer Review Rule, April 2026",
-      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
-     ],
-     [
-      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
-      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
-     ]
-    ]
    ]
   ]
  },
@@ -2759,23 +2616,6 @@ const POSTS = [
       "Yes, as long as you ask everyone, do not pressure anyone and offer no reward. Asking only your happiest employees produces reviews candidates do not trust."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Monster: Job search dealbreakers report, 2026",
-      "https://www.monster.com/career-advice/research/job-search-dealbreakers"
-     ],
-     [
-      "HRKatha: India's tech professionals have already decided before you call them (What Talent Wants 2026), October 2026",
-      "https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/"
-     ],
-     [
-      "LiveLaw: Two working days, the Code on Wages and an employee's final settlement, October 2026",
-      "https://www.livelaw.in/articles/two-working-days-code-wages-employee-final-settlement-552780"
-     ]
-    ]
    ]
   ]
  },
@@ -2928,23 +2768,6 @@ const POSTS = [
       "Yes, and it is the lightest option. A review link printed on the invoice does not send the customer any extra message."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Press Information Bureau: explainer on the Digital Personal Data Protection Rules, 2025 (November 2025)",
-      "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf"
-     ],
-     [
-      "Saga Legal via Legal500: The privacy timer starts now, analysing the DPDP Rules and its 18-month countdown",
-      "https://www.legal500.com/firms/237811-saga-legal/c-india/news-and-developments/the-privacy-timer-starts-now-analysing-the-dpdp-rules-and-its-18-month-countdown"
-     ],
-     [
-      "YourStory: Govt notifies Digital Personal Data Protection Rules 2025, rollout stretched over 18 months",
-      "https://yourstory.com/2025/11/digital-personal-data-protection-dpdp-rules-2025-rollout-over-18-months"
-     ]
-    ]
    ]
   ]
  },
@@ -3030,7 +2853,7 @@ const POSTS = [
    ],
    [
     "p",
-    "When there is little current information about a company, AI tools lean on whatever older material exists, or say very little. Fresh, specific mentions help: recent reviews from customers and employees, an up-to-date profile on the review sites in your industry and occasional news or articles that mention you. Trustpilot and SEER Interactive's 2026 study found brands with no claimed profile on Trustpilot were almost never cited in AI answers, while active profiles were cited far more often. Trustpilot sells these services, so treat the exact figures with care, but the direction is plain."
+    "When there is little current information about a company, AI tools lean on whatever older material exists, or say very little. Fresh, specific mentions help: recent reviews from customers and employees, an up-to-date profile on the review sites in your industry and occasional news or articles that mention you. A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode found that brands with no active review profile were rarely cited, while brands with active profiles were cited far more often."
    ],
    [
     "h",
@@ -3076,27 +2899,6 @@ const POSTS = [
       "They read different sources and build answers differently. Perplexity shows its sources clearly, which makes it the easiest place to find the page behind a wrong fact."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Vercel: The rise of the AI crawler, December 2024",
-      "https://vercel.com/blog/the-rise-of-the-ai-crawler"
-     ],
-     [
-      "Nieman Lab: Cloudflare will block AI scraping by default, July 2025",
-      "https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/"
-     ],
-     [
-      "OpenAI: Overview of OpenAI crawlers",
-      "https://developers.openai.com/api/docs/bots"
-     ],
-     [
-      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
-      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
-     ]
-    ]
    ]
   ]
  },
@@ -3122,7 +2924,7 @@ const POSTS = [
    ],
    [
     "p",
-    "In 2026 Trustpilot and SEER Interactive analysed more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode. Three findings matter here:"
+    "A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode looked at how the tools use reviews. Three findings matter here:"
    ],
    [
     "ul",
@@ -3134,7 +2936,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Trustpilot sells review services, so read [the study](https://business.trustpilot.com/marketing/what-ai-says-about-your-brand) with that in mind. The pattern also matches what you see by asking the tools yourself: answers tend to read like \"customers praise X but often mention Y\"."
+    "The study was run by companies that sell review services, so treat the exact figures with some care. The pattern also matches what you see by asking the tools yourself: answers tend to read like \"customers praise X but often mention Y\"."
    ],
    [
     "h",
@@ -3214,16 +3016,7 @@ const POSTS = [
      ],
      [
       "How many reviews does AI need to describe us?",
-      "There is no fixed number. The Trustpilot and SEER study found AI tools cited brands with active review profiles far more often than brands without one."
-     ]
-    ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
-      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+      "There is no fixed number. The 2026 study of AI answers found the tools cited brands with active review profiles far more often than brands without one."
      ]
     ]
    ]
@@ -3366,35 +3159,6 @@ const POSTS = [
       "Most website builders produce pages crawlers can read. Check robots.txt and your security settings, and make sure your key facts are written in text."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "OpenAI: Overview of OpenAI crawlers",
-      "https://developers.openai.com/api/docs/bots"
-     ],
-     [
-      "Perplexity: Perplexity crawlers",
-      "https://docs.perplexity.ai/guides/bots"
-     ],
-     [
-      "Vercel: The rise of the AI crawler, December 2024",
-      "https://vercel.com/blog/the-rise-of-the-ai-crawler"
-     ],
-     [
-      "Nieman Lab: Cloudflare will block AI scraping by default, July 2025",
-      "https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/"
-     ],
-     [
-      "llmstxt.org: The /llms.txt file",
-      "https://llmstxt.org/"
-     ],
-     [
-      "Growfusely: AI citation analysis for B2B software, July 2026",
-      "https://growfusely.com/blog/ai-citation-analysis-b2b-software/"
-     ]
-    ]
    ]
   ]
  },
@@ -3499,27 +3263,6 @@ const POSTS = [
      [
       "What if we only have contact details for some customers?",
       "Ask everyone you can reach in the same way. The problem is choosing who to ask based on how happy you think they are."
-     ]
-    ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Google Maps: Prohibited and restricted content (user contributed content policy)",
-      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
-     ],
-     [
-      "PPC Land: Google tightens Maps review policy, staff names and quotas now banned, April 2026",
-      "https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/"
-     ],
-     [
-      "MediaNama: Summary of the BIS standard for online reviews, IS 19000:2022",
-      "https://www.medianama.com/2022/12/223-summary-bis-standard-online-reviews-e-commerce/"
-     ],
-     [
-      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
-      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
      ]
     ]
    ]
@@ -3648,23 +3391,6 @@ const POSTS = [
       "No. Legitimate review sites do not sell removals, and these offers are usually scams. Report the message to the review site and keep a copy."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Google Maps: Prohibited and restricted content (user contributed content policy)",
-      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
-     ],
-     [
-      "Repulex: Are fake reviews illegal in India? The law on buying, posting and removing reviews, September 2026",
-      "https://www.repulex.com/blog/are-fake-reviews-illegal-in-india"
-     ],
-     [
-      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
-      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
-     ]
-    ]
    ]
   ]
  },
@@ -3768,19 +3494,6 @@ const POSTS = [
      [
       "How long until the rating recovers?",
       "It depends on what happens next. If the company genuinely improves and keeps asking everyone for reviews, newer reviews usually start to outweigh the wave within a few months."
-     ]
-    ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Google Maps: Prohibited and restricted content (user contributed content policy)",
-      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
-     ],
-     [
-      "LiveLaw: Two working days, the Code on Wages and an employee's final settlement, October 2026",
-      "https://www.livelaw.in/articles/two-working-days-code-wages-employee-final-settlement-552780"
      ]
     ]
    ]
@@ -3898,23 +3611,6 @@ const POSTS = [
      [
       "What if the reviews come back negative?",
       "Then you have learnt something useful. Reply honestly, fix what you can and say so in your replies. Candidates trust a mixed page with good replies more than a perfect one."
-     ]
-    ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Google Maps: Prohibited and restricted content (user contributed content policy)",
-      "https://support.google.com/contributionpolicy/answer/7400114?hl=EN"
-     ],
-     [
-      "PPC Land: Google tightens Maps review policy, staff names and quotas now banned, April 2026",
-      "https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/"
-     ],
-     [
-      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
-      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
      ]
     ]
    ]
@@ -4048,27 +3744,6 @@ const POSTS = [
       "As of September 2026 it was still voluntary, according to Repulex's legal guide, though a 2024 draft proposed making it mandatory. Check the current position before relying on it."
      ]
     ]
-   ],
-   [
-    "src",
-    [
-     [
-      "Benesch Law: Five stars, zero tolerance, FTC turns up enforcement under the Consumer Review Rule, April 2026",
-      "https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/"
-     ],
-     [
-      "Taylor Wessing: The CMA steps up its fight against fake reviews, March 2026",
-      "https://www.taylorwessing.com/en/insights-and-events/insights/2026/03/the-cma-steps-up-its-fight-against-fake-reviews"
-     ],
-     [
-      "MediaNama: Summary of the BIS standard for online reviews, IS 19000:2022",
-      "https://www.medianama.com/2022/12/223-summary-bis-standard-online-reviews-e-commerce/"
-     ],
-     [
-      "Repulex: Are fake reviews illegal in India? The law on buying, posting and removing reviews, September 2026",
-      "https://www.repulex.com/blog/are-fake-reviews-illegal-in-india"
-     ]
-    ]
    ]
   ]
  }
@@ -4097,11 +3772,21 @@ function vBlog() {
     <section class="wrap sec"><h2 class="sr">Latest articles</h2><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(postCard).join('')}</div>
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
+function listCard(where) {
+  return `<div class="listcard ${where}"><p class="lc-eye">For businesses</p><h2>List your company for free</h2>
+    <ul class="ticks">${['Verified company page','Reply to customer and employee reviews','Readable by Google and AI search tools'].map(t => `<li>${TICK('var(--gold)')}<span>${t}</span></li>`).join('')}</ul>
+    <a class="btn gold" href="#list">List your company</a>
+    <p class="lc-note">${LAUNCH ? `Basic is free for your first year when you join before ${LAUNCH_END}.` : 'Plans from [[PB]] a year.'}</p></div>`;
+}
 function vPost(p) {
-  const body = p.body.map(postBlock).join('');
+  const blocks = p.body.map(postBlock);
+  const heads = p.body.map((b, i) => b[0] === 'h' ? i : -1).filter(i => i > 0);
+  const at = heads.length > 1 ? heads[1] : Math.min(3, blocks.length);
+  blocks.splice(at, 0, listCard('inline'));
+  const body = blocks.join('');
   const more = POSTS.filter(x => x.id !== p.id).slice(0, 3);
   return `<div class="wrap">${crumbs([['Home','#home'],['Blog','#blog'],[p.title]])}
-    <article class="article" style="padding-top:22px">
+    <div class="postgrid"><article class="article" style="padding-top:22px">
       <p class="eyebrow">${esc(p.cat)}</p>
       <h1 style="font-size:clamp(30px,4.2vw,44px);font-weight:800;line-height:1.12;margin-top:10px">${esc(p.title)}</h1>
       <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span>${p.updated && p.updated !== p.date ? `<span>·</span><span>Updated ${fmtDate(p.updated)}</span>` : ''}</div>
@@ -4109,7 +3794,7 @@ function vPost(p) {
       <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
       ${body}
       <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From [[PB]] a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>
-    </article>
+    </article><aside class="postside">${listCard('side')}</aside></div>
     <section class="sec"><div class="sechead"><h2 style="font-size:24px">More from the blog</h2><a href="#blog" style="font-weight:700">All articles</a></div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${more.map(postCard).join('')}</div></section></div>`;
 }
 

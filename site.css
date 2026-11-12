@@ -238,6 +238,17 @@ details p{margin-top:10px;color:var(--muted);line-height:1.6}
 .article h3{font-size:19px;font-weight:800;margin-top:24px}
 .article a{text-decoration:underline;text-underline-offset:2px}
 .article blockquote{margin:16px 0 0;padding:14px 18px;border-left:4px solid var(--accent);background:var(--surface);border-radius:0 12px 12px 0}
+.postgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:48px}
+.postside{display:none}
+.listcard{background:var(--deep);color:var(--deep-fg);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px}
+.listcard h2{font-size:22px;font-weight:800;line-height:1.2;color:var(--deep-fg);margin:0}
+.listcard .lc-eye{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0}
+.listcard .ticks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.listcard .ticks li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45;color:var(--deep-muted)}
+.listcard .btn{align-self:stretch;justify-content:center;text-decoration:none}
+.listcard .lc-note{font-size:13px;line-height:1.5;color:var(--deep-muted);margin:0}
+.article .listcard.inline{margin-top:30px}
+@media (min-width:1080px){.postgrid{grid-template-columns:minmax(0,720px) 320px;justify-content:space-between}.postside{display:block;padding-top:22px}.postside .listcard{position:sticky;top:110px}.listcard.inline{display:none}}
 .article blockquote p{margin-top:6px;font-size:16px}
 .article blockquote p:first-child{margin-top:0}
 .article .sources li{font-size:15px}

@@ -196,10 +196,10 @@
  },
  {
   "route": "blog-which-review-sites-can-ai-read",
-  "title": "Which review sites can ChatGPT and Perplexity read? · Know The Company",
-  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, Indeed, G2, Clutch, Tripadvisor and more on 12 November 2026. Here is which AI tools each lets in.",
-  "h1": "Which review sites can ChatGPT and Perplexity actually read? We checked",
-  "intro": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of nine well-known review sites."
+  "title": "Can ChatGPT read your reviews? How to check · Know The Company",
+  "desc": "Some review sites tell AI tools to stay away, so reviews there may never reach a ChatGPT or Perplexity answer. How to check any site in two minutes.",
+  "h1": "Can ChatGPT and Perplexity read your reviews? How to check any review site",
+  "intro": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. Here is how to check any site in two minutes."
  },
  {
   "route": "blog-how-to-reply-to-a-bad-review",
