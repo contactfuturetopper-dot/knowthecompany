@@ -16,9 +16,9 @@
  {
   "route": "tools",
   "title": "Free tools · Know The Company",
-  "desc": "Free tools for your career and business: compare job offers, work out a salary hike, set a freelance rate, and estimate gratuity and HRA in India.",
+  "desc": "Free tools for your career and business: work out your in-hand salary, compare job offers, check a salary hike, set a freelance rate, and estimate…",
   "h1": "Free career and company tools",
-  "intro": "Compare companies and offers, check a hike, price your freelance work, and estimate Indian gratuity and HRA. No sign-up needed."
+  "intro": "Work out your in-hand salary, compare offers, check a hike, price your freelance work, and estimate Indian gratuity and HRA. No sign-up needed."
  },
  {
   "route": "why-list",
@@ -151,6 +151,13 @@
   "desc": "Refunds and cancellations for paid Know The Company listings: how autopay works, how to cancel a plan and when a refund applies.",
   "h1": "Refunds and cancellations",
   "intro": ""
+ },
+ {
+  "route": "tool-in-hand",
+  "title": "CTC to in-hand salary calculator · Know The Company",
+  "desc": "CTC to in-hand salary calculator for India, FY 2026-27: monthly take-home after PF, professional tax and income tax, under the new or old regime and the…",
+  "h1": "CTC to in-hand salary calculator",
+  "intro": "See your monthly take-home from a CTC after PF, professional tax and income tax, for FY 2026-27 under the new labour codes."
  },
  {
   "route": "tool-offer",

@@ -93,7 +93,7 @@ await import('./app.test.mjs');
 await new Promise(r => setTimeout(r, 200));
 
 const app = g.document.getElementById('app');
-const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'claim', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
+const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'claim', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-in-hand', 'tool-rate', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
 const report = [];
 for (const r of routes) {
   g.location.hash = r;
@@ -114,7 +114,7 @@ for (const r of routes) {
 // so search engines and AI crawlers that don't run JavaScript get the whole page (astro/src/lib/page.ts).
 {
   globalThis.__memberFn({ loggedIn: false, loading: false, member: null, error: null });
-  const SNAP = ['about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'refunds', 'pricing', 'why-list', 'claim', 'list', 'write-for-us', 'categories', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate'];
+  const SNAP = ['about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'refunds', 'pricing', 'why-list', 'claim', 'list', 'write-for-us', 'categories', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-in-hand', 'tool-rate'];
   const KEEP = new Set(['H2', 'H3', 'H4', 'P', 'UL', 'OL', 'LI', 'A', 'STRONG', 'B', 'EM', 'I', 'SECTION', 'DIV', 'SPAN', 'SMALL', 'DL', 'DT', 'DD', 'BLOCKQUOTE', 'TABLE', 'TR', 'TD', 'TH', 'TBODY', 'THEAD', 'BR', 'DETAILS', 'SUMMARY']);
   const snaps = {};
   for (const r of SNAP) {
@@ -221,10 +221,10 @@ const rf = app.querySelector('form.oreply'); report.push('reply forms: ' + app.q
 if (rf) { rf.querySelector('textarea').value = 'Thank you, we have shared this with the team.'; rf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
 // currency switch on the pricing page
 await go('pricing');
-const before = app.textContent.includes('₹499');
+const before = app.textContent.includes('₹999');
 click('[data-act="cur"][data-cur="USD"]'); await new Promise(r => setTimeout(r, 40));
 const usd = app.textContent;
-report.push('pricing INR first: ' + before + ', after USD: ' + (usd.includes('$9') && usd.includes('$19') && !usd.includes('₹499')));
+report.push('pricing INR first: ' + before + ', after USD: ' + (usd.includes('$19') && usd.includes('$39') && !usd.includes('₹999')));
 click('[data-act="cur"][data-cur="INR"]'); await new Promise(r => setTimeout(r, 40));
 // password reset from the login page (logged out)
 {

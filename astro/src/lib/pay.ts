@@ -15,8 +15,8 @@ import { adminTouched } from "./data";
 
 export const PRICES: Record<string, Record<string, number>> = {
   // smallest currency unit: paise and cents
-  basic: { INR: 49900, USD: 900 },
-  plus: { INR: 99900, USD: 1900 },
+  basic: { INR: 99900, USD: 1900 },
+  plus: { INR: 199900, USD: 3900 },
   business: { INR: 1499900, USD: 17900 },
 };
 export const PLAN_NAMES: Record<string, string> = { basic: "Basic listing", plus: "Plus listing", business: "Business listing" };

@@ -140,7 +140,7 @@ const catIntro = name => CAT_INTROS[name] || `Customer and employee reviews of $
 const PAGE_DESCS = {
   categories: 'Browse startups and growing companies by category, from fintech and education to travel, crypto and food delivery, and read what customers and employees say.',
   search: 'Search Know The Company for any startup or growing company by name or website, and read its customer and employee reviews.',
-  tools: 'Free tools for your career and business: compare job offers, work out a salary hike, set a freelance rate, and estimate gratuity and HRA in India.',
+  tools: 'Free tools for your career and business: work out your in-hand salary, compare job offers, check a salary hike, set a freelance rate, and estimate gratuity and HRA in India.',
   'why-list': 'Why companies list on Know The Company: a verified page, public replies to reviews, and an honest record that customers, job seekers and AI search can find.',
   add: 'Can\'t find a company? Add it to Know The Company and write the first review. The company can claim its page later.',
   claim: 'Claim your company’s page on Know The Company. Verify it in minutes, reply to customer and employee reviews and set up your employer page.',
@@ -163,7 +163,8 @@ const PAGE_DESCS = {
   'tool-hike': 'Salary hike calculator: work out your new salary from a percentage hike, or the hike behind a new offer, in any currency. Free, no sign-up.',
   'tool-rate': 'Freelance rate calculator: find the hourly and day rate you need to hit your income target after business costs, time off and non-billable hours.',
   'tool-gratuity': 'Gratuity calculator for India: estimate the gratuity you get on leaving a job, using the 15/26 formula. Free, no sign-up.',
-  'tool-hra': 'HRA exemption calculator for India: see how much of your house rent allowance is tax-free under the old tax regime. Free, no sign-up.'
+  'tool-hra': 'HRA exemption calculator for India: see how much of your house rent allowance is tax-free under the old tax regime. Free, no sign-up.',
+  'tool-in-hand': 'CTC to in-hand salary calculator for India, FY 2026-27: monthly take-home after PF, professional tax and income tax, under the new or old regime and the new labour codes. Free, no sign-up.'
 };
 const ALL_CATS = ['Accounting & Tax', 'Advertising & Marketing', 'Aerospace & Defense', 'Agriculture & Farming', 'Airlines', 'Architecture & Interior Design', 'Automotive', 'Beauty & Personal Care', 'Chemicals & Materials', 'Construction & Engineering', 'Consumer Brands', 'Consumer Electronics', 'Crypto Exchanges', 'E-commerce & Marketplaces', 'Education & E-learning', 'Energy & Utilities', 'Events & Weddings', 'Fashion & Apparel', 'Fintech & Banking', 'Food & Beverage Brands', 'Food & Delivery', 'Gaming', 'Government & Public Services', 'Groceries & Retail', 'Health & Wellness', 'Healthcare & Hospitals', 'Home & Furniture', 'Home Services & Repairs', 'HR & Staffing', 'Industrial & Manufacturing', 'Insurance', 'IT Services & Consulting', 'Jewellery & Accessories', 'Jobs & Freelancing', 'Legal Services', 'Media & News', 'Mining & Metals', 'Mobility & Logistics', 'Non-profits & NGOs', 'Pets & Animal Care', 'Pharmacy & Medicines', 'Printing & Packaging', 'Professional Services', 'Real Estate', 'Restaurants & Cafés', 'Security Services', 'Semiconductors & Hardware', 'Social Media & Entertainment', 'Sports & Fitness', 'Stock Brokers & Investing', 'Technology & Software', 'Telecom & Internet', 'Textiles', 'Travel & Hospitality', 'Web Hosting & Website Builders'];
 const formCats = () => [...new Set(ALL_CATS.concat(CATS.map(k => k.name)))].filter(n => n !== 'Other').sort((a, b) => a.localeCompare(b)).concat('Other');
@@ -630,9 +631,11 @@ const TOOL_IC = {
   rate: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   gratuity: '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9.5v5M17 9.5v5"/>',
   hra: '<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
+  'in-hand': '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/><path d="M15 15h2"/>',
   fair: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/>'
 };
 const TOOLS = [
+  { id: 'in-hand', name: 'CTC to in-hand salary calculator', d: 'See your monthly take-home from a CTC after PF, professional tax and income tax, for FY 2026-27 under the new labour codes.', tone: 1, region: 'India' },
   { id: 'offer', name: 'Compare job offers', d: 'Weigh two offers on pay, bonus, benefits and costs, and see which is worth more each year.', tone: 2 },
   { id: 'hike', name: 'Salary hike calculator', d: 'Work out your new salary from a hike, or the hike behind an offer. Any currency.', tone: 3 },
   { id: 'rate', name: 'Freelance rate calculator', d: 'Find the hourly and day rate a freelancer or small team needs to hit an income target.', tone: 4 },
@@ -667,6 +670,14 @@ function toolForm(id) {
       ${numF('g-sal', 'Last monthly basic salary plus dearness allowance (₹)', 50000, 'Not your full CTC. Leave out HRA, special allowance and bonus.')}
       <div class="two">${numF('g-years', 'Years of service', 7)}${numF('g-months', 'Extra months', 7)}</div>
       <label class="check"><input id="g-act" type="checkbox" checked data-tool><span>My employer is covered by gratuity law (usually 10 or more employees)</span></label></form>`;
+  if (id === 'in-hand') return `<form class="box" novalidate onsubmit="return false"><h2>Your CTC (yearly, ₹)</h2>
+      <div class="two">${numF('ih-ctc', 'Total CTC', 1200000, 'The yearly figure on your offer letter')}${numF('ih-var', 'Variable pay or bonus inside the CTC', 0, 'Paid separately, not every month')}</div>
+      <div class="two">${numF('ih-basic', 'Basic salary as a share of fixed pay', 40, 'Percent. Check your offer letter; 40% to 50% is common.')}${numF('ih-pt', 'Professional tax (yearly)', 2500, 'Up to ₹2,500 in most states. Use 0 where there is none, such as Delhi.')}</div>
+      <div class="two"><div class="field"><label class="l" for="ih-regime">Tax regime</label><select id="ih-regime" data-tool><option value="new" selected>New regime (default)</option><option value="old">Old regime</option></select></div>
+      <div class="field"><label class="l" for="ih-pf">Provident fund (PF)</label><select id="ih-pf" data-tool><option value="cap" selected>12% of basic, capped at ₹15,000 a month</option><option value="full">12% of full basic</option><option value="none">No PF</option></select></div></div>
+      ${numF('ih-ded', 'Old regime only: deductions apart from PF', 0, '80C (beyond PF), 80D, HRA exemption, home loan interest. Ignored under the new regime.')}
+      <label class="check"><input id="ih-lc" type="checkbox" checked data-tool><span>Apply the new labour codes: basic pay is at least 50% of fixed pay</span></label>
+      <label class="check"><input id="ih-grat" type="checkbox" checked data-tool><span>My CTC includes gratuity (4.81% of basic)</span></label></form>`;
   if (id === 'hra') return `<form class="box" novalidate onsubmit="return false"><h2>Your salary and rent (yearly, ₹)</h2>
       <div class="two">${numF('x-basic', 'Basic salary plus dearness allowance', 720000)}${numF('x-hra', 'HRA received', 300000)}</div>
       ${numF('x-rent', 'Rent paid', 300000)}
@@ -677,6 +688,39 @@ function toolForm(id) {
       <div class="field"><label class="l" for="c-b">Second company</label><input id="c-b" list="co-list" type="text" value="${esc(S.cmpB || 'Monzo')}" data-tool></div></div>
       <div id="cmp-out"></div></form>`; }
   return '';
+}
+
+/* CTC to in-hand, FY 2026-27 (tax year from 1 April 2026). Slabs and rebate as in Budget 2025, unchanged by Budget 2026. */
+const IH_SLABS = {
+  new: [[400000, 0], [800000, .05], [1200000, .10], [1600000, .15], [2000000, .20], [2400000, .25], [Infinity, .30]],
+  old: [[250000, 0], [500000, .05], [1000000, .20], [Infinity, .30]]
+};
+const IH_SURCHARGE = { new: [[5000000, .10], [10000000, .15], [20000000, .25]], old: [[5000000, .10], [10000000, .15], [20000000, .25], [50000000, .37]] };
+function slabTax(inc, slabs) { let t = 0, lo = 0; for (const [hi, r] of slabs) { if (inc > lo) t += (Math.min(inc, hi) - lo) * r; lo = hi; } return t; }
+function incomeTax(inc, regime) {
+  inc = Math.max(0, inc);
+  let t = slabTax(inc, IH_SLABS[regime]);
+  /* Section 87A rebate, with marginal relief just above the limit under the new regime */
+  if (regime === 'new') { if (inc <= 1200000) t = 0; else t = Math.min(t, inc - 1200000); }
+  else if (inc <= 500000) t = 0;
+  /* Surcharge, with marginal relief at each threshold */
+  let rate = 0, th = 0; for (const [lim, r] of IH_SURCHARGE[regime]) if (inc > lim) { rate = r; th = lim; }
+  if (rate) { const below = IH_SURCHARGE[regime].filter(x => x[0] < th).pop(), at = slabTax(th, IH_SLABS[regime]) * (1 + (below ? below[1] : 0)); t = Math.min(t * (1 + rate), at + (inc - th)); }
+  return Math.round(t * 1.04);
+}
+function inHand(o) {
+  const fixed = Math.max(0, o.ctc - o.vr);
+  const pctUsed = Math.min(100, Math.max(0, o.lc ? Math.max(o.pct, 50) : o.pct));
+  /* CTC = gross pay + employer PF + gratuity, and basic is a share of fixed CTC */
+  const basic = fixed * pctUsed / 100;
+  const pfOf = b => o.pf === 'none' ? 0 : o.pf === 'full' ? b * .12 : Math.min(b, 180000) * .12;
+  const erPF = pfOf(basic), eePF = erPF, gratuity = o.grat ? basic * .0481 : 0;
+  const gross = Math.max(0, fixed - erPF - gratuity);
+  const taxable = (g) => o.regime === 'new' ? g - 75000 : g - 50000 - o.pt - Math.min(150000, eePF) - o.ded;
+  const taxFixed = incomeTax(taxable(gross), o.regime), tax = incomeTax(taxable(gross + o.vr), o.regime);
+  const month = (gross - eePF - o.pt - taxFixed) / 12;
+  const bonusNet = o.vr - (tax - taxFixed);
+  return { pctUsed: Math.round(pctUsed), basic, erPF, eePF, gratuity, gross, tax, month: Math.max(0, month), bonusNet, year: Math.max(0, month * 12 + bonusNet) };
 }
 
 function toolResult(id) {
@@ -704,6 +748,26 @@ function toolResult(id) {
       <div class="row2"><span>Years counted</span><b>${yrs}</b></div><div class="row2"><span>Formula</span><b>${act ? 'Salary × 15 ÷ 26 × years' : 'Salary × 15 ÷ 30 × years'}</b></div>
       ${months < 60 ? '<div class="warn">Permanent employees usually need 5 years of continuous service to get gratuity. Fixed-term employees, and cases of death or disability, have different rules.</div>' : ''}
       <p class="note">${act ? 'A final part-year of 6 months or more counts as a full year.' : 'Only completed years count.'} An estimate only: India's new labour codes change how wages are defined, and part of a large gratuity can be taxable. Check with your employer or a tax adviser.</p>`; }
+  if (id === 'in-hand') {
+    const ctc = tv('ih-ctc'), vr = Math.min(tv('ih-var'), ctc), pt = tv('ih-pt'), pf = tv('ih-pf'), lc = tv('ih-lc'), grat = tv('ih-grat'), ded = tv('ih-ded'), regime = tv('ih-regime');
+    if (ctc <= 0) return '<h2>Result</h2><div class="warn">Enter your yearly CTC above 0.</div>';
+    const r = inHand({ ctc, vr, pt, pf, lc, grat, ded, regime, pct: tv('ih-basic') });
+    const other = inHand({ ctc, vr, pt, pf, lc, grat, ded, regime: regime === 'new' ? 'old' : 'new', pct: tv('ih-basic') });
+    const noLc = lc && r.pctUsed > tv('ih-basic') ? inHand({ ctc, vr, pt, pf, lc: false, grat, ded, regime, pct: tv('ih-basic') }) : null;
+    const m = n => money('₹', n);
+    return `<h2>Result</h2><div><span class="note">Monthly in-hand salary</span><div class="big">${m(r.month)}</div></div>
+      <div class="row2"><span>Yearly in-hand${vr > 0 ? ', including bonus' : ''}</span><b>${m(r.year)}</b></div>
+      ${vr > 0 ? `<div class="row2"><span>Bonus after tax</span><b>${m(r.bonusNet)}</b></div>` : ''}
+      <div class="row2"><span>Basic pay (${r.pctUsed}% of fixed)</span><b>${m(r.basic)}</b></div>
+      <div class="row2"><span>Employer PF, part of CTC</span><b>${m(r.erPF)}</b></div>
+      ${grat ? `<div class="row2"><span>Gratuity, part of CTC</span><b>${m(r.gratuity)}</b></div>` : ''}
+      <div class="row2"><span>Your PF</span><b>${m(r.eePF)}</b></div>
+      <div class="row2"><span>Professional tax</span><b>${m(pt)}</b></div>
+      <div class="row2"><span>Income tax and cess</span><b>${m(r.tax)}</b></div>
+      <div class="row2"><span>Tax as a share of CTC</span><b>${(r.tax / ctc * 100).toFixed(1)}%</b></div>
+      <div class="row2"><span>Under the ${regime === 'new' ? 'old' : 'new'} regime</span><b>${m(other.month)} a month</b></div>
+      ${noLc ? `<div class="row2"><span>Without the labour code rule</span><b>${m(noLc.month)} a month</b></div>` : ''}
+      <p class="note">Your PF still belongs to you: it goes into your PF account, not to the government. This is an estimate for FY 2026-27 using the published slabs, the ₹75,000 standard deduction (₹50,000 in the old regime) and the rebate that makes income up to ₹12 lakh tax-free under the new regime. Employers structure pay differently, so check your payslip. A bigger in-hand is worth less at a company with poor reviews. <a href="#search" style="color:var(--gold)">Check the company</a>.</p>`; }
   if (id === 'hra') { const basic = tv('x-basic'), hra = tv('x-hra'), rent = tv('x-rent'), metro = tv('x-metro');
     const l1 = hra, l2 = basic * (metro ? .5 : .4), l3 = Math.max(0, rent - basic * .1), ex = Math.max(0, Math.min(l1, l2, l3));
     return `<h2>Estimate</h2><div><span class="note">Tax-free HRA this year</span><div class="big">${money('₹', ex)}</div></div>
@@ -734,7 +798,7 @@ function runTool() {
   const r = document.getElementById('tool-res'); if (r) r.innerHTML = toolResult(x.id);
 }
 function vTools() {
-  return `<section class="band"><div class="wrap" style="padding-block:44px 32px;display:flex;flex-direction:column;gap:10px">${crumbs([['Home','#home'],['Tools']])}<h1 style="font-size:clamp(32px,4vw,44px)">Free career and company tools</h1><p style="font-size:18px;color:var(--muted);max-width:640px">Compare companies and offers, check a hike, price your freelance work, and estimate Indian gratuity and HRA. No sign-up needed.</p></div></section>
+  return `<section class="band"><div class="wrap" style="padding-block:44px 32px;display:flex;flex-direction:column;gap:10px">${crumbs([['Home','#home'],['Tools']])}<h1 style="font-size:clamp(32px,4vw,44px)">Free career and company tools</h1><p style="font-size:18px;color:var(--muted);max-width:640px">Work out your in-hand salary, compare offers, check a hike, price your freelance work, and estimate Indian gratuity and HRA. No sign-up needed.</p></div></section>
     <section class="wrap sec" style="padding-top:32px"><div class="toolgrid">${TOOLS.map(toolCard).join('')}</div></section>`;
 }
 function vTool(x) {
@@ -1199,9 +1263,9 @@ const EMP_SIZES = ['1–10 people','11–50 people','51–200 people','201–1,0
 let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We are a small, senior team that pairs every new hire with a mentor, keeps meetings light and protects focus time.', benefits: ['Health insurance','Paid time off','Training and courses','Remote or hybrid work'], size: '11–50 people', hiring: true, roles: 'Product designer, Frontend developer' });
 
 /* ---------- jobs ---------- */
-/* Launch switch: true = free listings and free extra job posts. Set to false to start charging ₹499 and ₹99. */
+/* Launch switch: true = free listings and free extra job posts. Set to false to start charging ₹999 and ₹99. */
 const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '[[PB]] a year';
-const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30, BUSINESS_PRICE = 14999, INVITES_A_MONTH = 1000, TEAM_MAX = 5, LOCATIONS_MAX = 5;
+const BASIC_PRICE = 999, PLUS_PRICE = 1999, PLUS_TRIAL_DAYS = 30, BUSINESS_PRICE = 14999, INVITES_A_MONTH = 1000, TEAM_MAX = 5, LOCATIONS_MAX = 5;
 const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
 const PLUS_PERKS = ['Bring your past reviews: we confirm each one with the reviewer, then publish it', 'Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Website badge with your live rating','Priority support'];
 const BUSINESS_PERKS = [`Review invitations: up to ${INVITES_A_MONTH.toLocaleString('en-IN')} emails a month, plus WhatsApp invite links`, 'Rating trends and a monthly report', `Up to ${LOCATIONS_MAX} locations or branches on your page`, `Up to ${TEAM_MAX} team logins`, 'Verification checked within 1 working day', 'Export your reviews as a spreadsheet'];
@@ -1539,8 +1603,8 @@ function claimPanel() {
 function calcOut(sale) {
   const n = p => Math.max(1, Math.ceil(p / Math.max(1, sale)));
   const c = p => `${n(p)} new ${n(p) === 1 ? 'customer' : 'customers'} a year`;
-  return `<div><small>Basic, ₹499 a year</small><b>${n(499)}</b><em>${c(499)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
-    <div><small>Plus, ₹${PLUS_PRICE} a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
+  return `<div><small>Basic, ₹${BASIC_PRICE.toLocaleString('en-IN')} a year</small><b>${n(BASIC_PRICE)}</b><em>${c(BASIC_PRICE)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
+    <div><small>Plus, ₹${PLUS_PRICE.toLocaleString('en-IN')} a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
 }
 /* Claim: the company is already on the site. List (vList): the company isn't, so it is added first.
    Both use the same three-step form (claimPanel), with S.flow telling it which one it is. */
@@ -3886,7 +3950,7 @@ const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this sit
 /* ---------- currency switch ----------
    Plan prices show in rupees or US dollars. Visitors outside India's time zone start in dollars, and the
    choice is remembered in this browser. Legal pages always state both. */
-const CUR_PRICES = { INR: { PB: '₹499', PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), PZ: '₹' + BUSINESS_PRICE.toLocaleString('en-IN'), DB: 'About ₹42 a month', DP: 'About ₹83 a month', DZ: 'About ₹1,250 a month' }, USD: { PB: '$9', PP: '$19', PZ: '$179', DB: 'About 75 cents a month', DP: 'About $1.60 a month', DZ: 'About $15 a month' } };
+const CUR_PRICES = { INR: { PB: '₹' + BASIC_PRICE.toLocaleString('en-IN'), PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), PZ: '₹' + BUSINESS_PRICE.toLocaleString('en-IN'), DB: 'About ₹83 a month', DP: 'About ₹167 a month', DZ: 'About ₹1,250 a month' }, USD: { PB: '$19', PP: '$39', PZ: '$179', DB: 'About $1.60 a month', DP: 'About $3.25 a month', DZ: 'About $15 a month' } };
 const curDefault = () => { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; return /Asia\/(Kolkata|Calcutta)/.test(z) || !z ? 'INR' : 'USD'; } catch (e) { return 'INR'; } };
 const curNow = () => { const v = store.get('ktc_cur', ''); return v === 'USD' || v === 'INR' ? v : curDefault(); };
 const curText = html => { const P = CUR_PRICES[curNow()]; return String(html).replace(/\[\[(PB|PP|PZ|DB|DP|DZ)\]\]/g, (m, k) => P[k]); };
@@ -3900,7 +3964,7 @@ function vTerms() {
     ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.', 'An account that has written reviews cannot claim or manage a company. To manage a company, delete your reviewer account first and use a separate account.', 'Reviews written by an account that manages a company are not shown and do not count towards any rating, including reviews written before the account became a company account.']],
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
     ['3. Employee reviews', ['Post only your own experience as an employee, contractor or intern.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
-    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. Business costs ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India, with no free period. It adds review invitations, reports, branches and team logins. If Plus or Business is cancelled, the profile moves to Basic when the year you paid for ends. Moving up to a higher plan stops the lower plan's autopay, so you never pay for two plans at once.`, `Review invitations: you may only invite people who bought from you or worked with you, and you must invite all of them, not only those you expect to be happy. Invitations ask for an honest review, good or bad. You are responsible for having permission to contact the people you invite.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
+    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹${BASIC_PRICE.toLocaleString('en-IN')} a year in India, or $19 a year outside India.` : `Basic costs ₹${BASIC_PRICE.toLocaleString('en-IN')} a year in India, or $19 a year outside India.`, `Plus costs ₹${PLUS_PRICE.toLocaleString('en-IN')} a year in India, or $39 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. Business costs ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India, with no free period. It adds review invitations, reports, branches and team logins. If Plus or Business is cancelled, the profile moves to Basic when the year you paid for ends. Moving up to a higher plan stops the lower plan's autopay, so you never pay for two plans at once.`, `Review invitations: you may only invite people who bought from you or worked with you, and you must invite all of them, not only those you expect to be happy. Invitations ask for an honest review, good or bad. You are responsible for having permission to contact the people you invite.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
@@ -3957,7 +4021,7 @@ function vPricing() {
 }
 function vRefunds() {
   return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
-    ['1. What you pay for', [`Basic listing: ₹499 a year in India, or $9 a year outside India. Plus listing: ₹${PLUS_PRICE} a year in India, or $19 a year outside India. Business listing: ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
+    ['1. What you pay for', [`Basic listing: ₹${BASIC_PRICE.toLocaleString('en-IN')} a year in India, or $19 a year outside India. Plus listing: ₹${PLUS_PRICE.toLocaleString('en-IN')} a year in India, or $39 a year outside India. Business listing: ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
     ['2. How the service is delivered', ['You can choose and pay for a plan as soon as you send your claim. A website check verifies you straight away; documents and ID cards are checked by our team, usually within 2 working days, and your Verified badge and listing tools switch on when the check passes.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
     ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free. Business has no free period.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you set up autopay. We email you before it ends.']],
     ['4. Autopay and cancelling', ['Paid plans renew every year by autopay on the card, UPI or bank mandate you used. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time, by writing to knowthecompanysupport@gmail.com from the email address on your listing, or by cancelling the mandate in your UPI app or with your bank.', 'When you cancel, no further charges are made and your tools stay active until the end of the year you paid for.', 'If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.']],
