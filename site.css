@@ -505,7 +505,7 @@ h1,h2,h3,.brand b{letter-spacing:-0.025em}
 .jtile b{font-size:17px;display:block}
 .jtile .meta{font-size:13px}
 .soon{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--gold-soft);color:var(--gold-ink);border-radius:6px;padding:2px 6px;margin-left:6px;vertical-align:2px}
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;align-items:stretch;max-width:920px;margin:0 auto}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:stretch;max-width:1240px;margin:0 auto}
 .plans .price{max-width:none;box-shadow:var(--shadow-md);border:1px solid var(--line)}
 .plans .price.plus{border:2px solid var(--accent)}
 .plans .price .btn{margin-top:auto}

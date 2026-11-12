@@ -14,7 +14,21 @@ g.window.HTMLElement.prototype.scrollIntoView = function () {};
 g.window.confirm = () => true;
 g.confirm = () => true;
 g.requestAnimationFrame = f => setTimeout(f, 0);
-g.fetch = g.window.fetch = async u => { throw new Error('no network in tests: ' + u); };
+/* The site's own server, faked for the Business tools: everything else has no network. */
+g.__api = [];
+g.fetch = g.window.fetch = async (u, o = {}) => {
+  const url = String(u);
+  if (url.startsWith('/api/invite/') || url.startsWith('/api/team/') || url.startsWith('/api/pay/status')) {
+    const body = JSON.parse(o.body || '{}'); g.__api.push([url, body]);
+    const ok = d => new Response(JSON.stringify(d), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    if (url === '/api/invite/status') return ok({ email: true, month: '2026-11', sent: 10, limit: 1000 });
+    if (url === '/api/invite/send') return ok({ ok: true, sent: body.emails.length, skippedRecent: 0, skippedOptOut: 0, invalid: 0, left: 990 - body.emails.length });
+    if (url === '/api/team/list') return ok({ max: 5, members: [{ id: 'm1', name: 'Owner', you: true }, { id: 'm11', name: 'Teammate Tara' }] });
+    if (url === '/api/team/invite') return ok({ ok: true, link: 'https://www.knowthecompany.com/#join-team-' + 'a'.repeat(48), days: 7 });
+    if (url === '/api/pay/status') return ok({ ready: true, plan: 'business', planEndsAt: '2027-11-12T00:00:00Z', billing: [] });
+  }
+  throw new Error('no network in tests: ' + url);
+};
 for (const id of ['a-cat', 'a-cc', 'a-name', 'a-web', 'b-agree', 'b-cat', 'b-country', 'b-role', 'b-type', 'hj-what', 'hj-where', 'l-code', 'l-email', 'l-pass', 'r-body', 'r-date', 'r-role', 'r-title', 'reply-text']) Object.defineProperty(g.window.HTMLFormElement.prototype, id, { get() { return this.querySelector('#' + id); }, configurable: true });
 
 // CSV -> company items, plus a few published reviews of each type
@@ -27,7 +41,7 @@ const companies = csv.slice(1).map(l => { const r = Object.fromEntries(hdr.map((
 companies.push({ _id: 'pendingco.com', title: 'PENDINGCO', slug: 'pendingco', website: 'pendingco.com', category: 'Fintech & Banking', country: 'IN', bio: '', addedBy: 'owner', claimStatus: 'none', plan: 'none', _owner: 'm8', _createdDate: '2026-11-12T00:00:00Z', _updatedDate: '2026-11-12T00:00:00Z' });
 companies.push({ _id: 'fakeco.com', title: 'Fakeco', slug: 'fakeco', website: 'fakeco.com', category: 'Fintech & Banking', country: 'IN', bio: 'Inserted by a member.', addedBy: 'reviewer', claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', ownerMemberIds: ['m9'], employerPage: { why: 'FAKE EMPLOYER PAGE text that must never show.', benefits: [], hiring: true }, _owner: 'm9', _createdDate: '2026-11-09T00:00:00Z', _updatedDate: '2026-11-09T00:00:00Z' });
 companies.find(c => c._id === 'razorpay.com').logo = 'https://static.wixstatic.com/media/c0f544_test~mv2.png';
-Object.assign(companies.find(c => c._id === 'razorpay.com'), { claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', about: 'About text', founded: '2014', teamSize: '201–1,000 people', services: ['Payments'], phone: '+91 80000 00000', publicEmail: 'x@y.z', employerPage: { why: 'Why work here text, long enough.', benefits: ['Health insurance'], size: '201–1,000 people', hiring: true }, ownerMemberIds: ['m1'] });
+Object.assign(companies.find(c => c._id === 'razorpay.com'), { claimStatus: 'verified', verifiedVia: 'email', plan: 'business', about: 'About text', founded: '2014', teamSize: '201–1,000 people', services: ['Payments'], phone: '+91 80000 00000', publicEmail: 'x@y.z', employerPage: { why: 'Why work here text, long enough.', benefits: ['Health insurance'], size: '201–1,000 people', hiring: true }, ownerMemberIds: ['m1'] });
 const reviews = [
   { _id: 'r1', _owner: 'm4', _createdDate: '2026-11-01T00:00:00Z', _updatedDate: '2026-11-01T01:00:00Z', company: 'razorpay.com', type: 'customer', displayName: 'Asha K.', rating: 4, title: 'Quick settlements', body: 'Payments settled in two days and support answered quickly.' },
   { _id: 'r2', _owner: 'm2', _createdDate: '2026-11-02T00:00:00Z', _updatedDate: '2026-11-02T01:00:00Z', company: 'razorpay.com', type: 'employee', anonymous: true, rating: 3, subRatings: { pay: 3 }, pros: 'Good people and learning culture here.', cons: 'Long hours during launches, every quarter.', recommend: 'yes', employmentStatus: 'Current employee', jobTitle: 'Engineer', tenure: '1–3 years' },
@@ -59,7 +73,7 @@ g.__mock = {
   removeItem: async (col, id) => { inserted.push([col + ' remove', id]); return null; },
   wixRequest: async (path, opts) => { inserted.push(['wixRequest', opts.body]); if (/recovery/.test(path)) { inserted.push(['recovery', path]); return {}; } return { dataItem: { data: opts.body.dataItem.data } }; },
   WIX_CLIENT_ID: 'test-client',
-  toItem: x => x, imgSrc: () => '', imgRatio: () => 1,
+  toItem: x => x, imgSrc: () => '', imgRatio: () => 1, accessToken: async () => 'Bearer test-token',
   member: { member: { id: 'm5', loginEmail: 'asha@example.com', displayName: 'Asha K.' }, loggedIn: true, loading: false, error: null }
 };
 let src = fs.readFileSync('../app.js', 'utf8');
@@ -171,7 +185,28 @@ report.push('past reviews tab: form ' + !!app.querySelector('#import-form'));
     imf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }
   report.push('past review sent: ' + JSON.stringify(inserted.filter(x => x[0] === 'ReviewImports').map(x => [x[1].company, x[1].status, x[1].rating]))); }
 click('[data-act="dash-tab"][data-tab="plan"]'); await new Promise(r => setTimeout(r, 80));
-report.push('plan tab: ' + /Plan and payments/.test(app.textContent) + ', plus offer: ' + !!app.querySelector('[data-act="pay-start"][data-plan="plus"]') + ', basic autopay offer: ' + !!app.querySelector('[data-act="pay-start"][data-plan="basic"]'));
+report.push('plan tab: ' + /Plan and payments/.test(app.textContent) + ', business plan shown: ' + /Business plan/.test(app.textContent) + ', continue business: ' + !!app.querySelector('[data-act="pay-start"][data-plan="business"]') + ', plus offer (should be false): ' + !!app.querySelector('[data-act="pay-start"][data-plan="plus"]') + ', basic offer (should be false): ' + !!app.querySelector('[data-act="pay-start"][data-plan="basic"]'));
+click('[data-act="dash-tab"][data-tab="business"]'); await new Promise(r => setTimeout(r, 120));
+report.push('business tab: ' + /Review invitations/.test(app.textContent) + ', quota: ' + /10 of 1,000/.test(app.textContent) + ', whatsapp: ' + app.querySelectorAll('a[href^="https://wa.me/?text="]').length + ', trends: ' + /Rating trends/.test(app.textContent) + ', team: ' + /Teammate Tara/.test(app.textContent));
+{ const ta = app.querySelector('#biz-list'); ta.value = 'Name,Email\nAsha,asha@example.com\nRavi,RAVI@example.com; ravi@example.com\nbad@@x'; ta.dispatchEvent(new g.window.Event('input', { bubbles: true }));
+  const send = () => app.querySelector('[data-act="biz-send"]');
+  report.push('invite list parsed: ' + app.querySelector('#biz-count').textContent + ', send locked until full-list box ticked: ' + send().disabled);
+  const full = app.querySelector('#biz-full'); full.checked = true; full.dispatchEvent(new g.window.Event('change', { bubbles: true }));
+  send().click(); await new Promise(r => setTimeout(r, 120));
+  const sent = g.__api.find(x => x[0] === '/api/invite/send');
+  report.push('invite request: ' + JSON.stringify(sent && sent[1]) + ', result shown: ' + /Sent 2 invitations/.test(app.textContent)); }
+click('[data-act="biz-team-invite"]'); await new Promise(r => setTimeout(r, 120));
+report.push('team link shown: ' + !!(app.querySelector('#biz-link') && app.querySelector('#biz-link').value.includes('#join-team-')));
+{ const row = app.querySelector('#biz-locs .locrow'); row.querySelector('[data-k="name"]').value = 'Agra, Sanjay Place'; row.querySelector('[data-k="address"]').value = '12 Sanjay Place, Agra'; click('[data-act="biz-loc-save"]'); await new Promise(r => setTimeout(r, 80));
+  const saved = inserted.filter(x => (x[0] === 'OwnerContent' || x[0] === 'OwnerContent update') && x[1].kind === 'profile').pop();
+  report.push('branches saved: ' + JSON.stringify(saved && saved[1].data && saved[1].data.locations)); }
+{ let csv = ''; const B = g.window.Blob; g.window.URL.createObjectURL = b => { b.text().then(t => { csv = t; }); return 'blob:x'; }; g.window.URL.revokeObjectURL = () => {};
+  click('[data-act="biz-report"]'); await new Promise(r => setTimeout(r, 40)); report.push('monthly report rows: ' + (csv.trim().split('\n').length - 1) + ', header ok: ' + csv.includes('Customer average'));
+  click('[data-act="biz-export"]'); await new Promise(r => setTimeout(r, 40)); report.push('export has reviews: ' + csv.includes('Quick settlements')); }
+await go('co-razorpay'); report.push('branches on public page: ' + /Branches/.test(app.textContent) + ' ' + app.textContent.includes('12 Sanjay Place, Agra'));
+await go('pricing'); report.push('pricing shows Business: ' + /Business listing/.test(app.textContent) + ', price: ' + app.textContent.includes('₹14,999'));
+await go('list'); report.push('list page Business card: ' + !!app.querySelector('[data-act="pick-plan"][data-plan="business"]') + ', perks: ' + app.textContent.includes('Up to 5 team logins'));
+await go('dashboard');
 click('[data-act="dash-tab"][data-tab="page"]'); await new Promise(r => setTimeout(r, 40));
 const pf = app.querySelector('#cprof-form'); report.push('company page form: ' + !!pf + ', photos shown: ' + app.querySelectorAll('.gallery img').length);
 if (pf) { pf.querySelector('#cp-about').value = 'We build payment tools for small and growing businesses across India and abroad.'; pf.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60)); }

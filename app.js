@@ -38,7 +38,7 @@ function urlFor(r) {
   if (r === 'not-found') return location.pathname;
   return '/#' + r;
 }
-const isRoute = r => r === 'home' || r === 'sample' || PAGE_ROUTES.includes(r) || r.startsWith('invite-') || !!(BYID[r] || CATBYID[r] || POSTBYID[r] || TOOLBYID[r]);
+const isRoute = r => r === 'home' || r === 'sample' || PAGE_ROUTES.includes(r) || r.startsWith('invite-') || r.startsWith('join-team-') || !!(BYID[r] || CATBYID[r] || POSTBYID[r] || TOOLBYID[r]);
 /* Swap the address bar to the page's clean address (keeps any ?query). */
 function canonicalUrl() {
   const u = urlFor(curRoute());
@@ -180,7 +180,7 @@ function indexCompanies(items) {
   CATBYID = Object.fromEntries(CATS.map(c => [c.id, c]));
   FORM_CATS = formCats();
   for (const k of Object.keys(CLAIMS)) delete CLAIMS[k];
-  COS.forEach(c => { const s = c.raw.claimStatus; if (s === 'verified' || s === 'pending') CLAIMS[c.id] = { verified: s === 'verified' ? (c.raw.verifiedVia || 'email') : 'pending', plan: c.raw.plan === 'plus' ? 'plus' : 'basic' }; });
+  COS.forEach(c => { const s = c.raw.claimStatus; if (s === 'verified' || s === 'pending') CLAIMS[c.id] = { verified: s === 'verified' ? (c.raw.verifiedVia || 'email') : 'pending', plan: ['plus', 'business'].includes(c.raw.plan) ? c.raw.plan : 'basic' }; });
   computeFeatured();
 }
 function addCompanyLocal(it) { const c = mkCo(it); COS.push(c); BYID[c.id] = c; BYWID[c.wid] = c; ensureCat(c.cat, c.catId).items.push(c); FORM_CATS = formCats(); return c; }
@@ -223,7 +223,7 @@ function indexReviews(items) {
     const team = adminTouched(r); /* labels and replies only count once the team has set them: see "trust" above */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
     const imported = team && r.importedFrom ? { from: String(r.importedFrom), date: monthOf(r.originalDate || '') } : null; /* a past review a Plus company shared, confirmed with its writer by the team */
-    const base = { wid: r._id, by: r._owner || (MINE.has(r._id) && S.user ? S.user.id : ''), type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
+    const base = { wid: r._id, by: r._owner || (MINE.has(r._id) && S.user ? S.user.id : ''), type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), ym: String((imported && r.originalDate) || r._createdDate || '').slice(0, 7), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
     else if (r.type === 'interview') empBucket(c.id).interviews.push({ ...base, role: r.jobTitle || '', outcome: r.interviewOutcome || '', diff: r.interviewDifficulty || '', exp: r.interviewExperience || '', process: r.body || '', questions: r.interviewQuestions || '' });
     else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: team && !!r.proofChecked, invited: !!r.invited });
@@ -252,7 +252,7 @@ function applyData(cos, rvs, own) { LAST = { cos, rvs, own: own || [] }; indexCo
    Any member can add an item there, and only its author can change or remove it. An item counts only when its
    author is listed in the company's ownerMemberIds, which only the site admin can set, so nobody can edit a
    company they don't own, and ratings, plans and verification stay admin-only in Companies. */
-const OWN_KEYS = { about: 'about', founded: 'founded', size: 'teamSize', hq: 'headquarters', web2: 'website2', services: 'services', hours: 'hours', phone: 'phone', email: 'publicEmail', address: 'address', socials: 'socials', updates: 'updates', logo: 'logo', employerPage: 'employerPage' };
+const OWN_KEYS = { about: 'about', founded: 'founded', size: 'teamSize', hq: 'headquarters', web2: 'website2', services: 'services', hours: 'hours', phone: 'phone', email: 'publicEmail', address: 'address', socials: 'socials', updates: 'updates', logo: 'logo', employerPage: 'employerPage', locations: 'locations' };
 const PROF = {}, MEDIA = {};
 const ownsCo = (c, member) => !!(c && member && (c.raw.ownerMemberIds || []).includes(member));
 /* Reviewer and company accounts are kept apart. A company account (one that owns or has claimed a company)
@@ -1180,9 +1180,10 @@ let EMPLOYER = store.get('tn_employer', { sample: true, why: 'Example text. We a
 /* ---------- jobs ---------- */
 /* Launch switch: true = free listings and free extra job posts. Set to false to start charging ₹499 and ₹99. */
 const LAUNCH = true, LAUNCH_END = '31 March 2027', PLAN_PRICE = '[[PB]] a year';
-const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30;
+const PLUS_PRICE = 999, PLUS_TRIAL_DAYS = 30, BUSINESS_PRICE = 14999, INVITES_A_MONTH = 1000, TEAM_MAX = 5, LOCATIONS_MAX = 5;
 const BASIC_PERKS = ['Verified company badge','Reply publicly to customer and employee reviews','Logo, description and opening hours','A clickable link to your website','Employer branding page','Review links for customers and employees'];
 const PLUS_PERKS = ['Bring your past reviews: we confirm each one with the reviewer, then publish it', 'Call, WhatsApp and email buttons, plus social links','Photo gallery (up to 10) and a cover banner','No “similar companies” suggestions on your profile','Offers and updates: 2 posts a month','Website badge with your live rating','Priority support'];
+const BUSINESS_PERKS = [`Review invitations: up to ${INVITES_A_MONTH.toLocaleString('en-IN')} emails a month, plus WhatsApp invite links`, 'Rating trends and a monthly report', `Up to ${LOCATIONS_MAX} locations or branches on your page`, `Up to ${TEAM_MAX} team logins`, 'Verification checked within 1 working day', 'Export your reviews as a spreadsheet'];
 const planOf = () => (S.user && S.user.plan) || 'basic';
 const JOBS_ON = false; /* job posts: coming soon. Set to true to switch the whole jobs feature back on. */
 const FREE_JOBS = 5, EXTRA_JOB = 99, JOB_DAYS = 60;
@@ -1269,7 +1270,7 @@ const FAQS = [
   ['What if someone posts a bad review?', 'Reply publicly with your side, calmly and with facts. If it breaks our guidelines, report it and we check it. We never remove reviews just because they are negative, and an honest reply often wins more trust than a perfect score.'],
   ['Does this help if the site is new?', 'Yes. Your page link and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
 
-  ['What’s the difference between Basic and Plus?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus ([[PP]] a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Both plans are reviewed and rated exactly the same way.`],
+  ['What’s the difference between Basic, Plus and Business?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus ([[PP]] a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Business ([[PZ]] a year) adds review invitations by email and WhatsApp, rating trends, up to ${LOCATIONS_MAX} branches and up to ${TEAM_MAX} team logins. Every plan is reviewed and rated exactly the same way.`],
   LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs [[PB]] a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?','[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
   ['Will a verified listing improve my rating?','No. Ratings come only from reviews. Verified and unverified companies are reviewed and moderated the same way.'],
   ['Can I remove a bad review?','No, but you can reply publicly, and report a review that breaks our guidelines so our team can check it.'],
@@ -1359,6 +1360,15 @@ function rvList(list, cid) {
 }
 const WARNINGS = {};
 const warnBan = (c, w) => `<div class="wrap"><div class="warnban" role="note">${svgI('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>', 22)}<div><b>Warning: review manipulation</b>On ${esc(w.date)}, we found evidence that ${esc(c.name)} ${esc(w.text)} We removed the affected reviews. <a href="#guidelines">How we handle this</a></div></div></div>`;
+/* A teammate opens the link an owner made in Business tools: once logged in, the server adds them to the
+   company's team (astro/src/pages/api/team). */
+function vJoinTeam(token) {
+  const J = S.join && S.join.token === token ? S.join : (S.join = { token, state: '' });
+  if (!S.user) return `<div class="wrap" style="max-width:640px;padding-block:48px"><div class="box" style="gap:14px"><h1 style="font-size:26px">Join your company’s team</h1><p>You’ve been invited to help manage a company page on Know The Company. Log in or create an account with your work email to accept.</p><div><a class="btn p lg" href="#business-login" data-act="join-login" data-token="${esc(token)}">Log in to accept</a></div><p class="meta">Use an account you don’t write reviews with: reviewer and company accounts are kept apart.</p></div></div>`;
+  if (!J.state) { J.state = 'busy'; bizApi('team/join', { token }).then(async d => { J.state = 'done'; J.company = d.company; await loadData(true); S.myClaims = undefined; if (curRoute().startsWith('join-team-')) render(); }).catch(e => { J.state = 'err'; J.err = e.message; if (curRoute().startsWith('join-team-')) render(); }); }
+  const body = J.state === 'busy' ? '<p>Adding you to the team…</p>' : J.state === 'err' ? `<p class="err" role="alert">${esc(J.err)}</p>` : `<p>You’re on the team${BYWID[J.company] ? ' for ' + esc(BYWID[J.company].name) : ''}. You can now reply to reviews and update the company page.</p><div><a class="btn p lg" href="#dashboard">Open the dashboard</a></div>`;
+  return `<div class="wrap" style="max-width:640px;padding-block:48px"><div class="box" style="gap:14px"><h1 style="font-size:26px">Join your company’s team</h1>${body}</div></div>`;
+}
 function vInvite(c, k) {
   const list = reviewsFor(c.id), er = empData(c.id).reviews; const team = k === 'e';
   return `<div class="wrap"><div class="invite">${coLogo(c, 84)}
@@ -1368,7 +1378,12 @@ function vInvite(c, k) {
     <p class="meta" style="max-width:460px">Your review is published whether it's good or bad. ${esc(c.name)} can reply, but can't edit or hide it. Reviews from invitations are labelled “Invited”.</p>
     ${list.length || er.length ? `<a href="#${c.id}" style="font-size:14px;font-weight:700">Read what others say</a>` : ''}</div></div>`;
 }
-const coPlan = c => (CLAIMS[c.id] && CLAIMS[c.id].plan) || 'basic';
+/* coTier: the plan itself (basic, plus or business). coPlan: 'plus' whenever the company has Plus features,
+   which Business includes, so every Plus check also lets Business through. */
+const coTier = c => (CLAIMS[c.id] && CLAIMS[c.id].plan) || 'basic';
+const coPlan = c => coTier(c) === 'basic' ? 'basic' : 'plus';
+const isBusiness = c => isVerifiedCo(c) && coTier(c) === 'business';
+const TIER_NAME = { basic: 'Basic', plus: 'Plus', business: 'Business' };
 const coEmployer = id => (BYID[id] && BYID[id].raw && BYID[id].raw.employerPage) || null;
 const curEmp = () => S.user && S.user.coId ? (coEmployer(S.user.coId) || { why: '', benefits: [], size: EMP_SIZES[0], hiring: false }) : EMPLOYER;
 function workBox(c) {
@@ -1394,6 +1409,7 @@ function coSide(c) {
   const P = cprof(c); const plus = coPlan(c) === 'plus';
   return (plus && P.phone ? `<div class="box"><h2>Contact and location</h2>${P.address ? `<div class="kv"><span>Address</span><span>${esc(P.address)}</span></div>` : ''}<div class="kv"><span>Phone</span><span>${esc(P.phone)}</span></div>${P.email ? `<div class="kv"><span>Email</span><span>${esc(P.email)}</span></div>` : ''}${P.hours ? `<div class="kv"><span>Hours</span><span>${esc(P.hours)}</span></div>` : ''}${P.socials && P.socials.length ? `<div class="kv"><span>Social</span><span>${P.socials.map(esc).join(' · ')}</span></div>` : ''}</div>` : '')
     + (!plus && P.hours ? `<div class="box"><h2>Opening hours</h2><p>${esc(P.hours)}</p></div>` : '')
+    + (isBusiness(c) && (c.raw.locations || []).some(l => l && l.name) ? `<div class="box"><h2>Branches</h2>${(c.raw.locations || []).filter(l => l && l.name).slice(0, LOCATIONS_MAX).map(l => `<div class="kv" style="flex-direction:column;align-items:flex-start;gap:2px"><b>${esc(l.name)}</b>${l.address ? `<span>${esc(l.address)}</span>` : ''}${l.phone ? `<span class="meta">${esc(l.phone)}</span>` : ''}</div>`).join('')}</div>` : '')
     + `<div class="box soft"><h2>What “Verified” means</h2><p>${cl.verified === 'documents' ? `We checked official documents for ${esc(c.name)}.` : `${esc(c.name)} proved it controls ${cl.verified === 'website' ? 'the website' : 'an email address on'} ${esc(c.web)}.`} Verification never changes its rating, and the company can't edit or hide reviews.</p></div>
       <div class="box"><h2>Do you manage ${esc(c.name)}?</h2><p>Log in to reply to reviews and keep this page up to date.</p><a class="btn o" href="#business-login" style="align-self:flex-start">Company login</a></div>`;
 }
@@ -1483,8 +1499,9 @@ function claimPanel() {
       <div class="vopts">${opt('website', 'Website', 'Add a DNS record or a tag', 'Instant')}${opt('docs', 'Documents', 'Checked by our team')}${opt('id', 'ID card', 'Your company ID, checked by our team')}</div>
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
-      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
-        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then [[PP]] a year` : `[[PP]] a year`}. Contact buttons, photos, offers and updates</small></span></label></div>
+      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${!['plus', 'business'].includes(d.plan) ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
+        <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then [[PP]] a year` : `[[PP]] a year`}. Contact buttons, photos, offers and updates</small></span></label>
+        <label><input type="radio" name="plan" value="business" ${d.plan === 'business' ? 'checked' : ''}><span><b>Business</b><small>[[PZ]] a year. Everything in Plus, with review invitations, trends, branches and team logins</small></span></label></div>
       <p class="meta">${LAUNCH ? 'No payment now. Nothing is charged when a free period ends unless you set up autopay.' : 'Plans renew every year by autopay. You can cancel at any time.'}</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
   const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '', claimCo = d.coWid ? BYWID[d.coWid] : null;
@@ -1584,7 +1601,7 @@ function vList() {
       <div class="out" aria-live="polite">${calcOut(S.calcSale || 1500)}</div>
     </div></section>
 
-    <section class="wrap sec" id="plans"><div class="sechead" style="justify-content:center;text-align:center"><div><p class="eyebrow">Plans</p><h2>Pick a plan</h2><p>Both plans are reviewed and rated exactly the same way.</p><div style="display:flex;justify-content:center;margin-top:14px">${curSwitch()}</div></div></div>
+    <section class="wrap sec" id="plans"><div class="sechead" style="justify-content:center;text-align:center"><div><p class="eyebrow">Plans</p><h2>Pick a plan</h2><p>Every plan is reviewed and rated exactly the same way.</p><div style="display:flex;justify-content:center;margin-top:14px">${curSwitch()}</div></div></div>
       <div class="plans">
         <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>[[PB]]</b><span style="color:var(--muted)">a year</span>'}</div>
           <p class="meta" style="font-size:14px">${LAUNCH ? `Then [[PB]] a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DB]]</span>
@@ -1595,6 +1612,11 @@ function vList() {
           <p class="sub">Everything in Basic, plus:</p>
           <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
           <a class="btn p lg" href="#list" data-act="pick-plan" data-plan="plus">${LAUNCH ? `Try Plus free for ${PLUS_TRIAL_DAYS} days` : 'Choose Plus'}</a></div>
+        <div class="price"><span class="eyebrow">Business</span><span class="pill un" style="align-self:flex-start">For growing teams and several branches</span><div class="amt"><b>[[PZ]]</b><span style="color:var(--muted)">a year</span></div>
+          <p class="meta" style="font-size:14px">Renews yearly by autopay. Cancel any time.</p><span class="daily">[[DZ]]</span>
+          <p class="sub">Everything in Plus, plus:</p>
+          <ul>${BUSINESS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
+          <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="business">Choose Business</a></div>
       </div>
       <p class="meta" style="text-align:center;margin-top:16px">Job posts are coming soon. Companies in India pay in rupees, and companies outside India pay in US dollars.</p></section>
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
@@ -1690,7 +1712,7 @@ function vDashboard() {
   const linkRow = (label, id, url) => `<div class="field"><label class="l" for="${id}">${label}</label><div style="display:flex;gap:8px"><input id="${id}" type="text" readonly value="${esc(url)}" class="mono" style="flex:1;min-width:0;background:var(--surface)"><button class="btn g" type="button" data-act="copy-text" data-text="${esc(url)}">Copy</button></div></div>`;
   const coCard = c => { const rv = reviewsFor(c.id), er = empData(c.id).reviews, all = rv.concat(er);
     const stats = [[rv.length ? avgOf(rv).toFixed(1) : '–', 'Customer rating', rv.length + ' review' + (rv.length === 1 ? '' : 's')], [er.length ? avgOf(er).toFixed(1) : '–', 'Employee rating', er.length + ' review' + (er.length === 1 ? '' : 's')], [all.length ? all.filter(r => r.reply).length + ' of ' + all.length : '–', 'Replied', 'Reply to every review']];
-    return `<section class="box" style="gap:16px"><div class="cohead">${coLogo(c, 56)}<div style="flex:1;min-width:0"><a href="#${c.id}" style="font-size:20px;font-weight:800;text-decoration:none;color:var(--fg)">${esc(c.name)}</a><div class="meta">${esc(c.web)} · ${coPlan(c) === 'plus' ? 'Plus' : 'Basic'} plan</div></div>${ownerPill(c)}</div>
+    return `<section class="box" style="gap:16px"><div class="cohead">${coLogo(c, 56)}<div style="flex:1;min-width:0"><a href="#${c.id}" style="font-size:20px;font-weight:800;text-decoration:none;color:var(--fg)">${esc(c.name)}</a><div class="meta">${esc(c.web)} · ${TIER_NAME[coTier(c)]} plan</div></div>${ownerPill(c)}</div>
       <div class="stats">${stats.map(([v, l, n]) => `<div class="stat"><span>${l}</span><b>${v}</b><small>${n}</small></div>`).join('')}</div>
       ${linkRow('Customer review link', 'cl-' + c.id, base + '#invite-' + c.id)}
       ${linkRow('Employee review link', 'el-' + c.id, base + '#invite-team-' + c.id)}
@@ -1709,11 +1731,11 @@ function vDashboard() {
   const empty = !mine.length && claims && !claims.length;
   const sel = mine.find(c => c.id === S.dashCo) || mine[0];
   if (sel) { S.user.coId = sel.id; S.user.plan = coPlan(sel); loadMedia(sel); }
-  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews'], ['plan', 'Plan and payments']];
+  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews'], ...(sel && isBusiness(sel) ? [['business', 'Business tools']] : []), ['plan', 'Plan and payments']];
   const tab = TABS.some(t => t[0] === S.dashTab) ? S.dashTab : 'overview';
   const pick = mine.length > 1 ? `<div class="field" style="max-width:360px"><label class="l" for="dash-co">Company</label><select id="dash-co" data-dashco>${mine.map(c => `<option value="${c.id}" ${c === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : '';
   const tabs = sel ? `<nav style="display:flex;flex-wrap:wrap;gap:8px" aria-label="Dashboard sections">${TABS.map(([k, l]) => `<a class="btn ${k === tab ? 'p' : 'g'}" href="#dashboard" data-act="dash-tab" data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>` : '';
-  const body = !sel ? '' : tab === 'plan' ? planPanel(sel) : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
+  const body = !sel ? '' : tab === 'business' ? businessPanel(sel) : tab === 'plan' ? planPanel(sel) : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
   return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
     <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn o" href="#claim">Claim a company</a><a class="btn g" href="#list">List a new company</a></div></div>
     ${pick}${tabs}${body}
@@ -1753,7 +1775,7 @@ async function startIdp(key, biz) {
   const verifier = rand(48), state = rand(24);
   const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
   const redirectUri = location.origin + '/auth-callback.html';
-  const returnTo = biz ? 'dashboard' : (S.returnTo || 'my-reviews');
+  const returnTo = S.returnTo && S.returnTo.startsWith('join-team-') ? S.returnTo : biz ? 'dashboard' : (S.returnTo || 'my-reviews');
   try { sessionStorage.setItem('ktc_oauth', JSON.stringify({ verifier, state, redirectUri, returnTo, back: biz ? 'business-login' : 'login' })); } catch (e) { toast('Your browser blocked sign-in storage. Use email instead.'); return; }
   const authRequest = { redirectUri, clientId: WIX_CLIENT_ID, codeChallenge: challenge, codeChallengeMethod: 'S256', responseMode: 'fragment', responseType: 'code', scope: 'offline_access', state, idp: idp.id };
   const res = await wixRequest('/_api/redirects-api/v1/redirect-session', { body: { auth: { authRequest } } });
@@ -1988,7 +2010,7 @@ function vAbout() {
       <p style="color:var(--muted);font-size:18px;max-width:680px">Know The Company is an open review platform for startups and growing companies, everywhere. Big brands already have thousands of reviews; the companies people actually hire, work with and work for often have none. Anyone can read and write reviews for free. We show how a company treats both its customers and its employees.</p></div></section>
     <section class="wrap sec"><h2 class="sr">Our mission and how we work</h2><div class="steps">
       <div class="step"><p class="lbl">Our mission</p><h3>Honest information before you pay</h3><p>Customers deserve to know how a company treats people before they hand over money or personal data.</p></div>
-      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year. Plus costs [[PP]] a year.` : `Businesses can buy a Basic listing for [[PB]] a year or Plus for [[PP]] a year.`} A listing gives a business tools, and never changes its rating.</p></div>
+      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year. Plus costs [[PP]] a year, and Business [[PZ]] a year.` : `Businesses can buy a Basic listing for [[PB]] a year, Plus for [[PP]] a year or Business for [[PZ]] a year.`} A listing gives a business tools, and never changes its rating.</p></div>
       <div class="step"><p class="lbl">Who we serve</p><h3>Startups and growing companies worldwide</h3><p>From a two-person studio to a 500-person scale-up, every company can be listed and reviewed.</p></div></div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><h2>What we stand for</h2></div>
       <div style="display:flex;flex-direction:column;gap:12px">${[['Neutral','Paid and unpaid companies are reviewed and moderated the same way.'],['Transparent','We publish how many reviews we remove and why.'],['Real people','Reviewers confirm their email before they can post.'],['Fair to companies','Every company can reply publicly and report reviews that break our rules.']].map(([a, b]) => `<div class="box" style="flex-direction:row;gap:16px;align-items:baseline;flex-wrap:wrap"><b style="min-width:150px">${a}</b><span style="color:var(--muted);flex:1 1 300px">${b}</span></div>`).join('')}</div>
@@ -2026,7 +2048,7 @@ const HELP = [
     ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
     ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
   ['For employers', [
-    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then [[PB]] a year. ` : 'It costs [[PB]] a year. ') + `Plus ([[PP]] a year) adds call, WhatsApp and email buttons, photos, and offers and updates.`],
+    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then [[PB]] a year. ` : 'It costs [[PB]] a year. ') + `Plus ([[PP]] a year) adds call, WhatsApp and email buttons, photos, and offers and updates. Business ([[PZ]] a year) adds review invitations, rating trends, branches and team logins.`],
     LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost [[PB]] a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?', '[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
     ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to knowthecompanysupport@gmail.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
@@ -2054,10 +2076,10 @@ const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this sit
 /* ---------- currency switch ----------
    Plan prices show in rupees or US dollars. Visitors outside India's time zone start in dollars, and the
    choice is remembered in this browser. Legal pages always state both. */
-const CUR_PRICES = { INR: { PB: '₹499', PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), DB: 'About ₹1.4 a day', DP: 'About ₹2.7 a day' }, USD: { PB: '$9', PP: '$19', DB: 'About 2 cents a day', DP: 'About 5 cents a day' } };
+const CUR_PRICES = { INR: { PB: '₹499', PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), PZ: '₹' + BUSINESS_PRICE.toLocaleString('en-IN'), DB: 'About ₹1.4 a day', DP: 'About ₹2.7 a day', DZ: 'About ₹41 a day' }, USD: { PB: '$9', PP: '$19', PZ: '$179', DB: 'About 2 cents a day', DP: 'About 5 cents a day', DZ: 'About 49 cents a day' } };
 const curDefault = () => { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; return /Asia\/(Kolkata|Calcutta)/.test(z) || !z ? 'INR' : 'USD'; } catch (e) { return 'INR'; } };
 const curNow = () => { const v = store.get('ktc_cur', ''); return v === 'USD' || v === 'INR' ? v : curDefault(); };
-const curText = html => { const P = CUR_PRICES[curNow()]; return String(html).replace(/\[\[(PB|PP|DB|DP)\]\]/g, (m, k) => P[k]); };
+const curText = html => { const P = CUR_PRICES[curNow()]; return String(html).replace(/\[\[(PB|PP|PZ|DB|DP|DZ)\]\]/g, (m, k) => P[k]); };
 const curSwitch = () => { const c = curNow(); return `<div class="curswitch" role="group" aria-label="Show prices in">${[['INR', '₹ INR'], ['USD', '$ USD']].map(([k, l]) => `<button type="button" data-act="cur" data-cur="${k}" aria-pressed="${c === k}">${l}</button>`).join('')}</div>`; };
 
 const legalPage = (title, crumb, intro, sections) => `<div class="wrap" style="max-width:860px">${crumbs([['Home','#home'],[crumb]])}
@@ -2068,7 +2090,7 @@ function vTerms() {
     ['1. Accounts', ['You must be at least 18 to create an account.', 'Keep your login email secure. You are responsible for activity on your account.', 'Reviewer and company accounts are separate. Company accounts cannot post reviews.', 'An account that has written reviews cannot claim or manage a company. To manage a company, delete your reviewer account first and use a separate account.', 'Reviews written by an account that manages a company are not shown and do not count towards any rating, including reviews written before the account became a company account.']],
     ['2. Writing reviews', ['Reviews must describe your own genuine experience in the last 12 months.', 'Do not post reviews in exchange for money, discounts or gifts, or reviews about your own business or a competitor.', 'Do not include personal data about others, hate speech, threats, or claims of crime without evidence.', 'You keep ownership of your review and give Know The Company a licence to display and distribute it.']],
     ['3. Employee reviews', ['Post only your own experience as an employee, contractor or intern.', 'Do not share confidential information or trade secrets.', 'Do not name or identify individual people, other than senior leaders such as directors and executives.', 'Employers cannot remove employee reviews. We remove them only when they break these terms or the law requires it.', 'We keep your identity private and disclose it only when a valid court order requires us to.']],
-    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. If Plus is cancelled, the profile moves to Basic when the year you paid for ends.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
+    ['4. Business listings', [LAUNCH ? `Companies that join before ${LAUNCH_END} get their verified Basic listing free for 12 months from the day it is created. After that, and for companies that join later, Basic costs ₹499 a year in India, or $9 a year outside India.` : 'Basic costs ₹499 a year in India, or $9 a year outside India.', `Plus costs ₹${PLUS_PRICE} a year in India, or $19 a year outside India${LAUNCH ? `, with a ${PLUS_TRIAL_DAYS}-day free trial` : ''}. It adds profile features only. Business costs ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India, with no free period. It adds review invitations, reports, branches and team logins. If Plus or Business is cancelled, the profile moves to Basic when the year you paid for ends. Moving up to a higher plan stops the lower plan's autopay, so you never pay for two plans at once.`, `Review invitations: you may only invite people who bought from you or worked with you, and you must invite all of them, not only those you expect to be happy. Invitations ask for an honest review, good or bad. You are responsible for having permission to contact the people you invite.`, 'Paid plans renew every year by autopay on the card, UPI or bank mandate you used, until you cancel. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time. No further charges are made, and your plan stays active until the end of the year you paid for.', 'A free period never turns into a charge unless you set up autopay. If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.', 'A verified listing, free or paid, gives verification, a profile and tools. It never affects ratings, review order or moderation.', (JOBS_ON ? 'Job posts: 5 posts each calendar month are included. ' + (LAUNCH ? 'Extra posts are free in the first year and cost ₹99 each afterwards.' : 'Extra posts cost ₹99 each.') + ' Each post stays live for 60 days. Posts must be for real vacancies, and employers must never charge applicants a fee.' : 'Job posts are not available yet. When they launch, these terms will be updated before any business can post.'), 'We may suspend a listing that gives false information or tries to manipulate reviews.', 'Payments are processed by our payment partner. We never see or store your full card or bank details.', 'Refunds: if you pay for a plan and change your mind within 14 days, write to us for a full refund. After that, fees for the current year are not refundable, except where the law requires. Our <a href="#refunds">refunds and cancellations policy</a> has the full details.']],
     ['5. Moderation', 'We remove content that breaks these terms or our review guidelines, or when required by law.'],
     ['6. Liability', 'Reviews are the opinions of their authors, not of Know The Company. To the extent the law allows, Know The Company is not liable for decisions you make based on reviews.'],
     ['7. Governing law', 'These terms are governed by the laws of India, and Indian courts have jurisdiction, unless your local consumer law gives you other rights.'],
@@ -2093,15 +2115,16 @@ function vPricing() {
       ${plan('For reviewers', 'Free', 'Always free. No payment is ever asked for.', ['Read every review', 'Write customer and employee reviews', 'Use all free career and company tools'])}
       ${plan('Basic listing', '[[PB]] a year', LAUNCH ? `Free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year by autopay. Cancel any time.` : 'Billed yearly by autopay. Cancel any time.', BASIC_PERKS)}
       ${plan('Plus listing', '[[PP]] a year', LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. You are charged only if you set up autopay, and you can cancel any time.` : 'Billed yearly by autopay. Cancel any time.', ['Everything in Basic', ...PLUS_PERKS])}
+      ${plan('Business listing', '[[PZ]] a year', 'Billed yearly by autopay from the day you choose it. Cancel any time.', ['Everything in Plus', ...BUSINESS_PERKS])}
       ${JOBS_ON ? plan('Extra job post', `₹${EXTRA_JOB} a post`, `${FREE_JOBS} posts a month are included with every listing. Each post stays live for ${JOB_DAYS} days.`, ['For real vacancies only', 'Employers must never charge applicants a fee']) : ''}
       <div class="box soft"><p style="color:var(--fg)">Companies in India pay in Indian rupees, and companies outside India pay in US dollars. Use the switch at the top to see either.${OPERATOR.taxNote ? ' ' + esc(OPERATOR.taxNote) : ''} A listing is a digital service that starts once your company is verified; nothing is shipped. Read our <a href="#refunds">refunds and cancellations policy</a> and <a href="#terms">terms of use</a> before you pay.</p>
         <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn p" href="#list">List your company</a><a class="btn g" href="#contact">Ask a question</a></div></div></div></div>`;
 }
 function vRefunds() {
   return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
-    ['1. What you pay for', [`Basic listing: ₹499 a year in India, or $9 a year outside India. Plus listing: ₹${PLUS_PRICE} a year in India, or $19 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
+    ['1. What you pay for', [`Basic listing: ₹499 a year in India, or $9 a year outside India. Plus listing: ₹${PLUS_PRICE} a year in India, or $19 a year outside India. Business listing: ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
     ['2. How the service is delivered', ['You can choose and pay for a plan as soon as you send your claim. A website check verifies you straight away; documents and ID cards are checked by our team, usually within 2 working days, and your Verified badge and listing tools switch on when the check passes.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
-    ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you set up autopay. We email you before it ends.']],
+    ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free. Business has no free period.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you set up autopay. We email you before it ends.']],
     ['4. Autopay and cancelling', ['Paid plans renew every year by autopay on the card, UPI or bank mandate you used. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time, by writing to knowthecompanysupport@gmail.com from the email address on your listing, or by cancelling the mandate in your UPI app or with your bank.', 'When you cancel, no further charges are made and your tools stay active until the end of the year you paid for.', 'If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.']],
     ['5. Refunds', ['Change your mind within 14 days of paying, and we refund the full amount. No reason is needed.', 'After 14 days, fees for the current year are not refundable, except where the law requires a refund.', 'If you were charged twice, or charged for an order that failed, we refund the extra amount in full.', 'If we suspend a listing because it broke our terms, for example by trying to manipulate reviews, the fee is not refunded.']],
     ['6. How refunds are paid', ['Refunds go back to the payment method you used. We start the refund within 5 working days of approving it.', 'Your bank or card provider may take another 5 to 7 working days to show it in your account.']],
@@ -2166,7 +2189,7 @@ async function startAutopay(c, plan) {
       rz.on('payment.failed', r => reject(new Error((r && r.error && r.error.description) || 'The payment didn’t go through.')));
       rz.open();
     });
-    toast(plan === 'plus' ? 'Plus is on. Thank you.' : 'Basic is set up. Thank you.', 4000);
+    toast(plan === 'basic' ? 'Basic is set up. Thank you.' : TIER_NAME[plan] + ' is on. Thank you.', 4000);
     await loadData(true); await loadPay(c, true);
   } catch (e) { PAY.err = e.message; }
   PAY.busy = ''; payRedraw();
@@ -2177,23 +2200,106 @@ function planPanel(c, inClaim) {
   const P = CUR_PRICES[curNow()];
   const fmt = iso => iso ? fmtDate(String(iso).slice(0, 10)) : '';
   const live = d ? d.billing.filter(b => ['authenticated', 'active', 'pending', 'cancelling'].includes(b.status)) : [];
-  const plusLive = live.find(b => b.plan === 'plus' && b.status !== 'cancelling'), basicLive = live.find(b => b.plan === 'basic' && b.status !== 'cancelling');
-  const isPlus = d ? d.plan === 'plus' : coPlan(c) === 'plus';
+  const running = plan => live.find(b => b.plan === plan && b.status !== 'cancelling');
+  const tier = d ? (['plus', 'business'].includes(d.plan) ? d.plan : 'basic') : coTier(c);
   /* Payments not switched on yet: show the plans, but no buttons that can't work. */
   const off = PAY.company === c.wid && (PAY.off || (d && d.ready === false));
-  const btn = (plan, label) => off ? '' : `<button class="btn ${plan === 'plus' ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" data-wid="${esc(c.wid)}" ${PAY.busy || PAY.loading ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening…' : label}</button>`;
-  const rows = live.map(b => `<div class="cfrow"><div class="t"><b>${b.plan === 'plus' ? 'Plus' : 'Basic'} plan</b><small>${b.status === 'cancelling' ? `Won’t renew. Runs until ${esc(fmt(b.currentEnd))}` : b.status === 'active' ? `Paid until ${esc(fmt(b.currentEnd))}` : b.startAt ? `Free until ${esc(fmt(b.startAt))}` : 'Set up'}</small></div></div>`).join('');
+  const btn = (plan, label, main) => off ? '' : `<button class="btn ${main ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" data-wid="${esc(c.wid)}" ${PAY.busy || PAY.loading ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening…' : label}</button>`;
+  const rows = live.map(b => `<div class="cfrow"><div class="t"><b>${TIER_NAME[b.plan] || 'Basic'} plan</b><small>${b.status === 'cancelling' ? `Won’t renew. Runs until ${esc(fmt(b.currentEnd))}` : b.status === 'active' ? `Paid until ${esc(fmt(b.currentEnd))}` : b.startAt ? `Free until ${esc(fmt(b.startAt))}` : 'Set up'}</small></div></div>`).join('');
   const box = (h, sub, body, button) => `<div class="box soft" style="gap:10px"><h3>${h}</h3>${sub ? `<p><b>${sub}</b></p>` : ''}<p>${body}</p>${button}</div>`;
+  const until = d && d.planEndsAt ? `Yours until ${esc(fmt(d.planEndsAt))}, then ` : '';
+  const out = [];
+  if (tier === 'basic' && !running('plus') && !running('business')) out.push(box('Plus', LAUNCH ? `Free for your first month, then ${P.PP} a year` : `${P.PP} a year`, 'Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.', btn('plus', LAUNCH ? 'Start Plus free' : 'Choose Plus', true)));
+  if (tier === 'plus' && !running('plus') && !running('business')) out.push(box('Plus', `${until}${P.PP} a year`, 'Keep replying as a verified company, your photos, updates and employer page without a break.', btn('plus', 'Continue with Plus', true)));
+  if (tier !== 'business' && !running('business')) out.push(box('Business', `${P.PZ} a year, starting today`, `Everything in Plus, with review invitations to your customers by email and WhatsApp, rating trends and a monthly report, up to ${LOCATIONS_MAX} branches and up to ${TEAM_MAX} team logins.`, btn('business', 'Choose Business', tier === 'plus')));
+  if (tier === 'business' && !running('business')) out.push(box('Business', `${until}${P.PZ} a year`, 'Keep your review invitations, reports, branches and team logins without a break.', btn('business', 'Continue with Business', true)));
+  if (tier === 'basic' && !live.some(b => b.status !== 'cancelling')) out.push(box('Basic', LAUNCH ? `Free for your first year, then ${P.PB} a year` : `${P.PB} a year`, 'Your verified company page, with your details kept up to date.', btn('basic', LAUNCH ? 'Start Basic free' : 'Choose Basic', false)));
   return `<section class="box" style="gap:16px">
-    <div class="toolbar"><h2>${inClaim ? 'Choose your plan' : 'Plan and payments'}</h2><span class="pill ${isPlus ? 'ok' : 'un'}">${isPlus ? 'Plus' : 'Basic'} plan</span></div>
+    <div class="toolbar"><h2>${inClaim ? 'Choose your plan' : 'Plan and payments'}</h2><span class="pill ${tier !== 'basic' ? 'ok' : 'un'}">${TIER_NAME[tier]} plan</span></div>
     ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}
-    ${!isPlus && !plusLive ? box('Plus', LAUNCH ? `Free for your first month, then ${P.PP} a year` : `${P.PP} a year`, 'Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.', btn('plus', LAUNCH ? 'Start Plus free' : 'Choose Plus')) : ''}
-    ${isPlus && !plusLive ? box('Plus', d && d.planEndsAt ? `Yours until ${esc(fmt(d.planEndsAt))}, then ${P.PP} a year` : `${P.PP} a year`, 'Keep replying as a verified company, your photos, updates and employer page without a break.', btn('plus', 'Continue with Plus')) : ''}
-    ${!isPlus && !basicLive && !plusLive ? box('Basic', LAUNCH ? `Free for your first year, then ${P.PB} a year` : `${P.PB} a year`, 'Your verified company page, with your details kept up to date.', btn('basic', LAUNCH ? 'Start Basic free' : 'Choose Basic')) : ''}
+    ${out.join('')}
     ${off ? `<p class="meta"><b>Plan sign-up opens very soon.</b> ${inClaim ? 'Your claim is saved. ' : ''}You’ll be able to choose a plan here, from your dashboard, once it’s open.</p>` : ''}
     ${PAY.err && !off ? `<p class="err" role="alert">${esc(PAY.err)}</p>` : ''}
-    <p class="meta">Nothing is charged during the free period. After it, plans renew yearly by autopay through Razorpay (cards, UPI and netbanking), and you can cancel any time${live.some(b => b.status !== 'cancelling') ? ` <button class="link" type="button" data-act="pay-cancel" data-wid="${esc(c.wid)}">here</button>` : ''}. Paying never changes your ratings or reviews. See <a href="#refunds">refunds and cancellations</a>.</p>
+    <p class="meta">Nothing is charged during a free period. Plans renew yearly by autopay through Razorpay (cards, UPI and netbanking), and you can cancel any time${live.some(b => b.status !== 'cancelling') ? ` <button class="link" type="button" data-act="pay-cancel" data-wid="${esc(c.wid)}">here</button>` : ''}. Moving up to a higher plan stops the lower plan’s autopay. Paying never changes your ratings or reviews. See <a href="#refunds">refunds and cancellations</a>.</p>
   </section>`;
+}
+/* ---------- Business plan tools ----------
+   Review invitations (email through the server, astro/src/pages/api/invite, plus WhatsApp links), rating
+   trends with a monthly report, branches shown on the company page, team logins (api/team) and a
+   spreadsheet of the company's reviews. All of it reads the same published reviews everyone sees. */
+const BIZ = { company: '', invite: null, team: null, msg: '', err: '', busy: '', link: '', kind: 'customer', list: '', full: false };
+const bizApi = async (path, body) => { const res = await fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: await accessToken() }, body: JSON.stringify(body) }); const d = await res.json().catch(() => ({})); if (!res.ok) throw new Error(d.error || 'Something went wrong. Please try again.'); return d; };
+async function loadBiz(c, force) {
+  if (!force && BIZ.company === c.wid) return;
+  Object.assign(BIZ, { company: c.wid, invite: null, team: null, msg: '', err: '', link: '' });
+  const [inv, team] = await Promise.allSettled([bizApi('invite/status', { company: c.wid }), bizApi('team/list', { company: c.wid })]);
+  BIZ.invite = inv.status === 'fulfilled' ? inv.value : { error: inv.reason.message };
+  BIZ.team = team.status === 'fulfilled' ? team.value : { error: team.reason.message };
+  if (curRoute() === 'dashboard') renderKeep();
+}
+const emailsIn = text => [...new Set((String(text || '').match(/[^\s@<>()",;:'`]+@[^\s@<>()",;:'`]+\.[a-z]{2,}/gi) || []).map(e => e.toLowerCase()))];
+/* Month by month for the last 12 months: how many reviews, the average, and replies. */
+function monthRows(c) {
+  const rv = reviewsFor(c.id), er = empData(c.id).reviews, out = [];
+  const d = new Date(); d.setDate(1);
+  for (let i = 0; i < 12; i++) {
+    const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    const cu = rv.filter(r => r.ym === ym), em = er.filter(r => r.ym === ym);
+    out.push({ ym, label: d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }), cn: cu.length, ca: cu.length ? avgOf(cu) : null, en: em.length, ea: em.length ? avgOf(em) : null, rec: em.length ? Math.round(em.filter(r => r.rec === 'yes').length / em.length * 100) : null, replied: cu.concat(em).filter(r => r.reply).length });
+    d.setMonth(d.getMonth() - 1);
+  }
+  return out.reverse();
+}
+const csvCell = v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+function downloadCsv(name, rows) {
+  const blob = new Blob(['\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+function trendChart(rows) {
+  const W = 640, H = 200, pad = 28, bw = (W - pad * 2) / rows.length;
+  const bar = (v, i, off, col) => v === null ? '' : `<rect x="${(pad + i * bw + off).toFixed(1)}" y="${(H - pad - (v / 5) * (H - pad * 2)).toFixed(1)}" width="${(bw / 2 - 4).toFixed(1)}" height="${((v / 5) * (H - pad * 2)).toFixed(1)}" rx="3" fill="${col}"><title>${v.toFixed(1)} out of 5</title></rect>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Average rating each month for the last 12 months, customers and employees">
+    ${[1, 2, 3, 4, 5].map(v => `<line x1="${pad}" x2="${W - pad}" y1="${H - pad - (v / 5) * (H - pad * 2)}" y2="${H - pad - (v / 5) * (H - pad * 2)}" stroke="var(--line)"/><text x="4" y="${H - pad - (v / 5) * (H - pad * 2) + 4}" font-size="11" fill="var(--muted)">${v}</text>`).join('')}
+    ${rows.map((r, i) => bar(r.ca, i, 2, '#1B2738') + bar(r.ea, i, bw / 2, '#7CB518') + `<text x="${(pad + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" font-size="10" text-anchor="middle" fill="var(--muted)">${esc(r.label.split(' ')[0])}</text>`).join('')}
+  </svg><p class="meta"><span style="display:inline-block;width:10px;height:10px;background:#1B2738;border-radius:2px"></span> Customers <span style="display:inline-block;width:10px;height:10px;background:#7CB518;border-radius:2px;margin-left:12px"></span> Employees</p>`;
+}
+function businessPanel(c) {
+  loadBiz(c);
+  const sl = c.id.slice(3), page = location.origin + '/';
+  const cLink = page + '#invite-' + c.id, eLink = page + '#invite-team-' + c.id;
+  const wa = (text) => 'https://wa.me/?text=' + encodeURIComponent(text);
+  const inv = BIZ.company === c.wid ? BIZ.invite : null, team = BIZ.company === c.wid ? BIZ.team : null;
+  const left = inv && !inv.error ? Math.max(0, inv.limit - inv.sent) : 0;
+  const found = emailsIn(BIZ.list).length;
+  const rows = monthRows(c), any = rows.some(r => r.cn || r.en);
+  const locs = (c.raw.locations || []).slice(0, LOCATIONS_MAX);
+  const locRow = (l, i) => `<div class="locrow" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input type="text" maxlength="80" placeholder="Branch name, e.g. Agra, Sanjay Place" data-loc="${i}" data-k="name" value="${esc(l.name || '')}"><input type="text" maxlength="40" placeholder="Phone (optional)" data-loc="${i}" data-k="phone" value="${esc(l.phone || '')}"><input type="text" maxlength="160" placeholder="Address" data-loc="${i}" data-k="address" value="${esc(l.address || '')}" style="grid-column:1 / -1"></div>`;
+  const editLocs = locs.length ? locs : [{}];
+  return `<section class="box" style="gap:14px"><div class="toolbar"><h2>Review invitations</h2><span class="pill ok">Business</span></div>
+      <p class="meta">Invite people who bought from you or worked with you to write an honest review. Invitations must go to everyone, not only the people you expect to be happy: send your whole customer list for a period, and we ask each person for an honest review, good or bad.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn g" href="${wa(`We'd value your honest review of ${c.name}, good or bad. It takes two minutes: ${cLink}`)}" target="_blank" rel="noopener">Share customer link on WhatsApp</a><a class="btn g" href="${wa(`Please share an honest, anonymous review of working at ${c.name}: ${eLink}`)}" target="_blank" rel="noopener">Share employee link on WhatsApp</a></div>
+      ${!inv ? '<p class="meta">Loading…</p>' : inv.error ? `<p class="err">${esc(inv.error)}</p>` : !inv.email ? `<p class="meta"><b>Email invitations switch on soon.</b> Until then, share your links on WhatsApp or copy them from the Overview tab.</p>` : `
+      <p><b>${inv.sent.toLocaleString('en-IN')} of ${inv.limit.toLocaleString('en-IN')}</b> email invitations used this month. ${left.toLocaleString('en-IN')} left.</p>
+      <div class="field"><span class="l">Who are you inviting?</span><div style="display:flex;gap:16px;flex-wrap:wrap"><label class="check"><input type="radio" name="biz-kind" value="customer" ${BIZ.kind !== 'employee' ? 'checked' : ''}><span>Customers</span></label><label class="check"><input type="radio" name="biz-kind" value="employee" ${BIZ.kind === 'employee' ? 'checked' : ''}><span>Current and former employees</span></label></div></div>
+      <div class="field"><label class="l" for="biz-list">Your full list of email addresses</label><textarea id="biz-list" rows="6" placeholder="Paste addresses, one per line, or a CSV export from your billing or CRM software.">${esc(BIZ.list)}</textarea><p class="meta"><span id="biz-count">${found ? `${found} address${found === 1 ? '' : 'es'} found.` : 'Paste a list or choose a file.'}</span> Anyone invited in the last 90 days, or who asked not to be invited, is skipped.</p><input type="file" id="biz-file" accept=".csv,.txt,text/csv,text/plain"></div>
+      <label class="check"><input type="checkbox" id="biz-full" ${BIZ.full ? 'checked' : ''}><span>This is everyone I served${BIZ.kind === 'employee' ? ' or employed' : ''} in this period, not a hand-picked list, and I have their permission to contact them.</span></label>
+      <div><button class="btn p" type="button" data-act="biz-send" data-wid="${esc(c.wid)}" ${BIZ.busy === 'send' || !found || !BIZ.full ? 'disabled' : ''}>${BIZ.busy === 'send' ? 'Sending…' : `Send ${found || ''} invitation${found === 1 ? '' : 's'}`}</button></div>`}
+      ${BIZ.msg ? `<p class="meta" role="status">${esc(BIZ.msg)}</p>` : ''}${BIZ.err ? `<p class="err" role="alert">${esc(BIZ.err)}</p>` : ''}
+    </section>
+    <section class="box" style="gap:12px"><h2>Rating trends</h2>
+      ${any ? trendChart(rows) : '<p class="meta">Your monthly averages appear here once reviews come in.</p>'}
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn o" type="button" data-act="biz-report" data-wid="${esc(c.wid)}">Download monthly report</button><button class="btn g" type="button" data-act="biz-export" data-wid="${esc(c.wid)}">Export all reviews</button></div>
+      <p class="meta">Both download as spreadsheets (CSV) that open in Excel or Google Sheets.</p>
+    </section>
+    <section class="box" style="gap:12px"><h2>Branches</h2><p class="meta">Add up to ${LOCATIONS_MAX} locations. They show on your company page with their address and phone.</p>
+      <div id="biz-locs" style="display:flex;flex-direction:column;gap:14px">${editLocs.map(locRow).join('')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">${editLocs.length < LOCATIONS_MAX ? `<button class="btn g" type="button" data-act="biz-loc-add">Add a branch</button>` : ''}<button class="btn p" type="button" data-act="biz-loc-save" data-id="${c.id}">Save branches</button></div>
+    </section>
+    <section class="box" style="gap:12px"><h2>Team logins</h2><p class="meta">Up to ${TEAM_MAX} people can manage this page, each with their own login. Send a teammate a link: it works once, for 7 days, and they log in or sign up with any email.</p>
+      ${!team ? '<p class="meta">Loading…</p>' : team.error ? `<p class="err">${esc(team.error)}</p>` : `<div style="display:flex;flex-direction:column;gap:8px">${team.members.map((m, i) => `<div class="cfrow"><div class="t"><b>${esc(m.name || 'Team member ' + (i + 1))}</b><small>${m.you ? 'You' : 'Can manage this page'}</small></div>${m.you ? '' : `<button class="btn g" type="button" data-act="biz-team-remove" data-wid="${esc(c.wid)}" data-member="${esc(m.id)}">Remove</button>`}</div>`).join('')}</div>
+      ${team.members.length < team.max ? `<div><button class="btn o" type="button" data-act="biz-team-invite" data-wid="${esc(c.wid)}" ${BIZ.busy === 'team' ? 'disabled' : ''}>Create a team invitation link</button></div>` : `<p class="meta">You have ${team.max} team logins, the most a Business plan includes.</p>`}
+      ${BIZ.link ? `<div class="field"><label class="l" for="biz-link">Send this link to your teammate</label><div style="display:flex;gap:8px"><input id="biz-link" type="text" readonly class="mono" value="${esc(BIZ.link)}" style="flex:1;min-width:0;background:var(--surface)"><button class="btn g" type="button" data-act="copy-text" data-text="${esc(BIZ.link)}">Copy</button></div></div>` : ''}`}
+    </section>`;
 }
 const IMPORT_SOURCES = ['Our website', 'Email or message', 'Survey or feedback form', 'Google', 'Another review site', 'In person or on paper', 'Other'];
 const IMPORT_STATUS = { pending: ['un', 'Being checked'], confirmed: ['un', 'Confirmed, publishing soon'], published: ['ok', 'Published'], rejected: ['cat', 'Not published'] };
@@ -2675,6 +2781,7 @@ function render() {
   else if (h === 'pricing') { html = vPricing(); nav = 'list'; }
   else if (h === 'refunds') html = vRefunds();
   else if (CATBYID[h]) { html = vCategory(CATBYID[h]); nav = 'categories'; }
+  else if (h.startsWith('join-team-')) html = vJoinTeam(h.slice(10));
   else if (h.startsWith('invite-team-') && BYID[h.slice(12)]) html = vInvite(BYID[h.slice(12)], 'e');
   else if (h.startsWith('invite-') && BYID[h.slice(7)]) html = vInvite(BYID[h.slice(7)], 'c');
   else if (BYID[h]) { loadMedia(BYID[h]); loadFacts(BYID[h]); html = vCompany(BYID[h]); }
@@ -2702,7 +2809,7 @@ function setMeta(h) {
   /* Social sharing tags follow the page too (the server writes them for the first page load). */
   [['og:title', document.title], ['og:description', m.content], ['og:url', cl.href], ['twitter:title', document.title], ['twitter:description', m.content]].forEach(([k2, v]) => { const t = document.querySelector(`meta[property="${k2}"],meta[name="${k2}"]`); if (t) t.content = v; });
   let rb = document.querySelector('meta[name="robots"]'); if (!rb) { rb = document.createElement('meta'); rb.name = 'robots'; document.head.appendChild(rb); }
-  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-'); /* every company page is indexed, so people can find a company and review it */
+  const noindex = !isRoute(h) || ['search', 'login', 'business-login', 'dashboard', 'my-reviews', 'add'].includes(h) || h.startsWith('invite-') || h.startsWith('join-team-'); /* every company page is indexed, so people can find a company and review it */
   rb.content = SITE_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex, follow' : 'index, follow';
   let s = document.getElementById('ldjson'); if (s) s.remove();
   if (c && !document.getElementById('ld-json')) { const l = reviewsFor(c.id); const o = { '@context': 'https://schema.org', '@type': 'Organization', name: c.name, url: 'https://' + c.web, description: c.bio };
@@ -2753,6 +2860,7 @@ document.addEventListener('input', e => {
   if (e.target.id === 'cf-q') { S.cfQ = e.target.value; document.getElementById('cf-res').innerHTML = cfResults(e.target.value); return; }
   if (e.target.id === 'pk-q') { document.getElementById('pk-list').innerHTML = pickList(e.target.value); return; }
   if (e.target.closest && e.target.closest('[data-tool]')) { if (e.target.id === 'c-a' || e.target.id === 'c-b' || TOOLBYID[curRoute()]) runTool(); return; }
+  if (e.target.id === 'biz-list') { BIZ.list = e.target.value; const n = emailsIn(BIZ.list).length, m = document.getElementById('biz-count'), b = document.querySelector('[data-act="biz-send"]'); if (m) m.textContent = n ? `${n} address${n === 1 ? '' : 'es'} found.` : 'Paste a list or choose a file.'; if (b) { b.disabled = !n || !BIZ.full; b.textContent = `Send ${n || ''} invitation${n === 1 ? '' : 's'}`; } return; }
   if (e.target.id === 'calc-sale') { const v = parseFloat(e.target.value); if (v > 0) { S.calcSale = v; const o = document.querySelector('.calc .out'); if (o) o.innerHTML = calcOut(v); } return; }
   const t = e.target;
   if (t.dataset.suggest) suggestFor(t);
@@ -2760,6 +2868,9 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.name === 'biz-kind') { BIZ.kind = t.value === 'employee' ? 'employee' : 'customer'; renderKeep(); return; }
+  if (t.id === 'biz-full') { BIZ.full = t.checked; const b = document.querySelector('[data-act="biz-send"]'); if (b) b.disabled = !emailsIn(BIZ.list).length || !BIZ.full; return; }
+  if (t.id === 'biz-file' && t.files && t.files[0]) { const f = t.files[0]; if (f.size > 2e6) { toast('That file is too big. Use a CSV under 2 MB.'); return; } f.text().then(txt => { BIZ.list = txt; renderKeep(); }); return; }
   if (t.dataset.filter && t.dataset.filter !== 'text') { S.catFilter[t.dataset.filter] = t.value; const k = CATBYID[curRoute()]; if (k) document.getElementById('cat-results').innerHTML = catResults(k); }
 });
 document.addEventListener('keydown', e => {
@@ -2800,7 +2911,7 @@ document.addEventListener('click', e => {
       catch (e) { S.checkMsg = 'Something went wrong. Please try again.'; }
       S.checking = false; if (curRoute() === 'dashboard') renderKeep(); else cfRefresh(false); })(); return; }
   if (act === 'claim-plan') { S.dashPlanWid = S.dashPlanWid === a.dataset.wid ? '' : a.dataset.wid; renderKeep(); return; }
-  if (act === 'pay-start') { const c = BYWID[a.dataset.wid]; if (c) startAutopay(c, a.dataset.plan === 'plus' ? 'plus' : 'basic'); return; }
+  if (act === 'pay-start') { const c = BYWID[a.dataset.wid]; if (c) startAutopay(c, ['plus', 'business'].includes(a.dataset.plan) ? a.dataset.plan : 'basic'); return; }
   if (act === 'pay-cancel') { const c = BYWID[a.dataset.wid]; if (!c || !window.confirm('Stop ' + c.name + '’s plan from renewing?')) return; (async () => { PAY.err = ''; try { await payApi('cancel', { company: c.wid }); toast('Your plan won’t renew.'); await loadData(true); await loadPay(c, true); } catch (e) { PAY.err = e.message; payRedraw(); } })(); return; }
   if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (curRoute() === 'dashboard') { e.preventDefault(); render(); } return; }
   if (act === 'goto-plans') { S.scrollTo = 'plans'; if (curRoute() === 'list') { e.preventDefault(); render(); } return; }
@@ -2813,6 +2924,22 @@ document.addEventListener('click', e => {
   if (act === 'job-pay') { if (S.jobPending) { addJob(S.jobPending, true); S.jobPending = null; render(); toast(`Paid ₹${EXTRA_JOB} (demo). Job posted for ${JOB_DAYS} days.`); } }
   if (act === 'job-cancel') { S.jobPending = null; render(); }
   if (act === 'job-close') { const j = JOBS.find(x => x.id === a.dataset.id); if (j) { j.closed = true; store.set('tn_jobs', JOBS); render(); toast('Job post closed'); } }
+  if (act === 'join-login') { S.returnTo = 'join-team-' + a.dataset.token; S.notice = 'Log in or create an account to join your company’s team.'; return; }
+  if (act === 'biz-send') { const c = BYWID[a.dataset.wid]; const emails = emailsIn(BIZ.list); if (!c || !emails.length || !BIZ.full) return;
+    if (!window.confirm(`Send ${emails.length} review invitation${emails.length === 1 ? '' : 's'} to your ${BIZ.kind === 'employee' ? 'employees' : 'customers'}?`)) return;
+    (async () => { BIZ.busy = 'send'; BIZ.err = ''; BIZ.msg = ''; renderKeep();
+      try { const d = await bizApi('invite/send', { company: c.wid, kind: BIZ.kind, emails }); BIZ.msg = `Sent ${d.sent} invitation${d.sent === 1 ? '' : 's'}.${d.skippedRecent ? ` ${d.skippedRecent} skipped: invited in the last 90 days.` : ''}${d.skippedOptOut ? ` ${d.skippedOptOut} skipped: asked not to be invited.` : ''}${d.invalid ? ` ${d.invalid} weren’t valid addresses.` : ''}`; BIZ.list = ''; BIZ.full = false; BIZ.invite = await bizApi('invite/status', { company: c.wid }).catch(() => BIZ.invite); }
+      catch (err) { BIZ.err = err.message; }
+      BIZ.busy = ''; renderKeep(); })(); return; }
+  if (act === 'biz-report') { const c = BYWID[a.dataset.wid]; if (!c) return; downloadCsv(c.id.slice(3) + '-monthly-report.csv', [['Month', 'Customer reviews', 'Customer average', 'Employee reviews', 'Employee average', 'Would recommend (%)', 'Reviews you replied to'], ...monthRows(c).map(r => [r.label, r.cn, r.ca === null ? '' : r.ca.toFixed(1), r.en, r.ea === null ? '' : r.ea.toFixed(1), r.rec === null ? '' : r.rec, r.replied])]); return; }
+  if (act === 'biz-export') { const c = BYWID[a.dataset.wid]; if (!c) return; const all = reviewsFor(c.id).map(r => ['Customer', r.date, r.rating, r.title, r.body, '', '', r.name, r.reply]).concat(empData(c.id).reviews.map(r => ['Employee', r.date, r.rating, r.title, r.pros, r.cons, r.rec === 'yes' ? 'Yes' : 'No', r.named ? r.name : 'Anonymous', r.reply])); downloadCsv(c.id.slice(3) + '-reviews.csv', [['Type', 'Month', 'Rating', 'Title or job title', 'Review or pros', 'Cons', 'Would recommend', 'Reviewer', 'Your reply'], ...all]); return; }
+  if (act === 'biz-loc-add' || act === 'biz-loc-save') {
+    const rows = []; document.querySelectorAll('#biz-locs .locrow').forEach(row => { const v = k => (row.querySelector(`[data-k="${k}"]`) || {}).value || ''; rows.push({ name: v('name').trim(), address: v('address').trim(), phone: v('phone').trim() }); });
+    const c = BYID[S.user && S.user.coId]; if (!c) return;
+    if (act === 'biz-loc-add') { c.raw.locations = rows.concat([{}]).slice(0, LOCATIONS_MAX); renderKeep(); return; }
+    const locs = rows.filter(l => l.name).slice(0, LOCATIONS_MAX); if (saveProf(c.id, { locations: locs })) toast(locs.length ? 'Branches saved.' : 'Branches removed.'); renderKeep(); return; }
+  if (act === 'biz-team-invite') { const c = BYWID[a.dataset.wid]; if (!c) return; (async () => { BIZ.busy = 'team'; renderKeep(); try { const d = await bizApi('team/invite', { company: c.wid }); BIZ.link = d.link; } catch (err) { toast(err.message, 5000); } BIZ.busy = ''; renderKeep(); })(); return; }
+  if (act === 'biz-team-remove') { const c = BYWID[a.dataset.wid]; if (!c || !window.confirm('Remove this person from your team? They won’t be able to manage the page any more.')) return; (async () => { try { await bizApi('team/remove', { company: c.wid, member: a.dataset.member }); toast('Removed from the team.'); await loadData(true); await loadBiz(c, true); } catch (err) { toast(err.message, 5000); } })(); return; }
   if (act === 'card-png') { cardPng(a.dataset.slug).catch(() => toast('Couldn’t make the image. Try again, or use the image link.')); return; }
   if (act === 'copy-text') { const txt = a.dataset.text; try { navigator.clipboard.writeText(txt).then(() => toast('Copied'), () => toast('Select the email and copy it')); } catch (err) { toast('Select the email and copy it'); } }
   if (act === 'blogcat') { S.blogCat = a.dataset.cat; render(); }

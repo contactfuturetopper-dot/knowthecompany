@@ -20,6 +20,10 @@ export default defineConfig({
       RAZORPAY_KEY_ID: envField.string({ context: "server", access: "secret", optional: true }),
       RAZORPAY_KEY_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
       RAZORPAY_WEBHOOK_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
+      // Review invitation emails for the Business plan (src/lib/business.ts): a Brevo API key and the sender
+      // address verified in Brevo. Until both are set, invitations go by WhatsApp and review links only.
+      BREVO_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
+      INVITE_SENDER_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
 });

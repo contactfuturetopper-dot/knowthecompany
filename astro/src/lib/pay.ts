@@ -17,8 +17,12 @@ export const PRICES: Record<string, Record<string, number>> = {
   // smallest currency unit: paise and cents
   basic: { INR: 49900, USD: 900 },
   plus: { INR: 99900, USD: 1900 },
+  business: { INR: 1499900, USD: 17900 },
 };
-export const PLAN_NAMES: Record<string, string> = { basic: "Basic listing", plus: "Plus listing" };
+export const PLAN_NAMES: Record<string, string> = { basic: "Basic listing", plus: "Plus listing", business: "Business listing" };
+/* Higher plans include everything in the lower ones. */
+export const RANK: Record<string, number> = { basic: 0, plus: 1, business: 2 };
+export const planKey = (p: unknown) => (p === "business" ? "business" : p === "plus" ? "plus" : "basic");
 export const PLUS_TRIAL_DAYS = 30;
 /* Launch offer, same dates as app.js: Basic free for the first year, Plus free for its first 30 days. */
 export const LAUNCH = Date.now() < Date.parse("2027-04-01T00:00:00+05:30");
@@ -123,7 +127,11 @@ export function firstChargeAt(plan: string, company: any): Date | null {
   const now = Date.now();
   const ends = company.planEndsAt ? new Date(company.planEndsAt).getTime() : 0;
   /* A plan that is already paid or free until a date keeps that date: autopay starts after it. */
-  if (ends > now + DAY && (plan === "basic" || company.plan === "plus")) return new Date(ends);
+  const cur = planKey(company.plan);
+  /* Autopay for the plan the company already has (or a lower one) starts when the current period ends. */
+  if (ends > now + DAY && RANK[plan] <= RANK[cur]) return new Date(ends);
+  /* Business has no free period: its first year starts, and is charged, today. */
+  if (plan === "business") return null;
   if (plan === "plus") return LAUNCH ? new Date(now + PLUS_TRIAL_DAYS * DAY) : null;
   return LAUNCH ? new Date(now + 365 * DAY) : null;
 }
