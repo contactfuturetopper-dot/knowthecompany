@@ -24,6 +24,7 @@ const hdr = parse(csv[0]);
 const companies = csv.slice(1).map(l => { const r = Object.fromEntries(hdr.map((h, i) => [h, parse(l)[i]])); return { _id: r.website, title: r.title, slug: r.slug, website: r.website, category: r.category, country: r.country, bio: r.bio, addedBy: 'seed', claimStatus: 'none', plan: 'none', _owner: 'c0f544a7-207e-490b-b7d9-830ef39f49c7' }; });
 // one verified Plus company to exercise the owner-written sections
 // A company a member inserted with team-only fields filled in; nobody on the team has edited it.
+companies.push({ _id: 'pendingco.com', title: 'PENDINGCO', slug: 'pendingco', website: 'pendingco.com', category: 'Fintech & Banking', country: 'IN', bio: '', addedBy: 'owner', claimStatus: 'none', plan: 'none', _owner: 'm8', _createdDate: '2026-11-12T00:00:00Z', _updatedDate: '2026-11-12T00:00:00Z' });
 companies.push({ _id: 'fakeco.com', title: 'Fakeco', slug: 'fakeco', website: 'fakeco.com', category: 'Fintech & Banking', country: 'IN', bio: 'Inserted by a member.', addedBy: 'reviewer', claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', ownerMemberIds: ['m9'], employerPage: { why: 'FAKE EMPLOYER PAGE text that must never show.', benefits: [], hiring: true }, _owner: 'm9', _createdDate: '2026-11-09T00:00:00Z', _updatedDate: '2026-11-09T00:00:00Z' });
 companies.find(c => c._id === 'razorpay.com').logo = 'https://static.wixstatic.com/media/c0f544_test~mv2.png';
 Object.assign(companies.find(c => c._id === 'razorpay.com'), { claimStatus: 'verified', verifiedVia: 'email', plan: 'plus', about: 'About text', founded: '2014', teamSize: '201–1,000 people', services: ['Payments'], phone: '+91 80000 00000', publicEmail: 'x@y.z', employerPage: { why: 'Why work here text, long enough.', benefits: ['Health insurance'], size: '201–1,000 people', hiring: true }, ownerMemberIds: ['m1'] });
@@ -86,7 +87,7 @@ for (const r of routes) {
   await new Promise(res => setTimeout(res, 30));
   const text = app.textContent.replace(/\s+/g, ' ');
   const h1 = (app.querySelector('h1') || {}).textContent || '';
-  const flags = ['Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'FAKE REPLY', 'SECOND REVIEW', 'HUGE RATING', '1000', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
+  const flags = ['PENDINGCO', 'Future Topper', 'Prototype', 'prototype', 'demo', 'Saved in this browser', 'undefined', 'NaN', '[object Object]', '[[', 'OWNER REVIEW', 'FAKE REPLY', 'SECOND REVIEW', 'HUGE RATING', '1000', 'Interviews', 'interview experience', 'Share your interview'].filter(w => text.includes(w));
   report.push(`${r.padEnd(24)} ${String(text.length).padStart(6)}  h1="${h1.trim().slice(0, 50)}" ${flags.length ? ' FLAGS:' + flags.join(',') : ''}`);
   { const hs = [...app.querySelectorAll('h1,h2,h3,h4,h5,h6')].map(h => +h.tagName[1]); const issues = [];
     if (hs.filter(x => x === 1).length !== 1) issues.push('h1 x' + hs.filter(x => x === 1).length);

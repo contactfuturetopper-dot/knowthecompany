@@ -83,13 +83,16 @@ function dedupeCos(items) {
   const keep = new Set(best.values());
   return items.filter(it => keep.has(it));
 }
+/* A company its owner listed goes live once its plan is set up or the team approves it (either one marks
+   it as touched by the team). Until then only the member who listed it sees it. Same rule as lib/data.ts. */
+const awaitingCo = it => !!it && it.addedBy === 'owner' && !adminTouched(it);
 const trustedCo = it => adminTouched(it) ? it : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null, logo: '' };
 /* The company's logo: its official icon, imported by the team into the site's media library, or one its owners set. */
 const logoOf = c => { const u = String((c && c.raw && c.raw.logo) || ''); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; };
 
 /* ---------- companies, from the Wix CMS (collection "Companies") ---------- */
 const mkCo = raw => { const it = trustedCo(raw); return {
-  wid: it._id, name: it.title || it._id, web: it.website || it._id, cat: it.category || 'Other', cc: it.country || 'WW', bio: it.bio || '',
+  wid: it._id, pending: awaitingCo(raw), name: it.title || it._id, web: it.website || it._id, cat: it.category || 'Other', cc: it.country || 'WW', bio: it.bio || '',
   added: it.addedBy === 'reviewer' ? 1 : it.addedBy === 'owner' ? 2 : 0, country: COUNTRY[it.country] || it.country || COUNTRY.WW,
   id: 'co-' + (it.slug || slug(it.title || it._id)), catId: 'cat-' + slug(it.category || 'Other'), raw: it
 }; };
@@ -154,7 +157,8 @@ const CLAIMS = {};
 const SB_CATS = [];
 const ensureCat = (name, id) => { let k = CATBYID[id]; if (!k) { const w = name.replace(/&/g, '').split(/\s+/).filter(Boolean); k = { name, id, items: [], short: (w[0][0] + (w[1] ? w[1][0] : '')).toUpperCase(), tone: (CATS.length % 6) + 1 }; CATS.push(k); CATBYID[id] = k; } return k; };
 function indexCompanies(items) {
-  COS = dedupeCos(items).map(mkCo);
+  const me = S.user ? S.user.id : '';
+  COS = dedupeCos(items).filter(it => !awaitingCo(it) || (me && it._owner === me)).map(mkCo);
   CATS = []; CATBYID = {};
   COS.forEach(c => { let k = CATS.find(x => x.name === c.cat); if (!k) { k = { name: c.cat, id: c.catId, items: [] }; CATS.push(k); } k.items.push(c); });
   CATS.forEach((k, i) => { const w = k.name.replace(/&/g,'').split(/\s+/).filter(Boolean); k.short = (w[0][0] + (w[1] ? w[1][0] : '')).toUpperCase(); k.tone = (i % 6) + 1; });
@@ -228,7 +232,7 @@ let LOADED = false, LOAD_ERR = '';
 const DATA_KEY = 'ktc_data_v1';
 let DATA_SIG = '';
 const sigOf = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) >>> 0; return h.toString(36) + ':' + str.length; };
-function applyData(cos, rvs, own) { LAST = { rvs, own: own || [] }; indexCompanies(cos); indexReviews(rvs.slice()); applyOwner(own || []); LOADED = true; LOAD_ERR = ''; }
+function applyData(cos, rvs, own) { LAST = { cos, rvs, own: own || [] }; indexCompanies(cos); indexReviews(rvs.slice()); applyOwner(own || []); LOADED = true; LOAD_ERR = ''; }
 
 /* ---------- owner-written content (collection "OwnerContent") ----------
    Verified owners write their own profile, employer page, photos, cover and replies as items in OwnerContent.
@@ -385,7 +389,7 @@ async function loadMine() {
   MINE_FOR = id;
   try { MINE_ITEMS = id ? (await fetchAll('Reviews')).filter(r => !r._owner || r._owner === id) : []; } catch (e) { MINE_ITEMS = []; }
   MINE = new Set(MINE_ITEMS.map(r => r._id));
-  if (LAST) { indexReviews(LAST.rvs.slice()); applyOwner(LAST.own); }
+  if (LAST) { indexCompanies(LAST.cos); indexReviews(LAST.rvs.slice()); applyOwner(LAST.own); }
   return true;
 }
 const alreadyReviewed = (c, type) => MINE_ITEMS.some(r => (typeof r.company === 'object' && r.company ? r.company._id : r.company) === c.wid && (r.type || 'customer') === type);
@@ -1112,6 +1116,7 @@ function vCompany(c) {
   const P = cprof(c); const ver = isVerifiedCo(c), plus = ver && coPlan(c) === 'plus';
   const rTile = (cls, label, l, extra) => `<div class="r ${cls}"><small>${label}</small>${l.length ? `<b>${avgOf(l).toFixed(1)}</b>${starRow(+avgOf(l).toFixed(1), 15)}<span>${nRev(l.length)}${extra ? ' · ' + extra : ''}</span>` : `<b class="none">–</b><span>No reviews yet</span>`}</div>`;
   return `<section class="cohdr"><div class="wrap">${crumbs([['Home','#home'],[c.cat,'#' + c.catId],[c.name]])}
+    ${c.pending ? `<div class="box soft" role="status" style="gap:8px;margin:12px 0"><b>Only you can see this page for now.</b><p class="meta">It goes live for everyone once you choose your plan, or once our team has checked your proof. <a href="#dashboard">Open your dashboard</a></p></div>` : ''}
     <div class="cocover${plus && P.cover ? '' : ' def'}"${plus && P.cover ? ` style="background-image:url('${P.cover}')"` : ''} aria-hidden="true"></div>
     <div class="cogrid">
       <div class="coid">${coLogo(c, 112)}
@@ -1393,6 +1398,7 @@ const emailDom = e => ((e || '').split('@')[1] || '').toLowerCase().trim();
 const FREE_MAIL = ['gmail.com','googlemail.com','yahoo.com','yahoo.co.in','outlook.com','hotmail.com','live.com','msn.com','icloud.com','me.com','proton.me','protonmail.com','aol.com','rediffmail.com','zoho.com','yandex.com','gmx.com','mail.com'];
 const domainMatch = (email, web) => { const e = emailDom(email), d = domOf(web); return !!e && !!d && !FREE_MAIL.includes(e) && (e === d || e.endsWith('.' + d)); };
 const isClaimed = c => !!CLAIMS[c.id] || c.added === 2;
+const listedByMe = c => !!(c && c.pending && S.user && c.raw._owner === S.user.id);
 /* Each claim gets its own random token for the website check, so a record left by someone else can't be reused. */
 const newCf = () => { let t = ''; try { t = [...crypto.getRandomValues(new Uint8Array(10))].map(b => b.toString(16).padStart(2, '0')).join(''); } catch (e) { t = Math.random().toString(36).slice(2) + Date.now().toString(36); } return { method: 'website', token: 'ktc-' + t }; };
 const vToken = s => { let h = 2166136261; for (const ch of String(s)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return 'ktc-' + h.toString(36) + (h % 997).toString(36); };
@@ -1404,7 +1410,7 @@ function cfResults(q) {
   if (!q) return `<p class="meta">${listing ? 'Type your company’s name or website. We’ll check it isn’t already on Know The Company.' : 'Start typing your company’s name or website.'}</p>`;
   const dq = domOf(q);
   const list = COS.filter(c => c.name.toLowerCase().includes(q) || (dq && c.web.includes(dq))).slice(0, 6);
-  const row = c => `<div class="cfrow">${avatar(c, 40, 14)}<div class="t"><b>${esc(c.name)}</b><small>${esc(c.web)} · ${esc(c.country)}${isClaimed(c) ? ' · already managed' : ''}</small></div>${isClaimed(c) ? `<button class="btn g" type="button" data-act="cf-request" data-id="${c.id}">Request access</button>` : listing ? `<a class="btn g" href="#claim" data-act="claim" data-id="${c.id}">Claim it instead</a>` : `<button class="btn p" type="button" data-act="cf-claim" data-id="${c.id}">Claim</button>`}</div>`;
+  const row = c => listedByMe(c) ? `<div class="cfrow">${avatar(c, 40, 14)}<div class="t"><b>${esc(c.name)}</b><small>${esc(c.web)} · listed by you, not live yet</small></div><a class="btn p" href="#dashboard">Finish in your dashboard</a></div>` : `<div class="cfrow">${avatar(c, 40, 14)}<div class="t"><b>${esc(c.name)}</b><small>${esc(c.web)} · ${esc(c.country)}${isClaimed(c) ? ' · already managed' : ''}</small></div>${isClaimed(c) ? `<button class="btn g" type="button" data-act="cf-request" data-id="${c.id}">Request access</button>` : listing ? `<a class="btn g" href="#claim" data-act="claim" data-id="${c.id}">Claim it instead</a>` : `<button class="btn p" type="button" data-act="cf-claim" data-id="${c.id}">Claim</button>`}</div>`;
   if (listing) return `<div class="cfres">${list.length ? `<p class="meta">${list.length === 1 ? 'This company is' : 'These companies are'} already on Know The Company. If one is yours, claim it instead and keep its reviews.</p>${list.map(row).join('')}` : '<p class="meta">Not on Know The Company yet. Add it below.</p>'}
     <div class="cfnew"><span><b>${list.length ? 'Yours isn’t here?' : 'Ready to add it?'}</b> <span class="meta">Add your company in a couple of minutes.</span></span><button class="btn p" type="button" data-act="cf-new">Add your company</button></div></div>`;
   return `<div class="cfres">${list.length ? list.map(row).join('') : `<p class="meta">No listed company matches “${esc(q)}”.</p>`}
@@ -1470,7 +1476,8 @@ function claimPanel() {
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
   const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '', claimCo = d.coWid ? BYWID[d.coWid] : null;
   const viaWeb = d.method === 'website';
-  return `<div class="formcard"><div style="display:flex;align-items:center;gap:12px">${TICK()}<h2>Claim received for ${esc(d.name)}</h2></div>
+  return `<div class="formcard"><div style="display:flex;align-items:center;gap:12px">${TICK()}<h2>${claimCo && claimCo.pending ? 'Listing received for' : 'Claim received for'} ${esc(d.name)}</h2></div>
+    ${claimCo && claimCo.pending ? `<p class="meta">Your page is saved and only you can see it. It goes live for everyone once you choose your plan below, or once our team has checked your proof.</p>` : ''}
     ${viaWeb ? `<div class="vstate ok"><span>Once the record is on ${esc(domOf(d.web) || 'your website')}, press <b>Check my website</b>. When we find it, you’re verified straight away.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><button class="btn p lg" type="button" data-act="claim-check" data-wid="${esc(d.coWid || '')}" ${S.checking ? 'disabled' : ''}>${S.checking ? 'Checking…' : 'Check my website'}</button>${S.checkMsg ? `<span class="meta" role="status">${esc(S.checkMsg)}</span>` : ''}</div>`
       : `<div class="vstate ok"><span>Our team checks your ${d.method === 'id' ? 'ID card' : 'document'}, usually within 2 working days. Your Verified badge goes live when the check passes, and you can follow it in your dashboard.</span></div>`}

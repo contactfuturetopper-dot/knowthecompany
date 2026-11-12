@@ -10,7 +10,7 @@ import snapshots from "../generated/page-snapshots.json";
 /* Full text of the fixed pages as the app draws them for a logged-out visitor (made by test/run.mjs). */
 const SNAPS = snapshots as Record<string, string>;
 import { graph, orgNode, webPage, breadcrumbs, companyNodes, faqNode, type Crumb } from "./schema";
-import { adminTouched, allReviewsElevated, publicReviews, dedupeCompanies } from "./data";
+import { adminTouched, awaitingListing, allReviewsElevated, publicReviews, dedupeCompanies } from "./data";
 export { adminTouched };
 
 export const ORIGIN = "https://www.knowthecompany.com";
@@ -119,7 +119,7 @@ export async function resolvePage(pathname: string): Promise<Page> {
   if (m) {
     try {
       const [c] = dedupeCompanies(await query("Companies", { slug: { $eq: m[1] } }, 50));
-      if (c) {
+      if (c && !awaitingListing(c)) {
         const name = c.title || c._id, cat = c.category || "Other";
         const f = FACTS[c._id];
         const title = `${name} reviews · Know The Company`, desc = coDesc(name, c, f);
@@ -141,7 +141,7 @@ export async function resolvePage(pathname: string): Promise<Page> {
     try {
       const name = (await categories()).find(n => slug(n) === m![1]);
       if (!name) return notFound(p);
-      const list = (await query("Companies", { category: { $eq: name } }, 100)).map(c => ({ s: c.slug || slug(c.title || c._id), n: c.title || c._id })).sort((a, b) => a.n.localeCompare(b.n));
+      const list = (await query("Companies", { category: { $eq: name } }, 100)).filter(c => !awaitingListing(c)).map(c => ({ s: c.slug || slug(c.title || c._id), n: c.title || c._id })).sort((a, b) => a.n.localeCompare(b.n));
       const body = `<p>${esc(catIntro(name))}</p><ul>${list.map(c => `<li><a href="/company/${c.s}">${esc(c.n)}</a></li>`).join("")}</ul>`;
       const title = `${name} · Know The Company`, desc = trim(catIntro(name));
       const ld = [
@@ -372,6 +372,7 @@ export async function sitemapXml(): Promise<string> {
   const companies = await allCompanies();
   const seen = new Set<string>();
   for (const c of companies) {
+    if (awaitingListing(c)) continue;
     const s = c.slug || slug(c.title || c._id);
     if (!s || seen.has(s)) continue;
     seen.add(s);

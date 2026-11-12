@@ -10,6 +10,9 @@ import { items } from "@wix/data";
 
 export const ADMIN_ID = "c0f544a7-207e-490b-b7d9-830ef39f49c7";
 const tms = (d: unknown) => { const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d; const t = d instanceof Date ? d.getTime() : Date.parse(String(v)); return isNaN(t) ? 0 : t; };
+/* A company its owner listed goes live once its plan is set up or the team approves it (both mark it as
+   touched by the team). Until then it stays off public pages. Same rule as awaitingCo in app.js. */
+export const awaitingListing = (it: any) => !!it && it.addedBy === "owner" && !adminTouched(it);
 export const adminTouched = (it: any) => !!it && (it._owner === ADMIN_ID || tms(it._updatedDate) > tms(it._createdDate));
 const iso = (d: unknown) => { const t = tms(d); return t ? new Date(t).toISOString() : ""; };
 export const slugOf = (s: unknown) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
