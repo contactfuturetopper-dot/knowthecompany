@@ -1940,11 +1940,11 @@ const POSTS = [
   "body": [
    [
     "p",
-    "Before someone calls you, places an order or applies for a job with you, there is a fair chance they have already asked an AI tool about your company. In one 2026 survey of 2,000 tech professionals, What Talent Wants 2026 [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), 31% said they use AI tools to research an employer before applying. Customers do the same before they spend money."
+    "Before someone calls you, places an order or applies for a job with you, there is a fair chance they have already asked an AI tool about your company. In one 2026 survey of 2,000 tech professionals, What Talent Wants 2026 [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), **31% said they use AI tools to research an employer before applying**. Customers do the same before they spend money."
    ],
    [
     "p",
-    "The answer they get is written without you. It may be accurate, out of date, mixed up with another company of the same name, or missing you altogether. The only way to know is to ask the same questions yourself. This is the check we run, and it takes about five minutes per tool."
+    "**The answer they get is written without you.** It may be accurate, out of date, mixed up with another company of the same name, or missing you altogether. The only way to know is to ask the same questions yourself. This is the check we run, and it **takes about five minutes per tool**."
    ],
    [
     "h",
@@ -1989,7 +1989,7 @@ const POSTS = [
    ],
    [
     "p",
-    "ChatGPT search finds pages with OpenAI's crawler, OAI-SearchBot. [OpenAI's documentation](https://developers.openai.com/api/docs/bots) says sites that block OAI-SearchBot will not appear in ChatGPT's search answers, apart from plain navigational links. A separate crawler, GPTBot, collects pages for training models. Blocking GPTBot does not remove you from ChatGPT search."
+    "ChatGPT search finds pages with OpenAI's crawler, OAI-SearchBot. [OpenAI's documentation](https://developers.openai.com/api/docs/bots) says sites that block OAI-SearchBot will not appear in ChatGPT's search answers, apart from plain navigational links. A separate crawler, GPTBot, collects pages for training models. **Blocking GPTBot does not remove you from ChatGPT search.**"
    ],
    [
     "h3",
@@ -2033,7 +2033,7 @@ const POSTS = [
    [
     "ul",
     [
-     "A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode found that review and trust sites were the second most cited type of source, and 59% of AI recommendations included a star rating as evidence. Brands with no active review profile were rarely cited.",
+     "A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode found that review and trust sites were the second most cited type of source, and **59% of AI recommendations included a star rating as evidence**. Brands with no active review profile were rarely cited.",
      "Growfusely checked 1,739 citations for business software questions in July 2026. Review platforms made up about 7%, companies' own pages roughly 12% to 24% and independent articles most of the rest. Their [write-up](https://growfusely.com/blog/ai-citation-analysis-b2b-software/) is worth reading if you sell software."
     ]
    ],
@@ -2051,7 +2051,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Write a plain About page that states what you do, where you are based, when you started and who runs the company, in full sentences. Use exactly the same company name, address and phone number on your website, Google Business Profile, social profiles and any directory listing. If you share a name with another business, add your city or your website to every profile so the difference is obvious."
+    "Write a plain About page that states what you do, where you are based, when you started and who runs the company, in full sentences. **Use exactly the same company name, address and phone number** on your website, Google Business Profile, social profiles and any directory listing. If you share a name with another business, add your city or your website to every profile so the difference is obvious."
    ],
    [
     "h3",
@@ -2067,7 +2067,7 @@ const POSTS = [
    ],
    [
     "p",
-    "This is the hardest one, and the honest fix is slow. If customers keep mentioning late refunds, fix the refund process first. Then reply to those reviews and say what changed. New reviews that describe the better experience are what change the summary over time. Our guide on [how to reply to a bad review](/blog/how-to-reply-to-a-bad-review) has worked examples."
+    "This is the hardest one, and the honest fix is slow. If customers keep mentioning late refunds, **fix the refund process first**. Then reply to those reviews and say what changed. New reviews that describe the better experience are what change the summary over time. Our guide on [how to reply to a bad review](/blog/how-to-reply-to-a-bad-review) has worked examples."
    ],
    [
     "h3",
@@ -2083,7 +2083,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Fix this the same day. Correct it on every profile you control, and report wrong details on directories you do not control. A wrong number in an AI answer is an easy opening for fraudsters posing as your business."
+    "**Fix this the same day.** Correct it on every profile you control, and report wrong details on directories you do not control. A wrong number in an AI answer is an easy opening for fraudsters posing as your business."
    ],
    [
     "h",
@@ -2104,7 +2104,7 @@ const POSTS = [
    ],
    [
     "p",
-    "AI answers change from one day to the next, and the same question can get a different answer twice in a row. Ask each question twice, keep the sheet and compare month by month. One wrong answer is noise. The same wrong fact three months running points to a source you need to fix."
+    "AI answers change from one day to the next, and the same question can get a different answer twice in a row. Ask each question twice, keep the sheet and compare month by month. One wrong answer is noise. **The same wrong fact three months running points to a source you need to fix.**"
    ],
    [
     "faq",
@@ -2143,7 +2143,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "When someone asks ChatGPT or Perplexity whether a company is any good, the tool goes looking for reviews. But every website can publish a file called robots.txt that tells crawlers which pages they may visit. Some review sites use it to keep AI tools out. If the sites your customers use do that, the reviews they wrote there may never make it into an AI answer."
+    "When someone asks ChatGPT or Perplexity whether a company is any good, the tool goes looking for reviews. But every website can publish a file called robots.txt that tells crawlers which pages they may visit. **Some review sites use it to keep AI tools out.** If the sites your customers use do that, the reviews they wrote there may never make it into an AI answer."
    ],
    [
     "p",
@@ -2155,7 +2155,7 @@ const POSTS = [
    ],
    [
     "p",
-    "AI companies run separate crawlers for separate jobs, and a site can treat each one differently. The ones that matter for whether reviews appear in answers are the search crawlers."
+    "AI companies run separate crawlers for separate jobs, and a site can treat each one differently. The ones that matter for whether reviews appear in answers are **the search crawlers**."
    ],
    [
     "ul",
@@ -2190,7 +2190,7 @@ const POSTS = [
    ],
    [
     "p",
-    "This is now the most common approach among large review sites. They block the training crawlers, such as GPTBot, ClaudeBot and CCBot, and let the search crawlers in, either by naming them or by leaving them under the general rules. Their reviews can be quoted and linked in ChatGPT search and Perplexity answers, but are not meant to be used to train future models. One large jobs and employee review site we read sorted AI crawlers into exactly these two groups by name."
+    "This is now the **most common approach among large review sites**. They block the training crawlers, such as GPTBot, ClaudeBot and CCBot, and let the search crawlers in, either by naming them or by leaving them under the general rules. Their reviews can be quoted and linked in ChatGPT search and Perplexity answers, but are not meant to be used to train future models. One large jobs and employee review site we read sorted AI crawlers into exactly these two groups by name."
    ],
    [
     "h3",
@@ -2198,11 +2198,11 @@ const POSTS = [
    ],
    [
     "p",
-    "A smaller group keeps AI search crawlers out as well. One employee review site we read disallowed its whole site to OAI-SearchBot, PerplexityBot and Bingbot together, while still letting Googlebot in, so its reviews can show in Google Search but are asked to stay out of ChatGPT search, Perplexity and Bing. A large local business directory blocked OpenAI's crawlers from the entire site while leaving Perplexity and Bing alone."
+    "A smaller group **keeps AI search crawlers out as well**. One employee review site we read disallowed its whole site to OAI-SearchBot, PerplexityBot and Bingbot together, while still letting Googlebot in, so its reviews can show in Google Search but are asked to stay out of ChatGPT search, Perplexity and Bing. A large local business directory blocked OpenAI's crawlers from the entire site while leaving Perplexity and Bing alone."
    ],
    [
     "p",
-    "These rules change. One large customer review site we read had been reported in mid-2025 as blocking AI crawlers entirely. By November 2026 its company pages were open to the main AI search tools. Whatever you read today, check again in six months."
+    "These rules change. One large customer review site we read had been reported in mid-2025 as blocking AI crawlers entirely. By November 2026 its company pages were open to the main AI search tools. **Whatever you read today, check again in six months.**"
    ],
    [
     "h",
@@ -2232,11 +2232,11 @@ const POSTS = [
    ],
    [
     "p",
-    "None of this means you should abandon a site your customers already use. Google Business Profile still matters most for local searches, and a candidate who opens a review site directly will still see your reviews there. The point is coverage. If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
+    "None of this means you should abandon a site your customers already use. Google Business Profile still matters most for local searches, and a candidate who opens a review site directly will still see your reviews there. **The point is coverage.** If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
    ],
    [
     "p",
-    "A sensible spread for most businesses is Google Business Profile, the review site that leads your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. Ask once, and rotate which link you send."
+    "A sensible spread for most businesses is Google Business Profile, the review site that leads your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. **Ask once, and rotate which link you send.**"
    ],
    [
     "h",
@@ -2283,11 +2283,11 @@ const POSTS = [
   "body": [
    [
     "p",
-    "A one-star review stings, and the first instinct is to defend yourself. Before you type, remember who reads the reply. The unhappy customer reads it once. Every future customer who scrolls past that review reads it too, and they are deciding whether to trust you."
+    "A one-star review stings, and the first instinct is to defend yourself. Before you type, remember who reads the reply. The unhappy customer reads it once. **Every future customer who scrolls past that review reads it too**, and they are deciding whether to trust you."
    ],
    [
     "p",
-    "A good reply will not always win back the reviewer. Its job is to show everyone else how you behave when something goes wrong."
+    "A good reply will not always win back the reviewer. **Its job is to show everyone else how you behave when something goes wrong.**"
    ],
    [
     "h",
@@ -2318,7 +2318,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Most good replies are under 100 words. Long replies read as arguments."
+    "**Most good replies are under 100 words.** Long replies read as arguments."
    ],
    [
     "h",
@@ -2408,7 +2408,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Some complaints are about choices you made on purpose, such as a price, a location or a policy. Do not pretend to change them. Explain the reason once, honestly. \"Our prices are higher than nearby shops because every piece is made to order in our workshop\" is a perfectly good reply. Some readers will agree with the reviewer, and some will now choose you for the same reason."
+    "Some complaints are about choices you made on purpose, such as a price, a location or a policy. Do not pretend to change them. **Explain the reason once, honestly.** \"Our prices are higher than nearby shops because every piece is made to order in our workshop\" is a perfectly good reply. Some readers will agree with the reviewer, and some will now choose you for the same reason."
    ],
    [
     "h",
@@ -2416,7 +2416,7 @@ const POSTS = [
    ],
    [
     "p",
-    "You do not have to thank every five-star review, and Google's advice says the same. Reply when you have something to add, such as a tip, an answer to a question in the review or a genuine thank-you to a regular customer. A wall of identical \"Thank you so much!\" replies adds nothing."
+    "You do not have to thank every five-star review, and Google's advice says the same. **Reply when you have something to add**, such as a tip, an answer to a question in the review or a genuine thank-you to a regular customer. A wall of identical \"Thank you so much!\" replies adds nothing."
    ],
    [
     "h",
@@ -2424,7 +2424,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Once a month, read your reviews in one sitting and list the complaints that repeat. Two mentions of slow refunds is a coincidence. Six is a process problem. Fixing it does more for your rating than any reply."
+    "Once a month, read your reviews in one sitting and list the complaints that repeat. Two mentions of slow refunds is a coincidence. Six is a process problem. **Fixing it does more for your rating than any reply.**"
    ],
    [
     "p",
@@ -2471,7 +2471,7 @@ const POSTS = [
    ],
    [
     "p",
-    "In [Monster's 2026 survey](https://www.monster.com/career-advice/research/job-search-dealbreakers) of more than 1,000 employed workers in the US, 56% said negative company reviews or a poor reputation would make them least likely to apply. A survey of 2,000 tech, product and data professionals in India, What Talent Wants 2026 [reported by HRKatha](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), found nearly half check employee review sites before applying. Asked whom they trust most, 48% picked former employees, ahead of current employees' LinkedIn posts at 44% and company websites at 39%. Only 23% picked posts by leadership."
+    "In [Monster's 2026 survey](https://www.monster.com/career-advice/research/job-search-dealbreakers) of more than 1,000 employed workers in the US, **56% said negative company reviews or a poor reputation would make them least likely to apply**. A survey of 2,000 tech, product and data professionals in India, What Talent Wants 2026 [reported by HRKatha](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), found nearly half check employee review sites before applying. Asked whom they trust most, **48% picked former employees**, ahead of current employees' LinkedIn posts at 44% and company websites at 39%. Only 23% picked posts by leadership."
    ],
    [
     "p",
@@ -2487,7 +2487,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Comments about managers come up more than almost anything else. Candidates look for words like micromanage, supportive or takes credit, and whether they are tied to a team or function. In the same Indian survey, 56% rated a prospective manager's profile as very important before accepting an offer."
+    "**Comments about managers come up more than almost anything else.** Candidates look for words like micromanage, supportive or takes credit, and whether they are tied to a team or function. In the same Indian survey, 56% rated a prospective manager's profile as very important before accepting an offer."
    ],
    [
     "h3",
@@ -2495,7 +2495,7 @@ const POSTS = [
    ],
    [
     "p",
-    "\"Salary paid late\" in one review is a warning. In three reviews it is a decision. Candidates also look at what reviewers say about performance reviews: whether pay rises matched what was promised, whether ratings felt decided in advance and whether promotions happened on time."
+    "\"Salary paid late\" in one review is a warning. **In three reviews it is a decision.** Candidates also look at what reviewers say about performance reviews: whether pay rises matched what was promised, whether ratings felt decided in advance and whether promotions happened on time."
    ],
    [
     "h3",
@@ -2511,7 +2511,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Candidates read what reviewers say about notice periods, final pay, references and paperwork. Some of this is now law in many places. India's Code on Wages, in force since November 2025, requires final wages within two working days of an employee leaving, and many US states set their own deadlines for a final pay cheque. A company that drags its feet on final pay will hear about it in reviews, and candidates read that as a sign of how they will be treated on the way out."
+    "Candidates read what reviewers say about notice periods, final pay, references and paperwork. Some of this is now law in many places. India's Code on Wages, in force since November 2025, **requires final wages within two working days of an employee leaving**, and many US states set their own deadlines for a final pay cheque. A company that drags its feet on final pay will hear about it in reviews, and candidates read that as a sign of how they will be treated on the way out."
    ],
    [
     "h3",
@@ -2519,7 +2519,7 @@ const POSTS = [
    ],
    [
     "p",
-    "After a round of layoffs, the newest reviews carry most of the weight. Candidates want to know whether cuts were handled with notice and fair severance, or by a calendar invite at nine in the morning. Our guide to [handling a wave of negative employee reviews](/blog/negative-employee-reviews-after-layoffs) covers what to do if that is you."
+    "After a round of layoffs, **the newest reviews carry most of the weight**. Candidates want to know whether cuts were handled with notice and fair severance, or by a calendar invite at nine in the morning. Our guide to [handling a wave of negative employee reviews](/blog/negative-employee-reviews-after-layoffs) covers what to do if that is you."
    ],
    [
     "h",
@@ -2540,7 +2540,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Replying to employee reviews is different from replying to customers. The reviewer may still work for you, and anonymity is what makes the review honest. A few rules:"
+    "Replying to employee reviews is different from replying to customers. The reviewer may still work for you, and **anonymity is what makes the review honest**. A few rules:"
    ],
    [
     "ul",
@@ -2617,11 +2617,11 @@ const POSTS = [
   "body": [
    [
     "p",
-    "If you send customers a message after an order asking them to leave a review, you are using their personal data: a name, a phone number or email address and the fact that they bought from you. In India that is governed by the Digital Personal Data Protection Act, 2023 and the rules made under it, which the government notified in November 2025."
+    "If you send customers a message after an order asking them to leave a review, **you are using their personal data**: a name, a phone number or email address and the fact that they bought from you. In India that is governed by the Digital Personal Data Protection Act, 2023 and the rules made under it, which the government notified in November 2025."
    ],
    [
     "p",
-    "The rules are being phased in. The Data Protection Board was set up straight away. Provisions for registering consent managers started in November 2026. Most duties for ordinary businesses, including notices, security safeguards, breach reporting, deletion and parental consent, apply from May 2027, according to [an analysis by Saga Legal](https://www.legal500.com/firms/237811-saga-legal/c-india/news-and-developments/the-privacy-timer-starts-now-analysing-the-dpdp-rules-and-its-18-month-countdown). That leaves about six months to get review requests right."
+    "The rules are being phased in. The Data Protection Board was set up straight away. Provisions for registering consent managers started in November 2026. Most duties for ordinary businesses, including notices, security safeguards, breach reporting, deletion and parental consent, **apply from May 2027**, according to [an analysis by Saga Legal](https://www.legal500.com/firms/237811-saga-legal/c-india/news-and-developments/the-privacy-timer-starts-now-analysing-the-dpdp-rules-and-its-18-month-countdown). That leaves about six months to get review requests right."
    ],
    [
     "note",
@@ -2633,7 +2633,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Under the Act, the business that decides why and how personal data is used is the Data Fiduciary. If you collect a customer's number at checkout and decide to ask them for a review, that is you. If a software tool or review platform sends the messages for you, it acts as your Data Processor. The responsibility stays with you, so choose tools that let you meet the rules below."
+    "Under the Act, the business that decides why and how personal data is used is the Data Fiduciary. If you collect a customer's number at checkout and decide to ask them for a review, that is you. If a software tool or review platform sends the messages for you, it acts as your Data Processor. **The responsibility stays with you**, so choose tools that let you meet the rules below."
    ],
    [
     "h",
@@ -2641,7 +2641,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The rules require a notice that can be understood on its own, in clear and plain language. It should list the personal data you will use, the specific purpose and how the person can withdraw consent, exercise their rights and complain to the Data Protection Board. A line hidden in your terms and conditions does not meet that standard."
+    "The rules require a notice that can be understood on its own, in clear and plain language. It should list the personal data you will use, the specific purpose and how the person can withdraw consent, exercise their rights and complain to the Data Protection Board. **A line hidden in your terms and conditions does not meet that standard.**"
    ],
    [
     "p",
@@ -2661,7 +2661,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The Act allows some processing without separate consent. One of these \"legitimate uses\" covers data a person gave you voluntarily for a specified purpose, as long as they have not said they do not want it used. Whether a review request falls inside the purpose of a purchase has not been tested yet. The safer course is to name review requests in your notice, so the purpose is clearly stated from the start."
+    "The Act allows some processing without separate consent. One of these \"legitimate uses\" covers data a person gave you voluntarily for a specified purpose, as long as they have not said they do not want it used. Whether a review request falls inside the purpose of a purchase has not been tested yet. The safer course is to **name review requests in your notice**, so the purpose is clearly stated from the start."
    ],
    [
     "h",
@@ -2669,7 +2669,7 @@ const POSTS = [
    ],
    [
     "p",
-    "This affects coaching institutes, schools, edtech companies, toy stores and anyone else whose customers include people under 18. Under the rules, processing a child's data needs verifiable consent from a parent or guardian, with limited exceptions. For review requests, the simple rule is to ask the parent who paid, never the student, and only once the parent has agreed to be contacted."
+    "This affects coaching institutes, schools, edtech companies, toy stores and anyone else whose customers include people under 18. Under the rules, processing a child's data needs verifiable consent from a parent or guardian, with limited exceptions. For review requests, the simple rule is to **ask the parent who paid, never the student**, and only once the parent has agreed to be contacted."
    ],
    [
     "h",
@@ -2689,7 +2689,7 @@ const POSTS = [
    ],
    [
     "p",
-    "From May 2027 businesses must keep reasonable security safeguards, tell affected people about a data breach without delay in plain language, and respond to requests to access, correct or erase their data within 90 days, as the [government's explainer](https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf) sets out. For review requests that means:"
+    "From May 2027 businesses must keep reasonable security safeguards, tell affected people about a data breach without delay in plain language, and respond to requests to access, correct or erase their data **within 90 days**, as the [government's explainer](https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf) sets out. For review requests that means:"
    ],
    [
     "ul",
@@ -2705,7 +2705,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The Act sets maximum penalties of up to ₹250 crore for failing to keep reasonable security safeguards, up to ₹200 crore for failing to report a breach or for breaking the rules on children's data, and up to ₹50 crore for other breaches. These are ceilings, and the Board decides the actual amount case by case. For a small business, the more likely cost of a careless review campaign is a complaint, a lost customer and a worse review than the one you asked for."
+    "The Act sets maximum penalties of **up to ₹250 crore** for failing to keep reasonable security safeguards, up to ₹200 crore for failing to report a breach or for breaking the rules on children's data, and up to ₹50 crore for other breaches. These are ceilings, and the Board decides the actual amount case by case. For a small business, the more likely cost of a careless review campaign is a complaint, a lost customer and a worse review than the one you asked for."
    ],
    [
     "h",
@@ -2769,7 +2769,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "Ask an AI tool about a small or mid-sized company and you will often get a confident paragraph with one or two things wrong: an old address, a product that was discontinued, a founder who left or details borrowed from a different company with a similar name. You cannot edit an AI answer directly. You can change what it is built from."
+    "Ask an AI tool about a small or mid-sized company and you will often get a confident paragraph with one or two things wrong: an old address, a product that was discontinued, a founder who left or details borrowed from a different company with a similar name. **You cannot edit an AI answer directly. You can change what it is built from.**"
    ],
    [
     "p",
@@ -2781,7 +2781,7 @@ const POSTS = [
    ],
    [
     "p",
-    "This is the most common mix-up for smaller firms. If a better-known company in another country shares your name, the tools may blend the two, giving you its founding date, its headcount or its reviews."
+    "**This is the most common mix-up for smaller firms.** If a better-known company in another country shares your name, the tools may blend the two, giving you its founding date, its headcount or its reviews."
    ],
    [
     "ul",
@@ -2797,7 +2797,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Directories, old press coverage and abandoned profiles keep stating facts that were true five years ago. AI search tools read them because they are still online."
+    "Directories, old press coverage and abandoned profiles **keep stating facts that were true five years ago**. AI search tools read them because they are still online."
    ],
    [
     "ul",
@@ -2817,7 +2817,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Write the facts in plain sentences somewhere obvious: what you do, who for, where, since when and who runs the company. Keep a short page of key facts and keep it current. Our guide on [making your website easy for AI tools to read](/blog/make-your-website-easy-for-ai-to-read) covers the technical side."
+    "Write the facts in plain sentences somewhere obvious: what you do, who for, where, since when and who runs the company. **Keep a short page of key facts and keep it current.** Our guide on [making your website easy for AI tools to read](/blog/make-your-website-easy-for-ai-to-read) covers the technical side."
    ],
    [
     "h",
@@ -2825,7 +2825,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Two problems are common. Some sites block AI crawlers by accident, for example through a security setting. Cloudflare, which protects a large share of websites, began blocking AI crawlers by default for new sites in July 2025, as [Nieman Lab reported](https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/). Other sites only show their text after JavaScript runs in the browser. A study by Vercel in December 2024 found that none of the major AI crawlers, including OpenAI's and Perplexity's, execute JavaScript, so they see an empty page."
+    "Two problems are common. Some sites block AI crawlers by accident, for example through a security setting. Cloudflare, which protects a large share of websites, **began blocking AI crawlers by default for new sites in July 2025**, as [Nieman Lab reported](https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/). Other sites only show their text after JavaScript runs in the browser. A study by Vercel in December 2024 found that none of the major AI crawlers, including OpenAI's and Perplexity's, execute JavaScript, **so they see an empty page**."
    ],
    [
     "p",
@@ -2837,7 +2837,7 @@ const POSTS = [
    ],
    [
     "p",
-    "When there is little current information about a company, AI tools lean on whatever older material exists, or say very little. Fresh, specific mentions help: recent reviews from customers and employees, an up-to-date profile on the review sites in your industry and occasional news or articles that mention you. A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode found that brands with no active review profile were rarely cited, while brands with active profiles were cited far more often."
+    "When there is little current information about a company, AI tools lean on whatever older material exists, or say very little. Fresh, specific mentions help: recent reviews from customers and employees, an up-to-date profile on the review sites in your industry and occasional news or articles that mention you. A 2026 study of more than 800,000 answers from ChatGPT, Gemini, Perplexity and Google AI Mode found that **brands with no active review profile were rarely cited**, while brands with active profiles were cited far more often."
    ],
    [
     "h",
@@ -2845,7 +2845,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Sometimes there is no wrong source to fix. The tool fills a gap with something plausible, such as a founding year or a headcount. This happens most when there is little written about you anywhere. The fix is the same as for cause five: give the tools accurate facts in places they read."
+    "Sometimes there is no wrong source to fix. The tool fills a gap with something plausible, such as a founding year or a headcount. This happens most when there is little written about you anywhere. The fix is the same as for cause five: **give the tools accurate facts in places they read**."
    ],
    [
     "p",
@@ -2896,7 +2896,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "A star rating is a single number. A page of reviews is hundreds of sentences about late parcels, helpful staff, hidden fees and quick refunds. When an AI tool summarises a company, it uses both, and the sentences often matter more."
+    "A star rating is a single number. A page of reviews is hundreds of sentences about late parcels, helpful staff, hidden fees and quick refunds. When an AI tool summarises a company, it uses both, and **the sentences often matter more**."
    ],
    [
     "h",
@@ -2924,11 +2924,11 @@ const POSTS = [
    ],
    [
     "p",
-    "Picture two companies, both rated 4.2. In the first, the complaints are spread across many small issues. In the second, a third of the negative reviews mention refunds taking months. A person skimming the stars sees two identical companies. An AI tool reading the text will mention refund delays for the second, and anyone asking \"is it safe to buy from them?\" will hear about it."
+    "Picture two companies, both rated 4.2. In the first, the complaints are spread across many small issues. In the second, **a third of the negative reviews mention refunds taking months**. A person skimming the stars sees two identical companies. An AI tool reading the text will mention refund delays for the second, and anyone asking \"is it safe to buy from them?\" will hear about it."
    ],
    [
     "p",
-    "So the useful question about your reviews is less \"what is our rating?\" and more \"what would someone conclude if they read fifty of them in a row?\""
+    "So the useful question about your reviews is less \"what is our rating?\" and more **\"what would someone conclude if they read fifty of them in a row?\"**"
    ],
    [
     "h",
@@ -2953,7 +2953,7 @@ const POSTS = [
    ],
    [
     "p",
-    "There is no shortcut that survives. If refunds are slow, speed up refunds. When the fix is in place, three things help the new reality show up:"
+    "There is no shortcut that survives. **If refunds are slow, speed up refunds.** When the fix is in place, three things help the new reality show up:"
    ],
    [
     "ul",
@@ -2969,7 +2969,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Themes work in your favour as well. If customers repeatedly mention that your support team answers on weekends, that becomes part of how AI tools describe you. Mentioning it in your own replies and on your website gives the tools a consistent picture from several sources."
+    "Themes work in your favour as well. If customers repeatedly mention that your support team answers on weekends, that **becomes part of how AI tools describe you**. Mentioning it in your own replies and on your website gives the tools a consistent picture from several sources."
    ],
    [
     "h",
@@ -2977,7 +2977,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Reviewers and AI tools both give more weight to what is recent. A burst of complaints from three years ago, followed by two years of steady improvement, reads very differently from complaints that are still arriving. Replies that date the fix (\"Since March, refunds are processed within five days\") help readers and tools see the timeline."
+    "Reviewers and AI tools both **give more weight to what is recent**. A burst of complaints from three years ago, followed by two years of steady improvement, reads very differently from complaints that are still arriving. Replies that date the fix (\"Since March, refunds are processed within five days\") help readers and tools see the timeline."
    ],
    [
     "faq",
@@ -3032,11 +3032,11 @@ const POSTS = [
    ],
    [
     "p",
-    "If any of these sits under a line saying \"Disallow: /\", that tool is being told to stay away. Training crawlers such as GPTBot are a separate choice. Blocking them keeps your content out of model training without removing you from AI search."
+    "If any of these sits under a line saying \"Disallow: /\", **that tool is being told to stay away**. Training crawlers such as GPTBot are a separate choice. **Blocking them keeps your content out of model training without removing you from AI search.**"
    ],
    [
     "p",
-    "Check your security settings too. Cloudflare began blocking AI crawlers by default for new sites in July 2025, as [Nieman Lab reported](https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/), so a site can be blocked without anything showing in robots.txt."
+    "Check your security settings too. Cloudflare began blocking AI crawlers by default for new sites in July 2025, as [Nieman Lab reported](https://www.niemanlab.org/2025/07/cloudflare-will-block-ai-scraping-by-default-and-launches-new-pay-per-crawl-marketplace/), so **a site can be blocked without anything showing in robots.txt**."
    ],
    [
     "h",
@@ -3044,11 +3044,11 @@ const POSTS = [
    ],
    [
     "p",
-    "Many modern websites send the browser an almost empty page and build the content with JavaScript. People never notice, but a [December 2024 study by Vercel](https://vercel.com/blog/the-rise-of-the-ai-crawler) found that none of the major AI crawlers, including OpenAI's, Anthropic's and Perplexity's, run JavaScript. Google's crawler does, which is why such sites can rank on Google and still be invisible to ChatGPT."
+    "Many modern websites send the browser an almost empty page and build the content with JavaScript. People never notice, but a [December 2024 study by Vercel](https://vercel.com/blog/the-rise-of-the-ai-crawler) found that none of the major AI crawlers, including OpenAI's, Anthropic's and Perplexity's, run JavaScript. Google's crawler does, which is why such sites can rank on Google and **still be invisible to ChatGPT**."
    ],
    [
     "p",
-    "To test it, open a page, right-click and choose View page source. If you can find your headings and paragraphs in that source, crawlers can read them. If you only see code and an empty container, ask your developer about server-side rendering or pre-rendering for your main pages."
+    "To test it, open a page, right-click and choose View page source. **If you can find your headings and paragraphs in that source, crawlers can read them.** If you only see code and an empty container, ask your developer about server-side rendering or pre-rendering for your main pages."
    ],
    [
     "h",
@@ -3073,7 +3073,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Structured data is a small block of code, usually in the JSON-LD format from schema.org, that labels facts on a page: your organisation's name, logo, address, phone number and opening hours, or the questions and answers on an FAQ page. Search engines use it, and it removes guesswork for any tool reading the page. Ask your developer for Organization and, if you have premises, LocalBusiness markup. It is usually an hour's work."
+    "Structured data is a small block of code, usually in the JSON-LD format from schema.org, that labels facts on a page: your organisation's name, logo, address, phone number and opening hours, or the questions and answers on an FAQ page. Search engines use it, and it removes guesswork for any tool reading the page. Ask your developer for Organization and, if you have premises, LocalBusiness markup. **It is usually an hour's work.**"
    ],
    [
     "h",
@@ -3089,7 +3089,7 @@ const POSTS = [
    ],
    [
     "p",
-    "llms.txt is a proposed plain-text file, described at [llmstxt.org](https://llmstxt.org/), that summarises a site for AI tools. It is cheap to add and harmless. None of the major AI companies has said it uses llms.txt to decide what to show, so treat it as a small extra and put your effort into the steps above."
+    "llms.txt is a proposed plain-text file, described at [llmstxt.org](https://llmstxt.org/), that summarises a site for AI tools. It is cheap to add and harmless. None of the major AI companies has said it uses llms.txt to decide what to show, so **treat it as a small extra** and put your effort into the steps above."
    ],
    [
     "h",
@@ -3097,7 +3097,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Your website is only one source. AI answers draw heavily on reviews, directories and articles about you. Growfusely's July 2026 analysis of software questions found companies' own pages made up roughly 12% to 24% of citations, with independent articles and review sites making up most of the rest, according to [their write-up](https://growfusely.com/blog/ai-citation-analysis-b2b-software/). A readable website is the foundation. What others say about you is the rest of the building."
+    "Your website is only one source. AI answers draw heavily on reviews, directories and articles about you. Growfusely's July 2026 analysis of software questions found companies' own pages made up roughly 12% to 24% of citations, with independent articles and review sites making up most of the rest, according to [their write-up](https://growfusely.com/blog/ai-citation-analysis-b2b-software/). **A readable website is the foundation.** What others say about you is the rest of the building."
    ],
    [
     "h",
@@ -3152,7 +3152,7 @@ const POSTS = [
    ],
    [
     "p",
-    "This practice has a name, review gating, and it causes more trouble than it is worth."
+    "This practice has a name, **review gating**, and it causes more trouble than it is worth."
    ],
    [
     "h",
@@ -3160,11 +3160,11 @@ const POSTS = [
    ],
    [
     "p",
-    "Google's policy for reviews on Maps bans it directly. Under rating manipulation, the [policy](https://support.google.com/contributionpolicy/answer/7400114?hl=EN) says businesses may not \"discourage or prohibit negative reviews, or selectively solicit positive reviews from customers\". In April 2026 Google added two more lines, banning businesses from setting staff a quota of reviews to collect or asking staff to get reviews with specific content, as [PPC Land reported](https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/)."
+    "Google's policy for reviews on Maps bans it directly. Under rating manipulation, the [policy](https://support.google.com/contributionpolicy/answer/7400114?hl=EN) says businesses may not \"discourage or prohibit negative reviews, or **selectively solicit positive reviews from customers**\". In April 2026 Google added two more lines, **banning businesses from setting staff a quota of reviews** to collect or asking staff to get reviews with specific content, as [PPC Land reported](https://ppc.land/google-tightens-maps-review-policy-staff-names-and-quotas-now-banned/)."
    ],
    [
     "p",
-    "Other rules point the same way. India's review standard, IS 19000:2022, says invitations to review should go to all known purchasers, or be chosen by an objective process that avoids bias. In the US, the Federal Trade Commission's review rule treats suppressing negative reviews while implying the reviews shown are complete as a violation, with penalties of up to $53,088 per violation, according to [Benesch Law's April 2026 summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/). Our overview of [fake review laws around the world](/blog/fake-review-laws-around-the-world) covers the UK and EU too."
+    "Other rules point the same way. India's review standard, IS 19000:2022, says invitations to review should go to all known purchasers, or be chosen by an objective process that avoids bias. In the US, the Federal Trade Commission's review rule treats suppressing negative reviews while implying the reviews shown are complete as a violation, with **penalties of up to $53,088 per violation**, according to [Benesch Law's April 2026 summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/). Our overview of [fake review laws around the world](/blog/fake-review-laws-around-the-world) covers the UK and EU too."
    ],
    [
     "h",
@@ -3180,7 +3180,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Buyers are not naive. A page of short, glowing five-star reviews with no complaints at all reads as curated. A rating of 4.6 with a few honest three-star reviews, each answered properly, reads as real. The occasional bad review, handled well, is evidence that the good ones are genuine."
+    "Buyers are not naive. A page of short, glowing five-star reviews with no complaints at all reads as curated. A rating of 4.6 with a few honest three-star reviews, each answered properly, **reads as real**. The occasional bad review, handled well, is evidence that the good ones are genuine."
    ],
    [
     "h",
@@ -3188,7 +3188,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The customers you would rather not ask are the ones who can tell you why people leave. Filtering them out of public reviews usually means filtering them out of your attention as well. The complaint you never heard about keeps happening to other customers."
+    "The customers you would rather not ask are the ones who can tell you why people leave. Filtering them out of public reviews usually means filtering them out of your attention as well. **The complaint you never heard about keeps happening to other customers.**"
    ],
    [
     "h",
@@ -3250,7 +3250,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "Every business with enough reviews eventually gets one that seems to come from nowhere: no matching order, details that do not fit or suspicious timing that lines up with a competitor's launch. Some really are fake. Some are genuine customers using a nickname. The steps below help you tell the difference and respond in a way that does not backfire."
+    "Every business with enough reviews eventually gets one that seems to come from nowhere: no matching order, details that do not fit or suspicious timing that lines up with a competitor's launch. Some really are fake. **Some are genuine customers using a nickname.** The steps below help you tell the difference and respond in a way that does not backfire."
    ],
    [
     "h",
@@ -3276,7 +3276,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Even if you are sure it is fake, reply as if it might be real. Readers cannot see your records, and a furious reply looks worse than the review. Keep it short:"
+    "Even if you are sure it is fake, **reply as if it might be real**. Readers cannot see your records, and a furious reply looks worse than the review. Keep it short:"
    ],
    [
     "quote",
@@ -3292,7 +3292,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Every serious review site has a way to flag a review. Reports with specific evidence succeed far more often than \"this is fake\"."
+    "Every serious review site has a way to flag a review. **Reports with specific evidence succeed far more often** than \"this is fake\"."
    ],
    [
     "ul",
@@ -3313,7 +3313,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The tempting response is to ask friends for five-star reviews to drown it out. It breaks the rules of every review site, and in several countries it is illegal for businesses to post or commission fake reviews. Review sites also detect bursts of new positive reviews, and a cluster of removed reviews damages your page more than one fake complaint."
+    "The tempting response is to ask friends for five-star reviews to drown it out. It breaks the rules of every review site, and in several countries **it is illegal for businesses to post or commission fake reviews**. Review sites also detect bursts of new positive reviews, and a cluster of removed reviews damages your page more than one fake complaint."
    ],
    [
     "h",
@@ -3321,11 +3321,11 @@ const POSTS = [
    ],
    [
     "p",
-    "If a competitor is behind a campaign of false reviews, or someone is demanding money to remove them, it may be worth talking to a lawyer. In many countries a false statement of fact that harms a business can be defamation, while a genuine negative opinion is protected. In India, for instance, the defamation offence now sits in section 356 of the Bharatiya Nyaya Sanhita. Fake reviews posted by businesses also fall under consumer protection law in several places, which our overview of [fake review laws around the world](/blog/fake-review-laws-around-the-world) explains."
+    "If a competitor is behind a campaign of false reviews, or someone is demanding money to remove them, it may be worth talking to a lawyer. In many countries **a false statement of fact that harms a business can be defamation**, while a genuine negative opinion is protected. In India, for instance, the defamation offence now sits in section 356 of the Bharatiya Nyaya Sanhita. Fake reviews posted by businesses also fall under consumer protection law in several places, which our overview of [fake review laws around the world](/blog/fake-review-laws-around-the-world) explains."
    ],
    [
     "p",
-    "Legal action is slow and expensive, and it can draw attention to the review. Keep it for clear, serious cases with evidence."
+    "Legal action is slow and expensive, and it can draw attention to the review. **Keep it for clear, serious cases with evidence.**"
    ],
    [
     "h",
@@ -3333,7 +3333,7 @@ const POSTS = [
    ],
    [
     "p",
-    "One fake review among dozens of genuine ones does little harm. The strongest defence is a steady flow of real reviews from all your customers, so a single fake one is outweighed. Ask everyone, as we explain in [why asking only happy customers for reviews backfires](/blog/asking-only-happy-customers-for-reviews)."
+    "One fake review among dozens of genuine ones does little harm. **The strongest defence is a steady flow of real reviews from all your customers**, so a single fake one is outweighed. Ask everyone, as we explain in [why asking only happy customers for reviews backfires](/blog/asking-only-happy-customers-for-reviews)."
    ],
    [
     "faq",
@@ -3372,7 +3372,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "It happens to good companies too. A round of layoffs, a pay freeze or a performance review cycle that left people feeling cheated, and within days your employee review page fills with one-star reviews. Candidates will read them for years. How you respond in the first few weeks decides whether they read a company that handled a hard moment badly, or one that handled it honestly."
+    "It happens to good companies too. A round of layoffs, a pay freeze or a performance review cycle that left people feeling cheated, and within days your employee review page fills with one-star reviews. **Candidates will read them for years.** How you respond in the first few weeks decides whether they read a company that handled a hard moment badly, or one that handled it honestly."
    ],
    [
     "h",
@@ -3406,7 +3406,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Then reply, but not to every review with the same paragraph. Write one honest reply for each theme and adapt it. Where you made mistakes, say so. Where you fixed something, say exactly what."
+    "Then reply, but not to every review with the same paragraph. **Write one honest reply for each theme and adapt it.** **Where you made mistakes, say so.** Where you fixed something, say exactly what."
    ],
    [
     "quote",
@@ -3414,7 +3414,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Check the legal deadlines where you operate. Rules on final pay vary widely. India's Code on Wages, in force since November 2025, requires final wages within two working days of an employee leaving, and many US states set their own deadlines. Missing them turns a hard decision into a legal problem, and it shows up in reviews."
+    "**Check the legal deadlines where you operate.** Rules on final pay vary widely. India's Code on Wages, in force since November 2025, requires final wages within two working days of an employee leaving, and many US states set their own deadlines. Missing them turns a hard decision into a legal problem, and it shows up in reviews."
    ],
    [
     "h",
@@ -3422,7 +3422,7 @@ const POSTS = [
    ],
    [
     "p",
-    "In three to six months, the reviews that matter will be from people who stayed. Once things have settled, ask everyone in the same way to share an honest review, with no pressure and no reward. Our guide on [how to ask employees for reviews](/blog/how-to-ask-employees-for-reviews) has the details. If the company has genuinely improved, the newer reviews will show it, and candidates read the newest reviews first."
+    "In three to six months, the reviews that matter will be from people who stayed. Once things have settled, ask everyone in the same way to share an honest review, with no pressure and no reward. Our guide on [how to ask employees for reviews](/blog/how-to-ask-employees-for-reviews) has the details. If the company has genuinely improved, the newer reviews will show it, and **candidates read the newest reviews first**."
    ],
    [
     "h",
@@ -3438,7 +3438,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Candidates expect companies to have bad periods. What they judge is the response. A page with a cluster of angry reviews from one month, honest replies underneath and better reviews after, tells them the company owns its mistakes. A page where the angry reviews sit unanswered, or are buried under suspicious praise, tells them the opposite. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) covers this in more detail."
+    "Candidates expect companies to have bad periods. **What they judge is the response.** A page with a cluster of angry reviews from one month, honest replies underneath and better reviews after, tells them the company owns its mistakes. A page where the angry reviews sit unanswered, or are buried under suspicious praise, tells them the opposite. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) covers this in more detail."
    ],
    [
     "faq",
@@ -3473,7 +3473,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "Employee reviews are only useful to candidates if they are honest, and they are only honest if people feel free to write what they think. Most companies that ask for reviews get that wrong in small ways: the manager asks, the timing is awkward or there is a hint that someone will check. Here is a way to ask that keeps the reviews believable."
+    "Employee reviews are only useful to candidates if they are honest, and **they are only honest if people feel free to write what they think**. Most companies that ask for reviews get that wrong in small ways: the manager asks, the timing is awkward or there is a hint that someone will check. Here is a way to ask that keeps the reviews believable."
    ],
    [
     "h",
@@ -3481,7 +3481,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Ask every employee, not only your star performers or the team that just won an award. Reviews collected only from favourites read as hand-picked, and candidates can tell. Google's own review policy bans selectively asking for positive reviews, and while it is written for customer reviews, the principle holds for employee reviews too."
+    "**Ask every employee**, not only your star performers or the team that just won an award. Reviews collected only from favourites read as hand-picked, and candidates can tell. Google's own review policy bans selectively asking for positive reviews, and while it is written for customer reviews, the principle holds for employee reviews too."
    ],
    [
     "h",
@@ -3502,7 +3502,7 @@ const POSTS = [
    ],
    [
     "p",
-    "A request from a line manager feels like an instruction, and people write differently for someone who writes their appraisal. Send the request from HR or the founder, to everyone, in writing. Never ask in a team meeting, never set a deadline and never ask people to confirm they have done it."
+    "A request from a line manager feels like an instruction, and people write differently for someone who writes their appraisal. **Send the request from HR or the founder, to everyone, in writing.** Never ask in a team meeting, never set a deadline and never ask people to confirm they have done it."
    ],
    [
     "h",
@@ -3522,7 +3522,7 @@ const POSTS = [
    ],
    [
     "p",
-    "No gifts, extra leave, points or prize draws for writing a review. Rewards produce glowing reviews candidates discount, and many review sites remove incentivised reviews. In the US, the Federal Trade Commission's review rule bans incentives that depend on a review being positive, according to [Benesch Law's summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/)."
+    "**No gifts, extra leave, points or prize draws for writing a review.** Rewards produce glowing reviews candidates discount, and many review sites remove incentivised reviews. In the US, the Federal Trade Commission's review rule bans incentives that depend on a review being positive, according to [Benesch Law's summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/)."
    ],
    [
     "h",
@@ -3551,7 +3551,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The best encouragement for the next round is visible action on the last one. Reply to reviews that raise real issues, say what changed and share the changes internally too. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) has examples of replies that work."
+    "The best encouragement for the next round is **visible action on the last one**. Reply to reviews that raise real issues, say what changed and share the changes internally too. Our article on [what candidates read in your employee reviews](/blog/what-candidates-read-in-employee-reviews) has examples of replies that work."
    ],
    [
     "faq",
@@ -3586,7 +3586,7 @@ const POSTS = [
   "body": [
    [
     "p",
-    "A few years ago, buying reviews or quietly hiding the bad ones was mostly a question of a review site's rules. Now it is a legal question in several large markets, with real penalties. If you sell to customers in more than one country, the rules below may all apply to you."
+    "A few years ago, buying reviews or quietly hiding the bad ones was mostly a question of a review site's rules. **Now it is a legal question in several large markets, with real penalties.** If you sell to customers in more than one country, **the rules below may all apply to you**."
    ],
    [
     "note",
@@ -3598,7 +3598,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The Federal Trade Commission's rule on consumer reviews and testimonials took effect on 21 October 2024. According to [Benesch Law's April 2026 summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/), it bans:"
+    "The Federal Trade Commission's rule on consumer reviews and testimonials **took effect on 21 October 2024**. According to [Benesch Law's April 2026 summary](https://www.beneschlaw.com/insight/five-stars-zero-tolerance-ftc-turns-up-enforcement-under-consumer-review-rule/), it bans:"
    ],
    [
     "ul",
@@ -3613,7 +3613,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Penalties reach up to $53,088 per violation. The FTC sent warning letters to nearly a dozen companies at the end of 2025."
+    "**Penalties reach up to $53,088 per violation.** The FTC sent warning letters to nearly a dozen companies at the end of 2025."
    ],
    [
     "h",
@@ -3621,7 +3621,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Under the Digital Markets, Competition and Consumers Act 2024, fake reviews and concealed incentivised reviews became banned practices from April 2025, deemed unfair in all cases. The Competition and Markets Authority can now enforce consumer law directly and fine businesses up to 10% of global turnover, according to [Taylor Wessing's March 2026 analysis](https://www.taylorwessing.com/en/insights-and-events/insights/2026/03/the-cma-steps-up-its-fight-against-fake-reviews). The CMA reviewed more than 100 review publishers, sent advisory letters to 54 firms and opened five investigations into how negative reviews are treated, inflated reviews and incentivised reviews."
+    "Under the Digital Markets, Competition and Consumers Act 2024, fake reviews and concealed incentivised reviews became banned practices from April 2025, deemed unfair in all cases. The Competition and Markets Authority can now enforce consumer law directly and **fine businesses up to 10% of global turnover**, according to [Taylor Wessing's March 2026 analysis](https://www.taylorwessing.com/en/insights-and-events/insights/2026/03/the-cma-steps-up-its-fight-against-fake-reviews). The CMA reviewed more than 100 review publishers, sent advisory letters to 54 firms and opened five investigations into how negative reviews are treated, inflated reviews and incentivised reviews."
    ],
    [
     "h",
@@ -3629,7 +3629,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Since 28 May 2022, the EU's Omnibus Directive has required businesses that show consumer reviews to tell consumers whether and how they check that reviews come from people who actually used or bought the product. Submitting fake reviews, commissioning them or misrepresenting reviews is banned as an unfair commercial practice. Each EU country enforces it through its own consumer authorities."
+    "Since 28 May 2022, the EU's Omnibus Directive has required businesses that show consumer reviews to tell consumers whether and how they check that reviews come from people who actually used or bought the product. Submitting fake reviews, commissioning them or misrepresenting reviews **is banned as an unfair commercial practice**. Each EU country enforces it through its own consumer authorities."
    ],
    [
     "h",
@@ -3651,7 +3651,7 @@ const POSTS = [
    ],
    [
     "p",
-    "The standard was voluntary at launch. A [September 2026 legal guide by Repulex](https://www.repulex.com/blog/are-fake-reviews-illegal-in-india) notes that a 2024 draft order to make it mandatory had not been finalised. Fake reviews are already caught by binding law, though. The Consumer Protection Act 2019 treats false claims about goods or services as unfair trade practices, and the E-Commerce Rules 2020 bar marketplace sellers from posing as consumers to post reviews."
+    "**The standard was voluntary at launch.** A [September 2026 legal guide by Repulex](https://www.repulex.com/blog/are-fake-reviews-illegal-in-india) notes that a 2024 draft order to make it mandatory had not been finalised. **Fake reviews are already caught by binding law, though.** The Consumer Protection Act 2019 treats false claims about goods or services as unfair trade practices, and the E-Commerce Rules 2020 bar marketplace sellers from posing as consumers to post reviews."
    ],
    [
     "h",
@@ -3678,7 +3678,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Reviewers sign in before they write a review. We publish positive and negative reviews the same way and do not edit them, and we never remove a review because a company asks. Companies cannot pay to change their rating. Review invitations on our Business plan go to the company's whole customer list, never a hand-picked one."
+    "Reviewers sign in before they write a review. We publish positive and negative reviews the same way and do not edit them, and **we never remove a review because a company asks**. Companies cannot pay to change their rating. Review invitations on our Business plan go to the company's whole customer list, never a hand-picked one."
    ],
    [
     "faq",
