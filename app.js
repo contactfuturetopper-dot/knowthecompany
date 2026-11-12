@@ -3788,6 +3788,8 @@ const POSTS = [
  },
  {
   "slug": "how-to-ask-employees-for-reviews",
+  "image": "/images/blog/how-to-ask-employees-for-reviews.webp",
+  "imageAlt": "HR manager asking an employee at her desk to share an honest review of the company",
   "cat": "Startup growth",
   "date": "2026-11-12",
   "tone": 6,
@@ -3920,6 +3922,8 @@ const POSTS = [
  },
  {
   "slug": "fake-review-laws-around-the-world",
+  "image": "/images/blog/fake-review-laws-around-the-world.webp",
+  "imageAlt": "Magnifying glass exposing a fake reviewer, with scales of justice, a gavel and the US, UK, EU and India flags",
   "cat": "Rules & compliance",
   "date": "2026-11-12",
   "tone": 1,
