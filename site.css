@@ -1071,3 +1071,6 @@ footer h2.fh{margin:0;color:var(--foot-head);font-family:var(--display);font-siz
 .nbt a:hover,.nb.b .nbt a:hover{color:var(--star-line);-webkit-text-stroke-color:var(--star-line)}
 .hfoot p{color:var(--muted)}
 .hfoot a{color:var(--fg)}
+
+/* Employer page on phones: the form comes straight after the intro, so the example card is left out. */
+@media (max-width: 700px) { .lbhero .lbvis { display: none; } }

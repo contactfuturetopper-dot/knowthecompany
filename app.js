@@ -1501,16 +1501,16 @@ function vClaim() {
         <p class="lede">Your company is already on Know The Company. Claim its page to reply to reviews, tell job seekers what it’s like to work with you, and get the Verified badge. You keep every review it already has.</p>
         ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Claim before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
     </div></section>
-    <section class="wrap sec"><div class="sechead"><div><h2>How claiming works</h2></div></div><div class="steps">
-      <div class="step"><span>1</span><h3>Find your company</h3><p>Search for it by name or website.</p></div>
-      <div class="step"><span>2</span><h3>Show it’s yours</h3><p>Add a record to your website, or upload a company document or your company ID card.</p></div>
-      <div class="step"><span>3</span><h3>Choose your plan</h3><p>Pick Basic or Plus straight away. Your Verified badge goes live when the check passes.</p></div></div></section>
-    <section class="wrap sec" id="list-form-area"><div class="layout">
+    <section class="wrap sec" id="list-form-area" style="padding-top:40px"><div class="layout">
       <div class="mainc">${panel}</div>
       <aside class="side"><div class="box soft"><h2>How verification works</h2><p>A record on your company’s website verifies you straight away. A company document or your company ID card is checked by our team, usually within 2 working days. Until then, your page shows no Verified badge.</p></div>
         <div class="box"><h2>Not listed yet?</h2><p>If your company isn’t on Know The Company, add it instead.</p><a class="btn o" href="#list">List your company</a></div>
         <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
-    </div></section>`;
+    </div></section>
+    <section class="wrap sec"><div class="sechead"><div><h2>How claiming works</h2></div></div><div class="steps">
+      <div class="step"><span>1</span><h3>Find your company</h3><p>Search for it by name or website.</p></div>
+      <div class="step"><span>2</span><h3>Show it’s yours</h3><p>Add a record to your website, or upload a company document or your company ID card.</p></div>
+      <div class="step"><span>3</span><h3>Choose your plan</h3><p>Pick Basic or Plus straight away. Your Verified badge goes live when the check passes.</p></div></div></section>`;
 }
 function vList() {
   const d = S.listData;
@@ -1525,6 +1525,11 @@ function vList() {
       <div class="lbvis" aria-label="Example of how reviews appear on Know The Company"><span class="tagex">Example</span>
         <div class="rc">${starRow(4, 18)}<p class="q">“Students are motivated, and the academic team listens to teachers about the syllabus.”</p><span class="by">Anonymous employee · Maths teacher · Example Company</span><span class="brand">${TICK('var(--accent)')}Reviewed on Know The Company</span></div>
         <div class="chipline"><span>${TICK('var(--accent)')}Verified company</span><span>${STAR(true, 16)} 4.0 from customers</span><span>67% of employees recommend</span></div></div>
+    </div></section>
+    <section class="wrap sec" id="list-form-area" style="padding-top:40px"><div class="layout">
+      <div class="mainc">${panel}</div>
+      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>Add a record to your company’s website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan in the meantime.</p></div>
+        <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
     </div></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Why it matters</p><h2>People check before they choose you, or join you</h2><p>Customers read reviews before choosing a company, and job seekers read them before applying. Both notice whether you reply.</p></div></div>
@@ -1580,15 +1585,6 @@ function vList() {
       </div>
       <p class="meta" style="text-align:center;margin-top:16px">Job posts are coming soon. Companies in India pay in rupees, and companies outside India pay in US dollars.</p></section>
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
-    <section class="wrap sec"><div class="steps">
-      <div class="step"><span>1</span><h3>Add details</h3><p>Company name, website, category, city and contact. About two minutes.</p></div>
-      <div class="step">${LAUNCH ? '<span>2</span><h3>Show it’s yours</h3><p>No payment for your first year. Choose how you’ll prove the company is yours: your website, a company document or your company ID card.</p>' : '<span>2</span><h3>Pay [[PB]] for the year</h3><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
-      <div class="step"><span>3</span><h3>Get verified</h3><p>A website check verifies you straight away. Documents and ID cards are checked by our team, then your Verified badge goes live.</p></div></div></section>
-    <section class="wrap sec" id="list-form-area"><div class="layout">
-      <div class="mainc">${panel}</div>
-      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>Add a record to your company’s website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan in the meantime.</p></div>
-        <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
-    </div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
 }
 
