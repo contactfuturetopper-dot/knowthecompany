@@ -141,14 +141,19 @@ export async function resolvePage(pathname: string): Promise<Page> {
     try {
       const name = (await categories()).find(n => slug(n) === m![1]);
       if (!name) return notFound(p);
-      const list = (await query("Companies", { category: { $eq: name } }, 100)).filter(c => !awaitingListing(c)).map(c => ({ s: c.slug || slug(c.title || c._id), n: c.title || c._id })).sort((a, b) => a.n.localeCompare(b.n));
-      const body = `<p>${esc(catIntro(name))}</p><ul>${list.map(c => `<li><a href="/company/${c.s}">${esc(c.n)}</a></li>`).join("")}</ul>`;
+      const rv = await reviewsByCompany().catch(() => ({ by: new Map<string, any[]>(), list: [] as any[] }));
+      const list = dedupeCompanies(await query("Companies", { category: { $eq: name } }, 100)).filter(c => !awaitingListing(c))
+        .map(c => { const l = rv.by.get(c._id) || []; const cu = l.filter(r => (r.type || "customer") === "customer"); return { s: c.slug || slug(c.title || c._id), n: c.title || c._id, l, cu, line: ratingLine(l), web: c.website || c._id }; })
+        .sort((a, b) => b.l.length - a.l.length || a.n.localeCompare(b.n));
+      const body = `<p>${esc(catIntro(name))}</p><ul>${list.map(c => `<li><a href="/company/${c.s}">${esc(c.n)}</a> (${esc(c.web)})${c.line ? `: ${esc(c.line)}` : ": no reviews yet"}</li>`).join("")}</ul>`;
       const title = `${name} · Know The Company`, desc = trim(catIntro(name));
       const ld = [
         webPage(p, title, desc, { type: "CollectionPage", mainEntity: `${ORIGIN}${p}#list`, crumbs: true }),
         breadcrumbs(p, [{ name: "All categories", path: "/categories" }, { name, path: p }]),
         { "@type": "ItemList", "@id": `${ORIGIN}${p}#list`, name: `${name} companies`, numberOfItems: list.length,
-          itemListElement: list.map((c, i) => ({ "@type": "ListItem", position: i + 1, url: `${ORIGIN}/company/${c.s}`, name: c.n })) },
+          itemListElement: list.map((c, i) => ({ "@type": "ListItem", position: i + 1, url: `${ORIGIN}/company/${c.s}`, name: c.n,
+            ...(c.cu.length ? { item: { "@type": "Organization", "@id": `${ORIGIN}/company/${c.s}#company`, name: c.n, url: `${ORIGIN}/company/${c.s}`,
+              aggregateRating: { "@type": "AggregateRating", ratingValue: Math.round(avgOf(c.cu) * 10) / 10, reviewCount: c.cu.length, bestRating: 5, worstRating: 1 } } } : {}) })) },
       ];
       return { status: 200, path: p, title, desc, h1: name, body, noindex: false, ld };
     } catch { return unknown(p); }
@@ -235,6 +240,23 @@ export async function rawReviews(companyId?: string): Promise<any[]> {
     return out;
   }
 }
+/* Every review a visitor may see, grouped by company id. Kept for a minute, like the companies. */
+let rvCache: { at: number; by: Map<string, any[]>; list: any[] } | null = null;
+async function reviewsByCompany(): Promise<{ by: Map<string, any[]>; list: any[] }> {
+  if (rvCache && Date.now() - rvCache.at < 60_000) return rvCache;
+  const list = publicReviews(await rawReviews(), await allCompanies());
+  const by = new Map<string, any[]>();
+  for (const r of list) { const id = typeof r.company === "object" && r.company ? r.company._id : r.company; if (!by.has(id)) by.set(id, []); by.get(id)!.push(r); }
+  rvCache = { at: Date.now(), by, list };
+  return rvCache;
+}
+const avgOf = (l: any[]) => l.reduce((s, r) => s + Number(r.rating), 0) / l.length;
+/* "Customers 4.2 out of 5 (12 reviews) · Employees 3.8 out of 5 (5 reviews)", or "" with no reviews. */
+function ratingLine(l: any[]): string {
+  const cu = l.filter(r => (r.type || "customer") === "customer"), em = l.filter(r => r.type === "employee");
+  const part = (label: string, x: any[]) => x.length ? `${label} ${avgOf(x).toFixed(1)} out of 5 (${x.length} review${x.length === 1 ? "" : "s"})` : "";
+  return [part("Customers", cu), part("Employees", em)].filter(Boolean).join(" · ");
+}
 async function companyReviews(companyId: string): Promise<any[]> {
   return publicReviews(await rawReviews(companyId), await allCompanies());
 }
@@ -305,11 +327,26 @@ function factsHtml(name: string, c: any, f: Facts, reviews: any[]): string {
 const TOOL_LINKS: [string, string][] = (meta as Meta[]).filter(m => m.route.startsWith("tool-")).map(m => [`/tools/${m.route.slice(5)}`, m.h1]);
 async function homeBody(): Promise<string> {
   const cats = await categories().catch(() => [] as string[]);
+  const [cos, rv] = await Promise.all([allCompanies().catch(() => [] as any[]), reviewsByCompany().catch(() => ({ by: new Map<string, any[]>(), list: [] as any[] }))]);
+  const live = cos.filter(c => !awaitingListing(c));
+  const byId = new Map(live.map(c => [c._id, c]));
+  const coLink = (c: any) => `<a href="/company/${c.slug || slug(c.title || c._id)}">${esc(c.title || c._id)}</a>`;
+  const latest = [...rv.list].filter(r => byId.has(typeof r.company === "object" && r.company ? r.company._id : r.company))
+    .sort((a, b) => String(monthIso(b._createdDate)).localeCompare(String(monthIso(a._createdDate)))).slice(0, 8);
+  const latestHtml = latest.length ? `<h2>Latest reviews</h2>` + latest.map(r => {
+    const c = byId.get(typeof r.company === "object" && r.company ? r.company._id : r.company);
+    const who = r.type === "employee" ? `${r.employmentStatus || "Employee"}${r.jobTitle ? ", " + r.jobTitle : ""}` : "Customer";
+    const text = String(r.body || r.pros || "").slice(0, 280);
+    return `<article><h3>${esc(r.title || "Review")} · ${coLink(c)}</h3><p>${stars(r.rating)} · ${esc(who)}${monthYear(r._createdDate) ? " · " + monthYear(r._createdDate) : ""}</p>${text ? `<p>${esc(text)}${String(r.body || r.pros || "").length > 280 ? "…" : ""}</p>` : ""}</article>`;
+  }).join("") : "";
+  const top = live.map(c => ({ c, l: rv.by.get(c._id) || [] })).filter(x => x.l.length).sort((a, b) => b.l.length - a.l.length).slice(0, 12);
+  const topHtml = top.length ? `<h2>Most reviewed companies</h2><ul>${top.map(x => `<li>${coLink(x.c)}: ${esc(ratingLine(x.l))}</li>`).join("")}</ul>` : "";
   return `<p>Customers and employees review the same company, on one page. Read what people say about startups and growing companies before you buy from them, work with them or join them.</p>
 <h2>What customers and employees say, together</h2>
 <ul><li>Customers rate the quality of the work, product or service, communication and support, value for money, and whether the company kept its promises.</li><li>Employees rate culture and management, pay and benefits, career growth and work-life balance, anonymously or with their name.</li></ul>
 <h2>Free for everyone, and no ratings bought</h2>
 <p>Reading and writing reviews costs nothing. Companies can pay for listing tools, never for stars: paying never changes, hides or delays a review.</p>
+${latestHtml}${topHtml}
 ${cats.length ? `<h2>Browse by category</h2><ul>${cats.sort().map(c => `<li><a href="/category/${slug(c)}">${esc(c)}</a></li>`).join("")}</ul>` : ""}
 <h2>Free career and company tools</h2><ul>${TOOL_LINKS.map(([href, name]) => `<li><a href="${href}">${esc(name)}</a></li>`).join("")}</ul>
 <h2>How it works</h2>
@@ -341,7 +378,9 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join("\n")
     + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
-  if (pg.h1) html = html.replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}</div>`);
+  if (pg.h1) html = html
+    .replace(/<main id="app"><noscript>[\s\S]*?<\/noscript><\/main>/, '<main id="app"></main>')
+    .replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}<noscript><p>Everything on this page can be read without JavaScript. To write a review, turn JavaScript on.</p></noscript></div>`);
   if (pg.preload) html = html.replace('<link rel="stylesheet"', () => `<link rel="preload" as="image" href="${esc(pg.preload)}" fetchpriority="high">\n<link rel="stylesheet"`);
   if (pg.facts) html = html.replace("</head>", () => `<script type="application/json" id="co-facts" data-id="${esc(pg.facts!.id)}">${JSON.stringify(pg.facts!.data).replace(/</g, "\\u003c")}</script>\n</head>`);
   if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);

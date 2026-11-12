@@ -90,6 +90,9 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   assert.ok(home.includes('<a href="/category/education-and-e-learning">') && home.includes("How it works"), "home page has text and category links");
   const cat = await resolvePage("/category/education-and-e-learning");
   assert.ok(cat.desc.startsWith("Reviews of online courses") && cat.body.includes("Reviews of online courses"), "category intro");
+  assert.ok(/Future Topper<\/a> \(futuretopper\.in\): (Customers|Employees) \d\.\d out of 5/.test(cat.body), "category page shows ratings without JavaScript");
+  assert.ok(home.includes("Latest reviews") && home.includes("Most reviewed companies") && /out of 5/.test(home), "home page shows reviews without JavaScript");
+  assert.ok(!home.includes("This website needs JavaScript") && home.includes("To write a review, turn JavaScript on") && home.includes("<head>") && (home.match(/<noscript>/g) || []).length === 2, "no 'needs JavaScript' notice over server-rendered content");
   assert.equal((await resolvePage("/blog")).status, 404, "no blog while there are no posts");
   const fp = await resolvePage("/company/1password"), fhtml = renderShell(fp);
   assert.ok(!fp.noindex && fhtml.includes("About 1Password") && fhtml.includes("When was 1Password founded?") && fhtml.includes('id="co-facts" data-id="1password.com"'), "researched facts are on the page");
