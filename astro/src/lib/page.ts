@@ -399,7 +399,7 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
   if (pg.h1) html = html
     .replace(/<main id="app"><noscript>[\s\S]*?<\/noscript><\/main>/, '<main id="app"></main>')
-    .replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}<noscript><p>Everything on this page can be read without JavaScript. To write a review, turn JavaScript on.</p></noscript></div>`);
+    .replace('<main id="app">', () => `<main id="app"><div class="wrap ssr" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}<noscript><p>Everything on this page can be read without JavaScript. To write a review, turn JavaScript on.</p></noscript></div>`);
   if (pg.preload) html = html.replace('<link rel="stylesheet"', () => `<link rel="preload" as="image" href="${esc(pg.preload)}" fetchpriority="high">\n<link rel="stylesheet"`);
   if (pg.facts) html = html.replace("</head>", () => `<script type="application/json" id="co-facts" data-id="${esc(pg.facts!.id)}">${JSON.stringify(pg.facts!.data).replace(/</g, "\\u003c")}</script>\n</head>`);
   if (pg.status === 200) html = html.replace("</head>", () => `<script type="application/ld+json" id="ld-json">${graph(pg.ld || [])}</script>\n</head>`);
