@@ -2910,8 +2910,8 @@ const postCard = p => `<a class="postcard" href="#${p.id}">${p.image ? `<img cla
 function vBlog() {
   const list = POSTS.filter(p => S.blogCat === 'All' || p.cat === S.blogCat);
   return `<section class="band"><div class="wrap" style="padding-block:44px 40px;display:flex;flex-direction:column;gap:14px">
-      <p class="eyebrow">Blog for companies</p><h1 style="font-size:clamp(32px,4.5vw,48px);font-weight:800">Practical advice on reviews, reputation and growing a business</h1>
-      <p style="color:var(--muted);font-size:18px;max-width:640px">Articles for business owners and teams. Every post is about running and growing a business.</p>
+      <h1 style="font-size:clamp(32px,4.5vw,48px);font-weight:800">Blog for companies</h1>
+      <p style="color:var(--muted);font-size:18px;max-width:640px">Articles for business owners and teams.</p>
       <div class="chips" style="margin-top:6px">${['All', ...BLOG_CATS].map(c => `<button type="button" class="chip" data-act="blogcat" data-cat="${esc(c)}" aria-pressed="${S.blogCat === c}" style="${S.blogCat === c ? 'background:var(--accent);color:var(--accent-ink);border-color:var(--accent)' : ''}">${esc(c)}</button>`).join('')}</div>
     </div></section>
     <section class="wrap sec"><h2 class="sr">Latest articles</h2><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(postCard).join('')}</div>

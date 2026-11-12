@@ -93,8 +93,8 @@
  {
   "route": "blog",
   "title": "Blog for companies · Know The Company",
-  "h1": "Practical advice on reviews, reputation and growing a business",
-  "intro": "Articles for business owners and teams. Every post is about running and growing a business."
+  "h1": "Blog for companies",
+  "intro": "Articles for business owners and teams."
  },
  {
   "route": "write-for-us",
