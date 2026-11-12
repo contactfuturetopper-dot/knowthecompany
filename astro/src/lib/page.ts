@@ -84,10 +84,10 @@ async function categories(): Promise<string[]> {
 /* ---- addresses ---- */
 /* `ld` is this page's structured data (schema.org JSON-LD), added to the shell as one @graph with the
    site's Organization and WebSite. */
-export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; facts?: { id: string; data: Facts }; preload?: string } | { redirect: string };
+export type Page = { status: number; path: string; title: string; desc: string; h1: string; body: string; noindex: boolean; ld?: object[]; ogType?: string; ogImage?: string; facts?: { id: string; data: Facts }; preload?: string } | { redirect: string };
 export type Facts = { name?: string; legalName?: string | null; founded?: string | null; hq?: string | null; founders?: string[]; parent?: string | null; ownership?: string | null; employees?: string | null; products?: string[]; markets?: string | null; description?: string | null; status?: string | null; links?: Record<string, string | null>; sources?: { fact: string; url: string }[]; checked?: string };
 const FACTS = factsData as Record<string, Facts>;
-type Post = { slug: string; cat: string; date: string; title: string; excerpt: string; body: [string, string | string[]][] };
+type Post = { slug: string; cat: string; date: string; updated?: string; title: string; seo?: string; desc?: string; excerpt: string; image?: string; imageAlt?: string; body: [string, any][] };
 const catIntro = (name: string) => (catIntros as Record<string, string>)[name] || `Customer and employee reviews of ${name} companies: how they treat the people they serve and the people who work for them.`;
 const POSTS = new Map((posts as Post[]).map(p => [p.slug, p]));
 
@@ -169,7 +169,7 @@ function fromMeta(path: string, m: Meta): Page {
   const desc = m.desc || DEFAULT_DESC;
   const post = m.route.startsWith("blog-") ? POSTS.get(m.route.slice(5)) : undefined;
   const body = SNAPS[m.route] || ((m.intro ? `<p>${esc(m.intro)}</p>` : "") + (post ? articleHtml(post) : ""));
-  return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article" } : {}) };
+  return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article", ...(post.image ? { ogImage: post.image } : {}) } : {}) };
 }
 const PAGE_TYPES: Record<string, string> = { about: "AboutPage", contact: "ContactPage", categories: "CollectionPage", tools: "CollectionPage", blog: "CollectionPage", search: "SearchResultsPage" };
 /* Structured data for the fixed pages: the page itself, its breadcrumb trail, and what it is about. */
@@ -181,10 +181,14 @@ function pageSchema(path: string, m: Meta, desc: string): object[] {
     const out: object[] = [webPage(path, m.title, desc, { type: "WebPage", mainEntity: `${ORIGIN}${path}#article`, crumbs: true }), breadcrumbs(path, crumbs)];
     if (post) out.push({
       "@type": "BlogPosting", "@id": `${ORIGIN}${path}#article`, headline: post.title, description: post.excerpt,
-      datePublished: post.date, dateModified: post.date, articleSection: post.cat, inLanguage: "en",
+      datePublished: post.date, dateModified: post.updated || post.date, articleSection: post.cat, inLanguage: "en-IN",
+      ...(post.image ? { image: { "@type": "ImageObject", url: post.image, width: 1200, height: 675 } } : {}),
+      wordCount: JSON.stringify(post.body).split(/\s+/).length,
       author: { "@id": `${ORIGIN}/#organization` }, publisher: { "@id": `${ORIGIN}/#organization` },
       mainEntityOfPage: { "@id": `${ORIGIN}${path}#webpage` }, isPartOf: { "@id": `${ORIGIN}/blog#blog` },
     });
+    const faq = post && (post.body || []).find(([k]) => k === "faq");
+    if (faq) out.push({ "@type": "FAQPage", "@id": `${ORIGIN}${path}#faq`, mainEntity: (faq[1] as [string, string][]).map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*/g, "") } })) });
     return out;
   }
   if (r.startsWith("tool-")) {
@@ -292,8 +296,15 @@ function reviewsHtml(name: string, reviews: any[]): string {
   return html + "</section>";
 }
 const monthIso = (d: unknown) => { const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d; return typeof v === "string" ? v : ""; };
+/* Article text, same rules as postBlock in app.js: [words](link) and **bold** inside text. */
+const inl = (t: string) => esc(t).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\[([^\]]+)\]\(((?:https:\/\/|\/|#)[^\s)]+)\)/g, (m, x, u) => /^https:\/\/(?!www\.knowthecompany\.com)/.test(u) ? `<a href="${u}" rel="noopener">${x}</a>` : `<a href="${u}">${x}</a>`);
 function articleHtml(post: Post): string {
-  return (post.body || []).map(([k, v]) => k === "h" ? `<h2>${esc(v)}</h2>` : k === "ul" ? `<ul>${(v as string[]).map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : `<p>${esc(v)}</p>`).join("");
+  return (post.body || []).map(([k, v]) => k === "h" ? `<h2>${esc(v)}</h2>` : k === "h3" ? `<h3>${esc(v)}</h3>`
+    : k === "ul" || k === "ol" ? `<${k}>${(v as string[]).map(i => `<li>${inl(i)}</li>`).join("")}</${k}>`
+    : k === "note" ? `<p>${inl(v)}</p>` : k === "quote" ? `<blockquote>${String(v).split("\n").map(x => `<p>${inl(x)}</p>`).join("")}</blockquote>`
+    : k === "faq" ? `<h2>Frequently asked questions</h2>${(v as [string, string][]).map(([q, a]) => `<h3>${esc(q)}</h3><p>${inl(a)}</p>`).join("")}`
+    : k === "src" ? `<h2>Sources</h2><ul>${(v as [string, string][]).map(([t, u]) => `<li><a href="${esc(u)}" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>`
+    : `<p>${inl(v)}</p>`).join("");
 }
 const bandText = (b: string) => { const m = b.replace(/\s/g, "").match(/^([\d,]+)[-–]([\d,]+)$/); return m ? `between ${m[1]} and ${m[2]}` : /\+$/.test(b) ? `more than ${b.replace(/\+$/, "")}` : b; };
 const listAnd = (a: string[]) => a.length < 2 ? (a[0] || "") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
@@ -379,9 +390,9 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   const url = `${ORIGIN}${pg.path}`, shareTitle = pg.title.replace(/ · Know The Company$/, "");
   const og = [
     ["og:site_name", "Know The Company"], ["og:type", pg.ogType || "website"], ["og:url", url], ["og:title", shareTitle], ["og:description", pg.desc],
-    ["og:image", `${ORIGIN}/og-image.png`], ["og:image:width", "1200"], ["og:image:height", "630"], ["og:image:alt", "Know The Company: customer and employee reviews of startups and growing companies"], ["og:locale", "en_GB"],
+    ["og:image", pg.ogImage || `${ORIGIN}/og-image.png`], ["og:image:width", "1200"], ["og:image:height", pg.ogImage ? "675" : "630"], ["og:image:alt", pg.ogImage ? shareTitle : "Know The Company: customer and employee reviews of startups and growing companies"], ["og:locale", "en_IN"],
   ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join("\n")
-    + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
+    + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", pg.ogImage || `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
   if (pg.h1) html = html
     .replace(/<main id="app"><noscript>[\s\S]*?<\/noscript><\/main>/, '<main id="app"></main>')

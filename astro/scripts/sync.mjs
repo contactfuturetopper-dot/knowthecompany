@@ -60,7 +60,7 @@ function literal(name, open, close) {
   const from = app.indexOf(open, start), end = app.indexOf(`\n${close};\n`, from);
   return new Function(`return ${app.slice(from, end + 2)}`)();
 }
-const posts = literal("POSTS", "[", "]").map(p => ({ slug: p.slug, cat: p.cat, date: p.date, title: p.title, excerpt: p.excerpt, body: p.body }));
+const posts = literal("POSTS", "[", "]").map(p => ({ slug: p.slug, cat: p.cat, date: p.date, updated: p.updated, title: p.title, seo: p.seo, desc: p.desc, excerpt: p.excerpt, image: p.image, imageAlt: p.imageAlt, body: p.body }));
 writeFileSync(join(gen, "posts.json"), JSON.stringify(posts, null, 1));
 const intros = literal("CAT_INTROS", "{", "}");
 if (Object.keys(intros).length < 5) throw new Error("category intros look wrong");

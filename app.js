@@ -1926,12 +1926,985 @@ const BLOG_CATS = ['Reviews & reputation', 'Customer experience', 'Startup growt
      body: [['p', 'Paragraph'], ['h', 'Subheading'], ['ul', ['Point', 'Point']]] },
    The server reads this list at build time and writes the article into the page for search engines. */
 const POSTS = [
+ {
+  "slug": "check-your-company-in-chatgpt-perplexity-gemini",
+  "cat": "Startup growth",
+  "date": "2026-11-12",
+  "tone": 1,
+  "title": "How to check what ChatGPT, Perplexity and Gemini say about your company",
+  "seo": "Check what ChatGPT and Perplexity say about your company",
+  "desc": "A five-minute check for Indian businesses: what to ask ChatGPT, Perplexity and Gemini about your company, what to note down and how to fix wrong answers.",
+  "excerpt": "Customers and job seekers now ask AI tools about a company before they buy or apply. Here is the five-minute check we use to see what those tools say, and how to fix what they get wrong.",
+  "body": [
+   [
+    "p",
+    "Before someone calls you, places an order or applies for a job with you, there is a fair chance they have already asked an AI tool about your company. In What Talent Wants 2026, a survey of 2,000 tech, product and data professionals in India [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), 31% said they use AI tools to research an employer before applying. Customers do the same before they spend money."
+   ],
+   [
+    "p",
+    "The answer they get is written without you. It may be accurate, out of date, mixed up with another company of the same name, or missing you altogether. The only way to know is to ask the same questions yourself. This is the check we run, and it takes about five minutes per tool."
+   ],
+   [
+    "h",
+    "Before you start"
+   ],
+   [
+    "ul",
+    [
+     "Use a private or incognito window, or log out. ChatGPT and Gemini can remember things about you, and you want the answer a stranger would see.",
+     "In ChatGPT, make sure web search is on, so the answer is built from pages it reads now rather than only from what the model learnt in training.",
+     "Keep a simple sheet with four columns: the question, the tool, a summary of the answer and the links it cited. Add the date. You will repeat this next month.",
+     "Ask the way a customer would, in plain words. Nobody types \"provide an overview of the organisation\"."
+    ]
+   ],
+   [
+    "h",
+    "The seven questions to ask"
+   ],
+   [
+    "p",
+    "Replace the words in brackets with your own details. Ask each question in a new chat, so one answer does not colour the next."
+   ],
+   [
+    "ol",
+    [
+     "**What is [company name] and what does it do?** Checks whether the tool knows you at all, and whether it has your products and city right.",
+     "**Is [company name] genuine? What do customers say about it?** This is the question people ask before paying an unfamiliar business.",
+     "**What is it like to work at [company name]?** Candidates ask this, and the answer usually leans on employee reviews.",
+     "**[company name] reviews.** Short, like a search. Note which review sites are quoted.",
+     "**Best [what you sell] in [your city].** Do you appear? Who appears instead?",
+     "**[company name] vs [your main competitor].** Shows how the tool frames the two of you, and which facts it uses to decide.",
+     "**[company name] phone number and address.** Wrong contact details send customers elsewhere, sometimes to scammers."
+    ]
+   ],
+   [
+    "h",
+    "Ask in three places, because each one reads different sources"
+   ],
+   [
+    "h3",
+    "ChatGPT"
+   ],
+   [
+    "p",
+    "ChatGPT search finds pages with OpenAI's crawler, OAI-SearchBot. [OpenAI's documentation](https://developers.openai.com/api/docs/bots) says sites that block OAI-SearchBot will not appear in ChatGPT's search answers, apart from plain navigational links. A separate crawler, GPTBot, collects pages for training models. Blocking GPTBot does not remove you from ChatGPT search."
+   ],
+   [
+    "h3",
+    "Perplexity"
+   ],
+   [
+    "p",
+    "Perplexity uses PerplexityBot to find pages for its answers, and Perplexity-User to fetch a page when someone asks about it directly. According to [Perplexity's own documentation](https://docs.perplexity.ai/guides/bots), Perplexity-User generally ignores robots.txt because a person asked for the page. Perplexity shows its sources clearly, which makes it the easiest of the three to learn from."
+   ],
+   [
+    "h3",
+    "Google AI Overviews, AI Mode and Gemini"
+   ],
+   [
+    "p",
+    "Google's AI answers in Search are built on the normal Google Search index. The Google-Extended setting in robots.txt controls training and grounding for Gemini apps, but it does not decide whether you appear in AI Overviews or AI Mode, as [PPC Land explains in its report on Google's new Search Console control](https://ppc.land/google-gives-site-owners-a-toggle-to-exit-ai-overviews-and-ai-mode/). If you rank well on Google and your Google Business Profile is complete, you start with an advantage here."
+   ],
+   [
+    "h",
+    "What to note for every answer"
+   ],
+   [
+    "ul",
+    [
+     "**Wrong facts.** Founding year, city, products, prices, the founder's name.",
+     "**Old facts.** An address you left two years ago, a product you stopped selling, a former director.",
+     "**Mix-ups.** Another company with a similar name, often in another state or country.",
+     "**Themes from reviews.** Words like delay, refund, rude or excellent support that the tool repeats.",
+     "**Competitors named instead of you,** especially in the \"best in your city\" question.",
+     "**The cited links.** Open every one. They tell you where the answer came from, which is where the fix will be."
+    ]
+   ],
+   [
+    "h",
+    "The links matter more than the answer"
+   ],
+   [
+    "p",
+    "AI tools assemble answers from a few kinds of pages: your own website, review sites, news and blog articles, directories and forums. Two recent studies give a sense of the mix."
+   ],
+   [
+    "ul",
+    [
+     "Trustpilot and SEER Interactive analysed more than 800,000 AI answers across ChatGPT, Gemini, Perplexity and Google AI Mode. Review and trust sites were the second most cited type of source, and 59% of AI recommendations included a star rating as evidence. Brands with no claimed profile on Trustpilot were almost never cited. Trustpilot sells review services, so read [the study](https://business.trustpilot.com/marketing/what-ai-says-about-your-brand) with that in mind.",
+     "Growfusely checked 1,739 citations for business software questions in July 2026. Review platforms made up about 7%, companies' own pages roughly 12% to 24% and independent articles most of the rest. Their [write-up](https://growfusely.com/blog/ai-citation-analysis-b2b-software/) is worth reading if you sell software."
+    ]
+   ],
+   [
+    "p",
+    "The pattern is the same in both. What other people write about you carries a lot of weight, and your own website still matters because it is where the basic facts come from."
+   ],
+   [
+    "h",
+    "Common problems and what to do about them"
+   ],
+   [
+    "h3",
+    "The tool does not know you, or confuses you with someone else"
+   ],
+   [
+    "p",
+    "Write a plain About page that states what you do, where you are based, when you started and who runs the company, in full sentences. Use exactly the same company name, address and phone number on your website, Google Business Profile, social profiles and any directory listing. If you share a name with another business, add your city or your website to every profile so the difference is obvious."
+   ],
+   [
+    "h3",
+    "The answer repeats old information"
+   ],
+   [
+    "p",
+    "Find the page it came from. If it is your own site, update it. If it is a directory or review profile, claim the profile and correct it. Old press articles cannot be changed, but a current page with the right facts gives the tools something newer to use."
+   ],
+   [
+    "h3",
+    "The answer repeats a complaint"
+   ],
+   [
+    "p",
+    "This is the hardest one, and the honest fix is slow. If customers keep mentioning late refunds, fix the refund process first. Then reply to those reviews and say what changed. New reviews that describe the better experience are what change the summary over time. Our guide on [how to reply to a bad review](/blog/how-to-reply-to-a-bad-review) has worked examples."
+   ],
+   [
+    "h3",
+    "A competitor appears and you do not"
+   ],
+   [
+    "p",
+    "For \"best in my city\" questions, the tools lean on review sites and local listings they can read. Make sure your reviews live somewhere AI tools are allowed to read. Not every review site allows that, as we found when we [checked which review sites ChatGPT and Perplexity can read](/blog/which-review-sites-can-ai-read)."
+   ],
+   [
+    "h3",
+    "Wrong phone number or address"
+   ],
+   [
+    "p",
+    "Fix this the same day. Correct it on every profile you control, and report wrong details on directories you do not control. A wrong number in an AI answer is an easy opening for fraudsters posing as your business."
+   ],
+   [
+    "h",
+    "Make your own website easy to read"
+   ],
+   [
+    "ul",
+    [
+     "Open yourdomain.com/robots.txt and check you are not blocking OAI-SearchBot, PerplexityBot, Bingbot or Googlebot by accident. Some website security settings add these blocks without telling you.",
+     "Put the important facts in normal text, not only inside images or PDFs.",
+     "Add Organization and LocalBusiness structured data, which your web developer can do in an hour.",
+     "An llms.txt file, a short plain-text summary of your site for AI tools, is cheap to add. No AI company has said it uses llms.txt for ranking, so treat it as a small extra."
+    ]
+   ],
+   [
+    "h",
+    "Repeat it every month"
+   ],
+   [
+    "p",
+    "AI answers change from one day to the next, and the same question can get a different answer twice in a row. Ask each question twice, keep the sheet and compare month by month. One wrong answer is noise. The same wrong fact three months running points to a source you need to fix."
+   ],
+   [
+    "note",
+    "Know The Company lets AI search tools read every company page, and each page shows reviews from both customers and employees. You can [claim your company page](/claim) to correct your details and reply to reviews, or [list your company](/list) if it is not here yet."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Can I pay ChatGPT or Perplexity to appear in their answers?",
+      "No. The answers themselves cannot be bought. Some AI tools show adverts, and OpenAI's crawler documentation describes a bot that checks pages submitted as adverts, but adverts appear separately from the answer and are labelled."
+     ],
+     [
+      "Why do I get a different answer each time I ask?",
+      "AI tools generate each answer fresh and may read different pages each time. Ask the same question twice and look at what stays the same across answers."
+     ],
+     [
+      "Should I block AI crawlers from my website?",
+      "If you want to appear in AI answers, do not block the search crawlers: OAI-SearchBot, PerplexityBot, Googlebot and Bingbot. You can block training crawlers such as GPTBot separately if you prefer, without leaving ChatGPT search."
+     ],
+     [
+      "How long does it take for a fix to show up?",
+      "Changes on your own site can be picked up within days once the crawlers revisit. Changes that depend on new reviews or new articles take months. Recheck monthly rather than daily."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "HRKatha: India's tech professionals have already decided before you call them (What Talent Wants 2026), October 2026",
+      "https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/"
+     ],
+     [
+      "OpenAI: Overview of OpenAI crawlers",
+      "https://developers.openai.com/api/docs/bots"
+     ],
+     [
+      "Perplexity: Perplexity crawlers",
+      "https://docs.perplexity.ai/guides/bots"
+     ],
+     [
+      "PPC Land: Google gives site owners a toggle to exit AI Overviews and AI Mode",
+      "https://ppc.land/google-gives-site-owners-a-toggle-to-exit-ai-overviews-and-ai-mode/"
+     ],
+     [
+      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
+      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+     ],
+     [
+      "Growfusely: AI citation analysis for B2B software, July 2026",
+      "https://growfusely.com/blog/ai-citation-analysis-b2b-software/"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "which-review-sites-can-ai-read",
+  "cat": "Reviews & reputation",
+  "date": "2026-11-12",
+  "tone": 2,
+  "title": "Which review sites can ChatGPT and Perplexity actually read? We checked",
+  "seo": "Which review sites can ChatGPT and Perplexity read?",
+  "desc": "We read the robots.txt files of Trustpilot, Glassdoor, AmbitionBox, Justdial and MouthShut on 12 November 2026. Here is which AI tools each one lets in.",
+  "excerpt": "A review site can tell AI tools to stay away. If it does, your reviews there may never reach a ChatGPT or Perplexity answer. We read the rules of five review sites popular in India.",
+  "body": [
+   [
+    "p",
+    "When someone asks ChatGPT or Perplexity whether a company is any good, the tool goes looking for reviews. But every website can publish a file called robots.txt that tells crawlers which pages they may visit. Some review sites use it to keep AI tools out. If yours does, the reviews your customers wrote there may never make it into an AI answer."
+   ],
+   [
+    "p",
+    "On 12 November 2026 we read the robots.txt files of five review sites that Indian businesses and job seekers use, plus our own. We run a review site, so we have an interest here. That is why every finding below links to the file itself, so you can check it."
+   ],
+   [
+    "h",
+    "A two-minute guide to the crawlers"
+   ],
+   [
+    "p",
+    "AI companies run separate crawlers for separate jobs, and a site can treat each one differently. The ones that matter for whether reviews appear in answers are the search crawlers."
+   ],
+   [
+    "ul",
+    [
+     "**OAI-SearchBot** finds pages for ChatGPT search. [OpenAI says](https://developers.openai.com/api/docs/bots) sites that block it will not appear in ChatGPT's search answers.",
+     "**GPTBot** collects pages that may be used to train OpenAI's models. Blocking it does not remove a site from ChatGPT search.",
+     "**ChatGPT-User** visits a page when a user's request needs it. OpenAI notes that robots.txt rules may not apply to it.",
+     "**PerplexityBot** finds pages for Perplexity's answers. **Perplexity-User** fetches a page a user asked about and, [according to Perplexity](https://docs.perplexity.ai/guides/bots), generally ignores robots.txt.",
+     "**Google-Extended** controls Gemini training and grounding in Gemini apps. It does not affect Google's AI Overviews or AI Mode, which follow normal Googlebot rules.",
+     "**Bingbot** crawls for Bing, whose index also feeds Microsoft's Copilot."
+    ]
+   ],
+   [
+    "h",
+    "What we found"
+   ],
+   [
+    "h3",
+    "Trustpilot"
+   ],
+   [
+    "p",
+    "[Trustpilot's robots.txt](https://www.trustpilot.com/robots.txt) names GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Google-Extended, ClaudeBot, CCBot and Bingbot, and gives them all the same rules. Company pages, the ones at trustpilot.com/review/ followed by a website address, are open to them. Individual review pages under /reviews/, search pages and filtered views are closed. Any crawler not named in the file is blocked from the whole site."
+   ],
+   [
+    "p",
+    "This has changed. [A study by Hall](https://usehall.com/guides/review-platform-ai-citation-analysis) of AI citations from mid-2025 listed Trustpilot as blocking AI crawlers entirely. Today the company pages are open to the main AI search tools, and Trustpilot's own 2026 research with SEER Interactive found it was the review site AI tools cited most often."
+   ],
+   [
+    "h3",
+    "Glassdoor"
+   ],
+   [
+    "p",
+    "[Glassdoor India's robots.txt](https://www.glassdoor.co.in/robots.txt) groups GPTBot, Google-Extended and ClaudeBot under a heading about partly blocking AI bots. They are kept out of everything except the About and employers sections. CCBot is blocked completely. OAI-SearchBot and PerplexityBot are not named, so they follow the general rules, which leave many review and salary pages open. In short, ChatGPT search and Perplexity may read Glassdoor reviews, while the training crawlers named in the file may not."
+   ],
+   [
+    "h3",
+    "AmbitionBox"
+   ],
+   [
+    "p",
+    "[AmbitionBox's robots.txt](https://www.ambitionbox.com/robots.txt) puts GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended, ClaudeBot, CCBot and Bingbot in one group and disallows the whole site to them. The only exceptions are its blog, FAQ, awards pages and community guidelines. Googlebot is allowed."
+   ],
+   [
+    "p",
+    "So AmbitionBox reviews can appear in Google Search, and possibly in Google's AI Overviews, which are built on the same index. ChatGPT search, Perplexity's crawler and Bing are asked to stay away from the review pages. Perplexity-User may still fetch a page if someone pastes the link, since it generally ignores robots.txt."
+   ],
+   [
+    "h3",
+    "Justdial"
+   ],
+   [
+    "p",
+    "[Justdial's robots.txt](https://www.justdial.com/robots.txt) blocks OAI-SearchBot, ChatGPT-User and GPTBot from the entire site. PerplexityBot and Bingbot are not named, so the general rules apply and most listing pages stay open to them. Justdial ratings are therefore unlikely to feed ChatGPT search answers directly, but can feed Perplexity and Bing."
+   ],
+   [
+    "h3",
+    "MouthShut"
+   ],
+   [
+    "p",
+    "[MouthShut's robots.txt](https://www.mouthshut.com/robots.txt) contains two sections managed through Cloudflare that contradict each other for GPTBot, CCBot and Google-Extended: one allows them and one blocks them. ClaudeBot is blocked in both. The search crawlers are not named, and the general section declares \"search=yes, ai-train=no\". Search tools are welcome, training is not, and which rule a training crawler follows depends on how it reads the file."
+   ],
+   [
+    "h3",
+    "Know The Company"
+   ],
+   [
+    "p",
+    "[Our robots.txt](https://www.knowthecompany.com/robots.txt) allows every crawler, AI search and training crawlers included. We block one bot, PetalBot, and ask two SEO crawlers to slow down. We also publish an [llms.txt summary](https://www.knowthecompany.com/llms.txt) of the site for AI tools. We made that choice because reviews are only useful if people can find them, wherever they search."
+   ],
+   [
+    "h",
+    "What this means for your company"
+   ],
+   [
+    "ul",
+    [
+     "Reviews on a site that blocks a tool's search crawler are unlikely to appear in that tool's answers, however many you have there.",
+     "AmbitionBox employee reviews help you in Google but are unlikely to reach ChatGPT search, Perplexity's crawler or Copilot.",
+     "Justdial ratings are unlikely to reach ChatGPT search.",
+     "Trustpilot company pages, Glassdoor reviews and Know The Company pages are open to the main AI search crawlers.",
+     "AI tools can still mention a blocked site if another page quotes it, or show it as a plain link."
+    ]
+   ],
+   [
+    "p",
+    "We are not suggesting you abandon any site. Google Business Profile still matters most for local searches, and a candidate checking AmbitionBox directly will still see your reviews there. The point is coverage. If all your reviews sit on sites that keep AI tools out, AI answers about you will be built from whatever else they can find, which may be one angry forum post."
+   ],
+   [
+    "p",
+    "A sensible spread for most Indian businesses is Google Business Profile, the review site most used in your industry and at least one site that AI search tools can read. Do not ask the same customer to review you on five sites. Ask once, and rotate which link you send."
+   ],
+   [
+    "h",
+    "How to check any site yourself"
+   ],
+   [
+    "ol",
+    [
+     "Open the site's address followed by /robots.txt, for example example.com/robots.txt.",
+     "Search the page for the crawler names above, such as OAI-SearchBot or PerplexityBot.",
+     "Read the lines under each name. \"Disallow: /\" means the whole site is closed to that crawler. \"Allow\" lines open specific sections again.",
+     "If a crawler is not named, the rules under \"User-agent: *\" apply to it."
+    ]
+   ],
+   [
+    "p",
+    "These files change without notice, and both Trustpilot's and MouthShut's show signs of recent edits. We will recheck these five sites and update this article when they change."
+   ],
+   [
+    "faq",
+    [
+     [
+      "If a site blocks GPTBot, can ChatGPT still read it?",
+      "Yes, for search. GPTBot collects training data. ChatGPT search uses OAI-SearchBot, which is a separate setting."
+     ],
+     [
+      "Does robots.txt actually stop AI tools?",
+      "It is a request, not a lock. The large AI companies say their search crawlers follow it. User-triggered fetchers such as ChatGPT-User and Perplexity-User may not, because a person asked for the page."
+     ],
+     [
+      "Do Google's AI Overviews use AmbitionBox reviews?",
+      "AI Overviews draw on Google's normal search index, and AmbitionBox allows Googlebot. Whether a given answer quotes AmbitionBox depends on the question."
+     ],
+     [
+      "Which review site is best for appearing in ChatGPT?",
+      "There is no single answer. Hall's study found AI tools favour whichever site leads each industry, such as Clutch for agencies and TripAdvisor for travel. Check that the leading site in your industry lets AI search crawlers in."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Trustpilot robots.txt (read 12 November 2026)",
+      "https://www.trustpilot.com/robots.txt"
+     ],
+     [
+      "Glassdoor India robots.txt (read 12 November 2026)",
+      "https://www.glassdoor.co.in/robots.txt"
+     ],
+     [
+      "AmbitionBox robots.txt (read 12 November 2026)",
+      "https://www.ambitionbox.com/robots.txt"
+     ],
+     [
+      "Justdial robots.txt (read 12 November 2026)",
+      "https://www.justdial.com/robots.txt"
+     ],
+     [
+      "MouthShut robots.txt (read 12 November 2026)",
+      "https://www.mouthshut.com/robots.txt"
+     ],
+     [
+      "OpenAI: Overview of OpenAI crawlers",
+      "https://developers.openai.com/api/docs/bots"
+     ],
+     [
+      "Perplexity: Perplexity crawlers",
+      "https://docs.perplexity.ai/guides/bots"
+     ],
+     [
+      "Hall: Review platform citation analysis across ChatGPT, Perplexity, AI Overviews and Copilot",
+      "https://usehall.com/guides/review-platform-ai-citation-analysis"
+     ],
+     [
+      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
+      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "how-to-reply-to-a-bad-review",
+  "cat": "Customer experience",
+  "date": "2026-11-12",
+  "tone": 3,
+  "title": "How to reply to a bad review: examples for Indian businesses",
+  "seo": "How to reply to a bad review, with examples",
+  "desc": "How to reply to a negative review, with four example replies for Indian businesses: a late delivery, a coaching refund, rude staff and a review that looks fake.",
+  "excerpt": "Your reply to a bad review is read by everyone who reads the review after it. Here is a simple way to write one, what never to do and four replies you can adapt.",
+  "body": [
+   [
+    "p",
+    "A one-star review stings, and the first instinct is to defend yourself. Before you type, remember who reads the reply. The unhappy customer reads it once. Every future customer who scrolls past that review reads it too, and they are deciding whether to trust you."
+   ],
+   [
+    "p",
+    "A good reply will not always win back the reviewer. Its job is to show everyone else how you behave when something goes wrong."
+   ],
+   [
+    "h",
+    "Before you reply"
+   ],
+   [
+    "ul",
+    [
+     "**Check your records.** Find the order, booking or visit. [Google's own advice](https://support.google.com/business/answer/3474122?hl=en-GB) to businesses starts here, and it stops you replying to the wrong problem.",
+     "**Wait an hour if you are angry.** A reply written in temper stays online for years.",
+     "**Decide who replies.** The owner or a named manager is better than an anonymous \"Team\". Google recommends signing with your name or initials.",
+     "**Reply within a day or two.** A quick reply shows the problem was noticed. A reply three months later looks like an afterthought."
+    ]
+   ],
+   [
+    "h",
+    "A reply in five parts"
+   ],
+   [
+    "ol",
+    [
+     "**Name the problem in their words.** \"Your order arrived six days late\" shows you read the review. \"We value your feedback\" shows you did not.",
+     "**Own what was yours.** If you got it wrong, say so plainly. If part of it was outside your control, explain that briefly without making excuses.",
+     "**Say what you have done or changed.** A refund issued, a staff member spoken to, a process fixed. This is the part future customers care about most.",
+     "**Offer a direct route.** A named person and a phone number or email for the rest of the conversation. Do not ask them to post order details publicly.",
+     "**Sign it.** Your name and role."
+    ]
+   ],
+   [
+    "p",
+    "Most good replies are under 100 words. Long replies read as arguments."
+   ],
+   [
+    "h",
+    "What never to do"
+   ],
+   [
+    "ul",
+    [
+     "**Do not call the reviewer a liar,** even if you suspect it. Say you cannot find the order and invite them to contact you. Readers can draw their own conclusions.",
+     "**Do not share personal details.** No order numbers, phone numbers, addresses or anything about their purchase they did not mention. It breaks their trust, and under India's data protection law it is personal data you hold for a specific purpose.",
+     "**Do not offer money or discounts in exchange for changing or deleting the review.** Google tells businesses not to offer deals in replies, and paying to change reviews is against the rules of every serious review site.",
+     "**Do not paste the same reply under every complaint.** Copied replies show you did not read any of them.",
+     "**Do not threaten legal action over an honest opinion.** It rarely works, and the threat often becomes a bigger story than the review."
+    ]
+   ],
+   [
+    "h",
+    "Four example replies you can adapt"
+   ],
+   [
+    "h3",
+    "1. A late delivery from an online store"
+   ],
+   [
+    "quote",
+    "Review: \"Ordered a kurta set for Diwali. Came six days late, after the festival. No updates, nobody answered on WhatsApp. Waste of money.\""
+   ],
+   [
+    "quote",
+    "Reply: \"I'm sorry, Priya. Missing Diwali is exactly what you ordered early to avoid, and we didn't tell you it was delayed. Our courier partner held parcels in Delhi for four days, and we should have messaged every affected customer. We've refunded your delivery charge and now send an update whenever a parcel is held. If you'd like to return the set, please email me at the address on our website and I'll arrange a pickup. Rohan, founder\""
+   ],
+   [
+    "p",
+    "Why it works: it names the real cost to the customer, explains the cause in one sentence, admits the part that was theirs and gives a fix that helps future buyers."
+   ],
+   [
+    "h3",
+    "2. A refund dispute with a coaching institute"
+   ],
+   [
+    "quote",
+    "Review: \"Paid full fees for the NEET crash course. Batch timings changed twice in the first week. Asked for a refund, they said no refunds. Cheaters.\""
+   ],
+   [
+    "quote",
+    "Reply: \"Thank you for raising this, and I'm sorry the timings changed twice. That was our scheduling error, not something you agreed to. Our refund policy allows refunds within seven days of joining. Your request came on day nine, but because the change was ours, we'll make an exception. Please call our office and ask for me, and we'll process it this week. Anita Sharma, centre head\""
+   ],
+   [
+    "p",
+    "Why it works: it does not hide behind the policy, it explains the policy in one line and it fixes the specific case. Notice that the reply never mentions the student's name, phone number or fees paid."
+   ],
+   [
+    "h3",
+    "3. Rude staff at a clinic or restaurant"
+   ],
+   [
+    "quote",
+    "Review: \"The receptionist was rude and made my elderly father wait 50 minutes without a word.\""
+   ],
+   [
+    "quote",
+    "Reply: \"I'm sorry your father was kept waiting without an explanation. That's not how we want anyone treated, least of all an older patient. The doctor was delayed by an emergency that morning, but the front desk should have told every patient waiting. I've spoken to the team, and we now announce delays as soon as we know about them. I'd like to hear more about your visit. Please call me on the clinic number. Dr Mehta\""
+   ],
+   [
+    "p",
+    "Why it works: it accepts the complaint without blaming an individual by name in public, and it gives a change any reader can check on their next visit."
+   ],
+   [
+    "h3",
+    "4. A review that looks fake"
+   ],
+   [
+    "quote",
+    "Review: \"Worst service ever. Avoid.\" (No name you recognise, no details, no record of the person.)"
+   ],
+   [
+    "quote",
+    "Reply: \"We're sorry to read this. We can't find a booking under this name, so we can't see what went wrong. Please call or email us with your booking details so we can look into it properly. Kiran, operations manager\""
+   ],
+   [
+    "p",
+    "Why it works: it stays calm, tells readers you checked and leaves the door open. Separately, report the review to the site if it breaks their rules, for example if it was written by a competitor or by someone who was never a customer."
+   ],
+   [
+    "h",
+    "When the reviewer has a point you cannot fix"
+   ],
+   [
+    "p",
+    "Some complaints are about choices you made on purpose, such as a price, a location or a policy. Do not pretend to change them. Explain the reason once, honestly. \"Our prices are higher than nearby shops because every piece is made to order in our workshop\" is a perfectly good reply. Some readers will agree with the reviewer, and some will now choose you for the same reason."
+   ],
+   [
+    "h",
+    "What about good reviews?"
+   ],
+   [
+    "p",
+    "You do not have to thank every five-star review, and Google's advice says the same. Reply when you have something to add, such as a tip, an answer to a question in the review or a genuine thank-you to a regular customer. A wall of identical \"Thank you so much!\" replies adds nothing."
+   ],
+   [
+    "h",
+    "After you reply, fix the cause"
+   ],
+   [
+    "p",
+    "Once a month, read your reviews in one sitting and list the complaints that repeat. Two mentions of slow refunds is a coincidence. Six is a process problem. Fixing it does more for your rating than any reply."
+   ],
+   [
+    "p",
+    "It also changes what AI tools say about you. When ChatGPT, Perplexity or Gemini summarise a company, they often repeat the themes customers mention most, such as refunds, delivery or staff behaviour. Our guide to [checking what AI tools say about your company](/blog/check-your-company-in-chatgpt-perplexity-gemini) shows how to see this for yourself."
+   ],
+   [
+    "note",
+    "On Know The Company, verified companies can reply publicly to both customer and employee reviews. We never remove a review because a company asks, but you can report any review that breaks our guidelines. [Claim your company page](/claim) to start replying."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Should I reply to every bad review?",
+      "Reply to every review that describes a real problem, especially recent ones. You can skip reviews with no content at all, but a short, calm reply like example four does no harm."
+     ],
+     [
+      "How quickly should I reply?",
+      "Within one or two days. A fast reply shows you are paying attention, and the problem is still fresh enough to fix."
+     ],
+     [
+      "Can I ask a customer to delete or change a review?",
+      "You can tell a customer you have fixed the problem and that they are welcome to update their review if they wish. Never make a refund or discount depend on it."
+     ],
+     [
+      "What if a review is fake?",
+      "Reply calmly, say you cannot find a record and invite them to contact you. Then report it to the review site with whatever evidence you have."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Google Business Profile Help: Tips to reply to reviews",
+      "https://support.google.com/business/answer/3474122?hl=en-GB"
+     ],
+     [
+      "Trustpilot and SEER Interactive: What AI says about your brand (2026)",
+      "https://business.trustpilot.com/marketing/what-ai-says-about-your-brand"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "what-candidates-read-in-employee-reviews",
+  "cat": "Startup growth",
+  "date": "2026-11-12",
+  "tone": 4,
+  "title": "What candidates read in your employee reviews before they apply",
+  "seo": "What job candidates read in your employee reviews",
+  "desc": "Nearly half of Indian tech professionals check Glassdoor or AmbitionBox before applying. What they look for in employee reviews, and how to reply.",
+  "excerpt": "Nearly half of India's tech professionals check employee reviews before they apply, and former employees are the source they trust most. Here is what candidates look for, and how to respond.",
+  "body": [
+   [
+    "p",
+    "Your careers page tells candidates what you want them to know. Employee reviews tell them what former colleagues think they should know. Candidates read both, and they trust the second more."
+   ],
+   [
+    "p",
+    "In What Talent Wants 2026, a survey of 2,000 tech, product and data professionals across India [reported by HRKatha in October 2026](https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/), 92% said they research employers on LinkedIn before applying, 81% visit the company website and careers page and nearly half check Glassdoor or AmbitionBox. Asked whom they trust most, 48% picked former employees, ahead of current employees' LinkedIn posts at 44% and company websites at 39%. Only 23% picked posts by leadership."
+   ],
+   [
+    "p",
+    "An employee review is the closest a candidate gets to asking a former employee over coffee. Here is what they look for when they read yours."
+   ],
+   [
+    "h",
+    "What candidates look for"
+   ],
+   [
+    "h3",
+    "Their likely manager"
+   ],
+   [
+    "p",
+    "Comments about managers come up more than almost anything else. Candidates look for words like micromanage, supportive or takes credit, and whether they are tied to a team or function. The same survey found 56% of respondents rate a prospective manager's profile as very important before accepting an offer."
+   ],
+   [
+    "h3",
+    "Salary on time and honest appraisals"
+   ],
+   [
+    "p",
+    "\"Salary credited late\" in one review is a warning. In three reviews it is a decision. Candidates also look at what reviewers say about appraisal cycles: whether increments matched what was promised, whether ratings felt fixed in advance and whether promotions happened on time."
+   ],
+   [
+    "h3",
+    "Working hours and weekends"
+   ],
+   [
+    "p",
+    "Reviews are where candidates find out whether \"flexible hours\" means flexible or always available. Mentions of weekend calls, late-night client meetings or unpaid overtime get noticed, especially by people with families."
+   ],
+   [
+    "h3",
+    "How people leave"
+   ],
+   [
+    "p",
+    "This one is particular to India and it matters a lot. Candidates read what reviewers say about notice periods, buyouts, full and final settlement and relieving letters. A company that delays a relieving letter by two months will hear about it in reviews, and candidates read that as a sign of how they will be treated on the way out."
+   ],
+   [
+    "h3",
+    "Job security"
+   ],
+   [
+    "p",
+    "After a round of layoffs, the newest reviews carry most of the weight. Candidates want to know whether cuts were handled with notice and severance, or by a calendar invite at 9 in the morning."
+   ],
+   [
+    "h",
+    "Patterns candidates notice"
+   ],
+   [
+    "ul",
+    [
+     "**Dates.** A complaint from 2021 matters less than one from last month. Candidates scroll to the newest reviews first.",
+     "**Repetition.** One reviewer complaining about a manager is a personality clash. Five is a pattern.",
+     "**Your replies.** Whether the company replies at all, and whether the reply sounds like a person or a policy document.",
+     "**Sudden bursts of praise.** Twenty five-star reviews in one week, all short and similar, look organised. Candidates trust the whole page less afterwards."
+    ]
+   ],
+   [
+    "h",
+    "How to reply to employee reviews"
+   ],
+   [
+    "p",
+    "Replying to employee reviews is different from replying to customers. The reviewer may still work for you, and anonymity is what makes the review honest. A few rules:"
+   ],
+   [
+    "ul",
+    [
+     "**Never try to identify the writer,** in the reply or inside the company. If staff believe reviews are traced, the honest ones stop and the page fills with polite ones nobody believes.",
+     "**Answer the substance.** If the review says appraisals were delayed, say when the cycle will close this year.",
+     "**Be specific about changes.** \"We've moved to monthly salary credit on the 1st, without exception\" beats \"We take employee feedback seriously\".",
+     "**Write like a person.** Sign with a name and role, such as the head of people or a co-founder.",
+     "**Do not argue with a former employee in public,** even if you remember things differently."
+    ]
+   ],
+   [
+    "p",
+    "Here is an example for a common complaint:"
+   ],
+   [
+    "quote",
+    "Review: \"Good learning, but my full and final settlement took three months and nobody answered my emails.\""
+   ],
+   [
+    "quote",
+    "Reply: \"Thank you for writing this, and I'm sorry. Three months is far too long, and not replying to your emails was worse. Since September, settlements are paid within 30 days of the last working day, and every leaver has one named contact in HR. If anything from your own settlement is still pending, please write to me directly. Neha, head of people\""
+   ],
+   [
+    "h",
+    "Getting more honest reviews"
+   ],
+   [
+    "ul",
+    [
+     "Ask everyone, including people who are leaving. Reviews collected only from top performers read as hand-picked, and candidates can tell.",
+     "Share the review link in the exit process, as part of the paperwork.",
+     "Do not ask in team meetings or with a manager standing nearby. People write differently when they feel watched.",
+     "Never reward reviews with gifts, leave or points. Rewards produce glowing reviews that candidates discount, and review sites can remove them."
+    ]
+   ],
+   [
+    "h",
+    "Candidates are asking AI tools too"
+   ],
+   [
+    "p",
+    "The same survey found 31% of Indian tech professionals use AI tools to research employers. When a candidate asks ChatGPT what it is like to work for you, the answer can only draw on reviews the tool can read. When we read the rules review sites publish for AI crawlers, we found that some keep ChatGPT search and Perplexity's crawler away from their employee review pages. The details are in our article on [which review sites AI tools can read](/blog/which-review-sites-can-ai-read)."
+   ],
+   [
+    "note",
+    "On Know The Company, employee reviews are anonymous, and companies can reply to them once verified. Every company page shows customer and employee reviews side by side, and AI search tools can read them. [List your company](/list) or [claim your page](/claim) to reply to your employees."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Do candidates really read employee reviews?",
+      "Yes. In What Talent Wants 2026, nearly half of 2,000 Indian tech professionals said they check Glassdoor or AmbitionBox before applying, and former employees were the source they trusted most."
+     ],
+     [
+      "Should we reply to every employee review?",
+      "Reply to reviews that raise a specific issue, especially recent ones. Thank people for detailed positive reviews when you have something to add."
+     ],
+     [
+      "Can we find out who wrote a review?",
+      "On any reputable site, no, and you should not try. Anonymity is what makes the reviews believable to candidates."
+     ],
+     [
+      "Can we ask employees to write reviews?",
+      "Yes, as long as you ask everyone, do not pressure anyone and offer no reward. Asking only your happiest employees produces reviews candidates do not trust."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "HRKatha: India's tech professionals have already decided before you call them (What Talent Wants 2026), October 2026",
+      "https://www.hrkatha.com/features/research/indias-tech-professionals-have-already-decided-before-you-call-them/"
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "dpdp-rules-review-requests",
+  "cat": "Rules & compliance",
+  "date": "2026-11-12",
+  "tone": 5,
+  "title": "Asking customers for reviews? What India's DPDP Rules mean for you",
+  "seo": "DPDP Rules and review requests: what businesses must do",
+  "desc": "India's DPDP Rules take full effect in May 2027. What they mean for businesses that email, SMS or WhatsApp customers for reviews, with a checklist.",
+  "excerpt": "Most of India's data protection duties for businesses apply from May 2027, and review requests are covered. Here is what changes when you email, SMS or WhatsApp customers for a review.",
+  "body": [
+   [
+    "p",
+    "If you send customers a message after an order asking them to leave a review, you are using their personal data: a name, a phone number or email address and the fact that they bought from you. In India that is governed by the Digital Personal Data Protection Act, 2023 and the rules made under it, which the government notified in November 2025."
+   ],
+   [
+    "p",
+    "The rules are being phased in. The Data Protection Board was set up straight away. Provisions for registering consent managers started in November 2026. Most duties for ordinary businesses, including notices, security safeguards, breach reporting, deletion and parental consent, apply from May 2027, according to [an analysis by Saga Legal](https://www.legal500.com/firms/237811-saga-legal/c-india/news-and-developments/the-privacy-timer-starts-now-analysing-the-dpdp-rules-and-its-18-month-countdown). That leaves about six months to get review requests right."
+   ],
+   [
+    "note",
+    "This article explains the rules in plain language. It is not legal advice. For your own situation, speak to a lawyer who works on data protection."
+   ],
+   [
+    "h",
+    "Who is responsible"
+   ],
+   [
+    "p",
+    "Under the Act, the business that decides why and how personal data is used is the Data Fiduciary. If you collect a customer's number at checkout and decide to ask them for a review, that is you. If a software tool or review platform sends the messages for you, it acts as your Data Processor. The responsibility stays with you, so choose tools that let you meet the rules below."
+   ],
+   [
+    "h",
+    "Tell customers clearly, before you ask"
+   ],
+   [
+    "p",
+    "The rules require a notice that can be understood on its own, in clear and plain language. It should list the personal data you will use, the specific purpose and how the person can withdraw consent, exercise their rights and complain to the Data Protection Board. A line hidden in your terms and conditions does not meet that standard."
+   ],
+   [
+    "p",
+    "For review requests, the simplest approach is a short, separate line at the point of sale:"
+   ],
+   [
+    "quote",
+    "\"We may send you one message on WhatsApp or email after your order to ask for a review. You can say no now, or reply STOP at any time.\""
+   ],
+   [
+    "p",
+    "Put it on your checkout page, your invoice or the form at your counter, wherever you collect the number."
+   ],
+   [
+    "h",
+    "Consent, or a legitimate use?"
+   ],
+   [
+    "p",
+    "The Act allows some processing without separate consent. One of these \"legitimate uses\" covers data a person gave you voluntarily for a specified purpose, as long as they have not said they do not want it used. Whether a review request falls inside the purpose of a purchase has not been tested yet. The safer course is to name review requests in your notice, so the purpose is clearly stated from the start."
+   ],
+   [
+    "h",
+    "Children need a parent's consent"
+   ],
+   [
+    "p",
+    "This affects coaching institutes, schools, edtech companies, toy stores and anyone else whose customers include people under 18. Under the rules, processing a child's data needs verifiable consent from a parent or guardian, with limited exceptions. For review requests, the simple rule is to ask the parent who paid, never the student, and only once the parent has agreed to be contacted."
+   ],
+   [
+    "h",
+    "Make stopping as easy as starting"
+   ],
+   [
+    "ul",
+    [
+     "Withdrawing consent must be as easy as giving it. Every review request should say how to stop further messages.",
+     "Keep a list of people who said no, and check it before every send. Sending again after someone opted out is the fastest way to a complaint.",
+     "Do not quietly move review-request contacts into your marketing list. They gave you their number for an order and a review request, not for offers."
+    ]
+   ],
+   [
+    "h",
+    "Keep the data safe, and delete it when you are done"
+   ],
+   [
+    "p",
+    "From May 2027 businesses must keep reasonable security safeguards, tell affected people about a data breach without delay in plain language, and respond to requests to access, correct or erase their data within 90 days, as the [government's explainer](https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf) sets out. For review requests that means:"
+   ],
+   [
+    "ul",
+    [
+     "Do not keep spreadsheets of customer numbers on personal phones or shared drives open to everyone.",
+     "Limit who in your team can export customer lists.",
+     "Once a customer has been asked for a review, you do not need their number for that purpose any more. Decide how long you keep it, write it down and stick to it."
+    ]
+   ],
+   [
+    "h",
+    "What the penalties are"
+   ],
+   [
+    "p",
+    "The Act sets maximum penalties of up to ₹250 crore for failing to keep reasonable security safeguards, up to ₹200 crore for failing to report a breach or for breaking the rules on children's data, and up to ₹50 crore for other breaches. These are ceilings, and the Board decides the actual amount case by case. For a small business, the more likely cost of a careless review campaign is a complaint, a lost customer and a worse review than the one you asked for."
+   ],
+   [
+    "h",
+    "A checklist for review requests"
+   ],
+   [
+    "ol",
+    [
+     "Add a short, separate notice wherever you collect phone numbers or email addresses, naming review requests as a purpose.",
+     "Send one request per order, not a series of reminders.",
+     "Include a simple way to stop in every message.",
+     "Keep and check a list of people who opted out.",
+     "For customers under 18, contact the parent, and only with their agreement.",
+     "Keep review-request contacts out of your marketing lists unless people agreed to both.",
+     "Restrict who can download customer lists, and decide how long you keep them.",
+     "If a tool sends requests for you, check it supports opt-outs and does not reuse your customers' data for its own marketing."
+    ]
+   ],
+   [
+    "h",
+    "How we handle review invitations"
+   ],
+   [
+    "p",
+    "Companies on our Business plan can send review invitations by email. Before sending, the company confirms it has permission to contact everyone on its list. We keep only a scrambled code of each address, never the address itself, so we can stop anyone being invited twice within 90 days. Every invitation has a link to stop all future invitations, from any company, and we honour it permanently. You can see the [plans and pricing](/pricing) for details."
+   ],
+   [
+    "faq",
+    [
+     [
+      "Does the DPDP Act apply to small businesses?",
+      "Yes. The Act has no general exemption for small businesses, though the government can exempt some categories, including startups, from certain provisions by notification. Check the current notifications before relying on an exemption."
+     ],
+     [
+      "When do the DPDP Rules apply to review requests?",
+      "Most duties for businesses, including notices and security safeguards, apply from May 2027, 18 months after the rules were notified in November 2025."
+     ],
+     [
+      "Is WhatsApp treated differently from email or SMS?",
+      "No. The rules apply to personal data whatever channel you use. WhatsApp also has its own business messaging policies, which you need to follow separately."
+     ],
+     [
+      "Can I ask for a review on the invoice instead?",
+      "Yes, and it is the lightest option. A review link printed on the invoice does not send the customer any extra message."
+     ]
+    ]
+   ],
+   [
+    "src",
+    [
+     [
+      "Press Information Bureau: explainer on the Digital Personal Data Protection Rules, 2025 (November 2025)",
+      "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf"
+     ],
+     [
+      "Saga Legal via Legal500: The privacy timer starts now, analysing the DPDP Rules and its 18-month countdown",
+      "https://www.legal500.com/firms/237811-saga-legal/c-india/news-and-developments/the-privacy-timer-starts-now-analysing-the-dpdp-rules-and-its-18-month-countdown"
+     ],
+     [
+      "YourStory: Govt notifies Digital Personal Data Protection Rules 2025, rollout stretched over 18 months",
+      "https://yourstory.com/2025/11/digital-personal-data-protection-dpdp-rules-2025-rollout-over-18-months"
+     ]
+    ]
+   ]
+  ]
+ }
 ];
-POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
+POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].flat().join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
 const POSTBYID = Object.fromEntries(POSTS.map(p => [p.id, p]));
 if (!POSTS.length) PAGE_ROUTES.splice(PAGE_ROUTES.indexOf('blog'), 1);
 const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-const postCard = p => `<a class="postcard" href="#${p.id}"><span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>
+/* Article text: [words](link) becomes a link (site links stay in the tab, others open a new one) and
+   **words** becomes bold. Everything else is escaped. Same rules as articleHtml in astro/src/lib/page.ts. */
+const inl = t => esc(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(((?:https:\/\/|\/|#)[^\s)]+)\)/g, (m, x, u) => /^https:\/\/(?!www\.knowthecompany\.com)/.test(u) ? `<a href="${u}" target="_blank" rel="noopener">${x}</a>` : `<a href="${u}">${x}</a>`);
+const postBlock = ([k, v]) => k === 'h' ? `<h2>${esc(v)}</h2>` : k === 'h3' ? `<h3>${esc(v)}</h3>` : k === 'ul' ? `<ul>${v.map(i => `<li>${inl(i)}</li>`).join('')}</ul>` : k === 'ol' ? `<ol>${v.map(i => `<li>${inl(i)}</li>`).join('')}</ol>`
+  : k === 'note' ? `<div class="box soft" style="margin:22px 0"><p>${inl(v)}</p></div>` : k === 'quote' ? `<blockquote>${v.split('\n').map(x => `<p>${inl(x)}</p>`).join('')}</blockquote>`
+  : k === 'faq' ? `<h2>Frequently asked questions</h2>${v.map(([q, a]) => `<h3>${esc(q)}</h3><p>${inl(a)}</p>`).join('')}`
+  : k === 'src' ? `<h2>Sources</h2><ul class="sources">${v.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('')}</ul>` : `<p>${inl(v)}</p>`;
+const postCard = p => `<a class="postcard" href="#${p.id}">${p.image ? `<img class="cover" src="${esc(p.image)}" alt="" loading="lazy" style="object-fit:cover;width:100%;aspect-ratio:16/9;height:auto">` : `<span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>`}
   <div class="postmeta"><span>${fmtDate(p.date)}</span><span>${p.read} min read</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></a>`;
 
 function vBlog() {
@@ -1945,13 +2918,14 @@ function vBlog() {
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
 function vPost(p) {
-  const body = p.body.map(([k, v]) => k === 'h' ? `<h2>${esc(v)}</h2>` : k === 'ul' ? `<ul>${v.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : `<p>${esc(v)}</p>`).join('');
+  const body = p.body.map(postBlock).join('');
   const more = POSTS.filter(x => x.id !== p.id).slice(0, 3);
   return `<div class="wrap">${crumbs([['Home','#home'],['Blog','#blog'],[p.title]])}
     <article class="article" style="padding-top:22px">
       <p class="eyebrow">${esc(p.cat)}</p>
       <h1 style="font-size:clamp(30px,4.2vw,44px);font-weight:800;line-height:1.12;margin-top:10px">${esc(p.title)}</h1>
-      <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span></div>
+      <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span>${p.updated && p.updated !== p.date ? `<span>·</span><span>Updated ${fmtDate(p.updated)}</span>` : ''}</div>
+      ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="675" style="width:100%;height:auto;border-radius:16px;margin-top:22px;aspect-ratio:16/9;object-fit:cover">` : ''}
       <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
       ${body}
       <div class="box soft" style="margin-top:36px"><h2>Get listed on Know The Company</h2><p>A verified profile with a website link and replies to reviews, plus contact buttons and photos on Plus. ${LAUNCH ? 'Basic is free for your first year.' : 'From [[PB]] a year.'}</p><a class="btn p" href="#list" style="align-self:flex-start">List your company</a></div>
@@ -2806,11 +3780,11 @@ function render() {
   const sp = document.getElementById('searchpanel'); if (sp) sp.hidden = true;
   if (BYID[h] && S.draft && S.draft.cid === h) { const g = document.getElementById('review-form'); if (g && !g['r-title'].value && !g['r-body'].value) { g['r-title'].value = S.draft.title || ''; g['r-body'].value = S.draft.body || ''; g['r-date'].value = S.draft.date || ''; } }
   setMeta(h);
-  const c = BYID[h]; if (POSTBYID[h]) document.title = POSTBYID[h].title + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Plans and pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : PAGE_TITLES[h] ? `${PAGE_TITLES[h]} · Know The Company` : h === 'home' ? 'Know The Company · Customer and employee reviews of startups' : !isRoute(h) ? 'Page not found · Know The Company' : 'Know The Company · Customer and employee reviews of startups';
+  const c = BYID[h]; if (POSTBYID[h]) document.title = (POSTBYID[h].seo || POSTBYID[h].title) + ' · Know The Company'; else document.title = c ? `${c.name} reviews · Know The Company` : TOOLBYID[h] ? `${TOOLBYID[h].name} · Know The Company` : h === 'tools' ? 'Free tools · Know The Company' : h === 'why-list' ? 'Why list your company · Know The Company' : h === 'pricing' ? 'Plans and pricing · Know The Company' : h === 'refunds' ? 'Refunds and cancellations · Know The Company' : CATBYID[h] ? `${CATBYID[h].name} · Know The Company` : PAGE_TITLES[h] ? `${PAGE_TITLES[h]} · Know The Company` : h === 'home' ? 'Know The Company · Customer and employee reviews of startups' : !isRoute(h) ? 'Page not found · Know The Company' : 'Know The Company · Customer and employee reviews of startups';
 }
 function setMeta(h) {
   const c = BYID[h], k = CATBYID[h]; let d = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
-  if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = catIntro(k.name); else if (POSTBYID[h]) d = POSTBYID[h].excerpt; else if (PAGE_DESCS[h]) d = PAGE_DESCS[h];
+  if (c) d = `${c.name} reviews from customers and employees. ${c.bio}`; else if (k) d = catIntro(k.name); else if (POSTBYID[h]) d = POSTBYID[h].desc || POSTBYID[h].excerpt; else if (PAGE_DESCS[h]) d = PAGE_DESCS[h];
   let m = document.querySelector('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = d.length > 158 ? d.slice(0, 155).replace(/\s+\S*$/, '') + '…' : d;
   let cl = document.querySelector('link[rel="canonical"]'); if (!cl) { cl = document.createElement('link'); cl.rel = 'canonical'; document.head.appendChild(cl); }
   cl.href = location.origin + urlFor(h);

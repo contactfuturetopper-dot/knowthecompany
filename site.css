@@ -234,6 +234,13 @@ details p{margin-top:10px;color:var(--muted);line-height:1.6}
 .article p,.article li{font-size:17px;line-height:1.75}
 .article p{margin-top:14px}
 .article ul{margin:14px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:8px}
+.article ol{margin:14px 0 0;padding-left:24px;display:flex;flex-direction:column;gap:8px}
+.article h3{font-size:19px;font-weight:800;margin-top:24px}
+.article a{text-decoration:underline;text-underline-offset:2px}
+.article blockquote{margin:16px 0 0;padding:14px 18px;border-left:4px solid var(--accent);background:var(--surface);border-radius:0 12px 12px 0}
+.article blockquote p{margin-top:6px;font-size:16px}
+.article blockquote p:first-child{margin-top:0}
+.article .sources li{font-size:15px}
 .postmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--soft);align-items:center}
 .postcard{display:flex;flex-direction:column;gap:12px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);text-decoration:none;color:var(--fg)}
 .postcard:hover{border-color:var(--accent);color:var(--fg)}

@@ -106,7 +106,17 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   }
   assert.ok(home.includes("Latest reviews") && home.includes("Most reviewed companies") && /out of 5/.test(home), "home page shows reviews without JavaScript");
   assert.ok(!home.includes("This website needs JavaScript") && home.includes("To write a review, turn JavaScript on") && home.includes("<head>") && (home.match(/<noscript>/g) || []).length === 2, "no 'needs JavaScript' notice over server-rendered content");
-  assert.equal((await resolvePage("/blog")).status, 404, "no blog while there are no posts");
+  {
+    const blog = await resolvePage("/blog");
+    assert.equal(blog.status, 200, "blog page exists once there are posts");
+    const post = await resolvePage("/blog/how-to-reply-to-a-bad-review"), html = renderShell(post);
+    const types = (post.ld || []).map(n => n["@type"]);
+    assert.ok(post.status === 200 && types.includes("BlogPosting") && types.includes("FAQPage") && post.ogType === "article", "article page has BlogPosting and FAQ data");
+    assert.ok(html.includes("<h2>A reply in five parts</h2>") && html.includes('<a href="/claim">Claim your company page</a>') && html.includes('href="https://support.google.com/business/answer/3474122?hl=en-GB" rel="noopener"') && html.includes("<blockquote>") && html.includes("<h2>Sources</h2>"), "article text, links, quotes and sources are in the page");
+    assert.ok(!/[\u2014\u2013]/.test(JSON.stringify(post.ld)) && !/[\u2014]/.test(post.body), "no em dashes in articles");
+    assert.ok(post.title.startsWith("How to reply to a bad review, with examples") && post.desc.length <= 160, "article title and description");
+    assert.equal((await resolvePage("/blog/no-such-post")).status, 404, "unknown article is a 404");
+  }
   const fp = await resolvePage("/company/1password"), fhtml = renderShell(fp);
   assert.ok(!fp.noindex && fhtml.includes("About 1Password") && fhtml.includes("When was 1Password founded?") && fhtml.includes('id="co-facts" data-id="1password.com"'), "researched facts are on the page");
   assert.ok(fp.ld.some(n => n["@type"] === "FAQPage") && fp.ld.find(n => n["@id"] && n["@id"].endsWith("#company")).foundingDate, "facts in structured data");
@@ -128,9 +138,9 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const xml = await sitemapXml();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
   assert.equal(new Set(locs).size, locs.length, "no duplicate URLs");
-  for (const want of ["/", "/pricing", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
+  for (const want of ["/", "/pricing", "/blog", "/blog/which-review-sites-can-ai-read", "/tools/hike", "/category/education-and-e-learning", "/company/future-topper", "/company/co-246", "/company/a-and-b"])
     assert.ok(locs.includes("https://www.knowthecompany.com" + want), "sitemap has " + want);
-  for (const not of ["/blog", "/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
+  for (const not of ["/login", "/search", "/dashboard", "/add", "/jobs", "/my-reviews", "/business-login"])
     assert.ok(!locs.includes("https://www.knowthecompany.com" + not), "sitemap leaves out " + not);
   assert.ok(locs.includes("https://www.knowthecompany.com/company/1password") && xml.includes("<lastmod>2026-11-01</lastmod>"), "a company with researched facts is listed");
   assert.ok(!/&(?!amp;|lt;|gt;|quot;|#39;)/.test(xml), "XML is escaped");
