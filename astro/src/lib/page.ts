@@ -168,7 +168,8 @@ export async function resolvePage(pathname: string): Promise<Page> {
 function fromMeta(path: string, m: Meta): Page {
   const desc = m.desc || DEFAULT_DESC;
   const post = m.route.startsWith("blog-") ? POSTS.get(m.route.slice(5)) : undefined;
-  const body = SNAPS[m.route] || ((m.intro ? `<p>${esc(m.intro)}</p>` : "") + (post ? articleHtml(post) : ""));
+  const list = m.route === "blog" ? [...POSTS.values()].sort((a, b) => b.date.localeCompare(a.date)).map(p => `<article><h2><a href="/blog/${esc(p.slug)}">${esc(p.title)}</a></h2><p>${esc(p.cat)} · ${esc(p.date)}</p><p>${esc(p.excerpt)}</p></article>`).join("") : "";
+  const body = SNAPS[m.route] || ((m.intro ? `<p>${esc(m.intro)}</p>` : "") + list + (post ? articleHtml(post) : ""));
   return { status: 200, path, title: m.title, desc, h1: m.h1, body, noindex: NOINDEX_ROUTES.includes(m.route), ld: pageSchema(path, m, desc), ...(post ? { ogType: "article", ...(post.image ? { ogImage: post.image } : {}) } : {}) };
 }
 const PAGE_TYPES: Record<string, string> = { about: "AboutPage", contact: "ContactPage", categories: "CollectionPage", tools: "CollectionPage", blog: "CollectionPage", search: "SearchResultsPage" };
