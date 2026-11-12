@@ -91,6 +91,19 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   const cat = await resolvePage("/category/education-and-e-learning");
   assert.ok(cat.desc.startsWith("Reviews of online courses") && cat.body.includes("Reviews of online courses"), "category intro");
   assert.ok(/Future Topper<\/a> \(futuretopper\.in\): (Customers|Employees) \d\.\d out of 5/.test(cat.body), "category page shows ratings without JavaScript");
+  {
+    const mod = await import(out);
+    const co = { _id: "x.com", title: "A <b>&\"Co", website: "x.com", claimStatus: "verified", ownerMemberIds: ["o"], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7" };
+    const rv = (type, n, rating, rec) => Array.from({ length: n }, () => ({ type, rating, recommend: rec }));
+    const few = mod.cardSvg(mod.cardData(co, rv("customer", 4, 5), "/company/x"));
+    assert.ok(!few.includes(">5.0<") && few.includes("A score shows from 5") && !few.includes("<b>") && few.includes("A &lt;b&gt;&amp;&quot;Co") && few.includes("Verified"), "trust card: no score under 5 reviews, name escaped, verified tick");
+    const d = mod.cardData(co, [...rv("customer", 5, 4), ...rv("employee", 3, 5, "yes"), ...rv("employee", 2, 2, "no")], "/company/x");
+    assert.ok(d.customer.avg === 4 && d.employee.avg === 3.8 && d.employee.recommend === 60, "trust card numbers");
+    const svg = mod.cardSvg(d);
+    assert.ok(svg.includes(">4.0<") && svg.includes(">3.8<") && svg.includes("60% would recommend") && svg.startsWith("<svg"), "trust card shows both scores");
+    const unverified = mod.cardSvg(mod.cardData({ ...co, _owner: "m1", _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-01T00:00:00Z" }, [], "/company/x"));
+    assert.ok(!unverified.includes("Verified") && unverified.includes("No reviews yet") && unverified.includes("A score shows from 5 reviews"), "trust card: member-set verified status ignored");
+  }
   assert.ok(home.includes("Latest reviews") && home.includes("Most reviewed companies") && /out of 5/.test(home), "home page shows reviews without JavaScript");
   assert.ok(!home.includes("This website needs JavaScript") && home.includes("To write a review, turn JavaScript on") && home.includes("<head>") && (home.match(/<noscript>/g) || []).length === 2, "no 'needs JavaScript' notice over server-rendered content");
   assert.equal((await resolvePage("/blog")).status, 404, "no blog while there are no posts");

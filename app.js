@@ -1647,6 +1647,32 @@ function jobsPanel() {
   return quota + form + `<div class="toolbar"><h2 style="font-size:20px">Your job posts</h2><a href="#jobs" style="font-weight:700;font-size:14px">See how applicants see them</a></div>` + list;
 }
 
+/* Trust card: customer and employee scores side by side, as an image drawn by the server from published
+   reviews (/card/<slug>.svg, astro/src/lib/card.ts). Free on every plan: each copy links back here. */
+const CARD_MIN = 5;
+const SITE_ORIGIN = 'https://www.knowthecompany.com';
+function trustCard(c) {
+  const sl = c.id.slice(3), page = SITE_ORIGIN + '/company/' + sl, img = SITE_ORIGIN + '/card/' + sl + '.svg';
+  const rv = reviewsFor(c.id), er = empData(c.id).reviews;
+  const ready = rv.length >= CARD_MIN || er.length >= CARD_MIN;
+  const code = `<a href="${page}" target="_blank" rel="noopener"><img src="${img}" width="600" height="315" alt="${esc(c.name)} customer and employee reviews on Know The Company"></a>`;
+  return `<div class="box" style="gap:12px"><h3 style="font-size:17px">Trust card</h3>
+    <p class="meta">Your customer score and employee score side by side. Put it in proposals, pitch decks, emails and your careers page. It updates itself as reviews come in, and it’s free on every plan.</p>
+    <img src="/card/${esc(sl)}.svg" width="600" height="315" alt="Trust card for ${esc(c.name)}" style="width:100%;max-width:600px;height:auto;border:1px solid var(--line);border-radius:12px" loading="lazy">
+    ${ready ? '' : `<p class="meta"><b>Scores show from ${CARD_MIN} reviews.</b> Customer and employee scores each appear once that side has ${CARD_MIN} published reviews. Send your review links below to everyone to get there.</p>`}
+    <div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn o" type="button" data-act="card-png" data-slug="${esc(sl)}">Download image</button><button class="btn g" type="button" data-act="copy-text" data-text="${esc(img)}">Copy image link</button></div>
+    <div class="field"><label class="l">Code for your website or careers page</label><div style="display:flex;gap:8px"><textarea readonly rows="3" class="mono" style="flex:1;min-width:0;background:var(--surface);font-size:12px">${esc(code)}</textarea><button class="btn g" type="button" data-act="copy-text" data-text="${esc(code)}">Copy</button></div></div></div>`;
+}
+async function cardPng(sl) {
+  const im = new Image();
+  im.src = '/card/' + sl + '.svg?t=' + Date.now();
+  await im.decode();
+  const cv = document.createElement('canvas'); cv.width = 2400; cv.height = 1260;
+  const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(im, 0, 0, cv.width, cv.height);
+  const blob = await new Promise(ok => cv.toBlob(ok, 'image/png'));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = sl + '-trust-card.png';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
 /* Website badge: an embed that shows a company's live rating on its own site (badge.html). Plus only. */
 function badgePanel(c, base) {
   if (coPlan(c) !== 'plus') return `<div class="box soft" style="gap:8px"><h3 style="font-size:17px">Website badge</h3><p>Show your live rating on your own website and careers page. It comes with Plus.</p><a href="#pricing" style="font-weight:700;font-size:14px">See Plus</a></div>`;
@@ -1668,6 +1694,7 @@ function vDashboard() {
       <div class="stats">${stats.map(([v, l, n]) => `<div class="stat"><span>${l}</span><b>${v}</b><small>${n}</small></div>`).join('')}</div>
       ${linkRow('Customer review link', 'cl-' + c.id, base + '#invite-' + c.id)}
       ${linkRow('Employee review link', 'el-' + c.id, base + '#invite-team-' + c.id)}
+      ${trustCard(c)}
       ${badgePanel(c, base)}
       <p class="meta">Send each link to everyone, not only happy customers or staff. Edit your page, photos and employer page, and reply to reviews, from the tabs above. Changes go live straight away.</p></section>`; };
   const KIND = { claim: 'Claim', new: 'New company and claim', access: 'Access request' };
@@ -2786,6 +2813,7 @@ document.addEventListener('click', e => {
   if (act === 'job-pay') { if (S.jobPending) { addJob(S.jobPending, true); S.jobPending = null; render(); toast(`Paid ₹${EXTRA_JOB} (demo). Job posted for ${JOB_DAYS} days.`); } }
   if (act === 'job-cancel') { S.jobPending = null; render(); }
   if (act === 'job-close') { const j = JOBS.find(x => x.id === a.dataset.id); if (j) { j.closed = true; store.set('tn_jobs', JOBS); render(); toast('Job post closed'); } }
+  if (act === 'card-png') { cardPng(a.dataset.slug).catch(() => toast('Couldn’t make the image. Try again, or use the image link.')); return; }
   if (act === 'copy-text') { const txt = a.dataset.text; try { navigator.clipboard.writeText(txt).then(() => toast('Copied'), () => toast('Select the email and copy it')); } catch (err) { toast('Select the email and copy it'); } }
   if (act === 'blogcat') { S.blogCat = a.dataset.cat; render(); }
   if (act === 'pitch-again') { S.pitchSent = false; render(); }

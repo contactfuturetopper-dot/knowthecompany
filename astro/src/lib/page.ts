@@ -9,6 +9,8 @@ import factsData from "../generated/company-facts.json";
 import snapshots from "../generated/page-snapshots.json";
 /* Full text of the fixed pages as the app draws them for a logged-out visitor (made by test/run.mjs). */
 const SNAPS = snapshots as Record<string, string>;
+import { cardData } from "./card";
+export { cardData, cardSvg, MIN_REVIEWS } from "./card";
 import { graph, orgNode, webPage, breadcrumbs, companyNodes, faqNode, type Crumb } from "./schema";
 import { adminTouched, awaitingListing, allReviewsElevated, publicReviews, dedupeCompanies } from "./data";
 export { adminTouched };
@@ -122,8 +124,11 @@ export async function resolvePage(pathname: string): Promise<Page> {
       if (c && !awaitingListing(c)) {
         const name = c.title || c._id, cat = c.category || "Other";
         const f = FACTS[c._id];
-        const title = `${name} reviews · Know The Company`, desc = coDesc(name, c, f);
         const reviews = await companyReviews(c._id).catch(() => []);
+        /* Share previews and search snippets lead with both scores once a side has enough reviews. */
+        const cd = cardData(c, reviews, p);
+        const scoreLine = [cd.customer.avg !== null ? `Customers ${cd.customer.avg.toFixed(1)}/5 (${cd.customer.n} reviews)` : "", cd.employee.avg !== null ? `Employees ${cd.employee.avg.toFixed(1)}/5 (${cd.employee.n} reviews)` : ""].filter(Boolean).join(" · ");
+        const title = `${name} reviews · Know The Company`, desc = scoreLine ? `${scoreLine}. ${coDesc(name, c, f)}` : coDesc(name, c, f);
         const body = `<p><a href="/category/${slug(cat)}">${esc(cat)}</a> · ${esc(c.website || c._id)}</p>` + (c.bio ? `<p>${esc(c.bio)}</p>` : "") + reviewsHtml(name, reviews) + (f ? factsHtml(name, c, f, reviews) : "");
         const crumbs: Crumb[] = [{ name: cat, path: `/category/${slug(cat)}` }, { name, path: p }];
         const ld = [webPage(p, title, desc, { type: "ItemPage", mainEntity: `${ORIGIN}${p}#company`, crumbs: true }), breadcrumbs(p, crumbs), ...companyNodes(p, c, reviews, f)];
@@ -242,7 +247,7 @@ export async function rawReviews(companyId?: string): Promise<any[]> {
 }
 /* Every review a visitor may see, grouped by company id. Kept for a minute, like the companies. */
 let rvCache: { at: number; by: Map<string, any[]>; list: any[] } | null = null;
-async function reviewsByCompany(): Promise<{ by: Map<string, any[]>; list: any[] }> {
+export async function reviewsByCompany(): Promise<{ by: Map<string, any[]>; list: any[] }> {
   if (rvCache && Date.now() - rvCache.at < 60_000) return rvCache;
   const list = publicReviews(await rawReviews(), await allCompanies());
   const by = new Map<string, any[]>();

@@ -162,6 +162,7 @@ click('[data-act="cotab"][data-tab="customers"]'); await new Promise(r => setTim
 await go('dashboard');
 report.push('dashboard tabs: ' + app.querySelectorAll('[data-act="dash-tab"]').length);
 report.push('badge embeds on dashboard: ' + app.querySelectorAll('iframe[src*="badge.html?c=razorpay.com"]').length);
+report.push('trust card on dashboard: ' + !!app.querySelector('img[src="/card/razorpay.svg"]') + ', download: ' + !!app.querySelector('[data-act="card-png"][data-slug="razorpay"]') + ', embed code: ' + app.innerHTML.includes('https://www.knowthecompany.com/card/razorpay.svg'));
 click('[data-act="dash-tab"][data-tab="import"]'); await new Promise(r => setTimeout(r, 40));
 report.push('past reviews tab: form ' + !!app.querySelector('#import-form'));
 { const imf = app.querySelector('#import-form');
