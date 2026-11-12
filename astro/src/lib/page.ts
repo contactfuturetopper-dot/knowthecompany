@@ -97,7 +97,7 @@ export function cleanPath(pathname: string): string | null {
   if (p !== "/" && p.endsWith("/")) p = p.replace(/\/+$/, "");
   if (p.endsWith(".html")) p = p.slice(0, -5);
   if (p === "/index") p = "/";
-  if (p === "/sample") p = "/list";
+  if (p === "/sample" || p === "/list") p = "/list-your-company";
   /* Addresses are lowercase; /Company/Razorpay moves to /company/razorpay. */
   if (/[A-Z]/.test(p) && !p.startsWith("/_") && !p.startsWith("/api/")) p = p.toLowerCase();
   return p === pathname ? null : p || "/";
@@ -115,6 +115,7 @@ export async function resolvePage(pathname: string): Promise<Page> {
     if (info) return fromMeta(p, info);
   }
   m = p.match(/^\/([a-z-]+)$/);
+  if (m && m[1] === "list-your-company") return fromMeta(p, PAGES.get("list") as Meta);
   if (m && PAGES.has(m[1])) return fromMeta(p, PAGES.get(m[1]) as Meta);
 
   m = p.match(/^\/company\/([a-z0-9-]+)$/);
@@ -369,7 +370,7 @@ ${cats.length ? `<h2>Browse by category</h2><ul>${cats.sort().map(c => `<li><a h
 <h2>Free career and company tools</h2><ul>${TOOL_LINKS.map(([href, name]) => `<li><a href="${href}">${esc(name)}</a></li>`).join("")}</ul>
 <h2>How it works</h2>
 <ol><li>Search the company by name or website. Each page shows its reviews and whether the company is verified.</li><li>Read real experiences: customers share how they were treated, employees share anonymous reviews.</li><li>Share your own. Good or bad, every review is published the same way, and the company can reply.</li></ol>
-<p><a href="/list">List your company</a> · <a href="/why-list">Why companies list here</a> · <a href="/pricing">Pricing</a></p>`;
+<p><a href="/list-your-company">List your company</a> · <a href="/why-list">Why companies list here</a> · <a href="/pricing">Pricing</a></p>`;
 }
 function notFound(path: string): Page {
   return { status: 404, path, title: "Page not found · Know The Company", desc: DEFAULT_DESC, h1: "This page doesn’t exist", body: `<p>The link may be old or mistyped. Search for a company, or pick up from one of these pages.</p><ul><li><a href="/">Home</a></li><li><a href="/categories">All categories</a></li><li><a href="/search">Search companies</a></li><li><a href="/tools">Free tools</a></li><li><a href="/add">Add a missing company</a></li><li><a href="/help">Help centre</a></li></ul>`, noindex: true };
@@ -379,6 +380,8 @@ function unknown(path: string): Page {
   return { status: 200, path, title: "Know The Company", desc: DEFAULT_DESC, h1: "", body: "", noindex: true };
 }
 
+/* The newest articles, linked from every page's footer. */
+const footerPosts = () => [...POSTS.values()].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5).map(p => `<a href="/blog/${p.slug}">${esc(p.title)}</a>`).join("");
 /** The app's index.html with this page's details in it. */
 export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   const robots = SITE_NOINDEX ? "noindex, nofollow" : pg.noindex ? "noindex, follow" : "index, follow";
@@ -396,6 +399,7 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join("\n")
     + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", pg.ogImage || `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
+  html = html.replace("<!-- footer-posts -->", () => footerPosts());
   if (pg.h1) html = html
     .replace(/<main id="app"><noscript>[\s\S]*?<\/noscript><\/main>/, '<main id="app"></main>')
     .replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}<noscript><p>Everything on this page can be read without JavaScript. To write a review, turn JavaScript on.</p></noscript></div>`);
@@ -412,7 +416,7 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
    public fixed pages, tools, blog posts, categories and companies. */
 export const SITEMAP_PATH = "/sitemap-ktc.xml";
 const SITEMAP_SKIP = [...NOINDEX_ROUTES, "jobs"];
-const routePath = (r: string) => r.startsWith("tool-") ? `/tools/${r.slice(5)}` : r.startsWith("blog-") ? `/blog/${r.slice(5)}` : `/${r}`;
+const routePath = (r: string) => r.startsWith("tool-") ? `/tools/${r.slice(5)}` : r.startsWith("blog-") ? `/blog/${r.slice(5)}` : r === "list" ? "/list-your-company" : `/${r}`;
 const day = (d: unknown) => {
   const v = d && typeof d === "object" && "$date" in (d as object) ? (d as { $date: string }).$date : d;
   const t = typeof v === "string" ? new Date(v) : null;

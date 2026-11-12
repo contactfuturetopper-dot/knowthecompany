@@ -126,7 +126,7 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   assert.ok(!co.includes('"m5"') && !co.includes(">m5<"), "no member IDs in the page");
   assert.ok(fp.desc.startsWith("1Password reviews from customers and employees.") && fp.desc.length <= 158 && fp.desc.length > 70, "company description uses the researched facts: " + fp.desc);
   assert.deepEqual(await resolvePage("/Company/Future-Topper"), { redirect: "/company/future-topper" }, "uppercase addresses move to lowercase");
-  for (const r of ["/about", "/terms", "/help", "/pricing", "/list", "/categories"]) {
+  for (const r of ["/about", "/terms", "/help", "/pricing", "/list-your-company", "/categories"]) {
     const t = (await resolvePage(r)).body.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
     assert.ok(t > 50, `${r} sends its full text (${t} words)`);
   }

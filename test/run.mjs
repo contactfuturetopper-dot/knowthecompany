@@ -154,7 +154,7 @@ const af2 = app.querySelector('#add-form'); af2['a-name'].value = 'Razor Copy'; 
 af2.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true })); await new Promise(r => setTimeout(r, 60));
 report.push('after duplicate add, hash=' + g.location.hash);
 // a reviewer account that has written reviews can't claim a company
-const routeOf = h => h.startsWith('#') ? h.slice(1) : h.replace(/\.html$/, '').replace(/^\/(company|category|blog|tools)\/(.+)$/, (m, d, x) => ({ company: 'co-', category: 'cat-', blog: 'blog-', tools: 'tool-' })[d] + x).replace(/^\/([a-z-]+)$/, '$1');
+const routeOf = h => h.startsWith('#') ? h.slice(1) : h.replace(/\.html$/, '').replace(/^\/(company|category|blog|tools)\/(.+)$/, (m, d, x) => ({ company: 'co-', category: 'cat-', blog: 'blog-', tools: 'tool-' })[d] + x).replace(/^\/([a-z-]+)$/, '$1').replace(/^list-your-company$/, 'list');
 const go = async h => { g.location.hash = h; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 40)); };
 await go('list');
 report.push('reviewer with reviews sees claim block: ' + app.textContent.includes('This account has written reviews') + ', claim form hidden: ' + !app.querySelector('#claim-panel form'));

@@ -22,6 +22,7 @@ function routeOfPath(path) {
   if (p === '/' || p === '/index') return 'home';
   for (const [dir, pre] of PATH_KINDS) { const m = p.match(new RegExp('^/' + dir + '/([a-z0-9-]+)$')); if (m) return pre + m[1]; }
   const m = p.match(/^\/([a-z-]+)$/);
+  if (m && m[1] === 'list-your-company') return 'list';
   return m && (PAGE_ROUTES.includes(m[1]) || m[1] === 'sample') ? m[1] : 'not-found';
 }
 const curRoute = () => location.hash.length > 1 ? location.hash.slice(1) : routeOfPath(location.pathname);
@@ -32,7 +33,7 @@ function routeOfHref(href) {
 }
 function urlFor(r) {
   if (!r || r === 'home') return '/';
-  if (r === 'sample') return '/list';
+  if (r === 'sample' || r === 'list') return '/list-your-company';
   for (const [dir, pre] of PATH_KINDS) if (r.startsWith(pre) && /^[a-z0-9-]+$/.test(r.slice(pre.length))) return '/' + dir + '/' + r.slice(pre.length);
   if (PAGE_ROUTES.includes(r)) return '/' + r;
   if (r === 'not-found') return location.pathname;
@@ -1570,9 +1571,9 @@ function vList() {
         <li><span>2</span><div><b>Show you work there</b><small>Add a record to your website, or upload a company document or ID card.</small></div></li>
         <li><span>3</span><div><b>Pick a plan</b><small>${LAUNCH ? 'Basic is free for your first year. You can move up later.' : 'Start with Basic and move up later.'}</small></div></li>
       </ol>
-      <div class="layout" style="margin-top:24px">
-      <div class="mainc">${panel}</div>
-      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>Add a record to your company’s website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan in the meantime.</p></div>
+      <div class="listmain">
+      <div>${panel}</div>
+      <aside class="listinfo"><div class="box soft"><h2>How verification works</h2><p>Add a record to your company’s website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan in the meantime.</p></div>
         <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
     </div></section>
 
@@ -3720,6 +3721,8 @@ const POSTS = [
 ];
 POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].flat().join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
 const POSTBYID = Object.fromEntries(POSTS.map(p => [p.id, p]));
+/* The newest articles in the footer (the server fills these in too, for crawlers). */
+{ const fb = document.getElementById('footer-blog'); if (fb && !fb.querySelector('a')) fb.innerHTML = POSTS.slice(0, 5).map(p => `<a href="/blog/${p.slug}">${esc(p.title)}</a>`).join(''); }
 if (!POSTS.length) PAGE_ROUTES.splice(PAGE_ROUTES.indexOf('blog'), 1);
 const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 /* Article text: [words](link) becomes a link (site links stay in the tab, others open a new one) and
