@@ -1,4 +1,65 @@
 {
+ "1mg.com": {
+  "name": "Tata 1mg",
+  "founded": "2015",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Prashant Tandon",
+   "Gaurav Agarwal",
+   "Vikas Chauhan"
+  ],
+  "parent": "Tata Digital",
+  "ownership": "Subsidiary of Tata Digital",
+  "products": [
+   "Online pharmacy",
+   "Lab tests and diagnostics",
+   "Online doctor consultations",
+   "Health and wellness products",
+   "Retail pharmacy stores"
+  ],
+  "markets": "India",
+  "description": "Tata 1mg runs an online pharmacy that delivers prescription medicines and health products, along with lab tests with home sample collection, online doctor consultations and information about medicines. Prashant Tandon, Gaurav Agarwal and Vikas Chauhan founded it in Gurugram in 2015 by spinning out 1mg from HealthkartPlus, a medicine information site they had launched earlier. Tata Digital bought a majority stake in June 2021, after which the business was renamed Tata 1mg. It delivers to more than 20,000 PIN codes and has also opened its own pharmacy shops.",
+  "status": "Active. Majority owned by Tata Digital since 2021.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2021/06/tata-digital-majority-stake-online-pharma-startup-1mg/amp"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2021/11/tata-1mg-deal-widens-circle-trust-gaurav-agarwal"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2021/06/tata-digital-majority-stake-online-pharma-startup-1mg/amp"
+   },
+   {
+    "fact": "parent",
+    "url": "https://yourstory.com/topic/1mg"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://yourstory.com/topic/1mg"
+   },
+   {
+    "fact": "status",
+    "url": "https://yourstory.com/topic/1mg"
+   },
+   {
+    "fact": "products",
+    "url": "https://entrepreneur.com/en-in/news-and-trends/tata-digital-to-acquire-online-telemedicine-platform-1mg/374222"
+   },
+   {
+    "fact": "description",
+    "url": "https://valueforstartups.in/tata1mg"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2021/11/tata-1mg-deal-widens-circle-trust-gaurav-agarwal"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "1password.com": {
   "name": "1Password",
   "founded": "2005",
@@ -261,6 +322,110 @@
   ],
   "checked": "2026-11-11"
  },
+ "adda247.com": {
+  "name": "Adda247",
+  "founded": "2016",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Anil Nagar",
+   "Saurabh Bansal"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "Government job exam preparation",
+   "Live and recorded courses",
+   "Mock tests",
+   "Books and ebooks",
+   "StudyIQ",
+   "Skilling and higher education courses"
+  ],
+  "markets": "India",
+  "description": "Adda247 runs online preparation for government job exams in India, covering banking, SSC, railways, UPSC and state tests through live classes, recorded courses, mock tests and books. Anil Nagar and Saurabh Bansal founded it in Gurugram in 2016. Its courses are offered in 12 Indian languages and are designed to work on slow internet connections, and it bought StudyIQ in 2021. Google is among its investors, and chief executive Anil Nagar has said the company is working towards a stock market listing.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/buzz/google-backed-adda247-rolls-out-first-esop-buyback"
+   },
+   {
+    "fact": "founders",
+    "url": "https://adda247.com/about-us.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://india.entrepreneur.com/business-news/edtech-firm-adda247-lays-off-over-200-employees-to-streamline-operations"
+   },
+   {
+    "fact": "employees",
+    "url": "https://startupfeed.in/adda247-lays-off-200-employees-restructuring-ipo-2026/"
+   },
+   {
+    "fact": "products",
+    "url": "https://adda247.com/about-us.html"
+   },
+   {
+    "fact": "description",
+    "url": "https://startupfeed.in/adda247-lays-off-200-employees-restructuring-ipo-2026/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://startupfeed.in/adda247-lays-off-200-employees-restructuring-ipo-2026/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "allen.in": {
+  "name": "ALLEN Career Institute",
+  "legalName": "ALLEN Career Institute Pvt. Ltd.",
+  "founded": "1988",
+  "hq": "Kota, India",
+  "founders": [
+   "Rajesh Maheshwari"
+  ],
+  "ownership": "Private",
+  "products": [
+   "JEE coaching",
+   "NEET-UG coaching",
+   "Pre-foundation courses for classes 6 to 10",
+   "Olympiad preparation",
+   "Distance and online courses"
+  ],
+  "markets": "India",
+  "description": "ALLEN Career Institute prepares students for engineering and medical entrance exams. Rajesh Maheshwari started it on 18 April 1988 in a rented room in Kota with eight students, and his brothers Govind, Naveen and Brajesh are directors of the business. It teaches for JEE, NEET-UG, school classes 6 to 10 and olympiads through classroom centres, distance learning and an online platform. In 2022 Bodhi Tree Systems, the investment platform set up by James Murdoch and Uday Shankar, invested $600 million for a minority stake of about 36%.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://news.allen.in/family-and-values-key-behind-the-success-of-allen/amp/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://news.allen.in/family-and-values-key-behind-the-success-of-allen/amp/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://news.allen.in/allen-career-institute-to-acquire-new-avatar-with-its-strategic-alliance-with-bodhi-tree-systems/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://yourstory.com/2022/05/bodhi-tree-600m-investment-strategic-partnership-allen-career-institute"
+   },
+   {
+    "fact": "products",
+    "url": "https://edtechreview.in/?p=45048"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.businesstoday.in/india/story/from-8-students-to-rs10000-crore-empire-all-about-rajesh-maheshwari-the-mechanical-engineer-who-built-allen-550135-2026-08-20"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.techloy.com/investment-platform-bodhi-tree-acquires-allen-career-institute-for-600-million.md"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "andela.com": {
   "name": "Andela",
   "legalName": "Andela Inc.",
@@ -328,6 +493,65 @@
   ],
   "checked": "2026-11-11"
  },
+ "angelone.in": {
+  "name": "Angel One",
+  "legalName": "Angel One Limited",
+  "founded": "1996",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Dinesh Thakkar"
+  ],
+  "ownership": "Public (NSE: ANGELONE)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Stock, F&O and commodity broking",
+   "Mutual funds",
+   "Margin trading funding",
+   "Loans against shares",
+   "Research and advisory"
+  ],
+  "markets": "India",
+  "description": "Angel One is a stockbroker that lets people in India trade shares, derivatives and commodities and invest in mutual funds through its app and website, and it also offers margin funding and loans against shares. Dinesh Thakkar started the business as Angel Broking from a small Mumbai office in 1996 and remains founder, chairman and managing director. It moved from a branch-based brokerage to a mostly digital one and changed its name to Angel One in September 2021. The company has been listed on the NSE and BSE since October 2020 and reported 38.6 million clients in mid-2026.",
+  "status": "Active",
+  "links": {
+   "linkedin": "https://linkedin.com/company/angelone"
+  },
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.angelone.in/investor-relations/investor-information"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.angelone.in/investor-relations/investor-information"
+   },
+   {
+    "fact": "hq",
+    "url": "https://nsearchives.nseindia.com/corporate/ANGEL8896_20052026224540_IntimationforfilingofBRSR.pdf"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.angelone.in/investor-relations/investor-information"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/ANGELONE/company/"
+   },
+   {
+    "fact": "products",
+    "url": "https://site.financialmodelingprep.com/profile/ANGELONE.NS"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/enterprise-story/2024/02/rise-of-angel-one-online-broking-company-investors"
+   },
+   {
+    "fact": "description",
+    "url": "https://linkedin.com/company/angelone"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "apna.co": {
   "name": "apna",
   "founded": "2019",
@@ -392,6 +616,63 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Apnatime Tech Private Limited"
+ },
+ "atherenergy.com": {
+  "name": "Ather Energy",
+  "legalName": "Ather Energy Limited",
+  "founded": "2013",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Tarun Mehta",
+   "Swapnil Jain"
+  ],
+  "ownership": "Public (NSE: ATHERENERG)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Ather 450 electric scooters",
+   "Ather Rizta family scooter",
+   "Ather Grid fast-charging network",
+   "Home chargers",
+   "Software, accessories and service plans"
+  ],
+  "markets": "India",
+  "description": "Ather Energy designs and makes electric scooters, including the performance-focused 450 range and the family scooter Rizta, and runs its own fast-charging network along with software, accessories and servicing. IIT Madras graduates Tarun Mehta and Swapnil Jain founded it in October 2013, with early support from IIT Madras, and showed their first prototype scooter in Bengaluru in 2016. The company builds its scooters at factories in Hosur, Tamil Nadu, and counts Hero MotoCorp as its largest shareholder. Ather listed on the NSE and BSE in May 2025, with Mehta as chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.arihantcapital.com/company-information/about-company/75556"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.arihantcapital.com/company-information/about-company/75556"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/ATHERENERG/company/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.arihantcapital.com/company-information/about-company/75556"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/ATHERENERG/company/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.bikeleague.in/?p=45385"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.pocketful.in/stocks/ather-energy-ltd/history"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.hdfcsec.com/hsl.docs/Ather%20Energy%20Limited%20Ltd%20IPO%20Note-202504280925590965281.pdf"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "babbel.com": {
   "name": "Babbel",
@@ -822,6 +1103,67 @@
   "checked": "2026-11-11",
   "legalName": "Bayut Web Publishing FZ-LLC"
  },
+ "beminimalist.co": {
+  "name": "Minimalist",
+  "legalName": "Uprising Science Private Limited",
+  "founded": "2020",
+  "hq": "Jaipur, India",
+  "founders": [
+   "Mohit Yadav",
+   "Rahul Yadav"
+  ],
+  "parent": "Hindustan Unilever",
+  "ownership": "Subsidiary of Hindustan Unilever",
+  "products": [
+   "Face serums",
+   "Moisturisers and sunscreens",
+   "Toners and cleansers",
+   "Haircare",
+   "Body care"
+  ],
+  "markets": "India",
+  "description": "Minimalist sells skincare, haircare and body care products built around named active ingredients and their percentages, such as serums, toners and moisturisers, under the tagline Hide Nothing. Brothers Mohit and Rahul Yadav, who both worked at CarDekho, launched the brand from Jaipur in 2020 through Uprising Science, a company they set up in 2018. It sells through its own website and on Amazon, Nykaa and Flipkart. Hindustan Unilever completed its purchase of 90.5% of the business in 2025 for about ₹2,706 crore, with the founders staying on to run it.",
+  "status": "Active. Acquired by Hindustan Unilever in 2025.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://hul.co.in/news/press-releases/2025/hul-to-acquire-premium-beauty-brand-minimalist"
+   },
+   {
+    "fact": "founders",
+    "url": "https://hul.co.in/news/press-releases/2025/hul-to-acquire-premium-beauty-brand-minimalist"
+   },
+   {
+    "fact": "hq",
+    "url": "https://indianstartupnews.com/news/hindustan-unilever-completes-buying-905-stake-in-minimalist-for-rs-2706-crore-8989257"
+   },
+   {
+    "fact": "parent",
+    "url": "https://inc42.com/?p=510643"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://inc42.com/?p=510643"
+   },
+   {
+    "fact": "status",
+    "url": "https://inc42.com/?p=510643"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/?p=510643"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.storyboard18.com/amp/brand-makers/from-jaipur-to-jackpot-how-two-brothers-turned-skincare-into-a-rs-2955-crore-prize-54388.htm"
+   },
+   {
+    "fact": "description",
+    "url": "https://indianstartupnews.com/news/hindustan-unilever-completes-buying-905-stake-in-minimalist-for-rs-2706-crore-8989257"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "betterment.com": {
   "name": "Betterment",
   "legalName": "Betterment Holdings Inc.",
@@ -882,6 +1224,67 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "bewakoof.com": {
+  "name": "Bewakoof",
+  "legalName": "Bewakoof Brands Private Limited",
+  "founded": "2012",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Prabhkiran Singh",
+   "Siddharth Munot"
+  ],
+  "parent": "TMRW (Aditya Birla Fashion and Retail)",
+  "ownership": "Subsidiary of Aditya Birla Fashion and Retail",
+  "products": [
+   "Graphic and printed T-shirts",
+   "Joggers and co-ord sets",
+   "Casual wear for men and women",
+   "Licensed character merchandise",
+   "Accessories"
+  ],
+  "markets": "India",
+  "description": "Bewakoof sells casual clothing for young people, mainly known for printed and graphic T-shirts along with joggers, co-ord sets and accessories, mainly through its own website and app. IIT Bombay graduates Prabhkiran Singh and Siddharth Munot started it in Mumbai in 2012 with about ₹30,000, working from a single room. In late 2022 TMRW, the digital brands arm of Aditya Birla Fashion and Retail, invested ₹200 crore for a majority stake, and the deal completed in February 2023. Bewakoof opened its first physical store in Bengaluru in 2024 and reported revenue of ₹175 crore for the 2025 financial year.",
+  "status": "Active. Majority owned by Aditya Birla Fashion and Retail's TMRW since 2023.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.entrepreneur.com/en-in/news-and-trends/bewakoof-founder-prabhkiran-singh-to-step-down-after-14/502968"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.entrepreneur.com/en-in/news-and-trends/bewakoof-founder-prabhkiran-singh-to-step-down-after-14/502968"
+   },
+   {
+    "fact": "hq",
+    "url": "https://inc42.com/buzz/ceo-prabhkiran-singh-on-the-checkboxes-he-ticked-while-getting-acquired-by-tmrw"
+   },
+   {
+    "fact": "parent",
+    "url": "https://india.entrepreneur.com/news-and-trends/bewakoof-founder-prabhkiran-singh-to-step-down-after-14/502968"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://startuppedia.in/trending/startup-news/founded-in-2012-by-iit-bombay-alumni-bewakoof-clocks-rs-175-crore-revenue-in-fy25-as-loss-narrows-29-to-rs-73-crore-11139884"
+   },
+   {
+    "fact": "status",
+    "url": "https://india.entrepreneur.com/news-and-trends/bewakoof-founder-prabhkiran-singh-to-step-down-after-14/502968"
+   },
+   {
+    "fact": "products",
+    "url": "https://valueforstartups.in/bewakoof"
+   },
+   {
+    "fact": "description",
+    "url": "https://startuppedia.in/trending/startup-news/founded-in-2012-by-iit-bombay-alumni-bewakoof-clocks-rs-175-crore-revenue-in-fy25-as-loss-narrows-29-to-rs-73-crore-11139884"
+   },
+   {
+    "fact": "description",
+    "url": "https://voice.lapaas.com/startup/bewakoof/business-model/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "bharatpe.com": {
   "name": "BharatPe",
@@ -953,6 +1356,75 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "bigbasket.com": {
+  "name": "BigBasket",
+  "legalName": "Innovative Retail Concepts Private Limited",
+  "founded": "2011",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Hari Menon",
+   "Vipul Parekh",
+   "V. S. Sudhakar",
+   "V. S. Ramesh",
+   "Abhinay Choudhari"
+  ],
+  "parent": "Tata Digital",
+  "ownership": "Subsidiary of Tata Digital",
+  "employees": "10,000+",
+  "products": [
+   "Online grocery delivery",
+   "BB Now quick commerce",
+   "BB Daily milk and essentials subscriptions",
+   "Own brands such as Fresho and BB Royal",
+   "B2B supplies for businesses"
+  ],
+  "markets": "India",
+  "description": "BigBasket is an online grocery retailer that delivers fruit, vegetables, packaged food and household goods, both through scheduled deliveries and through BB Now, its quick commerce service built on local dark stores. Hari Menon, Vipul Parekh, V. S. Sudhakar, V. S. Ramesh and Abhinay Choudhari, who had earlier built the e-commerce site Fabmart, founded it in Bengaluru in 2011. Tata Digital bought a majority stake in May 2021, and it now operates as part of the Tata Group with brands of its own such as Fresho and BB Royal. Former Amazon executive Amit Nanda took over as chief executive from Menon in June 2026.",
+  "status": "Active. Majority owned by Tata Digital since 2021.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.peoplematters.in/news/leadership/bigbasket-ceo-hari-menon-to-step-down-tata-starts-succession-hunt-43238"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.peoplematters.in/news/leadership/bigbasket-ceo-hari-menon-to-step-down-tata-starts-succession-hunt-43238"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/bigbasket"
+   },
+   {
+    "fact": "parent",
+    "url": "https://hyring.com/company/bigbasket"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://hyring.com/company/bigbasket"
+   },
+   {
+    "fact": "status",
+    "url": "https://yourstory.com/2026/06/hari-menon-steps-down-bigbasket-ceo-amazon-veteran-amit-nanda-takes-charge"
+   },
+   {
+    "fact": "employees",
+    "url": "https://hyring.com/company/bigbasket"
+   },
+   {
+    "fact": "products",
+    "url": "https://hyring.com/company/bigbasket"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2026/06/hari-menon-steps-down-bigbasket-ceo-amazon-veteran-amit-nanda-takes-charge"
+   },
+   {
+    "fact": "description",
+    "url": "https://valueforstartups.in/bigbasket"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "bird.co": {
   "name": "Bird",
@@ -1534,6 +2006,71 @@
   ],
   "checked": "2026-11-11"
  },
+ "blinkit.com": {
+  "name": "Blinkit",
+  "legalName": "Blink Commerce Private Limited",
+  "founded": "2013",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Albinder Dhindsa",
+   "Saurabh Kumar"
+  ],
+  "parent": "Eternal",
+  "ownership": "Subsidiary of Eternal",
+  "employees": "10,000+",
+  "products": [
+   "10-minute grocery delivery",
+   "Household essentials",
+   "Electronics and other everyday goods",
+   "Bistro quick food delivery"
+  ],
+  "markets": "India",
+  "description": "Blinkit delivers groceries, household essentials, electronics and other everyday goods in around ten minutes from a network of more than 2,000 small dark stores in Indian cities. Albinder Dhindsa and Saurabh Kumar, who met while working at Cambridge Systematics, founded it in Gurugram in December 2013 as Grofers, a service delivering from neighbourhood shops. It was renamed Blinkit in December 2021 when it moved to quick delivery, and Zomato, now Eternal, bought it in an all-stock deal in June 2022. Dhindsa became group chief executive of Eternal in February 2026.",
+  "status": "Active. Acquired by Zomato (now Eternal) in 2022.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.exchange4media.com/people-movement-news/who-is-eternals-new-ceo-albinder-dhindsa-151248.html"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.exchange4media.com/people-movement-news/who-is-eternals-new-ceo-albinder-dhindsa-151248.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/blinkit"
+   },
+   {
+    "fact": "parent",
+    "url": "https://hyring.com/company/blinkit"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://hyring.com/company/blinkit"
+   },
+   {
+    "fact": "status",
+    "url": "https://hyring.com/company/blinkit"
+   },
+   {
+    "fact": "employees",
+    "url": "https://hyring.com/company/blinkit"
+   },
+   {
+    "fact": "products",
+    "url": "https://valueforstartups.in/blinkit"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.icoderzsolutions.com/blog/blinkit-business-model/"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2026/01/coming-circle-tracing-journey-eternal-ceo-albinder-dhindsa"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "boat-lifestyle.com": {
   "name": "boAt",
   "legalName": "Imagine Marketing Limited",
@@ -1673,6 +2210,57 @@
   ],
   "checked": "2026-11-11",
   "employees": "1,001-5,000"
+ },
+ "bombayshavingcompany.com": {
+  "name": "Bombay Shaving Company",
+  "legalName": "Visage Lines Personal Care",
+  "founded": "2016",
+  "founders": [
+   "Shantanu Deshpande"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Razors and shaving products",
+   "Trimmers",
+   "Beard care",
+   "Skincare and bath and body",
+   "Perfumes",
+   "Bombae women's grooming range"
+  ],
+  "markets": "India",
+  "description": "Bombay Shaving Company sells razors, trimmers, beard care, skincare, bath and body products and perfumes, mainly for men, through its website, online marketplaces and shops. Shantanu Deshpande set up the business in late 2015 and launched the brand in May 2016 as an online men's grooming label. Its operating company, Visage Lines Personal Care, also owns the women's grooming brand Bombae and the marketing agency 100Days.co. It reported revenue of about ₹635 crore for the 2026 financial year and has said it plans to list its shares.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.outlookbusiness.com/corporate/bombay-shaving-company-raises-136-cr-as-d2c-brand-gears-up-for-ipo"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.outlookbusiness.com/corporate/bombay-shaving-company-raises-136-cr-as-d2c-brand-gears-up-for-ipo"
+   },
+   {
+    "fact": "products",
+    "url": "https://voice.lapaas.com/?p=12142"
+   },
+   {
+    "fact": "products",
+    "url": "https://ascendants.in/?p=31198"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/flash-feed/bombay-shaving-co-funding"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/buzz/bombay-shaving-company-claims-adjusted-ebitda-profitability-in-fy26-loss-narrows-97/"
+   },
+   {
+    "fact": "description",
+    "url": "https://pulse.d2cinsider.com/bombay-shaving-company-revenue-surges-to-%e2%82%b9635-crore-in-fy26-moves-closer-to-profitability/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "brainly.com": {
   "name": "Brainly",
@@ -2543,6 +3131,71 @@
   "checked": "2026-11-11",
   "employees": "1,001-5,000"
  },
+ "caratlane.com": {
+  "name": "CaratLane",
+  "legalName": "CaratLane Trading Private Limited",
+  "founded": "2008",
+  "hq": "Chennai, India",
+  "founders": [
+   "Mithun Sacheti",
+   "Srinivasa Gopalan"
+  ],
+  "parent": "Titan Company",
+  "ownership": "Subsidiary of Titan Company",
+  "products": [
+   "Diamond jewellery",
+   "Gold jewellery",
+   "Silver jewellery",
+   "Everyday and lightweight jewellery",
+   "Try-at-home and store services"
+  ],
+  "markets": "India and the US",
+  "description": "CaratLane designs and sells diamond, gold and silver jewellery, much of it lightweight pieces for everyday wear, through its website and app and a chain of more than 350 stores. Jeweller Mithun Sacheti and IT entrepreneur Srinivasa Gopalan founded it in Chennai in 2008 as an online-only jewellery shop. Titan Company, part of the Tata Group, bought a majority stake in 2016, raised it to 98.28% in 2023 and bought the rest in 2024, making CaratLane a wholly owned subsidiary. Avnish Anand, a co-founder and former chief operating officer, became chief executive after Sacheti left.",
+  "status": "Active. Wholly owned by Titan Company since 2024.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.outlookbusiness.com/corporate/caratlane-bets-on-non-metro-cities-next-but-tier-1-still-rule-its-sales-chart"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.outlookbusiness.com/corporate/caratlane-bets-on-non-metro-cities-next-but-tier-1-still-rule-its-sales-chart"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.indianstartuptimes.com/?p=25629"
+   },
+   {
+    "fact": "parent",
+    "url": "https://inc42.com/?p=548295"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://inc42.com/?p=548295"
+   },
+   {
+    "fact": "status",
+    "url": "https://inc42.com/?p=548295"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.indianstartuptimes.com/?p=25629"
+   },
+   {
+    "fact": "markets",
+    "url": "https://retailjewellerindia.com/caratlane-promotes-avnish-anand-to-chief-executive-officer"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/buzz/caratlane-q3-revenue-jumps-42-yoy-to-%E2%82%B91537-cr/"
+   },
+   {
+    "fact": "description",
+    "url": "https://retailjewellerindia.com/caratlane-promotes-avnish-anand-to-chief-executive-officer"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "cardekho.com": {
   "name": "CarDekho",
   "legalName": "Girnar Software Pvt. Ltd.",
@@ -3212,6 +3865,107 @@
   ],
   "checked": "2026-11-11"
  },
+ "classplusapp.com": {
+  "name": "Classplus",
+  "founded": "2018",
+  "hq": "Noida, India",
+  "founders": [
+   "Mukul Rustagi",
+   "Bhaswat Agarwal"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Branded teaching apps for educators",
+   "Live and recorded classes",
+   "Online tests",
+   "Fee collection and course sales",
+   "Student communication tools"
+  ],
+  "markets": "India",
+  "description": "Classplus makes software that lets tutors, coaching institutes and online educators teach and sell courses through apps carrying their own name. Mukul Rustagi and Bhaswat Agarwal, who first met at a JEE coaching class in Delhi, launched it in 2018 after working on education ideas together since 2015. The Noida company's apps handle live classes, recorded video, tests, payments and messages to students. Its investors have included Tiger Global, Alpha Wave Global, GSV Ventures and Blume Ventures.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://kr-asia.com/classplus-keeps-indian-tutors-entrepreneurial-dreams-alive-startup-stories"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2018/01/classplus-aims-simplify-tutoring-give-students-new-age-classroom-experience"
+   },
+   {
+    "fact": "hq",
+    "url": "https://asugsvsummit.com/speakers/mukul-rustagi"
+   },
+   {
+    "fact": "products",
+    "url": "https://kr-asia.com/classplus-keeps-indian-tutors-entrepreneurial-dreams-alive-startup-stories"
+   },
+   {
+    "fact": "description",
+    "url": "https://startuptalky.com/classplus-success-story"
+   },
+   {
+    "fact": "markets",
+    "url": "https://classplusapp.com/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "cleartax.in": {
+  "name": "Clear",
+  "legalName": "Defmacro Software Pvt. Ltd.",
+  "founded": "2011",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Archit Gupta",
+   "Srivatsan Chari",
+   "Ankit Solanki"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "Income tax return filing",
+   "GST, e-invoicing and e-way bill software",
+   "TDS compliance",
+   "Vendor management (ClearVendor)",
+   "Mutual fund investing (Clear Black)"
+  ],
+  "markets": "India and Saudi Arabia",
+  "description": "Clear, still widely known by its original name ClearTax, makes software for filing income tax returns in India and for business compliance tasks such as GST returns, e-invoicing, e-way bills and TDS. Archit Gupta started it in 2011 with Srivatsan Chari and Ankit Solanki, and in 2014 it joined Y Combinator's Summer batch. The Bengaluru company, run through Defmacro Software, also sells tools for chartered accountants and invoice and vendor management for larger firms. It changed its brand from ClearTax to Clear in 2021 as it moved beyond tax filing.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.ycombinator.com/companies/cleartax"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.ycombinator.com/companies/cleartax"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.ycombinator.com/companies/cleartax"
+   },
+   {
+    "fact": "employees",
+    "url": "https://yourstory.com/companies/cleartax"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.clear.in/s/about-us"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.clear.in/s/about-us"
+   },
+   {
+    "fact": "description",
+    "url": "https://migrate.startuptalky.com/tag/cleartax"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "cleartrip.com": {
   "name": "Cleartrip",
   "founded": "2006",
@@ -3353,6 +4107,45 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Codecademy LLC"
+ },
+ "coforge.com": {
+  "name": "Coforge",
+  "legalName": "Coforge Limited",
+  "ownership": "Public (NSE: COFORGE)",
+  "employees": "10,000+",
+  "products": [
+   "AI-led engineering services",
+   "Data and cloud services",
+   "Quality engineering",
+   "Business process solutions",
+   "Pega, Appian, Salesforce and ERP platform work"
+  ],
+  "markets": "Worldwide (33 countries)",
+  "description": "Coforge provides software engineering, data, cloud and quality engineering services to large companies, along with platform work on systems such as Pega, Salesforce and Appian. The company was previously called NIIT Technologies and took the Coforge name in 2020. It bought the digital engineering firm Encora in April 2026, which brought large delivery teams in Latin America, and it now has more than 46,000 employees across 47 locations in 33 countries. Sudhir Singh is chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "employees",
+    "url": "https://www.sahi.com/news/coforge-marks-six-years-of-transformation-with-47-global-locations-and-46-000-employees-3468-PE1_COR"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.coforge.com/about-us"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://news.coforge.com/newsroom/press-release/coforge-posts-robust-q2fy26-revenue-up-8.1-qoq-ebit-margin-expands-251-bps-sequentially"
+   },
+   {
+    "fact": "description",
+    "url": "https://analyticsindiamag.com/it-services/coforge-is-outgrowing-its-larger-rivals-is-ai-the-reason"
+   },
+   {
+    "fact": "description",
+    "url": "https://quartr.com/events/coforge-limited-coforge-m-a-announcement_FeBQsrEm"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "coindcx.com": {
   "name": "CoinDCX",
@@ -3555,6 +4348,117 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Casey Block Services Pty Ltd"
+ },
+ "coinswitch.co": {
+  "name": "CoinSwitch",
+  "founded": "2017",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Ashish Singhal",
+   "Govind Soni",
+   "Vimal Sagar Tiwari"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "Crypto spot trading",
+   "Crypto futures and options",
+   "SmartInvest and crypto SIPs",
+   "Crypto staking",
+   "API trading",
+   "Services for HNI and institutional clients"
+  ],
+  "markets": "India",
+  "description": "CoinSwitch is a cryptocurrency trading app for Indian users that lets them buy, sell and trade crypto assets in rupees, with futures and options, SIPs and staking alongside spot trading. Ashish Singhal, Govind Soni and Vimal Sagar Tiwari, engineers who had worked at Amazon, Microsoft and Zynga, built the first version at a hackathon and launched it in 2017 as a global crypto exchange aggregator. The Bengaluru company later focused on India and is registered with the country's Financial Intelligence Unit. It says it has more than 20 million users.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/company/coinswitch/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/company/coinswitch/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://inc42.com/company/coinswitch/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://coinswitch.co/about-us"
+   },
+   {
+    "fact": "products",
+    "url": "https://coinswitch.co/about-us"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/the-decrypting-story/coinswitch-kuber-crypto-exchange-india-largest"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2020/10/startup-cryptocurrency-investing-coinswitch-bengaluru"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "countrydelight.in": {
+  "name": "Country Delight",
+  "legalName": "Beejapuri Dairy Private Limited",
+  "founded": "2015",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Chakradhar Gade",
+   "Nitin Kaushal"
+  ],
+  "ownership": "Private",
+  "employees": "1,001-5,000",
+  "products": [
+   "Milk subscriptions",
+   "Curd, paneer and ghee",
+   "Eggs and bakery items",
+   "Fruits and vegetables",
+   "Groceries and kitchen essentials"
+  ],
+  "markets": "India",
+  "description": "Country Delight delivers milk, curd, paneer, ghee, eggs, bread, fruit, vegetables and other daily groceries to homes, mostly through morning subscriptions ordered on its app. IIM Indore graduates Chakradhar Gade and Nitin Kaushal founded it in Gurugram in 2015 after struggling to find milk they trusted for their own families, and it sources milk directly from farmers. It gives customers a kit to test milk at the door, and began trying faster on-demand delivery in Gurugram in late 2024. It reported revenue of ₹1,380 crore for the 2024 financial year and counts Temasek among its investors.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.preqin.com/data/profile/asset/country-delight/311618"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.preqin.com/data/profile/asset/country-delight/311618"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.preqin.com/data/profile/asset/country-delight/311618"
+   },
+   {
+    "fact": "employees",
+    "url": "https://dealroom.co/companies/country-delight/"
+   },
+   {
+    "fact": "products",
+    "url": "https://entrepreneur.com/en-in/news-and-trends/country-delight-secures-inr-200-cr-venture-debt-from/482286"
+   },
+   {
+    "fact": "description",
+    "url": "https://app.dealroom.co/companies/country_delight"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.entrepreneur.com/en-in/starting-a-business/meet-the-new-milkman/373321"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.newsbytesapp.com/news/business/country-delight-plans-ipo-seeks-300m-through-public-float/story"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "coursehero.com": {
   "name": "Course Hero",
@@ -3842,6 +4746,62 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Cue Learn Private Limited"
+ },
+ "cult.fit": {
+  "name": "Cult.fit",
+  "legalName": "Cult.fit Limited",
+  "founded": "2016",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Mukesh Bansal",
+   "Ankit Nagori"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Cultpass gym and group workout memberships",
+   "Own and franchised fitness centres",
+   "Online workout classes",
+   "Cultsport fitness equipment and apparel",
+   "Health and wellness services"
+  ],
+  "markets": "India",
+  "description": "Cult.fit runs more than 700 gyms and group workout centres across Indian cities, sold mainly through Cultpass memberships, alongside online classes and Cultsport fitness equipment and clothing. Myntra co-founder Mukesh Bansal and former Flipkart executive Ankit Nagori founded it in Bengaluru in 2016 as Curefit, and Nagori left in 2020 to start Curefoods. The company operates its own gyms, franchised gyms and a marketplace of partner gyms, and has bought businesses such as Gold's Gym India and Fitternity. It changed its name from Curefit Healthcare to Cult.fit Limited in 2026 and filed draft papers for a stock market listing in July 2026.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.bajajbroking.in/blog/cult-fit-ipo"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.bajajbroking.in/blog/cult-fit-ipo"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.bajajbroking.in/blog/cult-fit-ipo"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://bigul.co/blog/ipo/cultfit-ipo-2026-issue-size-price-band-open-date-listing-date-all-key-details"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.mstock.com/articles/cult-fit-ipo-launch-date-price-details-everything-you-need-to-know"
+   },
+   {
+    "fact": "description",
+    "url": "https://india.entrepreneur.com/?p=97649"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.outlookbusiness.com/news/fitness-unicorn-cultfit-begins-rs-2500-crore-ipo-journey-picks-5-bankers"
+   },
+   {
+    "fact": "description",
+    "url": "https://finshots.in/archive/cult-fit-ipo-explained/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "curve.com": {
   "name": "Curve",
@@ -4262,6 +5222,66 @@
    "playStore": "https://play.google.com/store/apps/details?id=nl.degiro.trader"
   }
  },
+ "delhivery.com": {
+  "name": "Delhivery",
+  "legalName": "Delhivery Limited",
+  "founded": "2011",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Sahil Barua",
+   "Mohit Tandon",
+   "Bhavesh Manglani",
+   "Suraj Saharan",
+   "Kapil Bharati"
+  ],
+  "ownership": "Public (NSE: DELHIVERY)",
+  "employees": "10,000+",
+  "products": [
+   "Express parcel delivery",
+   "Part-truckload and full-truckload freight",
+   "Warehousing and fulfilment",
+   "Cross-border shipping",
+   "Supply chain software"
+  ],
+  "markets": "India",
+  "description": "Delhivery is a logistics company that delivers parcels for online sellers and businesses and also moves truckload freight, runs warehouses and handles cross-border shipments. Sahil Barua, Mohit Tandon, Bhavesh Manglani, Suraj Saharan and Kapil Bharati founded it in May 2011 as SSN Logistics, first delivering food and flowers for local shops in Gurugram. It built a national network of sort centres and delivery hubs and bought Ecom Express for about ₹1,407 crore in 2025. Delhivery has been listed on the NSE and BSE since May 2022, with Barua as managing director and chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.boardinfinity.com/blog/company-delhivery"
+   },
+   {
+    "fact": "founders",
+    "url": "https://hyring.com/company/delhivery"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/delhivery"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://valueforstartups.in/08-delhivery"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/DELHIVERY/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://hyring.com/company/delhivery"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.boardinfinity.com/blog/company-delhivery"
+   },
+   {
+    "fact": "description",
+    "url": "https://voice.lapaas.com/startup/delhivery/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "depop.com": {
   "name": "Depop",
   "founded": "2011",
@@ -4327,6 +5347,73 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Depop Limited"
+ },
+ "dhan.co": {
+  "name": "Dhan",
+  "legalName": "Raise Securities Private Limited",
+  "founded": "2021",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Pravin Jadhav",
+   "Alok Pandey",
+   "Jay Prakash Gupta",
+   "Raunak Rathi"
+  ],
+  "parent": "Raise Financial Services",
+  "ownership": "Subsidiary of Raise Financial Services",
+  "employees": "501-1,000",
+  "products": [
+   "Dhan trading app and web platform",
+   "Options Trader app",
+   "TradingView charts on Dhan",
+   "DhanHQ trading APIs",
+   "Direct mutual funds and IPOs"
+  ],
+  "markets": "India",
+  "description": "Dhan is a stock trading app and web platform for Indian shares, futures and options, commodities, ETFs, IPOs and direct mutual funds, with tools aimed at active traders such as option strategy builders, chart trading and APIs. It belongs to Raise Financial Services, which former Paytm Money chief executive Pravin Jadhav founded in Mumbai in January 2021 with Alok Pandey, Jay Prakash Gupta and Raunak Rathi. Raise bought the stockbroker Moneylicious Securities that August to gain its licences, and the broker has since been renamed Raise Securities. Dhan launched in November 2021, and Raise became a unicorn after a $120 million round led by Hornbill Capital.",
+  "status": "Active",
+  "links": {
+   "appStore": "https://apps.apple.com/in/app/id1575318726"
+  },
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://dhan.co/ai-info/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.ciol.com/funding-acquistion-merger/dhan-joins-unicorn-club-with-120m-boost-eyes-ai-powered-expansion-10534205"
+   },
+   {
+    "fact": "hq",
+    "url": "https://dhan.co/ai-info/"
+   },
+   {
+    "fact": "parent",
+    "url": "https://dhan.co/career/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://dhan.co/career/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://dhan.co/career/"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/buzz/trading-platform-dhans-parent-eyes-unicorn-tag-with-100-mn-funding/amp"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2022/01/funding-alert-raise-financial-raises-22million-seriesa/amp"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.deccanherald.com/amp/story/business%2Fcompanies%2Ftrading-platform-dhan-turns-unicorn-with-120-million-fundraise-led-by-hornbill-capital-3754488"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "dhgate.com": {
   "name": "DHgate",
@@ -4887,6 +5974,117 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Emma Matratzen GmbH"
+ },
+ "eruditus.com": {
+  "name": "Eruditus",
+  "legalName": "Eruditus Learning Solutions Pte. Ltd.",
+  "founded": "2010",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Ashwin Damera",
+   "Chaitanya Kalipatnapu"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Executive education programmes",
+   "Online certificate courses with universities (Emeritus)",
+   "University degree programmes",
+   "Corporate learning"
+  ],
+  "markets": "80+ countries",
+  "description": "Eruditus designs and runs executive education and online certificate courses in partnership with universities and business schools, with much of its online catalogue sold under the Emeritus name. Ashwin Damera and Chaitanya Kalipatnapu, who studied together at INSEAD, founded it in Mumbai in 2010, and Damera is chief executive. Its courses usually last six to eight months and take learners from more than 80 countries. Investors include Accel, SoftBank Vision Fund II and Sequoia India.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.entrepreneur.com/en-in/entrepreneurs/these-edupreneurs-have-tunnel-focus-on-disrupting-the/327722"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.entrepreneur.com/en-in/entrepreneurs/these-edupreneurs-have-tunnel-focus-on-disrupting-the/327722"
+   },
+   {
+    "fact": "hq",
+    "url": "https://marketingmind.in/how-eruditus-became-indias-4th-edtech-unicorn-now-valued-at-3-2-billion"
+   },
+   {
+    "fact": "markets",
+    "url": "https://marketingmind.in/how-eruditus-became-indias-4th-edtech-unicorn-now-valued-at-3-2-billion"
+   },
+   {
+    "fact": "products",
+    "url": "https://sp-edge.com/companies/468936"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.entrepreneur.com/en-in/news-and-trends/this-edtech-unicorn-chases-input-metric-and-not-outcome/382327"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.entrepreneur.com/en-in/news-and-trends/this-edtech-unicorn-chases-input-metric-and-not-outcome/382327"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "firstcry.com": {
+  "name": "FirstCry",
+  "legalName": "Brainbees Solutions Limited",
+  "founded": "2010",
+  "hq": "Pune, India",
+  "founders": [
+   "Supam Maheshwari",
+   "Amitava Saha"
+  ],
+  "ownership": "Public (NSE: FIRSTCRY)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Online store for baby, kids and maternity products",
+   "FirstCry and BabyHug stores",
+   "BabyHug and other own brands",
+   "Pre-schools through franchise partners"
+  ],
+  "markets": "India, UAE and Saudi Arabia",
+  "description": "FirstCry sells clothing, toys, nappies, baby gear and maternity products online and through more than 1,000 stores, many of them run by franchise partners, alongside its own brands such as BabyHug. Supam Maheshwari and Amitava Saha, who earlier built and sold the e-learning company Brainvisa, launched it from Pune in 2010 through Brainbees Solutions. The company also runs pre-schools through franchise partners and has expanded into the UAE and Saudi Arabia. Brainbees listed on the NSE and BSE in August 2024, and Maheshwari is chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.arihantcapital.com/company-information/about-company/68149"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.yosuccess.com/?p=3237"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/FIRSTCRY/company"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.arihantcapital.com/company-information/about-company/68149"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/FIRSTCRY/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.pocketful.in/stocks/brainbees-solutions-ltd/about"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.bitget.cloud/stock/nse-firstcry/what-is"
+   },
+   {
+    "fact": "description",
+    "url": "https://valueforstartups.in/firstcry"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.bitget.cloud/stock/nse-firstcry/what-is"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "flexport.com": {
   "name": "Flexport",
@@ -5509,6 +6707,62 @@
   "checked": "2026-11-11",
   "employees": "501-1,000"
  },
+ "godigit.com": {
+  "name": "Digit Insurance",
+  "legalName": "Go Digit General Insurance Limited",
+  "founded": "2016",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Kamesh Goyal"
+  ],
+  "ownership": "Public (NSE: GODIGIT)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Car and two-wheeler insurance",
+   "Health insurance",
+   "Travel insurance",
+   "Commercial vehicle insurance",
+   "Home, shop and business insurance"
+  ],
+  "markets": "India",
+  "description": "Digit Insurance is a general insurer selling motor, health, travel, property and business cover, mostly through digital channels and partners. Kamesh Goyal, who previously held senior roles at Allianz and Bajaj Allianz, set it up in 2016 with backing from Prem Watsa's Fairfax Financial Holdings. It was incorporated as Oben General Insurance, renamed Go Digit General Insurance in 2017 and began selling policies that year after receiving its IRDAI licence. The Bengaluru company listed on the NSE and BSE in May 2024, and Jasleen Kohli is chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://reports.chittorgarh.com/ipo_notes/GoDigitAxisCapital.pdf"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/companies/digit"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/GODIGIT/company"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://stockanalysis.com/quote/nse/GODIGIT/company"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/GODIGIT/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://the-captable.com/company/digit"
+   },
+   {
+    "fact": "description",
+    "url": "https://businesstoday.in/magazine/the-buzz/story/the-power-of-simplicity-177328-2019-03-18"
+   },
+   {
+    "fact": "description",
+    "url": "https://reports.chittorgarh.com/ipo_notes/GoDigitAxisCapital.pdf"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "gonoise.com": {
   "name": "Noise",
   "legalName": "Nexxbase Marketing Pvt. Ltd.",
@@ -5881,6 +7135,62 @@
   ],
   "checked": "2026-11-11"
  },
+ "groww.in": {
+  "name": "Groww",
+  "legalName": "Billionbrains Garage Ventures Limited",
+  "founded": "2016",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Lalit Keshre",
+   "Harsh Jain",
+   "Neeraj Singh",
+   "Ishan Bansal"
+  ],
+  "ownership": "Public (NSE: GROWW)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Stock and F&O trading",
+   "Direct mutual funds and SIPs",
+   "IPOs and ETFs",
+   "Margin trading facility",
+   "Personal credit",
+   "Groww Mutual Fund"
+  ],
+  "markets": "India",
+  "description": "Groww runs an investing app where people in India can buy shares, trade futures and options, apply for IPOs and invest in direct mutual funds, and it also offers margin trading and personal loans. Lalit Keshre founded it in 2016 with Harsh Jain, Neeraj Singh and Ishan Bansal, all formerly of Flipkart, and Keshre is chief executive. The Bengaluru company, legally Billionbrains Garage Ventures, also runs its own asset management business, Groww Mutual Fund. It listed on the NSE and BSE in November 2025 after an IPO of about ₹6,632 crore.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.forbesargentina.com/millonarios/boom-bursatil-una-jugada-maestra-asi-nacio-groww-app-nuevo-millonario-sedujo-ceo-microsoft-n82237"
+   },
+   {
+    "fact": "founders",
+    "url": "https://seedtable.com/exits/groww"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.alphaspread.com/security/nse/groww/investor-relations"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.alphaspread.com/security/nse/groww/investor-relations"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.alphaspread.com/security/nse/groww/investor-relations"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.torusdigital.com/toruscope/?p=15058"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.chittorgarh.com/ipo_faqs/groww-ipo/2453/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "gulftalent.com": {
   "name": "GulfTalent",
   "founded": "2005",
@@ -6018,6 +7328,106 @@
   "checked": "2026-11-11",
   "legalName": "Gusto, Inc."
  },
+ "happiestminds.com": {
+  "name": "Happiest Minds Technologies",
+  "legalName": "Happiest Minds Technologies Limited",
+  "founded": "2011",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Ashok Soota"
+  ],
+  "ownership": "Public (NSE: HAPPSTMNDS)",
+  "employees": "5,001-10,000",
+  "products": [
+   "Product and digital engineering",
+   "Cybersecurity services",
+   "Data and analytics",
+   "Automation and generative AI services"
+  ],
+  "markets": "Worldwide",
+  "description": "Happiest Minds provides digital engineering, cybersecurity, data and automation services, with product and digital engineering making up about three quarters of its revenue. Ashok Soota, who earlier co-founded Mindtree, started the company in Bengaluru in 2011. It had 6,466 employees and 311 clients at the end of September 2026. At the end of August 2026 its board approved a merger into ITC Infotech, part of the ITC group, which is expected to take around 15 months to complete.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.happiestminds.com/press-releases/ashok-soota-announces-founding-team-of-happiest-minds/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.happiestminds.com/press-releases/ashok-soota-announces-founding-team-of-happiest-minds/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.happiestminds.com/about-us/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://cxotoday.com/media-coverage/happiest-minds-posts-q2-fy27-revenues-of-₹645-cr-12-5-yoy-adjusted-pat-surges-20-7/"
+   },
+   {
+    "fact": "description",
+    "url": "https://jmfl.com/Common/getFile/5995"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.webull.com/news/15860201441762304"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "hcltech.com": {
+  "name": "HCLTech",
+  "legalName": "HCL Technologies Limited",
+  "founded": "1976",
+  "hq": "Noida, India",
+  "founders": [
+   "Shiv Nadar",
+   "Arjun Malhotra",
+   "Ajai Chowdhry",
+   "Subhash Arora",
+   "Yogesh Vaidya",
+   "D. S. Puri"
+  ],
+  "ownership": "Public (NSE: HCLTECH)",
+  "employees": "10,000+",
+  "products": [
+   "IT and business services",
+   "Digital and AI services",
+   "Cloud and infrastructure services",
+   "Engineering and R&D services",
+   "HCLSoftware enterprise products"
+  ],
+  "markets": "Worldwide (about 60 countries)",
+  "description": "HCLTech provides IT services, AI and cloud work, infrastructure management plus engineering and R&D services to large companies, and sells enterprise software through its HCLSoftware division. Its roots go back to HCL, which Shiv Nadar and five colleagues started in Delhi in 1976 to make calculators and computers, and the services business was spun out as a separate company in 1991. Based in Noida, it works in about 60 countries and had 230,339 employees at the end of September 2026. It is listed on the NSE and BSE, with C. Vijayakumar as chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.hcltech.com/about-us"
+   },
+   {
+    "fact": "founders",
+    "url": "https://swarajyamag.com/amp/story/technology%2Fthe-hard-core-of-hcl-fades-into-history"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.sci-tech-today.com/?p=29478"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.communicationstoday.co.in/?p=425431"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.hcltech.com/about-us"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.kosmo.com.my/2026/10/12/hcltech-delivers-strong-q2-led-by-record-deal-bookings-of-3-3-billion/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "headspace.com": {
   "name": "Headspace",
   "legalName": "Headspace Inc.",
@@ -6086,6 +7496,63 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "healthifyme.com": {
+  "name": "Healthify",
+  "legalName": "HealthifyMe Wellness Private Limited",
+  "founded": "2012",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Tushar Vashisht",
+   "Mathew Cherian",
+   "Sachin Shenoy"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Calorie and diet tracking app",
+   "Nutrition and fitness coaching",
+   "AI nutritionist Ria",
+   "Corporate wellness programmes",
+   "Metabolic health programmes"
+  ],
+  "markets": "India, US and other countries",
+  "description": "Healthify, known until recently as HealthifyMe, makes a health app for tracking food, calories, exercise and weight, and sells paid plans with human nutrition and fitness coaches and an AI assistant called Ria. Tushar Vashisht started it in Bengaluru in 2012 with Mathew Cherian, after the two built a spreadsheet of calorie values for Indian foods, and former Google engineer Sachin Shenoy joined as a co-founder later that year. It changed its public name to Healthify as it expanded into the US. In 2026 it merged with Berry Street, a US nutrition care company, and Vashisht became co-chief executive of the combined business.",
+  "status": "Active. Merged with US-based Berry Street in 2026.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/buzz/khosla-ventures-backed-healthify-merges-with-us-based-berry-street/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/buzz/khosla-ventures-backed-healthify-merges-with-us-based-berry-street/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://YourStory.com/2019/07/startup-healthifyme-100-crore-revenue-conversational-ai"
+   },
+   {
+    "fact": "status",
+    "url": "https://news.ventureintelligence.com/ma/wellness-startup-healthify-merges-with-us-based-nutrition-care-co.-berry-street"
+   },
+   {
+    "fact": "products",
+    "url": "https://valueforstartups.in/21-healthify"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.markhub24.com/post/healthifyme-and-the-growth-of-digital-nutrition-tracking"
+   },
+   {
+    "fact": "description",
+    "url": "https://YourStory.com/2019/07/startup-healthifyme-100-crore-revenue-conversational-ai"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/buzz/khosla-ventures-backed-healthify-merges-with-us-based-berry-street/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "hmd.com": {
   "name": "HMD",
@@ -6721,6 +8188,58 @@
   ],
   "checked": "2026-11-11"
  },
+ "indmoney.com": {
+  "name": "INDmoney",
+  "founded": "2019",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Ashish Kashyap"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "US stocks investing",
+   "Indian stocks and F&O",
+   "Direct mutual funds",
+   "IPOs and ETFs",
+   "Fixed deposits",
+   "Net worth and expense tracking"
+  ],
+  "markets": "India",
+  "description": "INDmoney is an investing and personal finance app that lets people in India buy US-listed shares alongside Indian stocks, futures and options, mutual funds, IPOs, ETFs and fixed deposits, and track their family's net worth in one place. Ashish Kashyap, who earlier co-founded the ibibo group and led PayU in India, started it in Gurugram in 2019 as a wealth tracking app. Tiger Global, Steadview Capital and Dragoneer co-led its $75 million Series D round in January 2022. It also has an office in Bengaluru.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://techcrunch.com/2022/01/17/indmoney-super-app-finance-funding/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://techcrunch.com/2022/01/17/indmoney-super-app-finance-funding/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://theprint.in/economy/trump-tariffs-led-to-a-brokerage-firm-seeing-400-more-investments-in-us-stocks-whats-the-rush-about/2597150"
+   },
+   {
+    "fact": "employees",
+    "url": "https://inc42.com/company/indmoney/people/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.indmoney.com/blog/updates"
+   },
+   {
+    "fact": "description",
+    "url": "https://techcrunch.com/2022/01/17/indmoney-super-app-finance-funding/"
+   },
+   {
+    "fact": "description",
+    "url": "https://privatebankerinternational.com/?p=102407"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "indrive.com": {
   "name": "inDrive",
   "legalName": "SUOL Innovations Ltd",
@@ -6787,6 +8306,108 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "infosys.com": {
+  "name": "Infosys",
+  "legalName": "Infosys Limited",
+  "founded": "1981",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "N. R. Narayana Murthy"
+  ],
+  "ownership": "Public (NSE: INFY)",
+  "employees": "10,000+",
+  "products": [
+   "IT services and consulting",
+   "AI services and Topaz Fabric",
+   "Cloud services (Infosys Cobalt)",
+   "Engineering services",
+   "Finacle banking software",
+   "Business process management"
+  ],
+  "markets": "Worldwide",
+  "description": "Infosys provides IT services, consulting, engineering and outsourcing to large companies around the world, including software development, cloud and AI work and business process services, and sells products such as the Finacle banking platform. N. R. Narayana Murthy founded it in Pune in 1981 with six other engineers, and its headquarters are now in Electronics City, Bengaluru. The company had 332,542 employees at the end of September 2026 and reported more than $20 billion in revenue for the 2026 financial year. It is listed on the NSE, BSE and NYSE, with Salil Parekh as chief executive and Nandan Nilekani as non-executive chairman.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.infosys.com/about/history.html"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.infosys.com/about/history.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/infosys"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.sarkaritel.com/?p=420106"
+   },
+   {
+    "fact": "products",
+    "url": "https://hyring.com/company/infosys"
+   },
+   {
+    "fact": "description",
+    "url": "https://hyring.com/company/infosys"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.sarkaritel.com/?p=420106"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "instamojo.com": {
+  "name": "Instamojo",
+  "founded": "2012",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Sampad Swain",
+   "Akash Gehani",
+   "Aditya Sengupta",
+   "Harshad Sharma"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Online store builder",
+   "Payment gateway",
+   "Payment links and pages",
+   "Shipping and logistics",
+   "Seller app"
+  ],
+  "markets": "India",
+  "description": "Instamojo gives small businesses and individual sellers in India tools to take payments and sell online, including payment links, a payment gateway and an online store builder with domains, shipping and customer management. Sampad Swain started it in Bengaluru in September 2012 with Akash Gehani and Aditya Sengupta, after finding there was no easy way to collect small payments from readers of his blog. It began as a payments product and later added online stores, logistics and small loans for merchants. The company says more than 2 million small businesses use it.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2019/09/the-turning-point-sampad-swain-founder-instamojo"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2022/04/instamojo-making-possible-small-businesses-go-online/amp"
+   },
+   {
+    "fact": "hq",
+    "url": "https://techcrunch.com/?p=1770053"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.instamojo.com/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.pressreader.com/india/business-today/20180211/281998967882916"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2019/12/instamojo-flagship-products-technology-website"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "instructure.com": {
   "name": "Instructure",
@@ -6988,6 +8609,63 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "ixigo.com": {
+  "name": "ixigo",
+  "legalName": "Le Travenues Technology Limited",
+  "founded": "2007",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Aloke Bajpai",
+   "Rajnish Kumar"
+  ],
+  "ownership": "Public (NSE: IXIGO)",
+  "employees": "201-500",
+  "products": [
+   "Train ticket booking and PNR status",
+   "Flight bookings",
+   "Bus tickets (AbhiBus)",
+   "ConfirmTkt train app",
+   "Hotel bookings"
+  ],
+  "markets": "India",
+  "description": "ixigo runs travel apps for booking train, flight, bus and hotel tickets in India, and is known for train tools such as live running status, PNR checks and seat availability predictions. IIT Kanpur graduates Aloke Bajpai and Rajnish Kumar started it in Gurugram, launching a flights search site in June 2007. Its parent, Le Travenues Technology, also owns the ConfirmTkt train app and AbhiBus bus ticketing platform and is listed on the NSE and BSE. In 2025 Prosus agreed to invest about ₹1,296 crore for a 10.1% stake, and Bajpai is chairman, managing director and group chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2021/08/turning-point-ixigo-ipo-iit-kanpur-alumni"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2021/08/turning-point-ixigo-ipo-iit-kanpur-alumni"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/IXIGO/company"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.arihantcapital.com/company-information/company-background/75817"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/IXIGO/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://stockanalysis.com/quote/nse/IXIGO/company"
+   },
+   {
+    "fact": "description",
+    "url": "https://india.entrepreneur.com/?p=88855"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.muthootsecurities.com/CorporateInfo/Company-Background/Le-Travenues-Technology-Ltd/544192"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "iyzico.com": {
   "name": "iyzico",
@@ -7349,6 +9027,69 @@
   "checked": "2026-11-11",
   "legalName": "Stryder Corp."
  },
+ "juspay.in": {
+  "name": "Juspay",
+  "legalName": "Juspay Technologies Private Limited",
+  "founded": "2012",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Vimal Kumar",
+   "Sheetal Lalwani",
+   "Ramanathan RV"
+  ],
+  "ownership": "Private",
+  "employees": "1,001-5,000",
+  "products": [
+   "Payment orchestration",
+   "Checkout and authentication",
+   "Tokenisation",
+   "UPI technology stack",
+   "Payouts and reconciliation",
+   "Hyperswitch open-source payments"
+  ],
+  "markets": "50+ countries",
+  "description": "Juspay builds payments software for large online businesses and banks, covering payment orchestration, checkout, card authentication, tokenisation, UPI technology and reconciliation. Vimal Kumar and Sheetal Lalwani founded it in Bengaluru in 2012 to make India's new two-factor payment checks less of a hurdle for shoppers, and they remain chief executive and chief operating officer. It says it handles more than 300 million transactions a day and has offices in San Francisco, Dublin, São Paulo, Singapore and Dubai. It raised $50 million from WestBridge Capital in January 2026 at a $1.2 billion valuation.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://juspay.io/about.md"
+   },
+   {
+    "fact": "founders",
+    "url": "https://juspay.io/about.md"
+   },
+   {
+    "fact": "founders",
+    "url": "https://currentaffairs.adda247.com/?p=302059"
+   },
+   {
+    "fact": "hq",
+    "url": "https://juspay.io/about.md"
+   },
+   {
+    "fact": "employees",
+    "url": "https://yourstory.com/2026/10/juspay-fy26-revenue-rises-30-percent-rs-664-crore-international-business-ai-bets-scale"
+   },
+   {
+    "fact": "products",
+    "url": "https://juspay.io/us"
+   },
+   {
+    "fact": "markets",
+    "url": "https://juspay.io/us"
+   },
+   {
+    "fact": "description",
+    "url": "https://juspay.io/newsroom/juspay-secures-usd50-million-investment-from-westbridge-capital"
+   },
+   {
+    "fact": "description",
+    "url": "https://finance.yahoo.com/news/india-juspay-secures-50m-funding-112309727.html"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "kahoot.com": {
   "name": "Kahoot!",
   "founded": "2012",
@@ -7495,6 +9236,61 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Keka Technologies Private Limited"
+ },
+ "khatabook.com": {
+  "name": "Khatabook",
+  "legalName": "ADJ Utility Apps Pvt Ltd",
+  "founded": "2018",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Ravish Naresh",
+   "Dhanesh Kumar",
+   "Jaideep Poonia",
+   "Ashish Sonone",
+   "Vaibhav Kalpe"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "Digital credit ledger (udhar khata) app",
+   "Payment collection and reminders",
+   "Billing and invoicing",
+   "Business loans through partners"
+  ],
+  "markets": "India",
+  "description": "Khatabook makes a mobile app that lets shopkeepers and small businesses record the credit they give customers, send payment reminders and collect money online, replacing the paper ledgers many Indian traders keep. It was launched in Bengaluru in 2018 by Ravish Naresh, a co-founder of Housing.com, with Dhanesh Kumar, Jaideep Poonia, Ashish Sonone and Vaibhav Kalpe, who first built the app. The company went through Y Combinator's Summer 2018 batch and works in 12 Indian languages. Cricketer MS Dhoni is among its investors and has appeared in its advertising.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.dnaindia.com/business/report-meet-man-ravish-naresh-who-built-rs-45000000000-company-with-ms-dhoni-s-help-his-business-is-khatabook-3105470"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.dnaindia.com/business/report-meet-man-ravish-naresh-who-built-rs-45000000000-company-with-ms-dhoni-s-help-his-business-is-khatabook-3105470"
+   },
+   {
+    "fact": "hq",
+    "url": "https://khatabook.com/about-us"
+   },
+   {
+    "fact": "employees",
+    "url": "https://dealroom.co/companies/khatabook/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.dnaindia.com/business/report-meet-man-ravish-naresh-who-built-rs-45000000000-company-with-ms-dhoni-s-help-his-business-is-khatabook-3105470"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.ycombinator.com/companies/khatabook"
+   },
+   {
+    "fact": "description",
+    "url": "https://khatabook.com/about-us"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "klook.com": {
   "name": "Klook",
@@ -7926,6 +9722,120 @@
    "playStore": "https://play.google.com/store/apps/details?id=hk.easyvan.app.client"
   }
  },
+ "leadsquared.com": {
+  "name": "LeadSquared",
+  "legalName": "MarketXpander Services Private Limited",
+  "founded": "2011",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Nilesh Patel",
+   "Prashant Singh",
+   "Sudhakar Gorti"
+  ],
+  "ownership": "Private",
+  "employees": "1,001-5,000",
+  "products": [
+   "Sales CRM and lead management",
+   "Marketing automation",
+   "Field sales management app",
+   "Call centre and customer onboarding tools",
+   "Industry editions for education, lending, insurance and healthcare"
+  ],
+  "markets": "India, Middle East, North America, Oceania and South Africa",
+  "description": "LeadSquared sells CRM software for businesses that handle large numbers of sales leads, with tools for lead management, marketing automation, field sales teams, call centres and customer onboarding, packaged for sectors such as education, lending, insurance and healthcare. Nilesh Patel, Prashant Singh and Sudhakar Gorti, who had earlier built and sold the engineering services firm Proteans, set up the company as a marketing agency, MarketXpander, in Bengaluru in 2011 and launched LeadSquared in 2013. It raised $153 million from WestBridge Capital in 2022. Most of its revenue comes from India, and it has offices in the Middle East, North America, Oceania and South Africa.",
+  "status": "Active",
+  "links": {
+   "linkedin": "https://linkedin.com/company/leadsquared"
+  },
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.leadsquared.com/news/square-peg-in-a-round-hole-meet-leadsquared-indias-first-unicorn-without-vc-money/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://techcrunch.com/?p=2339479"
+   },
+   {
+    "fact": "hq",
+    "url": "https://linkedin.com/company/leadsquared"
+   },
+   {
+    "fact": "employees",
+    "url": "https://leadiq.com/c/leadsquared/5a1d98b523000052008758ab"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/buzz/leadsquared-fy25-net-loss-declines-45-yoy-to-inr-89-cr"
+   },
+   {
+    "fact": "markets",
+    "url": "https://linkedin.com/company/leadsquared"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.leadsquared.com/our-story"
+   },
+   {
+    "fact": "description",
+    "url": "https://parsers.vc/startup/leadsquared.com"
+   },
+   {
+    "fact": "description",
+    "url": "https://techcrunch.com/?p=2339479"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "leapscholar.com": {
+  "name": "Leap Scholar",
+  "founded": "2019",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Vaibhav Singh",
+   "Arnav Kumar",
+   "Rajan Choudhary"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Study-abroad counselling and applications",
+   "IELTS preparation",
+   "Visa and accommodation support",
+   "LeapFinance education loans",
+   "Yocket university search",
+   "GeeBee"
+  ],
+  "markets": "India, with study destinations in the US, UK, Canada, Australia and Ireland",
+  "description": "Leap Scholar helps students from India apply to universities in the US, UK, Canada, Australia and Ireland, covering course shortlists, applications, visas and help with housing on arrival. Vaibhav Singh and Arnav Kumar founded it in Bengaluru in 2019, and Rajan Choudhary is also a co-founder. The group runs IELTS preparation and LeapFinance for education loans, and owns Yocket, a university search platform, and GeeBee, which works with more than 1,000 institutions. It says it has helped 500,000 students and runs more than 30 offline centres.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://leapscholar.com/about-us"
+   },
+   {
+    "fact": "founders",
+    "url": "https://leapscholar.com/about-us"
+   },
+   {
+    "fact": "hq",
+    "url": "https://leapscholar.com/about-us"
+   },
+   {
+    "fact": "products",
+    "url": "https://leapscholar.com/about-us"
+   },
+   {
+    "fact": "markets",
+    "url": "https://leapscholar.com/about-us"
+   },
+   {
+    "fact": "description",
+    "url": "https://leapscholar.com/about-us"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "ledger.com": {
   "name": "Ledger",
   "legalName": "Ledger SAS",
@@ -7985,6 +9895,59 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "lenskart.com": {
+  "name": "Lenskart",
+  "legalName": "Lenskart Solutions Limited",
+  "founded": "2008",
+  "founders": [
+   "Peyush Bansal",
+   "Amit Chaudhary",
+   "Sumeet Kapahi",
+   "Neha Bansal"
+  ],
+  "ownership": "Public (NSE: LENSKART)",
+  "products": [
+   "Prescription glasses",
+   "Sunglasses",
+   "Contact lenses",
+   "Eye tests in store and at home",
+   "Own-brand frames"
+  ],
+  "markets": "India, Singapore, UAE and other Asian markets",
+  "description": "Lenskart sells prescription glasses, sunglasses and contact lenses through its website and app and through a large chain of shops that also offer eye tests. Peyush Bansal, a former Microsoft employee, founded the company in 2008 with Amit Chaudhary and Sumeet Kapahi, and it began selling eyewear online in 2010. By June 2025 it ran 2,806 stores, 2,137 of them in India and the rest in markets such as Singapore and the UAE. It listed on the NSE and BSE in November 2025, and Bansal is chairman, managing director and chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.indiatvnews.com/business/markets/lenskart-ipo-listing-date-today-ceo-peyush-bansal-gmp-today-check-lenskart-share-price-nse-bse-2025-11-10-1016676"
+   },
+   {
+    "fact": "founders",
+    "url": "https://wsnext.trendlyne.com/ipo/detail/2085/lenskart-solutions-ltd/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://wsnext.trendlyne.com/ipo/detail/2085/lenskart-solutions-ltd/"
+   },
+   {
+    "fact": "products",
+    "url": "https://blogs.sahi.com/p/lenskart-ipo-listing-gmp-cools-to"
+   },
+   {
+    "fact": "markets",
+    "url": "https://techstory.in/indias-eyewear-giant-lenskart-enters-the-stock-market-heres-what-happened/"
+   },
+   {
+    "fact": "description",
+    "url": "https://insideretail.co.nz/?p=57112"
+   },
+   {
+    "fact": "description",
+    "url": "https://techstory.in/indias-eyewear-giant-lenskart-enters-the-stock-market-heres-what-happened/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "li.me": {
   "name": "Lime",
@@ -8068,6 +10031,105 @@
    "appStore": "https://apps.apple.com/app/lime/id1199780189"
   }
  },
+ "licious.in": {
+  "name": "Licious",
+  "legalName": "Delightful Gourmet Private Limited",
+  "founded": "2015",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Abhay Hanjura",
+   "Vivek Gupta"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Fresh chicken and mutton",
+   "Fish and seafood",
+   "Eggs",
+   "Cold cuts and marinades",
+   "Ready-to-cook and ready-to-eat meat"
+  ],
+  "markets": "India",
+  "description": "Licious sells fresh chicken, mutton, fish, seafood, eggs, cold cuts and ready-to-cook meat through its own app and website, quick commerce platforms and its own shops. Abhay Hanjura and Vivek Gupta, a former finance controller at Helion Ventures, founded it in Bengaluru in 2015 through Delightful Gourmet. It runs its own supply chain from sourcing to cold-chain delivery and became one of India's first consumer brands valued at more than $1 billion in 2021. The company reported revenue of ₹1,166 crore for the 2026 financial year and has said it is preparing for a stock market listing.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.business-standard.com/article/companies/licious-bets-on-quality-meat-for-growth-117042400009_1.html"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.business-standard.com/article/companies/licious-bets-on-quality-meat-for-growth-117042400009_1.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.business-standard.com/article/companies/licious-bets-on-quality-meat-for-growth-117042400009_1.html"
+   },
+   {
+    "fact": "products",
+    "url": "https://dealstreetasia.com/stories/licious-ipo-india-430804"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/?p=553959"
+   },
+   {
+    "fact": "description",
+    "url": "https://voice.lapaas.com/startup/licious/"
+   },
+   {
+    "fact": "description",
+    "url": "https://business-standard.com/markets/ipo/temasek-backed-meat-delivery-startup-licious-targets-2-billion-ipo-125021800140_1.html"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "ltimindtree.com": {
+  "name": "LTM (formerly LTIMindtree)",
+  "legalName": "LTM Limited",
+  "founded": "1996",
+  "hq": "Mumbai, India",
+  "parent": "Larsen & Toubro",
+  "ownership": "Subsidiary of Larsen & Toubro",
+  "employees": "10,000+",
+  "products": [
+   "Application management",
+   "Cloud infrastructure and cybersecurity",
+   "AI-led engineering",
+   "Data and analytics",
+   "Enterprise applications",
+   "BlueVerse business AI"
+  ],
+  "markets": "Worldwide (clients in more than 40 countries)",
+  "description": "LTM, the company formerly called LTIMindtree, provides IT services to large companies, covering application management, cloud infrastructure, cybersecurity, data and AI engineering and enterprise software, with clients in more than 40 countries. It was incorporated in 1996 as L&T Information Technology, became LTIMindtree in 2022 and changed its name to LTM Limited in March 2026. Larsen & Toubro is its parent company. It had 88,835 employees at the end of September 2026, and Venu Lambu is chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.indiainfoline.com/company/ltm-ltd/summary"
+   },
+   {
+    "fact": "hq",
+    "url": "https://fintechbiznews.com/fintech-technology/ltm-revenue-enterprise-ai-biz-ai-surge-47"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.jmfinancialservices.in/market-news-and-insights/1737516"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.ltm.com/about-us"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.indiainfoline.com/company/ltm-ltd/summary"
+   },
+   {
+    "fact": "name",
+    "url": "https://www.angelone.in/news/stocks/ltimindtree-renamed-as-ltm-limited-following-receipt-of-fresh-certificate-of-incorporation"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "luno.com": {
   "name": "Luno",
   "founded": "2013",
@@ -8137,6 +10199,55 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Luno Group Holdings Limited"
+ },
+ "magicbricks.com": {
+  "name": "MagicBricks",
+  "legalName": "Magicbricks Realty Services Limited",
+  "founded": "2006",
+  "hq": "Noida, India",
+  "parent": "Times Internet",
+  "ownership": "Subsidiary of Times Internet",
+  "products": [
+   "Property listings for sale and rent",
+   "New project listings from developers",
+   "Site Visit booking for buyers",
+   "Home loans and property services",
+   "Property news and price data"
+  ],
+  "markets": "India",
+  "description": "MagicBricks is a property website and app where people search, buy, sell and rent homes, plots and commercial space across India, with listings from owners, agents and developers. The Times Group launched it in 2006, and it is a wholly owned subsidiary of Times Internet, the digital arm of Bennett, Coleman and Co. It earns mainly from paid listings and advertising and has added services such as home loans, interiors and Site Visit, launched in 2024 to help developers arrange property visits. Sudhir Pai, who ran the business for more than 15 years, stepped down as chief executive in 2026.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.peoplematters.in/news/leadership/magicbricks-ceo-sudhir-pai-resigns-after-15-years-report-48482"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.preqin.com/data/profile/asset/magicbricks-realty-services-limited/227299"
+   },
+   {
+    "fact": "parent",
+    "url": "https://inc42.com/?p=549493"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://inc42.com/?p=549493"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.cbinsights.com/company/times-business-solutions-limited"
+   },
+   {
+    "fact": "description",
+    "url": "https://techstory.in/magicbricks-funding-0903/"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/?p=549493"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "magoosh.com": {
   "name": "Magoosh",
@@ -8212,6 +10323,67 @@
   ],
   "checked": "2026-11-11"
  },
+ "makemytrip.com": {
+  "name": "MakeMyTrip",
+  "legalName": "MakeMyTrip Limited",
+  "founded": "2000",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Deep Kalra",
+   "Rajesh Magow"
+  ],
+  "ownership": "Public (NASDAQ: MMYT)",
+  "employees": "5,001-10,000",
+  "products": [
+   "Flight bookings",
+   "Hotel and homestay bookings",
+   "Holiday packages",
+   "Train and bus tickets",
+   "Corporate travel (myBiz)"
+  ],
+  "markets": "India, with operations in the Gulf",
+  "description": "MakeMyTrip is an online travel company that sells flights, hotels, holiday packages and train and bus tickets through its own app and website and through Goibibo and redBus, which it took over in the 2017 merger with the ibibo group. Deep Kalra founded it in 2000, first selling US to India trips to the overseas Indian community, and Rajesh Magow is co-founder and group chief executive. The Gurugram company also runs a corporate travel business, myBiz, whose bookings passed $1 billion in 2025. Its parent, MakeMyTrip Limited, has been listed on Nasdaq since August 2010.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://hyring.com/company/makemytrip"
+   },
+   {
+    "fact": "founders",
+    "url": "https://hyring.com/company/makemytrip"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/stocks/mmyt/company"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://stockanalysis.com/stocks/MMYT"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/stocks/MMYT"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.roic.ai/quote/MMYT"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.roic.ai/quote/MMYT"
+   },
+   {
+    "fact": "description",
+    "url": "https://altss.com/profile/makemytrip-india-private-limited"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.outlookbusiness.com/corporate/makemytrips-gross-bookings-from-corporate-travel-cross-1-bn-in-2025"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "malt.com": {
   "name": "Malt",
   "founded": "2013",
@@ -8279,6 +10451,112 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Malt Community"
+ },
+ "mamaearth.in": {
+  "name": "Mamaearth",
+  "legalName": "Honasa Consumer Limited",
+  "founded": "2016",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Varun Alagh",
+   "Ghazal Alagh"
+  ],
+  "parent": "Honasa Consumer",
+  "ownership": "Public (NSE: HONASA)",
+  "employees": "501-1,000",
+  "products": [
+   "Skincare",
+   "Haircare",
+   "Body care",
+   "Baby care",
+   "Colour cosmetics"
+  ],
+  "markets": "India",
+  "description": "Mamaearth sells skincare, haircare, body care, baby care and make-up products that it markets as free of certain chemicals, online and through shops across India. Husband and wife Varun and Ghazal Alagh started it in Gurugram in 2016 after struggling to find baby products they were comfortable using on their son. The brand is owned by their company Honasa Consumer, which also runs The Derma Co., Aqualogica, BBlunt and Dr. Sheth's. Honasa Consumer listed on the NSE and BSE in November 2023, with Varun Alagh as chairman and chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://reports.chittorgarh.com/ipo_notes/Honasa-Consumer-IPO-Notes-Axis-Capital.pdf"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.sofinagroup.com/project/mamaearth/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/HONASA/company/"
+   },
+   {
+    "fact": "parent",
+    "url": "https://inc42.com/company/honasa-consumer/people/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://stockanalysis.com/quote/nse/HONASA/company/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/HONASA/company/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.thecompanycheck.com/company/b/honasa-consumer/khifnsnoncjr42ouj"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.preqin.com/data/profile/asset/honasa-consumer-limited/219543"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "masaischool.com": {
+  "name": "Masai School",
+  "legalName": "Nolan Edutech Private Limited",
+  "founded": "2019",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Prateek Shukla",
+   "Nrupul Dev",
+   "Yogesh Bhat"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Full-stack web development courses",
+   "Data analytics courses",
+   "AI and forward deployed engineer programmes",
+   "Certificate programmes with IIT institutes"
+  ],
+  "markets": "India",
+  "description": "Masai School trains people for technology jobs through online courses in software development, data analytics and applied AI. Prateek Shukla, Nrupul Dev and Yogesh Bhat started it in Bengaluru in June 2019, with a first batch of 12 students. It began with a pay-after-placement model funded by income sharing agreements and later shifted its approach after hiring slowed. Some newer programmes, such as its forward deployed engineer course, are certified by IIT Roorkee's iHUB DivyaSampark.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2019/11/masai-school-bengaluru-engineers-coders-isa-bootcamp"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/?p=363929"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2019/11/masai-school-bengaluru-engineers-coders-isa-bootcamp"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/?p=526935"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.outlookbusiness.com/enterprise/big-idea/lessons-from-a-tribe-5586"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.masaischool.com/about-us"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "masterclass.com": {
   "name": "MasterClass",
@@ -8401,6 +10679,63 @@
   "checked": "2026-11-11",
   "legalName": "A Medium Corporation",
   "employees": "51-200"
+ },
+ "meesho.com": {
+  "name": "Meesho",
+  "legalName": "Meesho Limited",
+  "founded": "2015",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Vidit Aatrey",
+   "Sanjeev Barnwal"
+  ],
+  "ownership": "Public (NSE: MEESHO)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Online marketplace",
+   "Seller tools with zero commission",
+   "Logistics for sellers",
+   "Groceries and daily essentials",
+   "Digital financial services"
+  ],
+  "markets": "India",
+  "description": "Meesho runs an online marketplace where small sellers and manufacturers sell low-priced clothing, home goods, beauty products and other items to shoppers across India. IIT Delhi graduates Vidit Aatrey and Sanjeev Barnwal founded it in Bengaluru in 2015, first as a way for resellers to share product catalogues over WhatsApp, Facebook and Instagram. It later opened directly to customers and added its own logistics services for sellers. Meesho listed on the NSE and BSE in December 2025 after raising about ₹5,421 crore, with Aatrey as chairman, managing director and chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.valueresearchonline.com/ipo/373020/meesho-ltd/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.valueresearchonline.com/ipo/373020/meesho-ltd/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/MEESHO/company/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.peakxv.com/insight/they-say-it-takes-a-village-the-making-of-meesho"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.ipoji.com/ipo/meesho-ipo"
+   },
+   {
+    "fact": "products",
+    "url": "https://stockanalysis.com/quote/nse/MEESHO/company/"
+   },
+   {
+    "fact": "description",
+    "url": "https://theprint.in/economy/meeshos-big-bang-market-debut-from-small-social-commerce-experiment-to-33x-ipo/2799242"
+   },
+   {
+    "fact": "description",
+    "url": "https://wsnext.trendlyne.com/ipo/detail/2253/meesho-ltd/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "memrise.com": {
   "name": "Memrise",
@@ -8627,6 +10962,59 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "mobikwik.com": {
+  "name": "MobiKwik",
+  "legalName": "One MobiKwik Systems Limited",
+  "founded": "2008",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Bipin Preet Singh",
+   "Upasana Taku"
+  ],
+  "ownership": "Public (NSE: MOBIKWIK)",
+  "products": [
+   "MobiKwik wallet",
+   "UPI payments",
+   "Bill payments and recharges",
+   "Digital credit",
+   "Investments and insurance",
+   "Merchant payment devices"
+  ],
+  "markets": "India",
+  "description": "MobiKwik runs a payments app with a wallet, UPI payments and bill payments, and gives users access to digital credit, investments and insurance. Husband and wife Bipin Preet Singh and Upasana Taku founded it, with the company incorporated in March 2008. Singh is managing director and chief executive and Taku chairs the board of the Gurugram company, which also sells payment devices and cash advances to shops. It listed on the NSE and BSE in December 2024, reporting 161 million registered users and 4.26 million merchants at the time.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://wsnext.trendlyne.com/ipo/detail/1434/one-mobikwik-systems-ltd/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.theweek.in/wire-updates/business/2024/12/18/dcm2-biz-stocks-mobikwik.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://nsearchives.nseindia.com/web/sites/default/files/inline-files/BasisOfAllotment_onemob.pdf"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://gmo-vp.com/en/?p=2029"
+   },
+   {
+    "fact": "products",
+    "url": "https://stockanalysis.com/quote/nse/MOBIKWIK/company/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.arihantcapital.com/company-information/company-background/68099"
+   },
+   {
+    "fact": "description",
+    "url": "https://app.dealroom.co/news/feed/mobikwik-ipo-opens-at-265-279-range"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "mollie.com": {
   "name": "Mollie",
@@ -8865,6 +11253,50 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "mphasis.com": {
+  "name": "Mphasis",
+  "legalName": "Mphasis Limited",
+  "founded": "1992",
+  "hq": "Bengaluru, India",
+  "ownership": "Public (NSE: MPHASIS)",
+  "employees": "10,000+",
+  "products": [
+   "Application services",
+   "Cloud and infrastructure services",
+   "Business process services",
+   "Mphasis Tria AI platform"
+  ],
+  "markets": "Worldwide",
+  "description": "Mphasis provides IT services, cloud and infrastructure work and business process services to large companies. In 2026 it launched Tria, an enterprise platform for running AI agents, and AI-led work made up about two thirds of its new deal value in the quarter to September 2026. The company is based in Bengaluru and its shares trade on the NSE and BSE. Nitin Rakesh is chief executive and managing director.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.emis.cn/php/company-profile/IN/Mphasis_Ltd_en_1626665.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.globaldata.com/company-profile/mphasis/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.mphasis.com/content/dam/mphasis-com/global/en/news/news_articles/coverage-report-mphasis-consolidated-net-profit-rises-14-14-in-the-march-2026-quarter.pdf"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://insurance-edge.net/2026/07/27/mphasis-publishes-financials-for-q2-2026/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.angelone.in/news/stocks/mphasis-share-price-in-focus-post-q2-fy27-earnings-results-total-income-up-18-9-yoy"
+   },
+   {
+    "fact": "products",
+    "url": "https://hyring.com/company/mphasis"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "mubi.com": {
   "name": "MUBI",
@@ -9245,6 +11677,129 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "naukri.com": {
+  "name": "Naukri",
+  "legalName": "Info Edge (India) Limited",
+  "founded": "1997",
+  "hq": "Noida, India",
+  "founders": [
+   "Sanjeev Bikhchandani"
+  ],
+  "parent": "Info Edge",
+  "ownership": "Public (NSE: NAUKRI)",
+  "employees": "5,001-10,000",
+  "products": [
+   "Job search and applications",
+   "Resdex CV database for recruiters",
+   "Job postings and employer branding",
+   "Naukri 360 and Talent Cloud",
+   "Neo job-search assistant"
+  ],
+  "markets": "India and the Gulf",
+  "description": "Naukri is a recruitment website and app where jobseekers search and apply for jobs and employers post vacancies and search a database of more than 100 million CVs. Sanjeev Bikhchandani launched it in 1997 through Info Edge, the company he had set up in 1995, after quitting a corporate job. Info Edge, which also runs 99acres for property, Jeevansathi for matrimony and Shiksha for education, has been listed on the NSE and BSE since November 2006 and trades under the symbol NAUKRI. The group employs around 6,000 people across Indian cities and offices in the Gulf.",
+  "status": "Active",
+  "links": {
+   "x": "https://twitter.com/naukri",
+   "instagram": "https://www.instagram.com/naukridotcom/",
+   "facebook": "https://www.facebook.com/Naukri",
+   "youtube": "https://www.youtube.com/@Naukri"
+  },
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yespress.io/naukri-com.md"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yespress.io/naukri-com.md"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/NAUKRI/company"
+   },
+   {
+    "fact": "parent",
+    "url": "https://hyring.com/company/info-edge"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://stoculator.com/stock/NAUKRI.NS/profile"
+   },
+   {
+    "fact": "employees",
+    "url": "https://yespress.io/naukri-com.md"
+   },
+   {
+    "fact": "products",
+    "url": "https://yespress.io/naukri-com.md"
+   },
+   {
+    "fact": "markets",
+    "url": "https://hyring.com/company/info-edge"
+   },
+   {
+    "fact": "description",
+    "url": "https://alphaspread.com/security/nse/naukri/investor-relations"
+   },
+   {
+    "fact": "description",
+    "url": "https://hyring.com/company/info-edge"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "navi.com": {
+  "name": "Navi",
+  "legalName": "Navi Limited",
+  "founded": "2018",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Sachin Bansal",
+   "Ankit Agarwal"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Personal and cash loans",
+   "Home loans",
+   "Navi UPI",
+   "Health insurance",
+   "Mutual funds"
+  ],
+  "markets": "India",
+  "description": "Navi offers personal, cash and home loans, UPI payments, health insurance and mutual funds through one app. Flipkart co-founder Sachin Bansal set it up in Bengaluru in December 2018 with his IIT Delhi batchmate Ankit Agarwal, first as an investment vehicle called BAC Acquisitions. The group's companies include Navi Finserv for lending and Navi General Insurance. Bansal holds almost all of the shares, and Rajiv Naresh has been managing director and chief executive since February 2025.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://qorpiq.com/company/navi-limited/U72900KA2018PLC119297"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.business-standard.com/article/companies/sachin-bansal-puts-rs-888-cr-in-investment-vehicle-renames-it-navi-tech-119111401807_1.html"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.business-standard.com/article/companies/sachin-bansal-puts-rs-888-cr-in-investment-vehicle-renames-it-navi-tech-119111401807_1.html"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://inc42.com/company/navi/captable/"
+   },
+   {
+    "fact": "products",
+    "url": "https://navi.com/"
+   },
+   {
+    "fact": "description",
+    "url": "https://qorpiq.com/company/navi-limited/U72900KA2018PLC119297"
+   },
+   {
+    "fact": "description",
+    "url": "https://navi.com/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "netlify.com": {
   "name": "Netlify",
@@ -9722,6 +12277,62 @@
   ],
   "checked": "2026-11-11"
  },
+ "nykaa.com": {
+  "name": "Nykaa",
+  "legalName": "FSN E-Commerce Ventures Limited",
+  "founded": "2012",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Falguni Nayar"
+  ],
+  "ownership": "Public (NSE: NYKAA)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Beauty and personal care marketplace",
+   "Nykaa Fashion",
+   "Own beauty brands",
+   "Nykaa Luxe and other physical stores",
+   "Superstore by Nykaa for retailers"
+  ],
+  "markets": "India",
+  "description": "Nykaa sells beauty, personal care and fashion products online through its website and apps and in its own shops, which include Nykaa Luxe and Nykaa On Trend stores. Falguni Nayar, a former managing director at Kotak Mahindra Capital, founded it in Mumbai in April 2012 as an online beauty retailer. Its parent company, FSN E-Commerce Ventures, listed on the NSE and BSE in November 2021, and Nayar is executive chairperson and chief executive. It reported revenue of ₹10,022 crore and a net profit of ₹199 crore for the 2026 financial year.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.indiainfoline.com/company/fsn-e-commerce-ventures-ltd/summary"
+   },
+   {
+    "fact": "founders",
+    "url": "https://hyring.com/company/nykaa"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/nykaa"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://hyring.com/company/nykaa"
+   },
+   {
+    "fact": "employees",
+    "url": "https://hyring.com/company/nykaa"
+   },
+   {
+    "fact": "products",
+    "url": "https://stockanalysis.com/quote/bom/543384/company"
+   },
+   {
+    "fact": "description",
+    "url": "https://hyring.com/company/nykaa"
+   },
+   {
+    "fact": "description",
+    "url": "https://stoculator.com/stock/NYKAA.NS/profile"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "odoo.com": {
   "name": "Odoo",
   "legalName": "Odoo S.A.",
@@ -9785,6 +12396,58 @@
   ],
   "checked": "2026-11-11",
   "employees": "5,001-10,000"
+ },
+ "okcredit.in": {
+  "name": "OkCredit",
+  "founded": "2017",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Harsh Pokharna",
+   "Gaurav Kumar",
+   "Aditya Prasad"
+  ],
+  "ownership": "Private",
+  "employees": "51-200",
+  "products": [
+   "Digital credit ledger app",
+   "Payment reminders and collection",
+   "Supplier and customer accounts",
+   "Credit for merchants through partners"
+  ],
+  "markets": "India",
+  "description": "OkCredit runs a mobile app that small shops, pharmacies and other retailers use to keep a record of credit given to customers and amounts owed to suppliers, and to send reminders and collect payments. Harsh Pokharna, Gaurav Kumar and Aditya Prasad, IIT Kanpur graduates who had built two earlier start-ups together, came up with it in April 2017 and launched the app that November. The Bengaluru company went through Y Combinator's Summer 2018 batch. Its investors include Tiger Global and Lightspeed, and it reported revenue of ₹25.3 crore for the 2025 financial year.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.entrepreneur.com/author/harsh-pokharna.rss"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.ycombinator.com/companies/okcredit"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.ycombinator.com/companies/okcredit"
+   },
+   {
+    "fact": "employees",
+    "url": "https://inc42.com/company/okcredit/"
+   },
+   {
+    "fact": "products",
+    "url": "https://kr-asia.com/indian-mom-and-pop-stores-use-okcredit-to-digitize-sales-records-startup-stories"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/author/harshpokharna"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/company/okcredit/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "olacabs.com": {
   "name": "Ola",
@@ -9880,6 +12543,62 @@
   "legalName": "ANI Technologies Pvt Ltd",
   "hq": "Bengaluru, India",
   "markets": "India"
+ },
+ "olaelectric.com": {
+  "name": "Ola Electric",
+  "legalName": "Ola Electric Mobility Limited",
+  "founded": "2017",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Bhavish Aggarwal"
+  ],
+  "ownership": "Public (NSE: OLAELEC)",
+  "employees": "1,001-5,000",
+  "products": [
+   "S1 electric scooters",
+   "Roadster electric motorcycles",
+   "Battery cells from its Gigafactory",
+   "Charging network",
+   "Service centres"
+  ],
+  "markets": "India",
+  "description": "Ola Electric designs and makes electric two-wheelers, including the S1 range of scooters and Roadster motorcycles, and is building its own lithium-ion battery cells. Ola Cabs co-founder Bhavish Aggarwal set it up in Bengaluru in 2017, first as part of the ride-hailing group, and he remains chairman, managing director and chief executive. It builds vehicles at its Futurefactory in Krishnagiri, Tamil Nadu, where its cell Gigafactory is also based, and sells through its own stores and website. The company listed on the NSE and BSE in August 2024.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://stockanalysis.com/quote/nse/OLAELEC/company"
+   },
+   {
+    "fact": "founders",
+    "url": "https://battery-tech.net/company/ola-electric/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/OLAELEC/company"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://nsearchives.nseindia.com/annual_reports/AR_27203_OLAELEC_2024_2025_A_31072025200159.pdf"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockevents.app/en/stock/OLAELEC.NSE"
+   },
+   {
+    "fact": "products",
+    "url": "https://voice.lapaas.com/startup/ola-electric/"
+   },
+   {
+    "fact": "description",
+    "url": "https://startupintros.com/orgs/ola-electric"
+   },
+   {
+    "fact": "description",
+    "url": "https://voice.lapaas.com/startup/ola-electric/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "omio.com": {
   "name": "Omio",
@@ -10305,6 +13024,116 @@
   "checked": "2026-11-11",
   "legalName": "Paystack Payments Limited"
  },
+ "paytm.com": {
+  "name": "Paytm",
+  "legalName": "One 97 Communications Limited",
+  "founded": "2000",
+  "hq": "Noida, India",
+  "founders": [
+   "Vijay Shekhar Sharma"
+  ],
+  "ownership": "Public (NSE: PAYTM)",
+  "employees": "10,000+",
+  "products": [
+   "UPI payments app",
+   "Soundbox and card machines for merchants",
+   "Mobile recharges and bill payments",
+   "Loan distribution",
+   "Travel and ticket booking",
+   "Paytm Money investments"
+  ],
+  "markets": "India",
+  "description": "Paytm is the payments brand of One 97 Communications, which Vijay Shekhar Sharma founded in 2000 and still leads as chairman and chief executive. Its app is used for UPI payments, mobile recharges, bill payments and travel bookings, and shops take payments through its Soundbox speakers and card machines. The Noida company also distributes loans and investment products to its users through partners. It listed on the NSE and BSE in November 2021 with what was then the largest IPO in India's history.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://stockanalysis.com/quote/nse/PAYTM/company"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.alphaspread.com/security/nse/paytm/investor-relations"
+   },
+   {
+    "fact": "hq",
+    "url": "https://nsearchives.nseindia.com/corporate/PAYTM_21082026193449_SEDisclosureBRSR.pdf"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://kalkinemedia.com/ca/companies/nse-paytm"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/PAYTM/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.alphaspread.com/security/nse/paytm/investor-relations"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.thepeoplesboard.com/news/paytm-to-hire-4000-across-ai-product-and-tech-teams/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.google.com/finance/beta/quote/PAYTM:NSE"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "payu.in": {
+  "name": "PayU India",
+  "legalName": "PayU Payments Private Limited",
+  "founded": "2002",
+  "founders": [
+   "Nitin Gupta",
+   "Shailaz Nag"
+  ],
+  "parent": "Prosus",
+  "ownership": "Subsidiary of Prosus",
+  "products": [
+   "Payment gateway and checkout",
+   "UPI, QR and POS payments",
+   "EMI and buy now pay later",
+   "Payouts and settlements",
+   "Rewards and loyalty payments",
+   "Consumer credit"
+  ],
+  "markets": "India",
+  "description": "PayU India provides a payment gateway and related tools that let businesses accept cards, UPI, net banking, EMI and pay-later payments online and in shops, along with payouts and lending. It is the Indian payments and credit business of Prosus, and was spun out of ibibo in 2014 under co-founders Nitin Gupta and Shailaz Nag. The RBI granted it final approval as an online payment aggregator in May 2025 and later authorised it for offline and cross-border payments too. PayU says more than 500,000 businesses use its services.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/?p=513975"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.outlookbusiness.com/corporate/payu-india-secures-302-crore-capital-infusion-from-prosus-to-accelerate-credit-business"
+   },
+   {
+    "fact": "parent",
+    "url": "https://entrackr.com/fintrackr/payu-india-clocks-397-mn-revenue-in-h1-fy26-10807937"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://entrackr.com/fintrackr/payu-india-clocks-397-mn-revenue-in-h1-fy26-10807937"
+   },
+   {
+    "fact": "products",
+    "url": "https://payu.in/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.business-standard.com/finance/news/payu-secures-final-rbi-approval-as-online-payment-aggregator-125051301470_1.html"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.angelone.in/news/market-updates/payu-india-secures-additional-303-crore-investment-from-prosus"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "pedidosya.com": {
   "name": "PedidosYa",
   "legalName": "PedidosYa S.A.",
@@ -10503,6 +13332,53 @@
   ],
   "checked": "2026-11-11"
  },
+ "persistent.com": {
+  "name": "Persistent Systems",
+  "legalName": "Persistent Systems Limited",
+  "founded": "1990",
+  "hq": "Pune, India",
+  "founders": [
+   "Anand Deshpande"
+  ],
+  "ownership": "Public (NSE: PERSISTENT)",
+  "employees": "10,000+",
+  "products": [
+   "Software product engineering",
+   "Digital and AI services",
+   "Cloud and data services",
+   "Enterprise IT services"
+  ],
+  "markets": "Worldwide (21 countries)",
+  "description": "Persistent Systems builds and maintains software for technology companies, banks, insurers and healthcare groups, with work covering product engineering, cloud, data and AI. Anand Deshpande founded it in Pune in 1990, and he remains chairman and managing director, with Sandeep Kalra as chief executive. The company has more than 29,500 employees in 21 countries and reported $487.6 million of revenue for the quarter to September 2026. In 2026 it secured about 94% of the German engineering firm Nagarro and was working towards completing the deal.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2018/11/techie-tuesdays-anand-deshpande/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2018/11/techie-tuesdays-anand-deshpande/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.morningstar.com/news/pr-newswire/20261015io73288/persistent-announces-4876m-revenue-in-q2-fy27-with-200-y-o-y-growth"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.persistent.com/media/press-releases/q2-fy27-results/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.morningstar.com/news/pr-newswire/20261015io73288/persistent-announces-4876m-revenue-in-q2-fy27-with-200-y-o-y-growth"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.persistent.com/media/press-releases/q2-fy27-results/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "personio.com": {
   "name": "Personio",
   "legalName": "Personio SE & Co. KG",
@@ -10657,6 +13533,122 @@
   "checked": "2026-11-11",
   "legalName": "Axelia Solutions Private Limited"
  },
+ "phonepe.com": {
+  "name": "PhonePe",
+  "founded": "2015",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Sameer Nigam",
+   "Rahul Chari",
+   "Burzin Engineer"
+  ],
+  "parent": "Walmart",
+  "ownership": "Subsidiary of Walmart",
+  "employees": "10,000+",
+  "products": [
+   "UPI payments app",
+   "Merchant payments and devices",
+   "Insurance",
+   "Mutual funds and stockbroking",
+   "Indus Appstore"
+  ],
+  "markets": "India",
+  "description": "PhonePe runs a UPI payments app used for money transfers, bill payments and paying in shops, and has added insurance, mutual funds and stockbroking. Sameer Nigam, Rahul Chari and Burzin Engineer, all formerly of Flipkart, founded it in December 2015, and Flipkart bought it the following year. It came under Walmart through the 2018 Flipkart deal and was later separated from Flipkart, with Walmart keeping a majority stake. The Bengaluru company also runs the Indus Appstore for Android phones and has filed to list its shares in India.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://techcrunch.com/2026/03/16/walmart-backed-phonepe-shelves-ipo-as-global-tensions-rattle-markets/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://techcrunch.com/2026/03/16/walmart-backed-phonepe-shelves-ipo-as-global-tensions-rattle-markets/"
+   },
+   {
+    "fact": "parent",
+    "url": "https://www.outlookbusiness.com/markets/phonepe-ipo-gets-sebi-nod-updated-drhp-expected-in-few-days"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.outlookbusiness.com/markets/phonepe-ipo-gets-sebi-nod-updated-drhp-expected-in-few-days"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.outlookbusiness.com/start-up/news/fintech-major-phonepe-rolls-out-800-cr-esop-program-ahead-of-ipo"
+   },
+   {
+    "fact": "hq",
+    "url": "https://ground.news/article/phonepe-ipo-investors-show-unwavering-confidence-in-2026-public-offering_6fc1e6"
+   },
+   {
+    "fact": "products",
+    "url": "https://ground.news/article/phonepe-ipo-investors-show-unwavering-confidence-in-2026-public-offering_6fc1e6"
+   },
+   {
+    "fact": "description",
+    "url": "https://curvedtrading.com/articles/en/investing/phonepe-ipo/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "pinelabs.com": {
+  "name": "Pine Labs",
+  "legalName": "Pine Labs Limited",
+  "founded": "1998",
+  "hq": "Noida, India",
+  "founders": [
+   "Lokvir Kapoor",
+   "Rajul Garg",
+   "Tarun Upadhyay"
+  ],
+  "ownership": "Public (NSE: PINELABS)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Card machines and point-of-sale software",
+   "Online payment gateway",
+   "EMI and pay-later at checkout",
+   "Gift cards and loyalty programmes",
+   "Setu financial APIs"
+  ],
+  "markets": "India",
+  "description": "Pine Labs makes card machines, point-of-sale software and payment gateways that shops and brands use to take payments and offer EMI and pay-later options at checkout. Lokvir Kapoor, Rajul Garg and Tarun Upadhyay founded it in 1998, when it began with card-based payment and loyalty programmes, and Amrish Rau is now chief executive. It also owns Setu, which supplies payment and financial data APIs to other companies. Pine Labs listed on the NSE and BSE in November 2025 and reported revenue of ₹2,711 crore for the 2026 financial year.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.morganstanley.com/content/dam/msdotcom/en/indiaofferdocuments/pdfs/Pine_Labs_Limited_Abridged_Prospectus.pdf"
+   },
+   {
+    "fact": "founders",
+    "url": "https://startuptalky.com/pine-labs-success-story"
+   },
+   {
+    "fact": "hq",
+    "url": "https://builtin.com/company/pine-labs"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://seedtable.com/exits/pine-labs"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/PINELABS/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/company/pine-labs/people/"
+   },
+   {
+    "fact": "description",
+    "url": "https://hyring.com/company/pine-labs"
+   },
+   {
+    "fact": "description",
+    "url": "https://stockanalysis.com/quote/nse/PINELABS/company"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "plaid.com": {
   "name": "Plaid",
   "founded": "2013",
@@ -10802,6 +13794,131 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "policybazaar.com": {
+  "name": "Policybazaar",
+  "legalName": "Policybazaar Insurance Brokers Private Limited",
+  "founded": "2008",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Yashish Dahiya",
+   "Alok Bansal",
+   "Avaneesh Nirjar"
+  ],
+  "parent": "PB Fintech",
+  "ownership": "Subsidiary of PB Fintech",
+  "employees": "10,000+",
+  "products": [
+   "Health insurance comparison and purchase",
+   "Life and term insurance",
+   "Car and two-wheeler insurance",
+   "Travel and other general insurance",
+   "Claims and policy servicing"
+  ],
+  "markets": "India",
+  "description": "Policybazaar is an online insurance marketplace where people compare and buy health, life, motor, travel and other policies from many insurers, and get help with renewals and claims. Yashish Dahiya, Alok Bansal and Avaneesh Nirjar founded it in Gurugram in 2008 with early backing from Info Edge. It operates through Policybazaar Insurance Brokers and is the main business of PB Fintech, which also owns the loans and credit card marketplace Paisabazaar. PB Fintech listed on the NSE and BSE in November 2021 and employs more than 14,000 people.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/features/org-chart-the-key-people-at-ipo-bound-policybazaar/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/features/org-chart-the-key-people-at-ipo-bound-policybazaar/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/policybazaar"
+   },
+   {
+    "fact": "parent",
+    "url": "https://hyring.com/company/policybazaar"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://hyring.com/company/policybazaar"
+   },
+   {
+    "fact": "employees",
+    "url": "https://hyring.com/company/policybazaar"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/features/org-chart-the-key-people-at-ipo-bound-policybazaar/"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2021/08/policybazaar-ipo-timeline-paisabazaar-drhp-timeline"
+   },
+   {
+    "fact": "description",
+    "url": "https://stoculator.com/stock/POLICYBZR.NS/profile"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "porter.in": {
+  "name": "Porter",
+  "legalName": "SmartShift Logistics Solutions Private Limited",
+  "founded": "2014",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Pranav Goel",
+   "Uttam Digga",
+   "Vikas Choudhary"
+  ],
+  "ownership": "Private",
+  "employees": "1,001-5,000",
+  "products": [
+   "Mini-truck and tempo bookings",
+   "Two-wheeler parcel delivery",
+   "Packers and movers",
+   "Intercity courier",
+   "Logistics for businesses"
+  ],
+  "markets": "India, UAE and Turkey",
+  "description": "Porter runs an app for booking mini-trucks, tempos and two-wheeler riders to move goods and parcels within a city, and also offers house moving, intercity courier and logistics services for businesses. IIT Kharagpur graduates Pranav Goel and Uttam Digga, then analysts at JP Morgan, launched it in August 2014 with their friend Vikas Choudhary, starting with trucks in Bengaluru. Mahindra merged its own logistics platform SmartShift into Porter in 2018, which is why the company is legally called SmartShift Logistics Solutions. It also operates in the UAE and Turkey, and Digga is chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.ey.com/en_in/entrepreneur-of-the-year/finalists-2025/pranav-goel-and-uttam-digga"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/company/porter/people/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/companies/porter"
+   },
+   {
+    "fact": "employees",
+    "url": "https://inc42.com/company/porter/people/"
+   },
+   {
+    "fact": "products",
+    "url": "https://inc42.com/company/porter/people/"
+   },
+   {
+    "fact": "markets",
+    "url": "https://voice.lapaas.com/startup/porter/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.magzter.com/nb/stories/newspaper/Financial-Express-Lucknow/THE-CONVICTION-CARRIERS"
+   },
+   {
+    "fact": "description",
+    "url": "https://voice.lapaas.com/startup/porter/business-model/"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2024/07/porter-startup-solving-indias-logistical-conundrums"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "poshmark.com": {
   "name": "Poshmark",
@@ -11338,6 +14455,63 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "pw.live": {
+  "name": "PhysicsWallah",
+  "legalName": "PhysicsWallah Limited",
+  "founded": "2016",
+  "hq": "Noida, India",
+  "founders": [
+   "Alakh Pandey",
+   "Prateek Maheshwari"
+  ],
+  "ownership": "Public (NSE: PWL)",
+  "employees": "10,000+",
+  "products": [
+   "JEE and NEET coaching",
+   "UPSC and government exam preparation",
+   "PW app and YouTube classes",
+   "Offline Vidyapeeth centres",
+   "PW Skills upskilling courses"
+  ],
+  "markets": "India",
+  "description": "PhysicsWallah began in 2016 as Alakh Pandey's YouTube channel teaching physics for the JEE, and he later registered it as a company with his childhood friend Prateek Maheshwari. It now prepares students for JEE, NEET, UPSC and other exams through its app, YouTube channels and more than 300 offline centres, and also runs upskilling courses. The Noida company listed on the NSE and BSE in November 2025 after raising about ₹3,480 crore in its IPO. Its offer documents reported more than 18,000 employees and 4.46 million paid users.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.businesstoday.in/markets/stocks/story/physicswallah-shares-stage-strong-market-debut-with-33-listing-premium-502559-2025-11-18"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.businesstoday.in/markets/stocks/story/physicswallah-shares-stage-strong-market-debut-with-33-listing-premium-502559-2025-11-18"
+   },
+   {
+    "fact": "founders",
+    "url": "https://india.entrepreneur.com/news-and-trends/physicswallah-makes-strong-debut-on-bse-nse-shares-surge/499753"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.5paisa.com/news/physicswallah-ipo-listing"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.5paisa.com/news/physicswallah-ipo-listing"
+   },
+   {
+    "fact": "hq",
+    "url": "https://valueforstartups.in/18-physicswallah"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.plindia.com/?p=21041"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.5paisa.com/news/physicswallah-ipo-listing"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "qonto.com": {
   "name": "Qonto",
@@ -12215,6 +15389,54 @@
   "checked": "2026-11-11",
   "employees": "501-1,000"
  },
+ "scaler.com": {
+  "name": "Scaler",
+  "legalName": "Interviewbit Software Services Pvt. Ltd.",
+  "founded": "2019",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Anshuman Singh",
+   "Abhimanyu Saxena"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Software and AI engineering programme",
+   "Data science and machine learning programme",
+   "DevOps and cloud engineering programme",
+   "Online master's degrees with Woolf",
+   "Executive certifications with IIM Trichy and IIT Roorkee"
+  ],
+  "markets": "India",
+  "description": "Scaler runs long online courses for working professionals in software and AI engineering, data science, DevOps and business, built around live classes, mentors and mock interviews. Anshuman Singh and Abhimanyu Saxena, both graduates of IIIT Hyderabad, started it in 2019, and it trades through their earlier company, InterviewBit. The Bengaluru firm also offers master's degrees in computer science and AI awarded through Woolf, plus certifications with IIM Trichy and IIT Roorkee. It says more than 100,000 people are part of its alumni community.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.scaler.com/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.scaler.com/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.scaler.com/about/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.scaler.com/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.scaler.com/about/"
+   },
+   {
+    "fact": "markets",
+    "url": "https://www.scaler.com/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "sharechat.com": {
   "name": "ShareChat",
   "legalName": "Mohalla Tech Private Limited",
@@ -12640,6 +15862,162 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "sleepyowl.co": {
+  "name": "Sleepy Owl",
+  "legalName": "Sleepy Owl Coffee Private Limited",
+  "founded": "2016",
+  "hq": "New Delhi, India",
+  "founders": [
+   "Ajai Thandi",
+   "Arman Sood",
+   "Ashwajeet Singh"
+  ],
+  "ownership": "Private",
+  "employees": "51-200",
+  "products": [
+   "Cold brew packs",
+   "Instant coffee",
+   "Hot brew bags",
+   "Ground coffee",
+   "Ready-to-drink cold coffee"
+  ],
+  "markets": "India",
+  "description": "Sleepy Owl sells coffee for making at home, including cold brew packs, instant coffee, hot brew bags, ground coffee and ready-to-drink cold coffee, made from 100% Arabica beans. Law school friends Arman Sood and Ashwajeet Singh started it in Delhi in 2016 with Ajai Thandi, an investment banker at JP Morgan, beginning in Singh's kitchen in Dwarka. Its products are sold on its own website, online marketplaces and in shops across Indian cities. Investors include Rukam Capital and DSG Consumer Partners, and it raised a further ₹12 crore in April 2026.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2018/04/sleepy-owl-helps-charge-mornings-fresh-cup-cold-brewed-coffee"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2018/04/sleepy-owl-helps-charge-mornings-fresh-cup-cold-brewed-coffee"
+   },
+   {
+    "fact": "hq",
+    "url": "https://nuffoodsspectrum.asia/?p=17090"
+   },
+   {
+    "fact": "employees",
+    "url": "https://fundup.ai/recently-funded-startups/company/eaf044c19dbb9f444e7fd276fc1c702883c5e9c7146f20a563b8e9dac322749f/sleepy-owl-coffee"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.businesstoday.in/latest/corporate/story/homegrown-coffee-brand-sleepy-owl-raises-usd-65-million-312958-2021-11-22"
+   },
+   {
+    "fact": "description",
+    "url": "https://entrepreneur.com/en-in/lifestyle/how-the-love-for-cold-brew-styled-coffee-made-way-for/321677"
+   },
+   {
+    "fact": "description",
+    "url": "https://ascendants.in/business-stories/gauri-khan-family-trust-sleepy-owl-funding-rs-12-crore/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "sliceit.com": {
+  "name": "slice",
+  "legalName": "slice small finance bank ltd",
+  "founded": "2016",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Rajan Bajaj"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Savings account",
+   "UPI credit card",
+   "Business banking",
+   "Pay in 3",
+   "Rewards"
+  ],
+  "markets": "India",
+  "description": "slice is a small finance bank offering savings accounts, a UPI credit card, business banking and a pay-in-three option through its app. Rajan Bajaj founded it in 2016 as SlicePay, a buy now pay later service, and it later became known for a card-like prepaid product for young people. In October 2024 it completed a merger with North East Small Finance Bank, a lender set up in 2016 to serve India's north-east, after approval from the RBI. The merged bank trades as slice and has its corporate office in Bengaluru.",
+  "status": "Active. Merged with North East Small Finance Bank in 2024 and now operates as slice small finance bank.",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/?p=496892"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/?p=496892"
+   },
+   {
+    "fact": "hq",
+    "url": "https://slice.bank.in/"
+   },
+   {
+    "fact": "products",
+    "url": "https://slice.bank.in/"
+   },
+   {
+    "fact": "status",
+    "url": "https://inc42.com/buzz/slice-completes-bank-merger-to-boost-presence-in-ne"
+   },
+   {
+    "fact": "description",
+    "url": "https://techcrunch.com/?p=2906584"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/?p=447647"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "smallcase.com": {
+  "name": "smallcase",
+  "founded": "2015",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Vasanth Kamath",
+   "Anugrah Shrivastava",
+   "Rohan Gupta"
+  ],
+  "ownership": "Private",
+  "products": [
+   "smallcases (ready-made stock and ETF portfolios)",
+   "Platform for SEBI-registered advisers and analysts",
+   "Broker and distribution integrations",
+   "Investment infrastructure for partners"
+  ],
+  "markets": "India",
+  "description": "smallcase is an investing platform built around ready-made portfolios of Indian stocks and ETFs, called smallcases, that are created by SEBI-registered advisers, analysts and fund houses and bought through the investor's own broker. IIT Kharagpur friends Vasanth Kamath, Anugrah Shrivastava and Rohan Gupta set up the company in Bengaluru in July 2015 and launched the platform with Zerodha a year later. It later added Axis and other brokers and now works with most of the country's large brokerages. Its investors include Sequoia India, Blume Ventures, Beenext and the DSP Group.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://digest.iimb.ac.in/?p=16090"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.peakxv.com/?p=284"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2021/10/turning-point-smallcase-zerodha-stock-trading/amp"
+   },
+   {
+    "fact": "products",
+    "url": "https://altss.com/profile/smallcase.md"
+   },
+   {
+    "fact": "description",
+    "url": "https://yourstory.com/2021/10/turning-point-smallcase-zerodha-stock-trading"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.entrepreneur.com/amphtml/345821"
+   },
+   {
+    "fact": "description",
+    "url": "https://entrepreneur.com/en-in/news-and-trends/stock-investment-platform-smallcase-raises-14mn-in-series/356793"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "snapdeal.com": {
   "name": "Snapdeal",
@@ -13101,6 +16479,58 @@
   ],
   "checked": "2026-11-11"
  },
+ "sugarcosmetics.com": {
+  "name": "SUGAR Cosmetics",
+  "legalName": "Vellvette Lifestyle Private Limited",
+  "founded": "2015",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Vineeta Singh",
+   "Kaushik Mukherjee"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "Lip, eye and face make-up",
+   "Skincare",
+   "SUGAR POP",
+   "Make-up tools and accessories"
+  ],
+  "markets": "India",
+  "description": "SUGAR Cosmetics makes lipsticks, eye and face make-up and skincare designed for Indian skin tones, sold through its own website and app, online marketplaces, its own stores and other beauty retailers. Husband and wife Vineeta Singh and Kaushik Mukherjee, who met at IIM Ahmedabad, launched it in Mumbai in 2015 after running Fab Bag, a beauty subscription box, from 2012. The brand began online and moved into shops from 2017, with counters in chains such as Shoppers Stop and Lifestyle. Singh is chief executive and Mukherjee chief operating officer.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2022/10/beauty-subscription-startup-led-launch-cosmetics-brand-sugar"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2022/10/beauty-subscription-startup-led-launch-cosmetics-brand-sugar"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2022/10/beauty-subscription-startup-led-launch-cosmetics-brand-sugar"
+   },
+   {
+    "fact": "employees",
+    "url": "https://thekredible.com/company/sugar-cosmetics/overview"
+   },
+   {
+    "fact": "products",
+    "url": "https://valueforstartups.in/26-sugar-cosmetics"
+   },
+   {
+    "fact": "description",
+    "url": "https://dealroom.co/companies/sugar-cosmetics/"
+   },
+   {
+    "fact": "description",
+    "url": "https://startupintros.com/orgs/sugar-cosmetics"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "sumup.com": {
   "name": "SumUp",
   "legalName": "SumUp Payments Limited",
@@ -13255,6 +16685,64 @@
   ],
   "checked": "2026-11-11"
  },
+ "swiggy.com": {
+  "name": "Swiggy",
+  "legalName": "Swiggy Limited",
+  "founded": "2014",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Sriharsha Majety",
+   "Nandan Reddy",
+   "Rahul Jaimini"
+  ],
+  "ownership": "Public (NSE: SWIGGY)",
+  "employees": "5,001-10,000",
+  "products": [
+   "Food delivery",
+   "Instamart quick commerce",
+   "Dineout restaurant reservations",
+   "Swiggy Genie package delivery",
+   "Swiggy One membership"
+  ],
+  "markets": "India",
+  "description": "Swiggy runs a food delivery app that connects customers with restaurants across Indian cities, and Instamart, a quick commerce service that delivers groceries and household goods in minutes from local stores. Sriharsha Majety and Nandan Reddy, whose earlier courier start-up Bundl was incorporated in 2013, launched Swiggy in Bengaluru in August 2014 with Rahul Jaimini, formerly of Myntra. It also runs Dineout for restaurant table bookings and a same-day package delivery service. Swiggy listed on the NSE and BSE in November 2024, and Majety is managing director and group chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://hyd.aliceblueonline.com/swiggy-ltd-history-growth-and-overview"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/company/swiggy/people/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/SWIGGY/company"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://valueforstartups.in/03-swiggy"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/SWIGGY/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://wikiwand.com/en/articles/Swiggy"
+   },
+   {
+    "fact": "description",
+    "url": "https://valueforstartups.in/03-swiggy"
+   },
+   {
+    "fact": "description",
+    "url": "https://stockanalysis.com/quote/nse/SWIGGY/company"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "takealot.com": {
   "name": "Takealot",
   "founded": "2011",
@@ -13326,6 +16814,61 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Takealot Online (RF) (Pty) Ltd"
+ },
+ "tallysolutions.com": {
+  "name": "Tally Solutions",
+  "legalName": "Tally Solutions Pvt. Ltd.",
+  "founded": "1986",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Bharat Goenka",
+   "Shyam Sunder Goenka"
+  ],
+  "ownership": "Private",
+  "products": [
+   "TallyPrime accounting and business software",
+   "TallyPrime Server",
+   "TallyPrime Developer",
+   "TallyPrime on AWS",
+   "TallyEducation courses"
+  ],
+  "markets": "100+ countries",
+  "description": "Tally Solutions makes TallyPrime, accounting and business management software used by small and medium businesses for bookkeeping, inventory, GST and other tax returns, banking and payroll. Bharat Goenka wrote its first program, Peutronics Financial Accountant, in Bengaluru in 1986 at the suggestion of his father, Shyam Sunder Goenka, who needed accounts software for his textile supplies business. The family still runs the company, with Sheela Goenka as chairperson and Tejas Goenka as managing director. Tally sells through a network of more than 28,000 partners and says it serves 2.5 million businesses in over 100 countries.",
+  "status": "Active",
+  "links": {
+   "linkedin": "https://www.linkedin.com/company/tallysolutions/"
+  },
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://tallysolutions.com/about-us/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://tipl.tallysolutions.com/about-us/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://awsdevint.tallysolutions.com/llm-info/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.crn.in/?p=66591"
+   },
+   {
+    "fact": "markets",
+    "url": "https://tallysolutions.com/bd/en/about-tally/"
+   },
+   {
+    "fact": "description",
+    "url": "https://awsdevint.tallysolutions.com/llm-info/"
+   },
+   {
+    "fact": "description",
+    "url": "https://tipl.tallysolutions.com/about-us/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "tamara.co": {
   "name": "Tamara",
@@ -13400,6 +16943,163 @@
   "checked": "2026-11-11",
   "legalName": "Tamara Finance Company"
  },
+ "tcs.com": {
+  "name": "TCS",
+  "legalName": "Tata Consultancy Services Limited",
+  "founded": "1968",
+  "hq": "Mumbai, India",
+  "founders": [
+   "J. R. D. Tata"
+  ],
+  "parent": "Tata Sons",
+  "ownership": "Public (NSE: TCS)",
+  "employees": "10,000+",
+  "products": [
+   "IT services and consulting",
+   "Cloud and data services",
+   "AI and enterprise software services",
+   "Business process services",
+   "Software products such as TCS BaNCS"
+  ],
+  "markets": "55 countries",
+  "description": "TCS provides IT services, consulting and business process services to large organisations, building and running software, cloud, data and AI systems for banks, retailers, manufacturers, governments and other clients, and sells its own products such as the TCS BaNCS banking platform. It was set up in 1968 by Tata Sons, under J. R. D. Tata, as Tata Computer Systems, and Tata Sons still owns most of its shares. The Mumbai company had 593,798 employees at the end of June 2026 and works from 202 delivery centres across 55 countries. It is listed on the NSE and BSE, and K. Krithivasan has been chief executive since June 2023.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://hyring.com/company/tcs"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.indiainfoline.com/company/tata-consultancy-services-ltd/summary"
+   },
+   {
+    "fact": "hq",
+    "url": "https://hyring.com/company/tcs"
+   },
+   {
+    "fact": "parent",
+    "url": "https://www.doc.surf/wiki/tata-consultancy-services"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://hyring.com/company/tcs"
+   },
+   {
+    "fact": "employees",
+    "url": "https://hyring.com/company/tcs"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.indiainfoline.com/company/tata-consultancy-services-ltd/summary"
+   },
+   {
+    "fact": "markets",
+    "url": "https://hyring.com/company/tcs"
+   },
+   {
+    "fact": "description",
+    "url": "https://hyring.com/company/tcs"
+   },
+   {
+    "fact": "description",
+    "url": "https://the-ken.com/tcs/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "teachmint.com": {
+  "name": "Teachmint",
+  "legalName": "Teachmint Technologies Pvt. Ltd.",
+  "founded": "2020",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Mihir Gupta",
+   "Payoj Jain",
+   "Divyansh Bordia",
+   "Anshuman Kumar"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Teachmint X interactive digital board",
+   "Connected Classroom platform",
+   "EduAI teaching tools",
+   "School management and fee software"
+  ],
+  "markets": "50+ countries",
+  "description": "Teachmint makes classroom technology for schools, centred on Teachmint X, an interactive digital board, and software for planning lessons and running school administration. Mihir Gupta, Payoj Jain, Divyansh Bordia and Anshuman Kumar, graduates of IIT Bombay and IIT Delhi, started it in Bengaluru in 2020 as a free app for tutors teaching online during lockdown. It has since moved towards hardware and AI tools for schools and has offices in Bengaluru, Singapore and Manila. The company says it is used in more than 50 countries.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://kr-asia.com/global-vc-firm-learn-capital-leads-usd-16-5-million-round-in-bengaluru-based-edtech-teachmint"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.citybiz.co/?p=55937"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com:443/2021/12/edtech-startup-teachmint-international-expansion"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.teachmint.com/about-us"
+   },
+   {
+    "fact": "markets",
+    "url": "https://india.entrepreneur.com/?p=88052"
+   },
+   {
+    "fact": "description",
+    "url": "https://india.entrepreneur.com/?p=88052"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "techmahindra.com": {
+  "name": "Tech Mahindra",
+  "legalName": "Tech Mahindra Limited",
+  "founded": "1986",
+  "hq": "Pune, India",
+  "parent": "Mahindra Group",
+  "ownership": "Public (NSE: TECHM)",
+  "employees": "10,000+",
+  "products": [
+   "IT services and consulting",
+   "Business process services",
+   "Network services",
+   "Engineering services",
+   "Enterprise applications",
+   "AI, cloud and infrastructure services"
+  ],
+  "markets": "Worldwide (more than 90 countries)",
+  "description": "Tech Mahindra provides IT services, consulting, business process services, network services and engineering work to companies in more than 90 countries. It was incorporated in 1986 as Mahindra British Telecom and took the Tech Mahindra name in 2006, and it is part of the Mahindra Group. Based in Pune, it had 152,206 employees at the end of September 2026. Its shares trade on the NSE and BSE, and Mohit Joshi is managing director and chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.techmahindra.com/about-us/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.globaldata.com/company-profile/tech-mahindra-limited/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://lapaasvoice.com/tech-mahindras-headcount-rises-by-5446-employees-in-q2-attrition-rate-falls-to-11-7/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.techmahindra.com/about-us/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://stockanalysis.com/quote/bom/532755/company"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "telegram.org": {
   "name": "Telegram",
   "founded": "2013",
@@ -13465,6 +17165,167 @@
   ],
   "checked": "2026-11-11",
   "legalName": "Telegram Messenger Inc."
+ },
+ "thesleepcompany.in": {
+  "name": "The Sleep Company",
+  "legalName": "Comfort Grid Technologies Pvt Ltd",
+  "founded": "2019",
+  "founders": [
+   "Priyanka Salot",
+   "Harshil Salot"
+  ],
+  "ownership": "Private",
+  "products": [
+   "SmartGRID mattresses",
+   "Pillows and bedding",
+   "Office and gaming chairs",
+   "Recliners and sofas",
+   "Beds"
+  ],
+  "markets": "India",
+  "description": "The Sleep Company makes mattresses, pillows, office and gaming chairs, recliners and beds built around SmartGRID, a grid-shaped polymer cushioning layer it holds patents for in India and Japan. Married IIM Calcutta classmates Priyanka and Harshil Salot launched it in October 2019, selling first through its own website and Amazon. It opened its first shops in 2022 after finding most buyers wanted to try a mattress before paying, and opened its 150th store in Mumbai in June 2025. The company says it has more than a million customers.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.indiaretailing.com/?p=168595"
+   },
+   {
+    "fact": "founders",
+    "url": "https://magzter.com/stories/business/Images-Retail/FROM-SLEEPLESSNESS-TO-SUCCESS"
+   },
+   {
+    "fact": "products",
+    "url": "https://themachinemaker.com/news/the-sleep-company-marks-150th-store-opening/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.markhub24.com/post/the-sleep-company-a-brand-strategy-built-on-product-innovation"
+   },
+   {
+    "fact": "description",
+    "url": "https://retail4growth.com/news/comfort-meets-tech-at-the-sleep-companys-150th-store-in-mumbai-7329"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.tribuneindia.com/news/business/the-sleep-company-celebrates-a-new-milestone-as-it-reveals-its-150th-store-launch-cementing-its-position-as-indias-fastest-growing-comfort-tech-brand/amp"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "thesouledstore.com": {
+  "name": "The Souled Store",
+  "legalName": "The Souled Store Private Limited",
+  "founded": "2013",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Vedang Patel",
+   "Rohin Samtaney",
+   "Aditya Sharma",
+   "Harsh Lal"
+  ],
+  "ownership": "Private",
+  "employees": "501-1,000",
+  "products": [
+   "Officially licensed pop-culture T-shirts and apparel",
+   "Casual wear and bottom wear",
+   "Sneakers and footwear",
+   "Bags, phone covers and accessories"
+  ],
+  "markets": "India",
+  "description": "The Souled Store sells clothing and accessories carrying officially licensed designs from films, TV shows, sport and comics, along with its own casual wear, sneakers, bags and phone covers. Vedang Patel, Rohin Samtaney, Aditya Sharma and Harsh Lal, three engineers and a lawyer, started it in Mumbai in 2013 with about ₹5.5 lakh of their own savings. Most sales come through its website and app, and it has been opening its own stores across India, with more than 70 by 2026. It reported operating revenue of ₹492 crore for the 2025 financial year.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/startups/the-souled-store-the-making-of-a-%E2%82%B9700-cr-d2c-lifestyle-brand-on-fandom-fashion/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/startups/the-souled-store-the-making-of-a-%E2%82%B9700-cr-d2c-lifestyle-brand-on-fandom-fashion/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://startuppedia.in/startup-stories/sara-ali-khan-backed-d2c-apparel-brand-the-souled-store-has-reached-4924-cr-operating-revenue-in-fy25-up-from-360-cr-in-fy24-10962022"
+   },
+   {
+    "fact": "employees",
+    "url": "https://inc42.com/company/the-souled-store/people/"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.rli.uk.com/?p=207696"
+   },
+   {
+    "fact": "description",
+    "url": "https://startuppedia.in/startup-stories/sara-ali-khan-backed-d2c-apparel-brand-the-souled-store-has-reached-4924-cr-operating-revenue-in-fy25-up-from-360-cr-in-fy24-10962022"
+   },
+   {
+    "fact": "description",
+    "url": "https://indiaretailing.com/?p=194379"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/startups/the-souled-store-the-making-of-a-%E2%82%B9700-cr-d2c-lifestyle-brand-on-fandom-fashion/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "thewholetruthfoods.com": {
+  "name": "The Whole Truth",
+  "legalName": "Fitshit Health Solutions Private Limited",
+  "founded": "2019",
+  "hq": "Mumbai, India",
+  "founders": [
+   "Shashank Mehta"
+  ],
+  "ownership": "Private",
+  "employees": "201-500",
+  "products": [
+   "Protein bars and energy bars",
+   "Protein powders",
+   "Muesli",
+   "Nut butters and spreads",
+   "Dark cocoa bars"
+  ],
+  "markets": "India",
+  "description": "The Whole Truth makes protein bars, energy bars, protein powders, muesli, nut butters and dark chocolate, and prints the full ingredient list on the front of each pack. Former Hindustan Unilever marketer Shashank Mehta left his job in June 2019 and launched the first bars that year from a small production unit in Saki Naka, Mumbai, under the name And Nothing Else. It took the name The Whole Truth in August 2020 and sells through its own website, online marketplaces, quick commerce apps and shops. It raised $51 million in a Series D round in February 2026 and reported revenue of about ₹220 crore for the 2025 financial year.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2021/10/sequoia-backed-clean-food-startup-d2c-market"
+   },
+   {
+    "fact": "founders",
+    "url": "https://inc42.com/?p=258503"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.outlookbusiness.com/start-up/news/the-whole-truth-twt-secures-15m-in-series-c-funding"
+   },
+   {
+    "fact": "employees",
+    "url": "https://inc42.com/company/the-whole-truth/captable/"
+   },
+   {
+    "fact": "products",
+    "url": "https://india.entrepreneur.com/news-and-trends/clean-label-food-startup-the-whole-truth-secures-usd-51-mn/502423"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.outlookbusiness.com/enterprise-3/big-idea-14/the-whole-truth-raises-the-bar-in-healthy-eating-6159"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.outlookbusiness.com/enterprise/big-idea/the-whole-truth-raises-the-bar-in-healthy-eating-6159"
+   },
+   {
+    "fact": "description",
+    "url": "https://inc42.com/company/the-whole-truth/captable/"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "toptal.com": {
   "name": "Toptal",
@@ -14335,6 +18196,63 @@
   ],
   "checked": "2026-11-11"
  },
+ "urbancompany.com": {
+  "name": "Urban Company",
+  "legalName": "Urban Company Limited",
+  "founded": "2014",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Abhiraj Singh Bhal",
+   "Varun Khaitan",
+   "Raghav Chandra"
+  ],
+  "ownership": "Public (NSE: URBANCO)",
+  "products": [
+   "Salon and beauty services at home",
+   "Cleaning and pest control",
+   "Appliance repair and servicing",
+   "Electricians, plumbers and carpenters",
+   "Native water purifiers and smart locks"
+  ],
+  "markets": "India, UAE, Singapore and Saudi Arabia",
+  "description": "Urban Company runs an app for booking home services such as salon and spa treatments, cleaning, pest control, appliance repairs, plumbing and electrical work, carried out by trained professionals who work through the platform. IIT alumni Abhiraj Singh Bhal, Varun Khaitan and Raghav Chandra founded it in Gurugram in 2014 as UrbanClap and renamed it Urban Company in January 2020. It also sells its own Native water purifiers and smart locks and operates in the UAE, Singapore and Saudi Arabia as well as India. The company listed on the NSE and BSE in September 2025, with Bhal as chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://yourstory.com/2025/09/urban-company-files-for-rs-1-900-cr-ipo"
+   },
+   {
+    "fact": "founders",
+    "url": "https://yourstory.com/2025/09/urban-company-files-for-rs-1-900-cr-ipo"
+   },
+   {
+    "fact": "hq",
+    "url": "https://yourstory.com/2025/09/urban-company-files-for-rs-1-900-cr-ipo"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://accel.com/news/a-decade-of-transforming-everyday-living-celebrating-urban-companys-ipo"
+   },
+   {
+    "fact": "markets",
+    "url": "https://techcrunch.com/2025/09/16/indias-urban-company-soars-58-above-ipo-price-in-years-most-subscribed-offering"
+   },
+   {
+    "fact": "products",
+    "url": "https://jkbfsl.com/market/ipo/news_details/IPO_News/1636902"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.indmoney.com/blog/ipo/urban-company-ipo-review"
+   },
+   {
+    "fact": "description",
+    "url": "https://nsearchives.nseindia.com/corporate/ADV_INE0CAZ01013_16SEP2025.pdf"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "urbanladder.com": {
   "name": "Urban Ladder",
   "legalName": "Reliance Retail Limited",
@@ -14729,6 +18647,110 @@
   "checked": "2026-11-11",
   "legalName": "The Constant Company, LLC"
  },
+ "vyaparapp.in": {
+  "name": "Vyapar",
+  "legalName": "Simply Vyapar Apps Pvt. Ltd.",
+  "founded": "2016",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Sumit Agarwal",
+   "Shubham Agarwal"
+  ],
+  "ownership": "Private",
+  "products": [
+   "Vyapar billing, accounting and inventory app",
+   "Vyapar TaxOne for accountants",
+   "NeoDove telecalling CRM",
+   "Thermal printers"
+  ],
+  "markets": "India and the Gulf",
+  "description": "Vyapar makes billing, accounting and stock management software for small businesses, with apps for Android, desktop and the web that create GST invoices and track payments due. Sumit Agarwal and Shubham Agarwal founded it in Bengaluru in 2016, and the company trades as Simply Vyapar Apps. It has added Vyapar TaxOne for accountants and tax professionals and the NeoDove telecalling CRM. Vyapar says more than 15 million businesses have used its software, and it has expanded beyond India into the Gulf.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://vyaparapp.in/about-us"
+   },
+   {
+    "fact": "founders",
+    "url": "https://vyaparapp.in/about-us"
+   },
+   {
+    "fact": "hq",
+    "url": "https://vyaparapp.in/about-us"
+   },
+   {
+    "fact": "products",
+    "url": "https://vyaparapp.in/about-us"
+   },
+   {
+    "fact": "markets",
+    "url": "https://vyaparapp.in/about-us"
+   },
+   {
+    "fact": "description",
+    "url": "https://vyaparapp.in/about-us"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "wakefit.co": {
+  "name": "Wakefit",
+  "legalName": "Wakefit Innovations Limited",
+  "founded": "2016",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Ankit Garg",
+   "Chaitanya Ramalingegowda"
+  ],
+  "ownership": "Public (NSE: WAKEFIT)",
+  "employees": "1,001-5,000",
+  "products": [
+   "Mattresses",
+   "Pillows and bedding",
+   "Beds and bed frames",
+   "Sofas and living room furniture",
+   "Wardrobes, dining and study furniture"
+  ],
+  "markets": "India",
+  "description": "Wakefit makes and sells mattresses, pillows, beds, sofas, wardrobes, dining sets and other home furniture, mainly through its own website and app and a growing number of its own stores. Ankit Garg and Chaitanya Ramalingegowda, both IIM Bangalore alumni, founded it in Bengaluru in 2016, starting with a single mattress sold online with a 100-night trial. Mattresses still bring in more than half of its revenue, which was about ₹1,310 crore in the 2025 financial year. Wakefit listed on the NSE and BSE in December 2025, with Garg as chairperson and chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://wsnext.trendlyne.com/ipo/detail/2024/wakefit-innovations-ltd/"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.bajajbroking.in/blog/how-to-apply-for-wakefit-innovations-ipo-guide"
+   },
+   {
+    "fact": "hq",
+    "url": "https://businesstoday.in/markets/ipo-corner/story/wakefit-ipo-to-open-on-december-8-check-price-band-issue-size-key-dates-other-details-504522-2025-12-02"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.chittorgarh.com/ipo_faqs/wakefit-innovations-ipo/2488/"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.ipoji.com/ipo/wakefit-innovations-ipo"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.outlookbusiness.com/news/wakefit-shares-tumble-below-ipo-price-on-debut-day-market-cap-falls-to-6146-cr"
+   },
+   {
+    "fact": "description",
+    "url": "https://valueforstartups.in/27-wakefit"
+   },
+   {
+    "fact": "description",
+    "url": "https://wsnext.trendlyne.com/ipo/detail/2024/wakefit-innovations-ltd/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "wallapop.com": {
   "name": "Wallapop",
   "founded": "2013",
@@ -15047,6 +19069,55 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "wipro.com": {
+  "name": "Wipro",
+  "legalName": "Wipro Limited",
+  "founded": "1945",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Mohamed Hasham Premji"
+  ],
+  "ownership": "Public (NSE: WIPRO)",
+  "employees": "10,000+",
+  "products": [
+   "IT services and consulting",
+   "Cloud and infrastructure services",
+   "Cybersecurity",
+   "Data, analytics and AI",
+   "Engineering services",
+   "Business process services"
+  ],
+  "markets": "Worldwide (about 65 countries)",
+  "description": "Wipro provides IT services, consulting and business process services to large companies, with work spanning cloud, cybersecurity, data and AI, applications and engineering in about 65 countries. It was incorporated in 1945 in Amalner, Maharashtra, as Western India Vegetable Products, a cooking oil business founded by Mohamed Hasham Premji, and moved into computing under his son Azim Premji from the late 1970s. Headquartered in Bengaluru, it had 236,328 employees at the end of September 2026. Its shares trade on the NSE, BSE and NYSE, and Srini Pallia is chief executive.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.storyboard18.com/amp/brand-makers/wipro-marks-80-years-since-incorporation-as-rishad-premji-shares-original-company-certificate-86876.htm"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.indiainfoline.com/company/wipro-ltd/summary"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.deccanherald.com/business/wipro-headcount-falls-by-6716-in-q2-biggest-decline-in-recent-quarters-4184455"
+   },
+   {
+    "fact": "employees",
+    "url": "https://www.peoplematters.in/news/business/wipro-workforce-declines-28percent-sequentially-to-236328-in-q2-fy27-52773"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.wipro.com/about-us/"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.psuconnect.in/financial/wipro-q2-fy27-it-services-flat-qoq-margin-improves-to-16-5"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "withings.com": {
   "name": "Withings",
@@ -15808,6 +19879,50 @@
   ],
   "checked": "2026-11-11"
  },
+ "zensar.com": {
+  "name": "Zensar Technologies",
+  "legalName": "Zensar Technologies Limited",
+  "hq": "Pune, India",
+  "parent": "RPG Group",
+  "ownership": "Public (NSE: ZENSARTECH)",
+  "employees": "10,000+",
+  "products": [
+   "Digital experience services",
+   "Engineering services",
+   "Cloud and infrastructure services",
+   "Data and AI services (ZenseAI)"
+  ],
+  "markets": "Worldwide",
+  "description": "Zensar Technologies provides software engineering, digital experience, cloud and data services to large companies. It is based in Pune and is part of the RPG Group, an Indian conglomerate. The company sells AI tools under its ZenseAI name, including a platform launched in July 2026 for testing and governing enterprise AI systems, and AI-influenced deals made up about a third of its order book in late 2026. Its shares trade on the NSE and BSE, and Manish Tandon is chief executive and managing director.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "hq",
+    "url": "https://zensar.com/about/who-we-are"
+   },
+   {
+    "fact": "parent",
+    "url": "https://zensar.com/about/who-we-are"
+   },
+   {
+    "fact": "employees",
+    "url": "https://alphastreet.com/india/zensar-tech-q2-fy26-earnings-results"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.sahi.com/news/zensar-technologies-revamps-sales-force-and-forecasts-stronger-q2-business-trajectory-143-PE1_CORP"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://financialfilings.com/companies/zensar-technologies-ltd/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.investywise.com/?p=125101"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
  "zeptonow.com": {
   "name": "Zepto",
   "legalName": "Zepto Limited",
@@ -16087,6 +20202,180 @@
    }
   ],
   "checked": "2026-11-11"
+ },
+ "zoho.com": {
+  "name": "Zoho",
+  "legalName": "Zoho Corporation Private Limited",
+  "founded": "1996",
+  "hq": "Chennai, India",
+  "founders": [
+   "Sridhar Vembu",
+   "Tony Thomas"
+  ],
+  "ownership": "Private",
+  "employees": "10,000+",
+  "products": [
+   "Zoho CRM",
+   "Zoho One business software suite",
+   "Zoho Books and finance apps",
+   "Zoho Workplace email and office apps",
+   "ManageEngine IT management software"
+  ],
+  "markets": "Worldwide",
+  "description": "Zoho makes business software, including CRM, accounting, email, office, HR and help desk apps sold separately or together as Zoho One, and runs ManageEngine, which sells IT management and security tools. Sridhar Vembu and Tony Thomas founded it in 1996 as AdventNet, which made network management software, and renamed it Zoho Corporation in 2009. The Chennai company has never taken outside investment, has more than 19,000 employees and offices in 28 countries, and also runs offices in rural Tamil Nadu towns such as Tenkasi. It passed one million paying customers in February 2026, and Shailesh Kumar Davey has been group chief executive since January 2025.",
+  "status": "Active",
+  "links": {
+   "facebook": "https://www.facebook.com/zoho"
+  },
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://prezohoweb.zoho.com/news/zoho-corporation-surpasses-one-million-customers.html"
+   },
+   {
+    "fact": "founders",
+    "url": "https://geo.sig.ai/brands/zoho.md"
+   },
+   {
+    "fact": "hq",
+    "url": "https://prezohoweb.zoho.com/news/zoho-corporation-surpasses-one-million-customers.html"
+   },
+   {
+    "fact": "employees",
+    "url": "https://prezohoweb.zoho.com/news/zoho-corporation-surpasses-one-million-customers.html"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.everydev.ai/developers/zoho-corporation"
+   },
+   {
+    "fact": "markets",
+    "url": "https://itbrief.co.uk/story/zoho-tops-one-million-paying-customers-in-30th-year"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.zoho.com/about-us.html"
+   },
+   {
+    "fact": "description",
+    "url": "https://yespress.io/zoho-corporation.md"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "zomato.com": {
+  "name": "Zomato",
+  "legalName": "Eternal Limited",
+  "founded": "2008",
+  "hq": "Gurugram, India",
+  "founders": [
+   "Deepinder Goyal",
+   "Pankaj Chaddah"
+  ],
+  "parent": "Eternal",
+  "ownership": "Public (NSE: ETERNAL)",
+  "employees": "10,000+",
+  "products": [
+   "Food delivery app",
+   "Restaurant listings and reviews",
+   "Zomato Gold membership",
+   "Hyperpure supplies for restaurants",
+   "District going-out app"
+  ],
+  "markets": "India",
+  "description": "Zomato is a food delivery and restaurant discovery app that lets people order from restaurants, browse menus and book tables across Indian cities. Deepinder Goyal and Pankaj Chaddah, then analysts at Bain & Company, started it in 2008 as Foodiebay, a website that put local restaurant menus online, and renamed it Zomato in 2010. Its parent company changed its name from Zomato Limited to Eternal in 2025 and also owns Blinkit, the District app and Hyperpure, which supplies restaurants. Eternal has been listed on the NSE and BSE since July 2021, and Albinder Dhindsa took over as chief executive from Goyal in February 2026.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://inc42.com/?p=506033"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.globalindian.com/story/cover-story/deepinder-goyal-zomato-ceo/"
+   },
+   {
+    "fact": "hq",
+    "url": "https://stockanalysis.com/quote/nse/ETERNAL/company"
+   },
+   {
+    "fact": "parent",
+    "url": "https://www.outlookbusiness.com/news/zomato-becomes-eternal-post-mca-approval-is-blinkit-behind-the-name-change"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.indiainfoline.com/company/eternal-ltd/summary"
+   },
+   {
+    "fact": "employees",
+    "url": "https://stockanalysis.com/quote/nse/ETERNAL/company"
+   },
+   {
+    "fact": "products",
+    "url": "https://cms.storyboard18.com/?p=55896"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.globalindian.com/story/cover-story/deepinder-goyal-zomato-ceo/"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.marketscreener.com/quote/stock/ETERNAL-LIMITED-125138034/company-governance/"
+   }
+  ],
+  "checked": "2026-11-12"
+ },
+ "zoomcar.com": {
+  "name": "Zoomcar",
+  "legalName": "Zoomcar Holdings, Inc.",
+  "founded": "2013",
+  "hq": "Bengaluru, India",
+  "founders": [
+   "Greg Moran",
+   "David Back"
+  ],
+  "ownership": "Public (OTCQB: ZCAR)",
+  "products": [
+   "Self-drive car rentals",
+   "Peer-to-peer car sharing for hosts",
+   "Vehicle subscriptions",
+   "Motorcycle and scooter rentals",
+   "Zoomcar Cabs chauffeur pilot"
+  ],
+  "markets": "India",
+  "description": "Zoomcar runs a peer-to-peer car sharing marketplace where car owners, called hosts, list their vehicles and guests rent them for self-drive trips by the hour or day. University of Pennsylvania graduates Greg Moran and David Back, both from the US, launched it in Bengaluru in February 2013, at first as a self-drive rental company with its own fleet. Its US holding company began trading on Nasdaq in December 2023 after a merger with a special purpose acquisition company, and its shares now trade on the OTCQB market. Zoomcar has added motorcycle and scooter rentals in Bengaluru.",
+  "status": "Active",
+  "sources": [
+   {
+    "fact": "founded",
+    "url": "https://www.entrepreneur.com/en-in/news-and-trends/car-rental-platform-zoomcar-lists-on-nasdaq/468483"
+   },
+   {
+    "fact": "founders",
+    "url": "https://www.entrepreneur.com/en-in/news-and-trends/car-rental-platform-zoomcar-lists-on-nasdaq/468483"
+   },
+   {
+    "fact": "hq",
+    "url": "https://www.nasdaq.com/press-release/zoomcar-delivers-highest-ever-contribution-profit-marking-ninth-straight-profitable"
+   },
+   {
+    "fact": "ownership",
+    "url": "https://www.barchart.com/story/news/3055230/zoomcar-adds-motorcycle-and-scooter-rentals-alongside-cars-expanding-into-india-s-high-frequency-daily-mobility-market"
+   },
+   {
+    "fact": "products",
+    "url": "https://www.roic.ai/quote/ZCAR"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.caplight.com/company/zoomcar"
+   },
+   {
+    "fact": "description",
+    "url": "https://www.barchart.com/story/news/3055230/zoomcar-adds-motorcycle-and-scooter-rentals-alongside-cars-expanding-into-india-s-high-frequency-daily-mobility-market"
+   }
+  ],
+  "checked": "2026-11-12"
  },
  "zoopla.co.uk": {
   "name": "Zoopla",
