@@ -3713,7 +3713,7 @@ const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day
 const inl = t => esc(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(((?:https:\/\/|\/|#)[^\s)]+)\)/g, (m, x, u) => /^https:\/\/(?!www\.knowthecompany\.com)/.test(u) ? `<a href="${u}" target="_blank" rel="noopener">${x}</a>` : `<a href="${u}">${x}</a>`);
 const postBlock = ([k, v]) => k === 'h' ? `<h2>${esc(v)}</h2>` : k === 'h3' ? `<h3>${esc(v)}</h3>` : k === 'ul' ? `<ul>${v.map(i => `<li>${inl(i)}</li>`).join('')}</ul>` : k === 'ol' ? `<ol>${v.map(i => `<li>${inl(i)}</li>`).join('')}</ol>`
   : k === 'note' ? `<div class="box soft" style="margin:22px 0"><p>${inl(v)}</p></div>` : k === 'quote' ? `<blockquote>${v.split('\n').map(x => `<p>${inl(x)}</p>`).join('')}</blockquote>`
-  : k === 'faq' ? `<h2>Frequently asked questions</h2>${v.map(([q, a]) => `<h3>${esc(q)}</h3><p>${inl(a)}</p>`).join('')}`
+  : k === 'faq' ? `<h2>Frequently asked questions</h2><div class="faqs">${v.map(([q, a]) => `<details class="faq"><summary><h3>${esc(q)}</h3><span class="pm" aria-hidden="true"></span></summary><p>${inl(a)}</p></details>`).join('')}</div>`
   : k === 'src' ? `<h2>Sources</h2><ul class="sources">${v.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('')}</ul>` : `<p>${inl(v)}</p>`;
 const postCard = p => `<a class="postcard" href="#${p.id}">${p.image ? `<img class="cover" src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="800" loading="lazy" style="object-fit:cover;width:100%;aspect-ratio:3/2;height:auto;padding:0">` : `<span class="cover" aria-hidden="true" style="background:var(--t${p.tone});color:var(--t${p.tone}i)">${esc(p.cat)}</span>`}
   <div class="postmeta"><span>${fmtDate(p.date)}</span><span>${p.read} min read</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></a>`;
@@ -3729,7 +3729,7 @@ function vBlog() {
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
 function listCard(where) {
-  return `<div class="listcard ${where}"><img class="lc-img" src="/images/banner/list-your-company.webp" alt="Shop owner celebrating a five-star review as his business appears on the map" width="720" height="480" loading="lazy" decoding="async"><p class="lc-eye">For businesses</p><h2>List your company for free</h2>
+  return `<div class="listcard ${where}"><img class="lc-img" src="/images/banner/list-your-company.webp" alt="Shop owner celebrating a five-star review as his business appears on the map" width="720" height="480" loading="lazy" decoding="async"><p class="lc-eye">For businesses</p><h2>List your company for <span class="lc-free">FREE</span></h2>
     <ul class="ticks">${['Verified company page','Reply to customer and employee reviews','Readable by Google and AI search tools'].map(t => `<li>${TICK('var(--gold)')}<span>${t}</span></li>`).join('')}</ul>
     <a class="btn gold" href="#list">List your company</a>
     <p class="lc-note">${LAUNCH ? `Basic is free for your first year when you join before ${LAUNCH_END}.` : 'Plans from [[PB]] a year.'}</p></div>`;

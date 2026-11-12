@@ -304,7 +304,7 @@ function articleHtml(post: Post): string {
   return (post.body || []).map(([k, v]) => k === "h" ? `<h2>${esc(v)}</h2>` : k === "h3" ? `<h3>${esc(v)}</h3>`
     : k === "ul" || k === "ol" ? `<${k}>${(v as string[]).map(i => `<li>${inl(i)}</li>`).join("")}</${k}>`
     : k === "note" ? `<p>${inl(v)}</p>` : k === "quote" ? `<blockquote>${String(v).split("\n").map(x => `<p>${inl(x)}</p>`).join("")}</blockquote>`
-    : k === "faq" ? `<h2>Frequently asked questions</h2>${(v as [string, string][]).map(([q, a]) => `<h3>${esc(q)}</h3><p>${inl(a)}</p>`).join("")}`
+    : k === "faq" ? `<h2>Frequently asked questions</h2><div class="faqs">${(v as [string, string][]).map(([q, a]) => `<details class="faq"><summary><h3>${esc(q)}</h3><span class="pm" aria-hidden="true"></span></summary><p>${inl(a)}</p></details>`).join("")}</div>`
     : k === "src" ? `<h2>Sources</h2><ul>${(v as [string, string][]).map(([t, u]) => `<li><a href="${esc(u)}" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>`
     : `<p>${inl(v)}</p>`).join("");
 }
