@@ -49,12 +49,18 @@ const update = auth.elevate(items.update);
 const insert = auth.elevate(items.insert);
 const query = auth.elevate(items.query);
 
-/* The company, if this member is a verified owner of it. */
+/* The company, if this member may manage its plan: a verified owner, or someone whose claim on it is
+   still being checked (they can choose and pay for a plan straight away; the Verified badge follows the
+   check). Not when someone else is already the company's verified owner. */
 export async function ownedCompany(memberId: string, companyId: string): Promise<any | null> {
   if (!companyId) return null;
   const c: any = await get("Companies", companyId).catch(() => null);
-  if (!c || !adminTouched(c) || c.claimStatus !== "verified") return null;
-  return (c.ownerMemberIds || []).includes(memberId) ? c : null;
+  if (!c) return null;
+  const owners: string[] = adminTouched(c) && c.claimStatus === "verified" ? (c.ownerMemberIds || []) : [];
+  if (owners.includes(memberId)) return c;
+  if (owners.length) return null;
+  const claims = (await query("Claims").eq("company", companyId).limit(50).find()).items;
+  return claims.some((cl: any) => cl._owner === memberId && cl.status !== "rejected") ? c : null;
 }
 
 export async function billingFor(companyId: string): Promise<any[]> {
@@ -71,7 +77,10 @@ export const saveBilling = (row: any) => (row._id ? update("Billing", row) : ins
 export async function setCompanyPlan(companyId: string, plan: string, until?: Date | null) {
   const c: any = await get("Companies", companyId);
   if (!c) return;
-  await update("Companies", { ...c, plan, ...(until ? { planEndsAt: until } : {}) });
+  /* Writing here marks the company as touched by the team, so anything a member set on a company they
+     added themselves (verified status, owners, badges) is cleared first. Only the team verifies. */
+  const clean = adminTouched(c) ? {} : { claimStatus: "none", verifiedVia: "", ownerMemberIds: [], employerPage: null, warning: null, logo: "" };
+  await update("Companies", { ...c, ...clean, plan, ...(until ? { planEndsAt: until } : {}) });
 }
 
 /* ---- Razorpay API ---- */

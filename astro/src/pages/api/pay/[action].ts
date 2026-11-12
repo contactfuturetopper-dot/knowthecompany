@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     if (!me) return json({ error: "Please log in again." }, 401);
     const body = await request.json().catch(() => ({}));
     const company = await ownedCompany(me.id, String(body.company || ""));
-    if (!company) return json({ error: "Only a verified owner of this company can manage its plan." }, 403);
+    if (!company) return json({ error: "Only someone who has claimed this company can manage its plan." }, 403);
 
     if (action === "status") {
       const rows = await billingFor(company._id);

@@ -78,7 +78,7 @@ await import('./app.test.mjs');
 await new Promise(r => setTimeout(r, 200));
 
 const app = g.document.getElementById('app');
-const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
+const routes = ['home', 'categories', 'cat-fintech-and-banking', 'search', 'co-razorpay', 'co-notion', 'co-zepto', 'co-1password', 'invite-co-razorpay', 'invite-team-co-razorpay', 'add', 'claim', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate', 'why-list', 'list', 'about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'pricing', 'refunds', 'jobs', 'login', 'business-login', 'my-reviews', 'dashboard', 'write-for-us', 'sample', 'nope'];
 const report = [];
 for (const r of routes) {
   g.location.hash = r;
@@ -99,7 +99,7 @@ for (const r of routes) {
 // so search engines and AI crawlers that don't run JavaScript get the whole page (astro/src/lib/page.ts).
 {
   globalThis.__memberFn({ loggedIn: false, loading: false, member: null, error: null });
-  const SNAP = ['about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'refunds', 'pricing', 'why-list', 'list', 'write-for-us', 'categories', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate'];
+  const SNAP = ['about', 'contact', 'help', 'guidelines', 'terms', 'privacy', 'refunds', 'pricing', 'why-list', 'claim', 'list', 'write-for-us', 'categories', 'tools', 'tool-offer', 'tool-hike', 'tool-gratuity', 'tool-hra', 'tool-rate'];
   const KEEP = new Set(['H2', 'H3', 'H4', 'P', 'UL', 'OL', 'LI', 'A', 'STRONG', 'B', 'EM', 'I', 'SECTION', 'DIV', 'SPAN', 'SMALL', 'DL', 'DT', 'DD', 'BLOCKQUOTE', 'TABLE', 'TR', 'TD', 'TH', 'TBODY', 'THEAD', 'BR', 'DETAILS', 'SUMMARY']);
   const snaps = {};
   for (const r of SNAP) {
@@ -221,7 +221,7 @@ report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '
   const AUTH = { login: ['Log in to Know The Company', 'Log in or create a free account to write reviews.'], 'business-login': ['Company login', 'Log in to manage your company page, reply to reviews and see your plan.'], dashboard: ['Company dashboard', 'Log in to manage your company page.'], 'my-reviews': ['My reviews', 'Log in to see the reviews you have written.'], search: ['Search companies', 'Search for a company by name or website.'] };
   await go('blog'); const posts = [...new Set([...app.querySelectorAll('a.postcard')].map(a => routeOf(a.getAttribute('href'))))];
   await go('tools'); const tools = [...new Set([...app.querySelectorAll('a[href]')].map(a => routeOf(a.getAttribute('href'))).filter(r => r.startsWith('tool-')))];
-  const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', ...(posts.length ? ['blog'] : []), 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
+  const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'claim', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', ...(posts.length ? ['blog'] : []), 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
   const out = [];
   const DEFAULT_DESC = 'Customer and employee reviews of startups and growing companies, on one page. Know the company before you deal with it.';
   for (const r of [...pages, ...tools, ...posts]) {

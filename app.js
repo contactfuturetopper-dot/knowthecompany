@@ -13,7 +13,7 @@ const slug = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ
    server hosting (the astro/ folder): the server answers every address with this app and the page's
    own title, description and canonical tag, and the app reads the page from the address. Old links
    still work: /#route and /page.html addresses are moved to the clean one. */
-const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
+const PAGE_ROUTES = ['categories', 'search', 'tools', 'why-list', 'add', 'claim', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', 'blog', 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
 const PAGE_TITLES = { categories: 'All categories', search: 'Search companies', tools: 'Free tools', 'why-list': 'Why list your company', add: 'Add a company', list: 'List your company', dashboard: 'Company dashboard', login: 'Log in', 'business-login': 'Company login', 'my-reviews': 'My reviews', jobs: 'Jobs', guidelines: 'How Know The Company works', blog: 'Blog for companies', 'write-for-us': 'Write for us', about: 'About us', contact: 'Contact us', help: 'Help centre', terms: 'Terms of use', privacy: 'Privacy policy', pricing: 'Pricing', refunds: 'Refunds and cancellations' };
 const PATH_KINDS = [['company', 'co-'], ['category', 'cat-'], ['blog', 'blog-'], ['tools', 'tool-']];
 function routeOfPath(path) {
@@ -126,7 +126,8 @@ const PAGE_DESCS = {
   tools: 'Free tools for your career and business: compare job offers, work out a salary hike, set a freelance rate, and estimate gratuity and HRA in India.',
   'why-list': 'Why companies list on Know The Company: a verified page, public replies to reviews, and an honest record that customers, job seekers and AI search can find.',
   add: 'Can\'t find a company? Add it to Know The Company and write the first review. The company can claim its page later.',
-  list: 'Claim your free company page on Know The Company. Reply to customer and employee reviews and show job seekers what working with you is like.',
+  claim: 'Claim your company’s page on Know The Company. Verify it in minutes, reply to customer and employee reviews and set up your employer page.',
+  list: 'Add your company to Know The Company. Reply to customer and employee reviews and show job seekers what working with you is like.',
   dashboard: 'Manage your company page on Know The Company: your details, replies to reviews and your listing plan.',
   login: 'Log in or create a free Know The Company account to write customer and employee reviews.',
   'business-login': 'Company login for Know The Company. Manage your company page, reply to reviews and check your plan.',
@@ -1369,7 +1370,7 @@ function coLinks(c) {
 }
 function coSide(c) {
   const cl = CLAIMS[c.id];
-  if (!cl) return `<div class="box"><h2>Is this your company?</h2><p>Claim this profile to verify it, reply to reviews and set up an employer page.</p><a class="btn p" href="#list" data-act="claim" data-id="${c.id}" data-name="${esc(c.name)}" data-web="${esc(c.web)}">${LAUNCH ? 'Claim free' : 'Claim for [[PB]] a year'}</a></div>
+  if (!cl) return `<div class="box"><h2>Is this your company?</h2><p>Claim this profile to verify it, reply to reviews and set up an employer page.</p><a class="btn p" href="#claim" data-act="claim" data-id="${c.id}" data-name="${esc(c.name)}" data-web="${esc(c.web)}">${LAUNCH ? 'Claim free' : 'Claim for [[PB]] a year'}</a></div>
       <div class="box soft"><h2>About this listing</h2><p>This profile was created from public information so customers and employees can share reviews. ${esc(c.name)} has not claimed it and is not affiliated with Know The Company.</p><div style="display:flex;flex-wrap:wrap;gap:14px"><a href="#guidelines" style="font-size:14px;font-weight:700">How we list companies</a><button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:14px">Suggest an edit</button></div></div>`;
   if (!isVerifiedCo(c)) return `<div class="box soft"><h2>Claimed by the company</h2><p>${esc(c.name)} has claimed this profile. We're checking its documents, and the Verified badge appears once that's done. Verification never changes ratings.</p></div>`;
   const P = cprof(c); const plus = coPlan(c) === 'plus';
@@ -1392,25 +1393,31 @@ const emailDom = e => ((e || '').split('@')[1] || '').toLowerCase().trim();
 const FREE_MAIL = ['gmail.com','googlemail.com','yahoo.com','yahoo.co.in','outlook.com','hotmail.com','live.com','msn.com','icloud.com','me.com','proton.me','protonmail.com','aol.com','rediffmail.com','zoho.com','yandex.com','gmx.com','mail.com'];
 const domainMatch = (email, web) => { const e = emailDom(email), d = domOf(web); return !!e && !!d && !FREE_MAIL.includes(e) && (e === d || e.endsWith('.' + d)); };
 const isClaimed = c => !!CLAIMS[c.id] || c.added === 2;
+/* Each claim gets its own random token for the website check, so a record left by someone else can't be reused. */
+const newCf = () => { let t = ''; try { t = [...crypto.getRandomValues(new Uint8Array(10))].map(b => b.toString(16).padStart(2, '0')).join(''); } catch (e) { t = Math.random().toString(36).slice(2) + Date.now().toString(36); } return { method: 'website', token: 'ktc-' + t }; };
 const vToken = s => { let h = 2166136261; for (const ch of String(s)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return 'ktc-' + h.toString(36) + (h % 997).toString(36); };
 const ownerPill = c => { const cl = CLAIMS[c.id]; if (cl || c.added === 2) { const v = isVerifiedCo(c); return v ? `<span class="pill ver" style="font-size:13px">${TICK('var(--accent-ink)')}Verified company</span>` : '<span class="pill cat" style="font-size:13px">Claimed · verification in progress</span>'; } return `<span class="pill un" style="font-size:13px">Unclaimed profile</span>${c.added ? '<span class="pill cat" style="font-size:13px">Added by a reviewer</span>' : ''}`; };
 const ROLES = ['Founder or owner', 'HR or people team', 'Marketing or communications', 'Recruiting', 'Other role'];
 function cfResults(q) {
   q = (q || '').trim().toLowerCase();
-  if (!q) return '<p class="meta">Start typing your company’s name or website.</p>';
+  const listing = S.flow === 'list';
+  if (!q) return `<p class="meta">${listing ? 'Type your company’s name or website. We’ll check it isn’t already on Know The Company.' : 'Start typing your company’s name or website.'}</p>`;
   const dq = domOf(q);
   const list = COS.filter(c => c.name.toLowerCase().includes(q) || (dq && c.web.includes(dq))).slice(0, 6);
-  return `<div class="cfres">${list.map(c => `<div class="cfrow">${avatar(c, 40, 14)}<div class="t"><b>${esc(c.name)}</b><small>${esc(c.web)} · ${esc(c.country)}${isClaimed(c) ? ' · already managed' : ''}</small></div>${isClaimed(c) ? `<button class="btn g" type="button" data-act="cf-request" data-id="${c.id}">Request access</button>` : `<button class="btn p" type="button" data-act="cf-claim" data-id="${c.id}">Claim</button>`}</div>`).join('') || `<p class="meta">No company called “${esc(q)}” yet.</p>`}
-    <div class="cfnew"><span><b>Not listed?</b> <span class="meta">Add your company in a couple of minutes.</span></span><button class="btn o" type="button" data-act="cf-new">Add your company</button></div></div>`;
+  const row = c => `<div class="cfrow">${avatar(c, 40, 14)}<div class="t"><b>${esc(c.name)}</b><small>${esc(c.web)} · ${esc(c.country)}${isClaimed(c) ? ' · already managed' : ''}</small></div>${isClaimed(c) ? `<button class="btn g" type="button" data-act="cf-request" data-id="${c.id}">Request access</button>` : listing ? `<a class="btn g" href="#claim" data-act="claim" data-id="${c.id}">Claim it instead</a>` : `<button class="btn p" type="button" data-act="cf-claim" data-id="${c.id}">Claim</button>`}</div>`;
+  if (listing) return `<div class="cfres">${list.length ? `<p class="meta">${list.length === 1 ? 'This company is' : 'These companies are'} already on Know The Company. If one is yours, claim it instead and keep its reviews.</p>${list.map(row).join('')}` : '<p class="meta">Not on Know The Company yet. Add it below.</p>'}
+    <div class="cfnew"><span><b>${list.length ? 'Yours isn’t here?' : 'Ready to add it?'}</b> <span class="meta">Add your company in a couple of minutes.</span></span><button class="btn p" type="button" data-act="cf-new">Add your company</button></div></div>`;
+  return `<div class="cfres">${list.length ? list.map(row).join('') : `<p class="meta">No listed company matches “${esc(q)}”.</p>`}
+    <div class="cfnew"><span><b>Not listed yet?</b> <span class="meta">Add your company instead.</span></span><a class="btn o" href="#list">List your company</a></div></div>`;
 }
-function cfRefresh(scroll = true) { const p = document.getElementById('claim-panel'); if (p) { p.innerHTML = claimPanel(); if (scroll) document.getElementById('list-form-area').scrollIntoView({ block: 'start' }); } }
+function cfRefresh(scroll = true) { const p = document.getElementById('claim-panel'); if (p) { p.innerHTML = curText(claimPanel()); if (scroll) document.getElementById('list-form-area').scrollIntoView({ block: 'start' }); } }
 function claimPanel() {
   const blk = claimBlock(); if (blk) return blk;
-  const d = S.listData, st = S.listStep, cf = S.cf || (S.cf = { method: 'email' });
-  const labels = ['Find your company', 'Your details', 'Verify and plan'];
+  const d = S.listData, st = S.listStep, cf = S.cf || (S.cf = newCf());
+  const labels = S.flow === 'list' ? ['Check it’s new', 'Company details', 'Verify and plan'] : ['Find your company', 'Your details', 'Verify and plan'];
   const steps = typeof st === 'number' && st < 4 ? `<div class="progress" aria-label="Progress">${labels.map((l, i) => `<span class="${st === i ? 'on' : ''}">${i + 1} · ${l}</span>`).join('')}</div>` : '';
   const co = d.coId ? BYID[d.coId] : null;
-  if (!S.user) return `<div class="formcard"><h2>Log in to claim or add your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
+  if (!S.user) return `<div class="formcard"><h2>Log in to ${S.flow === 'list' ? 'list' : 'claim'} your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
   if (st === 'req') { const c = BYID[S.reqCo]; return `<form class="formcard" id="req-form" novalidate><h2>Request access to ${esc(c.name)}</h2>
       <div class="cosum">${avatar(c, 44, 15)}<div style="flex:1"><b>${esc(c.name)}</b><span class="meta">${esc(c.web)} · already managed</span></div></div>
       <p style="color:var(--muted)">Someone at ${esc(c.name)} already manages this page. We’ll ask them to add you. If they don’t reply within 7 days, our team reviews your request and may ask for documents.</p>
@@ -1420,7 +1427,7 @@ function claimPanel() {
       <div class="field"><label class="l" for="r-msg">Message to the current admin <span class="meta">(optional)</span></label><textarea id="r-msg" rows="3" maxlength="500"></textarea></div>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="submit">Send request</button><button class="btn g lg" type="button" data-act="cf-restart">Back to search</button></div></form>`; }
   if (st === 'req-done') { const c = BYID[S.reqCo]; return `<div class="formcard"><div class="vstate ok">${TICK('var(--accent-soft-ink)')}<span>Request sent for ${esc(c.name)}.</span></div><p style="color:var(--muted)">We’ll contact the current admin and email you when they respond. If they don’t within 7 days, our team reviews your request.</p><div><button class="btn g lg" type="button" data-act="cf-restart">Back to search</button></div></div>`; }
-  if (st === 0) return `<div class="formcard">${steps}<h2>Find your company</h2><p style="color:var(--muted)">Search first. If your company is already listed, claim it and keep its reviews.</p>
+  if (st === 0) return `<div class="formcard">${steps}<h2>${S.flow === 'list' ? 'Add your company' : 'Find your company'}</h2><p style="color:var(--muted)">${S.flow === 'list' ? 'First, check it isn’t already on Know The Company.' : 'Search for your company. Claim it to manage its page and keep its reviews.'}</p>
       <div class="field"><label class="l" for="cf-q">Company name or website</label><input id="cf-q" type="search" autocomplete="off" value="${esc(S.cfQ || '')}" placeholder="Your company name or website"></div>
       <div id="cf-res">${cfResults(S.cfQ || '')}</div></div>`;
   if (st === 1) { const claim = d.mode === 'claim' && co;
@@ -1440,32 +1447,35 @@ function claimPanel() {
       <label class="check"><input id="b-agree" type="checkbox" ${d.agree ? 'checked' : ''}><span>I work for this company and can manage its page. I understand paying never affects reviews or ratings.</span></label>
       <p class="err" id="err-b-agree" hidden>Tick the box to continue.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="submit">Continue</button><button class="btn g lg" type="button" data-act="cf-restart">Back</button></div></form>`; }
-  if (st === 2) { const match = domainMatch(d.email, d.web), m = cf.method, dom = domOf(d.web), tok = vToken(dom || d.name);
-    const opt = (k, title, desc, rec) => `<button type="button" class="vopt" data-act="cf-method" data-m="${k}" aria-pressed="${m === k}">${rec ? '<span class="rec">Fastest</span>' : ''}<b>${title}</b><small>${desc}</small></button>`;
+  if (st === 2) { const m = ['website', 'docs', 'id'].includes(cf.method) ? cf.method : (cf.method = 'website'), dom = domOf(d.web), tok = cf.token || (cf.token = newCf().token);
+    const opt = (k, title, desc, tag) => `<button type="button" class="vopt" data-act="cf-method" data-m="${k}" aria-pressed="${m === k}">${tag ? `<span class="rec">${tag}</span>` : ''}<b>${title}</b><small>${desc}</small></button>`;
+    const fileField = (label, hint) => `<div class="field"><label class="l" for="cf-file">${label}</label><input id="cf-file" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" aria-describedby="hint-cf-file"><p class="meta" id="hint-cf-file">${hint} A photo or scan works: JPG, PNG or PDF. Only our team sees it.</p>${cf.fileName ? `<p class="meta">Attached: <b>${esc(cf.fileName)}</b></p>` : ''}<p class="err" id="err-cf-file" ${cf.fileErr ? '' : 'hidden'}>${esc(cf.fileErr || 'Attach the file to continue.')}</p></div>`;
     let body = '';
-    if (m === 'email') body = !match
-      ? `<p>We’ll email <b>${esc(d.email)}</b> to confirm the claim. Gmail and other personal addresses are fine. We only ask for more if someone else claims ${esc(d.name)} too.</p>`
-      : `<p>We’ll email <b>${esc(d.email)}</b> to confirm you can receive email at ${esc(dom)}. Reply to it and your badge goes live.</p>`;
-    if (m === 'website') body = `<p>Add <b>one</b> of these to ${esc(dom || 'your website')}. You can remove it after you’re verified.</p>
-      <div class="field"><span class="l">Option 1 · DNS TXT record</span><div class="codebox">knowthecompany-verification=${tok}</div></div>
-      <div class="field"><span class="l">Option 2 · Tag in your homepage’s &lt;head&gt;</span><div class="codebox">&lt;meta name="knowthecompany-verification" content="${tok}"&gt;</div></div>
-      <p class="meta">After you send your claim, we check your DNS record or homepage and email you the result.</p>`;
-    if (m === 'docs') body = `<p>We’ll email you to ask for one official document that shows the company name, like a registration certificate or a recent invoice. Only our team sees it.</p>
-      <div class="field"><label class="l" for="cf-doctype">Document you’ll send</label><select id="cf-doctype">${['Company registration certificate','Tax or VAT/GST registration','Recent invoice in the company’s name','Other official document'].map(x => `<option>${x}</option>`).join('')}</select></div>`;
+    if (m === 'website') body = `<p>Add <b>one</b> of these to ${esc(dom || 'your website')}, then send your claim and press <b>Check my website</b>. When we find it, you’re verified straight away. You can remove it afterwards.</p>
+      <div class="field"><span class="l">Option 1 · DNS TXT record on ${esc(dom || 'your domain')}</span><div class="codebox">knowthecompany-verification=${tok}</div></div>
+      <div class="field"><span class="l">Option 2 · Tag in your homepage’s &lt;head&gt;</span><div class="codebox">&lt;meta name="knowthecompany-verification" content="${tok}"&gt;</div></div>`;
+    if (m === 'docs') body = `<p>Upload one official document that shows the company name, like a registration certificate, a tax or GST registration, or a recent invoice in the company’s name. You can choose your plan straight away, and your Verified badge goes live once our team has checked it.</p>
+      <div class="field"><label class="l" for="cf-doctype">Document</label><select id="cf-doctype">${['Company registration certificate','Tax or GST registration','Recent invoice in the company’s name','Other official document'].map(x => `<option ${cf.docType === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+      ${fileField('Upload the document', 'Up to 5 MB.')}`;
+    if (m === 'id') body = `<p>Upload your company ID card, the one that shows your name, photo and the company’s name. You can choose your plan straight away, and your Verified badge goes live once our team has checked it.</p>
+      ${fileField('Upload your ID card', 'Front side, up to 5 MB.')}`;
     const ready = true;
-    return `<div class="formcard">${steps}<h2>Verify you work at ${esc(d.name)}</h2><p style="color:var(--muted)">Choose one way. Any email works, including Gmail.</p>
-      <div class="vopts">${opt('email', 'Email', match ? `Confirm through ${esc(d.email)}` : `Confirm through ${esc(d.email)}`, match)}${opt('website', 'Website', 'Add a DNS record or a tag')}${opt('docs', 'Documents', 'Checked by our team')}</div>
+    return `<div class="formcard">${steps}<h2>Verify you work at ${esc(d.name)}</h2><p style="color:var(--muted)">Choose one way.</p>
+      <div class="vopts">${opt('website', 'Website', 'Add a DNS record or a tag', 'Instant')}${opt('docs', 'Documents', 'Checked by our team')}${opt('id', 'ID card', 'Your company ID, checked by our team')}</div>
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
       <div class="planpick"><label><input type="radio" name="plan" value="basic" ${d.plan !== 'plus' ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
         <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then [[PP]] a year` : `[[PP]] a year`}. Contact buttons, photos, offers and updates</small></span></label></div>
       <p class="meta">${LAUNCH ? 'No payment now. Nothing is charged when a free period ends unless you set up autopay.' : 'Plans renew every year by autopay. You can cancel at any time.'}</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
-  const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '';
+  const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '', claimCo = d.coWid ? BYWID[d.coWid] : null;
+  const viaWeb = d.method === 'website';
   return `<div class="formcard"><div style="display:flex;align-items:center;gap:12px">${TICK()}<h2>Claim received for ${esc(d.name)}</h2></div>
-    <div class="vstate ok"><span>We check every claim by hand, usually within 2 business days, and email <b>${esc(d.email)}</b> with the next step. Your Verified badge goes live once the check passes.</span></div>
-    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn p lg" href="#dashboard">See your claims</a>${pageId ? `<a class="btn g lg" href="#${pageId}">View your page</a>` : ''}</div>
-    <p class="meta">${d.plan === 'plus' ? (LAUNCH ? `Plus starts with ${PLUS_TRIAL_DAYS} days free once you’re verified.` : 'Plus starts once you’re verified.') : (LAUNCH ? `Basic is free for your first year, counted from the day you’re verified.` : 'Basic starts once you’re verified.')}</p></div>`;
+    ${viaWeb ? `<div class="vstate ok"><span>Once the record is on ${esc(domOf(d.web) || 'your website')}, press <b>Check my website</b>. When we find it, you’re verified straight away.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><button class="btn p lg" type="button" data-act="claim-check" data-wid="${esc(d.coWid || '')}" ${S.checking ? 'disabled' : ''}>${S.checking ? 'Checking…' : 'Check my website'}</button>${S.checkMsg ? `<span class="meta" role="status">${esc(S.checkMsg)}</span>` : ''}</div>`
+      : `<div class="vstate ok"><span>Our team checks your ${d.method === 'id' ? 'ID card' : 'document'}, usually within 2 working days. Your Verified badge goes live when the check passes, and you can follow it in your dashboard.</span></div>`}
+    ${claimCo ? planPanel(claimCo, true) : ''}
+    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn g lg" href="#dashboard">Go to your dashboard</a>${pageId ? `<a class="btn g lg" href="#${pageId}">View your page</a>` : ''}</div></div>`;
 }
 
 function calcOut(sale) {
@@ -1474,6 +1484,27 @@ function calcOut(sale) {
   return `<div><small>Basic, ₹499 a year</small><b>${n(499)}</b><em>${c(499)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
     <div><small>Plus, ₹${PLUS_PRICE} a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
 }
+/* Claim: the company is already on the site. List (vList): the company isn't, so it is added first.
+   Both use the same three-step form (claimPanel), with S.flow telling it which one it is. */
+function vClaim() {
+  const panel = `<div id="claim-panel">${claimPanel()}</div>`;
+  return `<section class="lbhero"><div class="wrap">
+      <div style="flex:1 1 560px;display:flex;flex-direction:column;gap:18px">${crumbs([['Home', '#home'], ['For employers', '#list'], ['Claim your company']])}
+        <h1>Claim your company page</h1>
+        <p class="lede">Your company is already on Know The Company. Claim its page to reply to reviews, tell job seekers what it’s like to work with you, and get the Verified badge. You keep every review it already has.</p>
+        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Claim before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
+    </div></section>
+    <section class="wrap sec"><div class="sechead"><div><h2>How claiming works</h2></div></div><div class="steps">
+      <div class="step"><span>1</span><h3>Find your company</h3><p>Search for it by name or website.</p></div>
+      <div class="step"><span>2</span><h3>Show it’s yours</h3><p>Add a record to your website, or upload a company document or your company ID card.</p></div>
+      <div class="step"><span>3</span><h3>Choose your plan</h3><p>Pick Basic or Plus straight away. Your Verified badge goes live when the check passes.</p></div></div></section>
+    <section class="wrap sec" id="list-form-area"><div class="layout">
+      <div class="mainc">${panel}</div>
+      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>A record on your company’s website verifies you straight away. A company document or your company ID card is checked by our team, usually within 2 working days. Until then, your page shows no Verified badge.</p></div>
+        <div class="box"><h2>Not listed yet?</h2><p>If your company isn’t on Know The Company, add it instead.</p><a class="btn o" href="#list">List your company</a></div>
+        <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
+    </div></section>`;
+}
 function vList() {
   const d = S.listData;
   const panel = `<div id="claim-panel">${claimPanel()}</div>`;
@@ -1481,8 +1512,8 @@ function vList() {
   return `<section class="lbhero"><div class="wrap">
       <div style="flex:1 1 460px;display:flex;flex-direction:column;gap:18px"><p class="eyebrow" style="color:var(--gold)">For employers</p>
         <h1>Be the company customers trust and people want to work for.</h1>
-        <p class="lede">Claim your free company page. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn gold lg" href="#list" data-act="to-form">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div>
+        <p class="lede">Put your company on Know The Company. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn gold lg" href="#list" data-act="to-form">${LAUNCH ? 'List your company free' : 'List your company'}</a><a class="btn g lg" href="#claim">Already listed? Claim it</a></div>
         ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Join before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
       <div class="lbvis" aria-label="Example of how reviews appear on Know The Company"><span class="tagex">Example</span>
         <div class="rc">${starRow(4, 18)}<p class="q">“Students are motivated, and the academic team listens to teachers about the syllabus.”</p><span class="by">Anonymous employee · Maths teacher · Example Company</span><span class="brand">${TICK('var(--accent)')}Reviewed on Know The Company</span></div>
@@ -1506,7 +1537,7 @@ function vList() {
         <div class="ben">${ic2('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>', 5)}<h3>Proof you can share anywhere</h3><p>Link to your page from your website and careers page, and send your review link on LinkedIn, Instagram and WhatsApp. Independent reviews persuade more than your own words.</p>
           <div class="prev"><span class="mini">${TICK('var(--accent)')}4.7 on Know The Company</span><span class="meta">Page link · review link</span></div></div>
         <div class="ben">${ic2('<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', 6)}<h3>Proof you're a real company</h3><p>Your Verified badge tells job seekers and customers your company checked out. That matters when fake job offers and copycat shops are everywhere.</p>
-          <div class="prev"><span class="mini">${TICK('var(--accent)')}Verified company</span><span class="meta">Work email, website or documents checked</span></div></div>
+          <div class="prev"><span class="mini">${TICK('var(--accent)')}Verified company</span><span class="meta">Website, documents or ID card checked</span></div></div>
       </div></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Your first week</p><h2>Value from day one, not one day</h2></div></div>
@@ -1544,11 +1575,11 @@ function vList() {
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
     <section class="wrap sec"><div class="steps">
       <div class="step"><span>1</span><h3>Add details</h3><p>Company name, website, category, city and contact. About two minutes.</p></div>
-      <div class="step">${LAUNCH ? '<span>2</span><h3>Show it’s yours</h3><p>No payment for your first year. Choose how you’ll prove the company is yours: email, website or documents.</p>' : '<span>2</span><h3>Pay [[PB]] for the year</h3><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
-      <div class="step"><span>3</span><h3>Get verified</h3><p>We check your claim, then your Verified badge goes live and your dashboard opens.</p></div></div></section>
+      <div class="step">${LAUNCH ? '<span>2</span><h3>Show it’s yours</h3><p>No payment for your first year. Choose how you’ll prove the company is yours: your website, a company document or your company ID card.</p>' : '<span>2</span><h3>Pay [[PB]] for the year</h3><p>Pay securely online. It renews every year by autopay, and you can cancel any time.</p>'}</div>
+      <div class="step"><span>3</span><h3>Get verified</h3><p>A website check verifies you straight away. Documents and ID cards are checked by our team, then your Verified badge goes live.</p></div></div></section>
     <section class="wrap sec" id="list-form-area"><div class="layout">
       <div class="mainc">${panel}</div>
-      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>We check that you really work at the company: through your email (any address, including Gmail), a record on your website, or official documents. Until then, your page shows no Verified badge.</p></div>
+      <aside class="side"><div class="box soft"><h2>How verification works</h2><p>Add a record to your company’s website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan in the meantime.</p></div>
         <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
     </div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
@@ -1628,7 +1659,9 @@ function vDashboard() {
   const claims = S.myClaims;
   const claimList = claims === null || claims === undefined ? '<p class="meta">Loading your claims…</p>'
     : claims.length ? claims.map(cl => { const c = BYWID[cl.company]; const [k, t] = STATUS[cl.status] || STATUS.pending;
-        return `<div class="cfrow">${c ? avatar(c, 40, 14) : ''}<div class="t"><b>${esc(c ? c.name : 'Company')}</b><small>${esc(KIND[cl.kind] || 'Claim')}${cl.method ? ' · ' + esc(cl.method === 'documents' ? 'documents' : cl.method === 'website' ? 'website check' : 'work email') : ''}${cl._createdDate ? ' · sent ' + esc(fmtDay(String(cl._createdDate).slice(0, 10))) : ''}</small></div><span class="pill ${k}">${t}</span></div>`; }).join('')
+        return `<div class="cfrow">${c ? avatar(c, 40, 14) : ''}<div class="t"><b>${esc(c ? c.name : 'Company')}</b><small>${esc(KIND[cl.kind] || 'Claim')}${cl.method ? ' · ' + esc(cl.method === 'documents' ? 'documents' : cl.method === 'website' ? 'website check' : cl.method === 'id' ? 'ID card' : 'email') : ''}${cl._createdDate ? ' · sent ' + esc(fmtDay(String(cl._createdDate).slice(0, 10))) : ''}</small></div><span class="pill ${k}">${t}</span></div>
+          ${cl.status === 'pending' && c && cl.kind !== 'access' ? `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-4px 0 6px 52px">${cl.method === 'website' ? `<button class="btn p" type="button" data-act="claim-check" data-wid="${esc(c.wid)}" ${S.checking ? 'disabled' : ''}>${S.checking ? 'Checking…' : 'Check my website'}</button>` : ''}<button class="btn g" type="button" data-act="claim-plan" data-wid="${esc(c.wid)}">${S.dashPlanWid === c.wid ? 'Hide plan' : 'Choose your plan'}</button></div>
+            ${S.dashPlanWid === c.wid ? planPanel(c, true) : ''}` : ''}`; }).join('') + (S.checkMsg ? `<p class="meta" role="status">${esc(S.checkMsg)}</p>` : '')
     : '';
   const empty = !mine.length && claims && !claims.length;
   const sel = mine.find(c => c.id === S.dashCo) || mine[0];
@@ -1639,9 +1672,9 @@ function vDashboard() {
   const tabs = sel ? `<nav style="display:flex;flex-wrap:wrap;gap:8px" aria-label="Dashboard sections">${TABS.map(([k, l]) => `<a class="btn ${k === tab ? 'p' : 'g'}" href="#dashboard" data-act="dash-tab" data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>` : '';
   const body = !sel ? '' : tab === 'plan' ? planPanel(sel) : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
   return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
-    <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><a class="btn o" href="#list">Claim or add a company</a></div>
+    <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn o" href="#claim">Claim a company</a><a class="btn g" href="#list">List a new company</a></div></div>
     ${pick}${tabs}${body}
-    ${empty ? `<div class="empty"><b>You haven’t claimed a company yet</b><p>Claim your company page free, verify it, and get links to collect reviews from customers and your team.</p><a class="btn p" href="#list">Claim your company page</a></div>`
+    ${empty ? `<div class="empty"><b>You haven’t claimed a company yet</b><p>Claim your company page free, verify it, and get links to collect reviews from customers and your team.</p><a class="btn p" href="#claim">Claim your company page</a></div>`
       : `<section class="box" style="gap:10px"><h2>Your claims and requests</h2>${claimList || '<p class="meta">None yet.</p>'}${S.claimsErr ? `<p class="err">${esc(S.claimsErr)}</p>` : ''}</section>`}
   </div></div></div>`;
 }
@@ -1782,7 +1815,8 @@ const NAVI = {
 const nI = (k, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NAVI[k]}</svg>`;
 function empLinks() {
   return [['star', 'Why list your company', 'Online presence, AI search and more', '#why-list', ''],
-    ['claim', 'Claim your company page', 'Free for your first year', '#list', ''],
+    ['claim', 'Claim your company page', 'Your company is already listed', '#claim', ''],
+    ['pen', 'List your company', 'Your company isn’t on the site yet', '#list', ''],
     ['grid', 'Company dashboard', 'Your pages, review links and claims', S.user ? '#dashboard' : '#business-login', ''],
     ['plans', 'Plans and pricing', 'Basic and Plus', '#list', 'data-act="goto-plans"']];
 }
@@ -1954,7 +1988,8 @@ const HELP = [
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
     ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to knowthecompanysupport@gmail.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
     ['Can paying remove bad reviews?', 'No. Payment never changes ratings or hides reviews. You can reply publicly or report reviews that break the rules.'],
-    ['My company is already listed. What now?', 'Open your profile and press Claim. You keep the existing reviews.']]],
+    ['My company is already listed. What now?', 'Open your profile and press Claim. You keep the existing reviews.'],
+    ['How do I verify my company?', 'Choose one way when you claim. Add a DNS record or a tag to your website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan while the check is going on.']]],
   ['Trust and safety', [
     ['How do you stop fake reviews?', 'We confirm reviewers by email, check for patterns such as many reviews from one device, and review flagged content by hand.'],
     ['How do I report a review?', 'Use Report on the review, or contact us with a link to it. Companies can also report from their dashboard.']]]
@@ -1998,7 +2033,7 @@ function vTerms() {
 }
 function vPrivacy() {
   return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
-    ['What we collect', ['Account details: your name and email address.', 'Content you post: reviews, replies, reports and messages.', 'Proof files you upload to verify a review. We delete these after checking them.', 'Work email addresses used to verify employee reviews. We never show them to employers or the public.', 'Business listing details and payment confirmations. Payment details are handled by our payment provider, not stored by us.', 'Basic technical data such as device type and pages visited, to keep the site secure.']],
+    ['What we collect', ['Account details: your name and email address.', 'Content you post: reviews, replies, reports and messages.', 'Proof files you upload to verify a review. We delete these after checking them.', 'Documents and ID cards you upload to claim a company. Only our team can see them, and we use them only to check the claim.', 'Work email addresses used to verify employee reviews. We never show them to employers or the public.', 'Business listing details and payment confirmations. Payment details are handled by our payment provider, not stored by us.', 'Basic technical data such as device type and pages visited, to keep the site secure.']],
     ['How we use it', ['To run your account and show your reviews with your chosen name.', 'To detect fake reviews and abuse.', 'To verify businesses and process listing payments.', 'To reply to your messages and send login codes.']],
     ['What we never do', 'We never sell your personal data or show reviewers\' email addresses to businesses.'],
     ['Sharing', 'We share data only with service providers who help us run Know The Company (hosting, email, payments), and when required by law, such as a valid court order.'],
@@ -2022,7 +2057,7 @@ function vPricing() {
 function vRefunds() {
   return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
     ['1. What you pay for', [`Basic listing: ₹499 a year in India, or $9 a year outside India. Plus listing: ₹${PLUS_PRICE} a year in India, or $19 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
-    ['2. How the service is delivered', ['Your listing tools switch on as soon as we verify that you represent the company. We email you when the listing is live.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
+    ['2. How the service is delivered', ['You can choose and pay for a plan as soon as you send your claim. A website check verifies you straight away; documents and ID cards are checked by our team, usually within 2 working days, and your Verified badge and listing tools switch on when the check passes.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
     ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you set up autopay. We email you before it ends.']],
     ['4. Autopay and cancelling', ['Paid plans renew every year by autopay on the card, UPI or bank mandate you used. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time, by writing to knowthecompanysupport@gmail.com from the email address on your listing, or by cancelling the mandate in your UPI app or with your bank.', 'When you cancel, no further charges are made and your tools stay active until the end of the year you paid for.', 'If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.']],
     ['5. Refunds', ['Change your mind within 14 days of paying, and we refund the full amount. No reason is needed.', 'After 14 days, fees for the current year are not refundable, except where the law requires a refund.', 'If you were charged twice, or charged for an order that failed, we refund the extra amount in full.', 'If we suspend a listing because it broke our terms, for example by trying to manipulate reviews, the fee is not refunded.']],
@@ -2090,7 +2125,7 @@ async function startAutopay(c, plan) {
   } catch (e) { PAY.err = e.message; }
   PAY.busy = ''; renderKeep();
 }
-function planPanel(c) {
+function planPanel(c, inClaim) {
   loadPay(c);
   const d = PAY.company === c.wid ? PAY.data : null;
   const P = CUR_PRICES[curNow()];
@@ -2098,16 +2133,16 @@ function planPanel(c) {
   const live = d ? d.billing.filter(b => ['authenticated', 'active', 'pending', 'cancelling'].includes(b.status)) : [];
   const plusLive = live.find(b => b.plan === 'plus' && b.status !== 'cancelling'), basicLive = live.find(b => b.plan === 'basic' && b.status !== 'cancelling');
   const isPlus = d ? d.plan === 'plus' : coPlan(c) === 'plus';
-  const btn = (plan, label) => `<button class="btn ${plan === 'plus' ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" ${PAY.busy ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening Razorpay…' : label}</button>`;
+  const btn = (plan, label) => `<button class="btn ${plan === 'plus' ? 'p' : 'o'} lg" type="button" data-act="pay-start" data-plan="${plan}" data-wid="${esc(c.wid)}" ${PAY.busy ? 'disabled' : ''}>${PAY.busy === plan ? 'Opening Razorpay…' : label}</button>`;
   const rows = live.map(b => `<div class="cfrow"><div class="t"><b>${b.plan === 'plus' ? 'Plus' : 'Basic'} autopay</b><small>${b.status === 'cancelling' ? `Cancelled. Runs until ${esc(fmt(b.currentEnd))}` : b.status === 'active' ? `Paid until ${esc(fmt(b.currentEnd))}, then renews` : b.startAt ? `First charge on ${esc(fmt(b.startAt))}` : 'Set up'}</small></div></div>`).join('');
   return `<section class="box" style="gap:16px">
-    <div class="toolbar"><h2>Plan and payments</h2><span class="pill ${isPlus ? 'ok' : 'un'}">${isPlus ? 'Plus' : 'Basic'} plan</span></div>
+    <div class="toolbar"><h2>${inClaim ? 'Choose your plan' : 'Plan and payments'}</h2><span class="pill ${isPlus ? 'ok' : 'un'}">${isPlus ? 'Plus' : 'Basic'} plan</span></div>
     ${PAY.loading && !d ? '<p class="meta">Loading…</p>' : ''}
     ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}
     ${!isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Plus, ${P.PP} a year</h3><p>Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.${LAUNCH ? ` Your first ${PLUS_TRIAL_DAYS} days are free; the first charge is on day ${PLUS_TRIAL_DAYS + 1}.` : ''}</p>${btn('plus', LAUNCH ? `Start Plus free for ${PLUS_TRIAL_DAYS} days` : `Get Plus for ${P.PP} a year`)}</div>` : ''}
     ${isPlus && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Keep Plus with autopay, ${P.PP} a year</h3><p>${d && d.planEndsAt ? `Your Plus plan runs until ${esc(fmt(d.planEndsAt))}. ` : ''}Set up yearly autopay so it carries on without a gap. Nothing is charged before then.</p>${btn('plus', 'Set up autopay for Plus')}</div>` : ''}
     ${!isPlus && !basicLive && !plusLive ? `<div class="box soft" style="gap:10px"><h3>Basic, ${P.PB} a year</h3><p>${LAUNCH ? `Basic is free for your first year. Set up autopay now so your page stays live after that; nothing is charged until the free year ends.` : 'Keep your verified listing with yearly autopay.'}</p>${btn('basic', LAUNCH ? 'Set up autopay for later' : `Pay ${P.PB} a year`)}</div>` : ''}
-    ${live.some(b => b.status !== 'cancelling') ? `<p class="meta">Autopay renews every year. Cancel any time: an autopay that hasn’t charged yet ends straight away, and a paid year runs to its end. <button class="link" type="button" data-act="pay-cancel">Cancel autopay</button></p>` : ''}
+    ${live.some(b => b.status !== 'cancelling') ? `<p class="meta">Autopay renews every year. Cancel any time: an autopay that hasn’t charged yet ends straight away, and a paid year runs to its end. <button class="link" type="button" data-act="pay-cancel" data-wid="${esc(c.wid)}">Cancel autopay</button></p>` : ''}
     ${PAY.err ? `<p class="err" role="alert">${esc(PAY.err)}</p>` : ''}
     <p class="meta">Payments are handled by Razorpay. Cards, UPI and netbanking that support autopay can be used. Paying never changes your ratings or reviews. See <a href="#refunds">refunds and cancellations</a>.</p>
   </section>`;
@@ -2184,7 +2219,8 @@ async function submitClaim() {
   if (!S.user) { needLogin('Log in or create an account to claim or add your company.'); return; }
   if (claimBlock()) { toast('Delete your reviewer account before claiming a company.'); render(); return; }
   const plan = (document.querySelector('input[name=plan]:checked') || {}).value || d.plan || 'basic'; d.plan = plan;
-  const dom = domOf(d.web); const method = cf.method === 'docs' ? 'documents' : (cf.method || 'email');
+  const method = cf.method === 'docs' ? 'documents' : cf.method === 'id' ? 'id' : 'website';
+  if (method !== 'website' && !cf.file) { cf.fileErr = cf.fileErr || (method === 'id' ? 'Upload your ID card to continue.' : 'Upload the document to continue.'); cfRefresh(false); const el = document.getElementById('cf-file'); if (el) el.focus(); return; }
   const btn = document.querySelector('[data-act="cf-submit"]'); if (btn) btn.disabled = true;
   try {
     let wid = d.coId && BYID[d.coId] ? BYID[d.coId].wid : '';
@@ -2196,9 +2232,11 @@ async function submitClaim() {
         wid = it._id || cid; addCompanyLocal({ ...it, _id: wid, title: d.name, slug: it.slug || slug(d.name), website: cid, category: d.cat, addedBy: 'owner' });
       }
     }
-    const docType = (document.getElementById('cf-doctype') || {}).value || '';
-    await insertItem('Claims', { company: wid, kind: d.mode === 'claim' ? 'claim' : 'new', person: d.person, role: d.role, email: d.email, phone: d.phone, method, token: method === 'website' ? vToken(dom || d.name) : '', plan, message: docType ? 'Document offered: ' + docType : '', status: 'pending' });
-    d.listedAt = todayISO(); d.coWid = wid; S.listStep = 4; S.myClaims = undefined; cfRefresh();
+    const docType = method === 'documents' ? ((document.getElementById('cf-doctype') || {}).value || cf.docType || '') : method === 'id' ? 'Company ID card' : '';
+    /* The proof file is saved on the claim itself: the Claims collection can be read only by the person who
+       sent it and by the team. */
+    await insertItem('Claims', { company: wid, kind: d.mode === 'claim' ? 'claim' : 'new', person: d.person, role: d.role, email: d.email, phone: d.phone, method, token: method === 'website' ? cf.token : '', plan, message: docType ? 'Proof: ' + docType : '', proofFile: method === 'website' ? '' : cf.file, proofName: method === 'website' ? '' : cf.fileName, status: 'pending' });
+    d.listedAt = todayISO(); d.coWid = wid; d.method = method; S.listStep = 4; S.myClaims = undefined; S.checkMsg = ''; cf.file = ''; cfRefresh();
   } catch (err) { if (btn) btn.disabled = false; toast(errMsg(err), 5000); }
 }
 
@@ -2406,7 +2444,7 @@ document.addEventListener('click', async e => {
   if (act === 'reload') { stop(); location.reload(); return; }
   if (act === 'rv-report' && !S.user) { stop(); needLogin('Log in to report a review. It keeps the report button from being misused.'); return; }
   if (act === 'suggest' && !S.user) { stop(); needLogin('Log in to suggest an edit.'); return; }
-  if (act === 'gate-list-login') { stop(); S.returnTo = 'list'; S.scrollTo = 'list-form-area'; S.notice = 'Log in or create an account to claim or add your company.'; go('login'); window.scrollTo(0, 0); return; }
+  if (act === 'gate-list-login') { stop(); S.returnTo = S.flow === 'list' ? 'list' : 'claim'; S.scrollTo = 'list-form-area'; S.notice = 'Log in or create an account to claim or add your company.'; go('login'); window.scrollTo(0, 0); return; }
   if (act === 'del-review' || act === 'del-emp') {
     stop(); const wid = a.dataset.wid; if (!wid) return;
     if (!window.confirm('Remove this review? This can’t be undone.')) return;
@@ -2428,6 +2466,34 @@ document.addEventListener('click', async e => {
   if (act === 'cf-submit') { stop(); submitClaim(); return; }
 });
 
+/* Claim proof: images are resized to at most 1600 px and saved as JPEG, small enough to keep on the claim;
+   PDFs are kept as they are when under 350 KB. */
+const MAX_PROOF = 380_000;
+const readAsDataURL = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = () => no(r.error); r.readAsDataURL(f); });
+async function proofFromFile(f) {
+  if (f.type === 'application/pdf') { if (f.size > 350_000) throw new Error('That PDF is too big. Upload a PDF under 350 KB, or a photo of the document.'); return readAsDataURL(f); }
+  if (!/^image\//.test(f.type)) throw new Error('Upload a JPG, PNG or PDF file.');
+  if (f.size > 15_000_000) throw new Error('That file is too big. Upload one under 5 MB.');
+  const url = URL.createObjectURL(f);
+  try {
+    const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('We couldn’t read that image. Try another photo.')); i.src = url; });
+    for (const [max, q] of [[1600, .82], [1400, .72], [1100, .65], [900, .6]]) {
+      const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const cv = document.createElement('canvas'); cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k);
+      const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(img, 0, 0, cv.width, cv.height);
+      const out = cv.toDataURL('image/jpeg', q); if (out.length <= MAX_PROOF) return out;
+    }
+    throw new Error('That image is too detailed to upload. Try a smaller photo.');
+  } finally { URL.revokeObjectURL(url); }
+}
+document.addEventListener('change', async e => { const t = e.target;
+  if (t.id === 'cf-doctype' && S.cf) S.cf.docType = t.value;
+  if (t.name === 'plan' && S.listData) S.listData.plan = t.value;
+  if (t.id !== 'cf-file' || !S.cf) return;
+  const f = t.files && t.files[0]; if (!f) return;
+  S.cf.fileErr = ''; S.cf.file = ''; S.cf.fileName = '';
+  try { S.cf.file = await proofFromFile(f); S.cf.fileName = f.name; } catch (err) { S.cf.fileErr = err.message; }
+  cfRefresh(false); });
 document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.jfilter === 'q') { S.jobFilter.q = t.value; const r = document.getElementById('job-results'); if (r) r.innerHTML = jobResults(); } });
 document.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.jfilter && t.dataset.jfilter !== 'q') { S.jobFilter[t.dataset.jfilter] = t.value; const r = document.getElementById('job-results'); if (r) r.innerHTML = jobResults(); } });
 
@@ -2543,6 +2609,7 @@ function render() {
   else if (h === 'add') html = vAdd();
   else if (h === 'sample') { navigate('list', true); return; }
   else if (h === 'list') { html = vList(); nav = 'list'; }
+  else if (h === 'claim') { html = vClaim(); nav = 'list'; }
   else if (h === 'dashboard') { html = vDashboard(); nav = 'dashboard'; }
   else if (h === 'login') { html = vLogin('reviewer'); nav = 'login'; }
   else if (h === 'business-login') { html = vLogin('business'); nav = 'login'; }
@@ -2604,7 +2671,13 @@ function routeChanged() {
   if (CATBYID[h] && lastRoute !== h) S.catFilter = { country: '', text: '', sort: 'name' };
   if (BYID[h] && lastRoute !== h) { S.rating = 0; S.coTab = S.returnTab || (isVerifiedCo(BYID[h]) ? 'overview' : 'customers'); S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
   if (!BYID[h] && h !== 'login' && h !== 'business-login') S.returnTab = '';
-  if (h === 'list' && lastRoute !== 'list') { if (S.listStep === 4 || S.listStep === 'req-done') { S.listStep = 0; S.listData = { plan: S.listData.plan }; } }
+  /* Entering the claim or list page: the form starts in that page's mode. A finished form, or one that was
+     started on the other page, starts again (a claim picked from a company page keeps its company). */
+  if ((h === 'list' || h === 'claim') && lastRoute !== h) {
+    const flow = h === 'list' ? 'list' : 'claim', switched = S.flow !== flow, picked = flow === 'claim' && S.listData.mode === 'claim' && S.listStep === 1;
+    S.flow = flow;
+    if (S.listStep === 4 || S.listStep === 'req-done' || (switched && !picked)) { S.listStep = 0; S.listData = { plan: S.listData.plan }; }
+  }
   if (h !== 'login' && h !== 'business-login') S.notice = '';
   lastRoute = h;
   render(); window.scrollTo(0, 0);
@@ -2673,8 +2746,14 @@ document.addEventListener('click', e => {
   if (act === 'close-modal-go') { if (a.dataset.sheet === 'dash-tab') S.dashTab = a.dataset.tab; if (a.dataset.sheet === 'goto-plans') S.scrollTo = 'plans'; closeModals(); if (routeOfHref(a.getAttribute('href')) === curRoute()) { e.preventDefault(); render(); } return; }
   if (act === 'pick-co') { const as = (document.querySelector('input[name="pk-as"]:checked') || {}).value || 'customers'; closeModals(); if (curRoute() === a.dataset.id) { S.coTab = as; render(); } else { S.returnTab = as; navigate(a.dataset.id); } return; }
   if (act === 'cur') { store.set('ktc_cur', a.dataset.cur); renderKeep(); return; }
-  if (act === 'pay-start') { const c = BYID[S.user && S.user.coId]; if (c) startAutopay(c, a.dataset.plan === 'plus' ? 'plus' : 'basic'); return; }
-  if (act === 'pay-cancel') { const c = BYID[S.user && S.user.coId]; if (!c || !window.confirm('Cancel autopay for ' + c.name + '?')) return; (async () => { PAY.err = ''; try { await payApi('cancel', { company: c.wid }); toast('Autopay cancelled.'); await loadData(true); await loadPay(c, true); } catch (e) { PAY.err = e.message; renderKeep(); } })(); return; }
+  if (act === 'claim-check') { const wid = a.dataset.wid; S.checking = true; S.checkMsg = ''; (curRoute() === 'dashboard' ? renderKeep : cfRefresh)(false);
+    (async () => { try { const r = await fetch('/api/claim/check', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: await accessToken() }, body: JSON.stringify({ company: wid }) }); const d = await r.json().catch(() => ({}));
+        S.checkMsg = d.message || d.error || 'Something went wrong. Please try again.'; if (d.verified) { toast('Verified. Your company page is yours to manage.', 5000); S.myClaims = undefined; await loadData(true); } }
+      catch (e) { S.checkMsg = 'Something went wrong. Please try again.'; }
+      S.checking = false; if (curRoute() === 'dashboard') renderKeep(); else cfRefresh(false); })(); return; }
+  if (act === 'claim-plan') { S.dashPlanWid = S.dashPlanWid === a.dataset.wid ? '' : a.dataset.wid; renderKeep(); return; }
+  if (act === 'pay-start') { const c = BYWID[a.dataset.wid]; if (c) startAutopay(c, a.dataset.plan === 'plus' ? 'plus' : 'basic'); return; }
+  if (act === 'pay-cancel') { const c = BYWID[a.dataset.wid]; if (!c || !window.confirm('Cancel autopay for ' + c.name + '?')) return; (async () => { PAY.err = ''; try { await payApi('cancel', { company: c.wid }); toast('Autopay cancelled.'); await loadData(true); await loadPay(c, true); } catch (e) { PAY.err = e.message; renderKeep(); } })(); return; }
   if (act === 'dash-tab') { S.dashTab = a.dataset.tab; if (curRoute() === 'dashboard') { e.preventDefault(); render(); } return; }
   if (act === 'goto-plans') { S.scrollTo = 'plans'; if (curRoute() === 'list') { e.preventDefault(); render(); } return; }
   if (act === 'add-cat') { S.addCat = a.dataset.cat; return; }
@@ -2719,12 +2798,12 @@ document.addEventListener('click', e => {
     if (d && d[kind] && d[kind][i] && isMine(d[kind][i])) { d[kind].splice(i, 1); store.set('tn_emp', EMP); renderKeep(); toast(kind === 'salaries' ? 'Salary removed' : kind === 'interviews' ? 'Interview removed' : 'Review removed'); }
   }
   if (act === 'del-review') { const id = a.dataset.id; (REVIEWS[id] || []).splice(+a.dataset.idx, 1); store.set('tn_reviews', REVIEWS); render(); toast('Review removed'); }
-  if (act === 'claim') { const c = BYID[a.dataset.id] || COS.find(x => x.name === a.dataset.name); S.cf = { method: 'email' };
+  if (act === 'claim') { const c = BYID[a.dataset.id] || COS.find(x => x.name === a.dataset.name); S.cf = newCf();
     if (c && isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else if (c) { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } else { S.listData = { mode: 'new', name: a.dataset.name || '', plan: S.listData.plan }; S.listStep = 1; }
-    S.scrollTo = 'list-form-area'; if (curRoute() === 'list') { e.preventDefault(); render(); } }
-  if (act === 'cf-claim') { const c = BYID[a.dataset.id]; S.cf = { method: 'email' }; if (isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } cfRefresh(); return; }
+    S.flow = c ? 'claim' : 'list'; S.scrollTo = 'list-form-area'; if (curRoute() === (c ? 'claim' : 'list')) { e.preventDefault(); render(); } }
+  if (act === 'cf-claim') { const c = BYID[a.dataset.id]; S.cf = newCf(); if (isClaimed(c)) { S.reqCo = c.id; S.listStep = 'req'; } else { S.listData = { mode: 'claim', coId: c.id, name: c.name, web: c.web, cat: c.cat, country: c.country, plan: S.listData.plan }; S.listStep = 1; } cfRefresh(); return; }
   if (act === 'cf-request') { S.reqCo = a.dataset.id; S.listStep = 'req'; cfRefresh(); return; }
-  if (act === 'cf-new') { const q = (S.cfQ || '').trim(); S.listData = { mode: 'new', name: q.includes('.') ? '' : q, web: q.includes('.') ? q : '', plan: S.listData.plan }; S.cf = { method: 'email' }; S.listStep = 1; cfRefresh(); return; }
+  if (act === 'cf-new') { const q = (S.cfQ || '').trim(); S.listData = { mode: 'new', name: q.includes('.') ? '' : q, web: q.includes('.') ? q : '', plan: S.listData.plan }; S.cf = newCf(); S.listStep = 1; cfRefresh(); return; }
   if (act === 'cf-restart') { S.listStep = 0; S.listData = { plan: S.listData.plan }; cfRefresh(); return; }
   if (act === 'cf-edit') { S.listStep = 1; S.cf.codeSent = false; cfRefresh(); return; }
   if (act === 'cf-back-verify') { S.listStep = 2; cfRefresh(); return; }
@@ -2814,7 +2893,7 @@ document.addEventListener('submit', e => {
     let first = null; Object.entries(errs).forEach(([k, bad]) => { const el = errEl(k); if (el) el.hidden = !bad; if (bad && !first) first = k; });
     S.listData = d;
     if (first) { f[first].focus(); return; }
-    S.cf = { method: 'email' }; S.listStep = 2; cfRefresh();
+    S.cf = newCf(); S.listStep = 2; cfRefresh();
   }
   if (f.id === 'cprof-form' && S.user && S.user.coId) {
     const g = id => f.querySelector('#' + id); const val = id => g(id) ? g(id).value.trim() : '';

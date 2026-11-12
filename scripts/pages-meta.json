@@ -35,11 +35,18 @@
   "intro": "Missing a company? Add it, then write the first review. The company can claim it later."
  },
  {
+  "route": "claim",
+  "title": "Know The Company · Customer and employee reviews of startups",
+  "desc": "Claim your company’s page on Know The Company. Verify it in minutes, reply to customer and employee reviews and set up your employer page.",
+  "h1": "Claim your company page",
+  "intro": "Your company is already on Know The Company. Claim its page to reply to reviews, tell job seekers what it’s like to work with you, and get the Verified badge. You keep every review it already has."
+ },
+ {
   "route": "list",
   "title": "List your company · Know The Company",
-  "desc": "Claim your free company page on Know The Company. Reply to customer and employee reviews and show job seekers what working with you is like.",
+  "desc": "Add your company to Know The Company. Reply to customer and employee reviews and show job seekers what working with you is like.",
   "h1": "Be the company customers trust and people want to work for.",
-  "intro": "Claim your free company page. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one."
+  "intro": "Put your company on Know The Company. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one."
  },
  {
   "route": "dashboard",
