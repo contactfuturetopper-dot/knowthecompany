@@ -325,6 +325,16 @@ function factFaq(c, f, list, er) {
     : `There are no reviews of ${n} on Know The Company yet. If you have used ${n} or worked there, you can write the first one.`]);
   return q;
 }
+/* About tab for a company whose facts we haven't researched yet. */
+function aboutBasic(c) {
+  const rows = [['Category', c.cat], ['Based in', c.country]].filter(r => r[1]);
+  return `<section class="box cofacts" aria-labelledby="facts-h"><h2 id="facts-h" style="font-size:22px">About ${esc(c.name)}</h2>
+    ${c.bio ? `<p class="lead2">${esc(c.bio)}</p>` : ''}
+    <div><h3>At a glance</h3><dl class="factgrid">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>
+    <div><h3>Official links</h3><p class="factlinks"><a href="https://${esc(c.web)}" target="_blank" rel="nofollow noopener">Website</a></p></div>
+    <p class="meta" style="font-size:13px">Know more about ${esc(c.name)}? <button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:13px">Suggest an edit</button></p>
+  </section>`;
+}
 function factsSection(c, list, er) {
   const f = FACTS[c.wid]; if (!f) return '';
   const rows = [['Founded', f.founded], ['Headquarters', f.hq], [f.founders && f.founders.length > 1 ? 'Founders' : 'Founder', (f.founders || []).join(', ')], ['Owned by', f.parent], ['Ownership', f.parent ? '' : f.ownership], ['Employees', f.employees], ['Operates in', f.markets], ['Legal name', f.legalName]].filter(r => r[1]);
@@ -1102,12 +1112,12 @@ function vCompany(c) {
   const others = k.items.filter(x => x.id !== c.id).slice(0, 5);
   const words = ['Tap a star to rate','Bad','Poor','Average','Good','Excellent'];
   const ed = empData(c.id); const er = ed.reviews;
-  const tabsDef = isVerifiedCo(c) ? [['overview', 'Overview']].concat(CO_TABS) : CO_TABS;
-  const tab = tabsDef.some(x => x[0] === S.coTab) ? S.coTab : (isVerifiedCo(c) ? 'overview' : 'customers');
+  const tabsDef = [['about', 'About']].concat(CO_TABS);
+  const tab = tabsDef.some(x => x[0] === S.coTab) ? S.coTab : 'about';
   const counts = { customers: list.length, employees: er.length, salaries: ed.salaries.length, interviews: ed.interviews.length };
   const nRev = n => `${n} review${n === 1 ? '' : 's'}`;
   let panel;
-  if (tab === 'overview') panel = overviewPanel(c, list, er);
+  if (tab === 'about') panel = (isVerifiedCo(c) ? overviewPanel(c, list, er) : '') + (factsSection(c, list, er) || aboutBasic(c));
   else if (tab === 'customers') panel = `
       <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
         ${list.length ? rvBreakdown(list) + rvList(list, c.id) : `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg><b>Be the first to review ${esc(c.name)}</b><p>Share how they treated you. Good or bad, every review is published the same way.</p></div>`}
@@ -1160,7 +1170,7 @@ function vCompany(c) {
   <div class="cotabbar"><div class="wrap"><div class="cotabs" role="tablist" aria-label="Reviews of ${esc(c.name)}">${tabsDef.map(([key, label]) => `<button type="button" role="tab" id="tab-${key}" aria-controls="co-panel" aria-selected="${tab === key}" tabindex="${tab === key ? 0 : -1}" data-act="cotab" data-tab="${key}">${label}${counts[key] ? `<span class="n">${counts[key]}</span>` : ''}</button>`).join('')}</div></div></div>
 
   <div class="wrap" style="padding-top:32px"><div class="layout">
-    <div class="mainc" style="gap:24px"><div role="tabpanel" id="co-panel" aria-labelledby="tab-${tab}" style="display:flex;flex-direction:column;gap:24px">${panel}</div>${factsSection(c, list, er)}</div>
+    <div class="mainc" style="gap:24px"><div role="tabpanel" id="co-panel" aria-labelledby="tab-${tab}" style="display:flex;flex-direction:column;gap:24px">${panel}</div></div>
     <aside class="side">
       ${tab === 'employees' ? `<div class="box soft"><h2>Your identity stays private</h2><p>Employees choose whether to post anonymously or with their name. Emails are never shown, and ${esc(c.name)} can't see who wrote an anonymous review. We share a reviewer's identity only when a valid court order requires it.</p></div>` : ''}
       ${coSide(c)}
@@ -3721,8 +3731,6 @@ const POSTS = [
 ];
 POSTS.forEach(p => { const words = p.body.map(b => Array.isArray(b[1]) ? b[1].flat().join(' ') : b[1]).join(' ').split(/\s+/).length; p.read = Math.max(2, Math.round(words / 200)); p.id = 'blog-' + p.slug; });
 const POSTBYID = Object.fromEntries(POSTS.map(p => [p.id, p]));
-/* The newest articles in the footer (the server fills these in too, for crawlers). */
-{ const fb = document.getElementById('footer-blog'); if (fb && !fb.querySelector('a')) fb.innerHTML = POSTS.slice(0, 5).map(p => `<a href="/blog/${p.slug}">${esc(p.title)}</a>`).join(''); }
 if (!POSTS.length) PAGE_ROUTES.splice(PAGE_ROUTES.indexOf('blog'), 1);
 const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 /* Article text: [words](link) becomes a link (site links stay in the tab, others open a new one) and
@@ -4648,7 +4656,7 @@ function routeChanged() {
   /* The server's structured data describes the page it served; drop it once the app shows another page. */
   if (h !== lastRoute) { const ld = document.getElementById('ld-json'); if (ld) ld.remove(); }
   if (CATBYID[h] && lastRoute !== h) S.catFilter = { country: '', text: '', sort: 'name' };
-  if (BYID[h] && lastRoute !== h) { S.rating = 0; S.coTab = S.returnTab || (isVerifiedCo(BYID[h]) ? 'overview' : 'customers'); S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
+  if (BYID[h] && lastRoute !== h) { S.rating = 0; S.coTab = S.returnTab || 'about'; S.rvSort = 'new'; S.rvStar = 0; S.rvProof = false; S.erSort = 'new'; S.returnTab = ''; S.emp = EMP_ZERO(); S.formCache = {}; }
   if (!BYID[h] && h !== 'login' && h !== 'business-login') S.returnTab = '';
   /* Entering the claim or list page: the form starts in that page's mode. A finished form, or one that was
      started on the other page, starts again (a claim picked from a company page keeps its company). */

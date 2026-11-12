@@ -135,6 +135,8 @@ for (const r of routes) {
 // a few interactions: company tabs and a customer review submission
 g.location.hash = 'co-1password'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 30));
 const click = sel => { const el = app.querySelector(sel); if (!el) return report.push('missing ' + sel); el.dispatchEvent(new g.window.MouseEvent('click', { bubbles: true })); };
+report.push('default company tab: ' + (app.querySelector('[role="tab"][aria-selected="true"]') || {}).textContent);
+click('[data-act="cotab"][data-tab="customers"]'); await new Promise(r => setTimeout(r, 30));
 click('[data-act="rate"][data-n="4"]');
 await new Promise(r => setTimeout(r, 30));
 const f = app.querySelector('#review-form');

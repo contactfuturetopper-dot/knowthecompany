@@ -380,8 +380,6 @@ function unknown(path: string): Page {
   return { status: 200, path, title: "Know The Company", desc: DEFAULT_DESC, h1: "", body: "", noindex: true };
 }
 
-/* The newest articles, linked from every page's footer. */
-const footerPosts = () => [...POSTS.values()].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5).map(p => `<a href="/blog/${p.slug}">${esc(p.title)}</a>`).join("");
 /** The app's index.html with this page's details in it. */
 export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   const robots = SITE_NOINDEX ? "noindex, nofollow" : pg.noindex ? "noindex, follow" : "index, follow";
@@ -399,7 +397,6 @@ export function renderShell(pg: Exclude<Page, { redirect: string }>): string {
   ].map(([k, v]) => `<meta property="${k}" content="${esc(v)}">`).join("\n")
     + "\n" + [["twitter:card", "summary_large_image"], ["twitter:title", shareTitle], ["twitter:description", pg.desc], ["twitter:image", pg.ogImage || `${ORIGIN}/og-image.png`]].map(([k, v]) => `<meta name="${k}" content="${esc(v)}">`).join("\n");
   html = html.replace(/<!-- og -->[\s\S]*?<!-- \/og -->/, () => `<!-- og -->\n${og}\n<!-- /og -->`);
-  html = html.replace("<!-- footer-posts -->", () => footerPosts());
   if (pg.h1) html = html
     .replace(/<main id="app"><noscript>[\s\S]*?<\/noscript><\/main>/, '<main id="app"></main>')
     .replace('<main id="app">', () => `<main id="app"><div class="wrap" style="padding-block:40px"><h1>${esc(pg.h1)}</h1>${pg.body}<noscript><p>Everything on this page can be read without JavaScript. To write a review, turn JavaScript on.</p></noscript></div>`);
