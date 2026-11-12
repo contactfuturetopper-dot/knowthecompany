@@ -46,8 +46,11 @@
 <link rel="modulepreload" href="/js/wix/auth-core.js">
 <link rel="modulepreload" href="/js/wix/members.js">
 <link rel="modulepreload" href="/js/wix/members-core.js">
-<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}body:not(.ready) footer{visibility:hidden}</style>
-<noscript><style>footer{visibility:visible!important}</style></noscript>
+<!-- The server's plain text version of the page (.ssr) is for search engines and visitors without JavaScript.
+     With JavaScript it stays hidden until app.js draws the designed page, so it never flashes up first. If app.js
+     has not drawn anything after 4 seconds, the text is shown anyway, so a failed load never leaves a blank page. -->
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}body:not(.ready) footer{visibility:hidden}body:not(.ready) #app>.ssr{visibility:hidden;animation:ssr-show 0s 4s forwards}@keyframes ssr-show{to{visibility:visible}}</style>
+<noscript><style>footer,#app>.ssr{visibility:visible!important;animation:none!important}</style></noscript>
 </head>
 <body>
 
