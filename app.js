@@ -336,7 +336,7 @@ function factsSection(c, list, er) {
     ${f.products && f.products.length ? `<div><h3>Products and services</h3><ul class="factchips">${f.products.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
     ${rows.length ? `<div><h3>At a glance</h3><dl class="factgrid">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>` : ''}
     <div><h3>Official links</h3><p class="factlinks">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="nofollow noopener">${esc(l)}</a>`).join('')}</p></div>
-    <div><h3>Questions about ${esc(c.name)}</h3><div class="faq">${factFaq(c, f, list, er).map(([qq, a]) => `<details><summary>${esc(qq)}</summary><p>${esc(a)}</p></details>`).join('')}</div></div>
+    <div><h3>Questions about ${esc(c.name)}</h3><div class="qas">${factFaq(c, f, list, er).map(([qq, a]) => `<details class="qa"><summary><h4>${esc(qq)}</h4><span class="pm" aria-hidden="true"></span></summary><p>${esc(a)}</p></details>`).join('')}</div></div>
     <p class="meta" style="font-size:13px">These facts come from public sources${checked ? ` and were checked in ${checked}` : ''}. They are not written or paid for by ${esc(c.name)}. <button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:13px">Suggest an edit</button></p>
     ${srcs.length ? `<details class="srcs"><summary>Sources (${srcs.length})</summary><ul>${srcs.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="nofollow noopener">${esc(x.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').slice(0, 70))}</a></li>`).join('')}</ul></details>` : ''}
   </section>`;
@@ -493,10 +493,11 @@ function listRow(c) {
   return `<article class="listrow">
     ${avatar(c, 56, 18)}
     <div class="info"><div class="name"><a href="#${c.id}">${esc(c.name)}</a></div>
+      <span class="lrcat">${esc(c.cat)}</span>
       <span class="meta" style="font-size:14px">${esc(c.web)} · ${esc(c.country)}</span>
       <p class="bio" style="margin-block:2px">${esc(c.bio)}</p>
       ${ratingLine(c) ? `<span class="meta" style="font-size:14px">${esc(ratingLine(c))}</span>` : ''}</div>
-    ${(() => { const s = scoreOf(c), n = reviewsFor(c.id).length + empData(c.id).reviews.length; return s ? `<div class="lrscore" aria-label="Rated ${s.toFixed(1)} out of 5 from ${n} review${n === 1 ? '' : 's'}"><b>${s.toFixed(1)}</b>${starRow(+s.toFixed(1), 14)}<span>${n} review${n === 1 ? '' : 's'}</span></div>` : '<span class="lrnone">No reviews yet</span>'; })()}
+    ${(() => { const s = scoreOf(c), n = reviewsFor(c.id).length + empData(c.id).reviews.length; return s ? `<div class="lrscore" aria-label="Rated ${s.toFixed(1)} out of 5 from ${n} review${n === 1 ? '' : 's'}"><b>${s.toFixed(1)}</b>${starRow(+s.toFixed(1), 14)}<span>${n} review${n === 1 ? '' : 's'}</span></div>` : `<a class="btn o lrfirst" href="#${c.id}" data-act="cotab-link" data-tab="customers">Be the first to review</a>`; })()}
   </article>`;
 }
 const ICONS = {"bank":"<path d=\"M3 10l9-6 9 6\"/><path d=\"M5 10v8M9.5 10v8M14.5 10v8M19 10v8\"/><path d=\"M3 20h18\"/>","code":"<path d=\"M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14\"/>","heart":"<path d=\"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z\"/><path d=\"M8 12h2l1-2 2 4 1-2h2\"/>","shield":"<path d=\"M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z\"/><path d=\"M8.5 12l2.5 2.5 4.5-5\"/>","cup":"<path d=\"M5 9h12v4a6 6 0 0 1-12 0z\"/><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"/><path d=\"M8 3.5v2.5M11 3.5v2.5M14 3.5v2.5\"/>","basket":"<path d=\"M3 10h18l-2 10H5z\"/><path d=\"M8 10l3-6M16 10l-3-6M9 14v3M15 14v3M12 14v3\"/>","car":"<path d=\"M4 15.5l1.7-5.1A2 2 0 0 1 7.6 9h8.8a2 2 0 0 1 1.9 1.4l1.7 5.1V19H4z\"/><path d=\"M4 15.5h16\"/><circle cx=\"8\" cy=\"17.2\" r=\".6\"/><circle cx=\"16\" cy=\"17.2\" r=\".6\"/>","house":"<path d=\"M4 11l8-7 8 7\"/><path d=\"M6 9.5V20h12V9.5\"/><path d=\"M10 20v-5h4v5\"/>","card":"<rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2.5\"/><path d=\"M3 10h18M7 15h3\"/>","factory":"<path d=\"M3 20V11l5 3v-3l5 3V5h4v15\"/><path d=\"M2 20h20M17 9h3v11\"/>","layers":"<path d=\"M12 3l9 5-9 5-9-5z\"/><path d=\"M3 12.5l9 5 9-5\"/><path d=\"M3 16.5l9 5 9-5\"/>","cart":"<path d=\"M3 4h2l2.4 11h10.2L20 7.5H6.3\"/><circle cx=\"9\" cy=\"19.5\" r=\"1.3\"/><circle cx=\"17\" cy=\"19.5\" r=\"1.3\"/>","plane":"<path d=\"M21 15.5v-2l-7.5-4.5V4.5a1.5 1.5 0 0 0-3 0V9L3 13.5v2l7.5-2.3V18l-2 1.5V21l3.5-1 3.5 1v-1.5l-2-1.5v-4.8z\"/>","bolt":"<path d=\"M13 2.5L5 13.5h6l-1 8 8-11h-6z\"/>","bag":"<path d=\"M5.5 8h13l-1 12.5h-11z\"/><path d=\"M9 10V7a3 3 0 0 1 6 0v3\"/>","cap":"<path d=\"M2 9.5l10-5 10 5-10 5z\"/><path d=\"M6 11.5V16c3 2.2 9 2.2 12 0v-4.5M21 10v5\"/>","truck":"<path d=\"M2.5 6h11v10h-11zM13.5 9.5h4.5l3 3.5v3h-7.5\"/><circle cx=\"6.5\" cy=\"17.5\" r=\"1.7\"/><circle cx=\"17\" cy=\"17.5\" r=\"1.7\"/>","shirt":"<path d=\"M8 4L3 7l2 4.5 2-1V20h10v-9.5l2 1L21 7l-5-3a4 4 0 0 1-8 0z\"/>","sparkle":"<path d=\"M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z\"/><path d=\"M18.5 15v5M16 17.5h5\"/>","trend":"<path d=\"M4 20h16\"/><path d=\"M5 15.5l4.5-4.5 3 3L19 7.5\"/><path d=\"M14.5 7.5H19V12\"/>","chip":"<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\"/><rect x=\"9.5\" y=\"9.5\" width=\"5\" height=\"5\" rx=\"1\"/><path d=\"M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5\"/>","scale":"<path d=\"M12 4v16M7 20h10M5 7h14\"/><path d=\"M5 7l-2.5 6a2.5 2.5 0 0 0 5 0zM19 7l-2.5 6a2.5 2.5 0 0 0 5 0z\"/>","person":"<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4.5 20.5a7.5 7.5 0 0 1 15 0\"/>","signal":"<path d=\"M4 10a11.3 11.3 0 0 1 16 0M7 13.5a7 7 0 0 1 10 0M10 17a2.8 2.8 0 0 1 4 0\"/><circle cx=\"12\" cy=\"20\" r=\".8\"/>","play":"<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"3.5\"/><path d=\"M10 9.2l5 2.8-5 2.8z\"/>","phone":"<rect x=\"6.5\" y=\"2.5\" width=\"11\" height=\"19\" rx=\"2.5\"/><path d=\"M10.5 18.5h3\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9S14.6 18.4 12 21c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z\"/>","bed":"<path d=\"M3 19V6M3 14h18v5M21 14a3.5 3.5 0 0 0-3.5-3.5H11V14\"/><circle cx=\"7\" cy=\"11\" r=\"1.6\"/>","news":"<path d=\"M4 5h13v14H6a2 2 0 0 1-2-2z\"/><path d=\"M17 9h3v8a2 2 0 0 1-2 2\"/><path d=\"M7.5 8.5h6M7.5 12h6M7.5 15.5h4\"/>","chat":"<path d=\"M4 5h16v11H9.5L5 20v-4H4z\"/><path d=\"M8 9.5h8M8 12.5h5\"/>","game":"<rect x=\"2.5\" y=\"7\" width=\"19\" height=\"11\" rx=\"5.5\"/><path d=\"M7.5 10.5v4M5.5 12.5h4\"/><circle cx=\"15.5\" cy=\"11.5\" r=\".6\"/><circle cx=\"17.5\" cy=\"13.8\" r=\".6\"/>","server":"<rect x=\"3\" y=\"4\" width=\"18\" height=\"7\" rx=\"2\"/><rect x=\"3\" y=\"13\" width=\"18\" height=\"7\" rx=\"2\"/><path d=\"M7 7.5h.01M7 16.5h.01M11 7.5h6M11 16.5h6\"/>","pin":"<path d=\"M12 21.5s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>","coin":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 7.5h3.8a2.2 2.2 0 0 1 0 4.5H9.5h4.3a2.25 2.25 0 0 1 0 4.5H9.5zM11 6v1.5M11 16.5V18\"/>","rocket":"<path d=\"M12 2.5c3 2.5 4.5 6 4.5 10L14 17h-4l-2.5-4.5C7.5 8.5 9 5 12 2.5z\"/><circle cx=\"12\" cy=\"10\" r=\"1.6\"/><path d=\"M10 17l-1.5 4M14 17l1.5 4M7.5 12.5L5 15v2.5l3-1M16.5 12.5L19 15v2.5l-3-1\"/>","pick":"<path d=\"M14.5 9.5L4 20\"/><path d=\"M6 6.5c4.5-3.5 9.5-3.5 13.5 0-1.5.2-3 .8-4.2 1.7L9.6 9.7C8.8 8.5 7.6 7.4 6 6.5z\"/>","sofa":"<path d=\"M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3\"/><path d=\"M3 12a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3z\"/><path d=\"M5.5 17v2.5M18.5 17v2.5\"/>"};
@@ -1110,18 +1111,25 @@ function vCompany(c) {
       <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="rv-h"><h2 id="rv-h" style="font-size:22px">Reviews</h2>
         ${list.length ? rvBreakdown(list) + rvList(list, c.id) : `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg><b>Be the first to review ${esc(c.name)}</b><p>Share how they treated you. Good or bad, every review is published the same way.</p></div>`}
       </section>
-      ${reviewBlock() || `<form class="box" id="review-form" style="padding:24px;gap:18px" novalidate>
+      ${reviewBlock() || `<form class="box" id="review-form" data-step="${!S.rating ? 1 : (S.rstep || 2)}" style="padding:24px;gap:18px" novalidate>
         <h2 style="font-size:22px">Rate your experience with ${esc(c.name)}</h2>
+        <ol class="rsteps" aria-label="Steps">${['Rating', 'Your review', 'Details'].map((t, i) => `<li data-s="${i + 1}"><span>${i + 1}</span>${t}</li>`).join('')}</ol>
+        <div class="rstep" data-s="1">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px">
           <div class="starbtns" role="group" aria-label="Star rating">${[1,2,3,4,5].map(n => `<button type="button" class="${n <= S.rating ? 'on' : ''}" data-act="rate" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" aria-pressed="${n <= S.rating}">${STAR(n <= S.rating, 26)}</button>`).join('')}</div>
           <span style="font-weight:700;color:var(--muted)" id="rate-word">${words[S.rating]}</span></div>
         <p class="err" id="err-rating" hidden>Choose a star rating.</p>
-        <div class="field"><label class="l" for="r-title">Title</label><input id="r-title" type="text" maxlength="90" placeholder="Sum up your experience in a line"></div>
+        <div><button class="btn p" type="button" data-act="rstep" data-to="2">Next</button></div></div>
+        <div class="rstep" data-s="2">
+        <p class="rpick">${S.rating ? `${starRow(S.rating, 16)} <b>${words[S.rating]}</b> <button type="button" class="link" data-act="rstep" data-to="1">Change</button>` : ''}</p>
         <div class="field"><label class="l" for="r-body">Your review</label><textarea id="r-body" rows="5" maxlength="2000" placeholder="What happened? What went well or badly?"></textarea><p class="err" id="err-body" hidden>Write at least 20 characters so others understand what happened.</p></div>
+        <div class="field"><label class="l" for="r-title">Title <span class="meta">(optional)</span></label><input id="r-title" type="text" maxlength="90" placeholder="Sum up your experience in a line"></div>
+        <div class="rnav"><button class="btn g" type="button" data-act="rstep" data-to="1">Back</button><button class="btn p" type="button" data-act="rstep" data-to="3">Next</button></div></div>
+        <div class="rstep" data-s="3">
         <div class="row"><div class="field"><label class="l" for="r-date">Date of experience</label><input id="r-date" type="month"></div>
           <div class="field" style="justify-content:flex-end"><p class="meta" style="font-size:14px;padding-bottom:12px">${S.user && S.user.type === 'reviewer' ? `Posting as <b style="color:var(--fg)">${esc(S.user.name)}</b>` : 'You’ll log in as a reviewer before posting.'}</p></div></div>
         <label class="check"><input id="r-first" type="checkbox"><span>This is my own experience. I don’t work for this company or a competitor, and nobody paid me or gave me anything to write it.</span></label><p class="err" id="err-r-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Your review is published as soon as you post it. Reviews that break the <a href="#guidelines">guidelines</a> are taken down.</p>
-        <div><button class="btn p lg" type="submit">Post review</button></div>
+        <div class="rnav"><button class="btn g" type="button" data-act="rstep" data-to="2">Back</button><button class="btn p lg" type="submit">Post review</button></div></div>
       </form>`}`;
   else if (tab === 'employees') panel = (isVerifiedCo(c) ? workBox(c) : '') + empPanel(c, er);
   else if (tab === 'salaries') panel = salPanel(c, ed.salaries);
@@ -1452,7 +1460,7 @@ function claimPanel() {
   const labels = S.flow === 'list' ? ['Check it’s new', 'Company details', 'Verify and plan'] : ['Find your company', 'Your details', 'Verify and plan'];
   const steps = typeof st === 'number' && st < 4 ? `<div class="progress" aria-label="Progress">${labels.map((l, i) => `<span class="${st === i ? 'on' : ''}">${i + 1} · ${l}</span>`).join('')}</div>` : '';
   const co = d.coId ? BYID[d.coId] : null;
-  if (!S.user) return `<div class="formcard"><h2>Log in to ${S.flow === 'list' ? 'list' : 'claim'} your company</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
+  if (!S.user) return `<div class="formcard"><h2>${S.flow === 'list' ? 'Start here: log in to list your company' : 'Log in to claim your company'}</h2><p style="color:var(--muted)">A free account keeps every company page in the right hands. Any email works, including Gmail. After you log in, you come straight back here.</p><div><button class="btn p lg" type="button" data-act="gate-list-login">Log in or create an account</button></div></div>`;
   if (st === 'req') { const c = BYID[S.reqCo]; return `<form class="formcard" id="req-form" novalidate><h2>Request access to ${esc(c.name)}</h2>
       <div class="cosum">${avatar(c, 44, 15)}<div style="flex:1"><b>${esc(c.name)}</b><span class="meta">${esc(c.web)} · already managed</span></div></div>
       <p style="color:var(--muted)">Someone at ${esc(c.name)} already manages this page. We’ll ask them to add you. If they don’t reply within 7 days, our team reviews your request and may ask for documents.</p>
@@ -1547,16 +1555,22 @@ function vList() {
   const panel = `<div id="claim-panel">${claimPanel()}</div>`;
   const ic2 = (path, tone) => `<span class="bi" style="background:var(--t${tone});color:var(--t${tone}i)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg></span>`;
   return `<section class="lbhero"><div class="wrap">
-      <div style="flex:1 1 460px;display:flex;flex-direction:column;gap:18px"><p class="eyebrow" style="color:var(--gold)">For employers</p>
-        <h1>Be the company customers trust and people want to work for.</h1>
-        <p class="lede">Put your company on Know The Company. Reply to employee and customer reviews, show job seekers what it’s like to work with you, and share proof of your reputation anywhere. It works from day one.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn gold lg" href="#list" data-act="to-form">${LAUNCH ? 'List your company free' : 'List your company'}</a><a class="btn g lg" href="#claim">Already listed? Claim it</a></div>
-        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Join before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
+      <div style="flex:1 1 460px;display:flex;flex-direction:column;gap:18px"><p class="eyebrow" style="color:var(--gold)">For companies</p>
+        <h1>List your company${LAUNCH ? ' for <span style="color:var(--gold)">free</span>' : ''}</h1>
+        <p class="lede">Get a verified company page, reply to customer and employee reviews, and share your review links. It takes about five minutes.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center"><a class="btn gold lg" href="#list" data-act="to-form">Start now</a><a href="#claim" style="color:#fff;font-weight:600">Company already on the site? Claim its page</a></div>
+        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Basic is free for your first year when you join before ${LAUNCH_END}.</p>` : ''}</div>
       <div class="lbvis" aria-label="Example of how reviews appear on Know The Company"><span class="tagex">Example</span>
         <div class="rc">${starRow(4, 18)}<p class="q">“Students are motivated, and the academic team listens to teachers about the syllabus.”</p><span class="by">Anonymous employee · Maths teacher · Example Company</span><span class="brand">${TICK('var(--accent)')}Reviewed on Know The Company</span></div>
         <div class="chipline"><span>${TICK('var(--accent)')}Verified company</span><span>${STAR(true, 16)} 4.0 from customers</span><span>67% of employees recommend</span></div></div>
     </div></section>
-    <section class="wrap sec" id="list-form-area" style="padding-top:40px"><div class="layout">
+    <section class="wrap sec" id="list-form-area" style="padding-top:40px">
+      <ol class="how3" aria-label="How listing works">
+        <li><span>1</span><div><b>Add your company</b><small>Search for it first. If it is not on the site yet, add its name, website and category.</small></div></li>
+        <li><span>2</span><div><b>Show you work there</b><small>Add a record to your website, or upload a company document or ID card.</small></div></li>
+        <li><span>3</span><div><b>Pick a plan</b><small>${LAUNCH ? 'Basic is free for your first year. You can move up later.' : 'Start with Basic and move up later.'}</small></div></li>
+      </ol>
+      <div class="layout" style="margin-top:24px">
       <div class="mainc">${panel}</div>
       <aside class="side"><div class="box soft"><h2>How verification works</h2><p>Add a record to your company’s website and you’re verified straight away. Or upload a company document or your company ID card, and our team checks it, usually within 2 working days. You can choose and pay for your plan in the meantime.</p></div>
         <div class="box"><h2>Our neutrality pledge</h2><p>A verified listing, free or paid, gives you verification, a profile and its tools. It never buys stars, hides bad reviews or moves you up in ratings.</p></div></aside>
@@ -3720,12 +3734,14 @@ const postCard = p => `<a class="postcard" href="#${p.id}">${p.image ? `<img cla
 
 function vBlog() {
   const list = POSTS.filter(p => S.blogCat === 'All' || p.cat === S.blogCat);
+  const feat = list.length > 3 && list[0].image ? list[0] : null, rest = feat ? list.slice(1) : list;
   return `<section class="band"><div class="wrap" style="padding-block:44px 40px;display:flex;flex-direction:column;gap:14px">
       <h1 style="font-size:clamp(32px,4.5vw,48px);font-weight:800">Blog for companies</h1>
       <p style="color:var(--muted);font-size:18px;max-width:640px">Articles for business owners and teams.</p>
       <div class="chips" style="margin-top:6px">${['All', ...BLOG_CATS].map(c => `<button type="button" class="chip" data-act="blogcat" data-cat="${esc(c)}" aria-pressed="${S.blogCat === c}" style="${S.blogCat === c ? 'background:var(--accent);color:var(--accent-ink);border-color:var(--accent)' : ''}">${esc(c)}</button>`).join('')}</div>
     </div></section>
-    <section class="wrap sec"><h2 class="sr">Latest articles</h2><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(postCard).join('')}</div>
+    <section class="wrap sec"><h2 class="sr">Latest articles</h2>${feat ? `<a class="postfeat" href="#${feat.id}"><img src="${esc(feat.image)}" alt="${esc(feat.imageAlt || '')}" width="1200" height="800" fetchpriority="high"><div><span class="pf-tag">Latest</span><p class="eyebrow">${esc(feat.cat)}</p><h3>${esc(feat.title)}</h3><p>${esc(feat.excerpt)}</p><div class="postmeta"><span>${fmtDate(feat.date)}</span><span>${feat.read} min read</span></div></div></a>` : ''}
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${rest.map(postCard).join('')}</div>
       <div class="box soft" style="margin-top:28px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="font-size:19px">Have business expertise to share?</h2><p>We publish guest articles from founders, marketers and operators.</p></div><a class="btn p" href="#write-for-us">Write for us</a></div></section>`;
 }
 function listCard(where) {
@@ -3736,6 +3752,7 @@ function listCard(where) {
 }
 function vPost(p) {
   const blocks = p.body.map(postBlock);
+  const toc = p.body.filter(b => b[0] === 'h' || b[0] === 'faq').map(b => b[0] === 'faq' ? 'Frequently asked questions' : b[1]);
   const heads = p.body.map((b, i) => b[0] === 'h' ? i : -1).filter(i => i > 0);
   const at = heads.length > 1 ? heads[1] : Math.min(3, blocks.length);
   blocks.splice(at, 0, listCard('inline'));
@@ -3748,6 +3765,7 @@ function vPost(p) {
       <div class="postmeta" style="margin-top:14px"><span class="avatar" aria-hidden="true" style="width:32px;height:32px;font-size:12px;border-radius:999px">KC</span><span>Know The Company Editorial</span><span>·</span><span>${fmtDate(p.date)}</span><span>·</span><span>${p.read} min read</span>${p.updated && p.updated !== p.date ? `<span>·</span><span>Updated ${fmtDate(p.updated)}</span>` : ''}</div>
       ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt || '')}" width="1200" height="800" fetchpriority="high" style="width:100%;height:auto;border-radius:16px;margin-top:22px;aspect-ratio:3/2;object-fit:cover">` : ''}
       <p class="lead" style="margin-top:22px">${esc(p.excerpt)}</p>
+      ${toc.length > 2 ? `<nav class="toc" aria-label="In this article"><b>In this article</b><ol>${toc.map((t, i) => `<li><button type="button" data-act="toc" data-i="${i}">${esc(t)}</button></li>`).join('')}</ol></nav>` : ''}
       ${body}
     </article><aside class="postside">${listCard('side')}</aside></div>
     <section class="sec"><div class="sechead"><h2 style="font-size:24px">More from the blog</h2><a href="#blog" style="font-weight:700">All articles</a></div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${more.map(postCard).join('')}</div></section></div>`;
@@ -3853,7 +3871,7 @@ const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this sit
 /* ---------- currency switch ----------
    Plan prices show in rupees or US dollars. Visitors outside India's time zone start in dollars, and the
    choice is remembered in this browser. Legal pages always state both. */
-const CUR_PRICES = { INR: { PB: '₹499', PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), PZ: '₹' + BUSINESS_PRICE.toLocaleString('en-IN'), DB: 'About ₹1.4 a day', DP: 'About ₹2.7 a day', DZ: 'About ₹41 a day' }, USD: { PB: '$9', PP: '$19', PZ: '$179', DB: 'About 2 cents a day', DP: 'About 5 cents a day', DZ: 'About 49 cents a day' } };
+const CUR_PRICES = { INR: { PB: '₹499', PP: '₹' + PLUS_PRICE.toLocaleString('en-IN'), PZ: '₹' + BUSINESS_PRICE.toLocaleString('en-IN'), DB: 'About ₹42 a month', DP: 'About ₹83 a month', DZ: 'About ₹1,250 a month' }, USD: { PB: '$9', PP: '$19', PZ: '$179', DB: 'About 75 cents a month', DP: 'About $1.60 a month', DZ: 'About $15 a month' } };
 const curDefault = () => { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; return /Asia\/(Kolkata|Calcutta)/.test(z) || !z ? 'INR' : 'USD'; } catch (e) { return 'INR'; } };
 const curNow = () => { const v = store.get('ktc_cur', ''); return v === 'USD' || v === 'INR' ? v : curDefault(); };
 const curText = html => { const P = CUR_PRICES[curNow()]; return String(html).replace(/\[\[(PB|PP|PZ|DB|DP|DZ)\]\]/g, (m, k) => P[k]); };
@@ -3891,7 +3909,7 @@ function planCards() {
           <p class="meta" style="font-size:14px">${LAUNCH ? `Then [[PB]] a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DB]]</span>
           <ul>${BASIC_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
           <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="basic">${LAUNCH ? 'Start free' : 'Choose Basic'}</a></div>
-        <div class="price plus"><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>[[PP]]</b><span style="color:var(--muted)">a year</span></div>
+        <div class="price plus"><span class="popular">Most popular</span><span class="eyebrow">Plus</span><span class="pill ok" style="align-self:flex-start">Best for getting customers to your website</span><div class="amt"><b>[[PP]]</b><span style="color:var(--muted)">a year</span></div>
           <p class="meta" style="font-size:14px">${LAUNCH ? `First ${PLUS_TRIAL_DAYS} days free, then [[PP]] a year by autopay. Or stay on Basic.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DP]]</span>
           <p class="sub">Everything in Basic, plus:</p>
           <ul>${PLUS_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
@@ -4265,7 +4283,8 @@ document.addEventListener('submit', async e => {
     const body = f['r-body'].value.trim();
     const eR = !S.rating, eB = body.length < 20;
     document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB;
-    if (eR) { f.querySelector('[data-n="1"]').focus(); return; } if (eB) { f['r-body'].focus(); return; }
+    if (eR) { S.rstep = 1; f.dataset.step = 1; f.querySelector('[data-n="1"]').focus(); return; } if (eB) { S.rstep = 2; f.dataset.step = 2; f['r-body'].focus(); return; }
+    if (+f.dataset.step < 3) { S.rstep = 3; f.dataset.step = 3; return; }
     const m = f['r-date'].value;
     if (!S.user) {
       setDraft({ cid: c.id, rating: S.rating, title: f['r-title'].value, body: f['r-body'].value, date: m });
@@ -4279,7 +4298,7 @@ document.addEventListener('submit', async e => {
       await insertItem('Reviews', { company: c.wid, companySlug: c.id.slice(3), type: 'customer', displayName: S.user.name, anonymous: false, rating: S.rating, title: f['r-title'].value.trim(), body, experienceDate: m || '', firstHand: true, invited: S.invitedFor === c.id });
     } catch (err) { busy(f, false); toast(errMsg(err), 5000); return; }
     addPending({ cid: c.id, type: 'customer', title: f['r-title'].value.trim() || body.slice(0, 80) });
-    S.invitedFor = ''; S.rating = 0; setDraft(null); S.sentFor = c.id; render();
+    S.invitedFor = ''; S.rating = 0; S.rstep = 0; setDraft(null); S.sentFor = c.id; render();
     toast('Thanks. Your review is live.', 5000);
     loadData(true).then(ch => { if (ch) renderKeep(); });
     return;
@@ -4549,7 +4568,7 @@ function render() {
   const h = curRoute();
   if (!LOADED) {
     app.innerHTML = LOAD_ERR ? `<div class="wrap"><div class="empty" style="margin-top:40px"><b>We couldn't load the companies</b><p>Check your connection and try again.</p><button class="btn p" type="button" data-act="reload">Try again</button></div></div>`
-      : `<div class="wrap"><div class="empty" style="margin-top:40px;border:0" aria-busy="true"><b>Loading…</b></div></div>`;
+      : `<div class="wrap" aria-busy="true" style="padding-block:32px"><span class="sr">Loading…</span><div class="skel" style="width:220px;height:30px"></div>${'<div class="skelrow"><div class="skel" style="width:56px;height:56px;border-radius:16px"></div><div style="flex:1;display:flex;flex-direction:column;gap:10px"><div class="skel" style="width:40%;height:18px"></div><div class="skel" style="width:70%;height:14px"></div></div></div>'.repeat(5)}</div>`;
     renderNav(''); return;
   }
   let html, nav = '';
@@ -4721,7 +4740,7 @@ document.addEventListener('click', e => {
   if (act === 'add-prefill') { S.addPrefill = a.dataset.name || ''; return; }
   if (act === 'cotab-link') { S.returnTab = a.dataset.tab; return; }
   if (act === 'htab') { S.heroTab = a.dataset.tab; document.querySelectorAll('.htabs button').forEach(b => b.setAttribute('aria-pressed', b === a)); const box = document.getElementById('hero-form-box'); if (box) { box.innerHTML = heroForm(); const i = box.querySelector('input'); if (i) i.focus(); } return; }
-  if (act === 'rate') { S.rating = +a.dataset.n; const f = document.getElementById('review-form'); const keep = { t: f['r-title'].value, b: f['r-body'].value, d: f['r-date'].value }; render(); const g = document.getElementById('review-form'); g['r-title'].value = keep.t; g['r-body'].value = keep.b; g['r-date'].value = keep.d; g.querySelector(`[data-n="${S.rating}"]`).focus(); }
+  if (act === 'rate') { S.rating = +a.dataset.n; S.rstep = 2; const f = document.getElementById('review-form'); const keep = { t: f['r-title'].value, b: f['r-body'].value, d: f['r-date'].value }; render(); const g = document.getElementById('review-form'); g['r-title'].value = keep.t; g['r-body'].value = keep.b; g['r-date'].value = keep.d; g.querySelector(`[data-n="${S.rating}"]`).focus(); }
   if (act === 'jump') { e.preventDefault(); const el = document.getElementById(a.dataset.to); if (el) { el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); const fo = a.dataset.focus && document.getElementById(a.dataset.focus); if (fo) fo.focus({ preventScroll: true }); } }
   if (act === 'job-pay') { if (S.jobPending) { addJob(S.jobPending, true); S.jobPending = null; render(); toast(`Paid ₹${EXTRA_JOB} (demo). Job posted for ${JOB_DAYS} days.`); } }
   if (act === 'job-cancel') { S.jobPending = null; render(); }
@@ -4744,6 +4763,11 @@ document.addEventListener('click', e => {
   if (act === 'biz-team-remove') { const c = BYWID[a.dataset.wid]; if (!c || !window.confirm('Remove this person from your team? They won’t be able to manage the page any more.')) return; (async () => { try { await bizApi('team/remove', { company: c.wid, member: a.dataset.member }); toast('Removed from the team.'); await loadData(true); await loadBiz(c, true); } catch (err) { toast(err.message, 5000); } })(); return; }
   if (act === 'card-png') { cardPng(a.dataset.slug).catch(() => toast('Couldn’t make the image. Try again, or use the image link.')); return; }
   if (act === 'copy-text') { const txt = a.dataset.text; try { navigator.clipboard.writeText(txt).then(() => toast('Copied'), () => toast('Select the email and copy it')); } catch (err) { toast('Select the email and copy it'); } }
+  if (act === 'ftog') { const col = a.closest('.col'); const on = col.classList.toggle('open'); a.setAttribute('aria-expanded', on); return; }
+  if (act === 'toc') { const h = document.querySelectorAll('.article > h2')[+a.dataset.i]; if (h) h.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); return; }
+  if (act === 'rstep') { const f = document.getElementById('review-form'); const to = +a.dataset.to, cur = +f.dataset.step;
+    if (to > cur) { const eR = !S.rating, eB = cur >= 2 && f['r-body'].value.trim().length < 20; document.getElementById('err-rating').hidden = !eR; document.getElementById('err-body').hidden = !eB; if (eR || eB) return; }
+    S.rstep = to; f.dataset.step = to; const first = f.querySelector(`.rstep[data-s="${to}"] input, .rstep[data-s="${to}"] textarea, .rstep[data-s="${to}"] button`); if (first && to !== 1) first.focus({ preventScroll: true }); return; }
   if (act === 'blogcat') { S.blogCat = a.dataset.cat; render(); }
   if (act === 'pitch-again') { S.pitchSent = false; render(); }
   if (act === 'contact-again') { S.contactSent = false; render(); }

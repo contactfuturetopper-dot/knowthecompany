@@ -257,7 +257,7 @@ report.push('home path: h1=' + ((app.querySelector('h1') || {}).textContent || '
 {
   g.__mock.member = { member: null, loggedIn: false, loading: false, error: null }; globalThis.__memberFn(g.__mock.member); await new Promise(r => setTimeout(r, 40));
   const AUTH = { login: ['Log in to Know The Company', 'Log in or create a free account to write reviews.'], 'business-login': ['Company login', 'Log in to manage your company page, reply to reviews and see your plan.'], dashboard: ['Company dashboard', 'Log in to manage your company page.'], 'my-reviews': ['My reviews', 'Log in to see the reviews you have written.'], search: ['Search companies', 'Search for a company by name or website.'] };
-  await go('blog'); const posts = [...new Set([...app.querySelectorAll('a.postcard')].map(a => routeOf(a.getAttribute('href'))))];
+  await go('blog'); const posts = [...new Set([...app.querySelectorAll('a.postcard, a.postfeat')].map(a => routeOf(a.getAttribute('href'))))];
   await go('tools'); const tools = [...new Set([...app.querySelectorAll('a[href]')].map(a => routeOf(a.getAttribute('href'))).filter(r => r.startsWith('tool-')))];
   const pages = ['categories', 'search', 'tools', 'why-list', 'add', 'claim', 'list', 'dashboard', 'login', 'business-login', 'my-reviews', 'jobs', 'guidelines', ...(posts.length ? ['blog'] : []), 'write-for-us', 'about', 'contact', 'help', 'terms', 'privacy', 'pricing', 'refunds'];
   const out = [];
