@@ -2,12 +2,18 @@
 // (Razorpay). The rules are in src/lib/pay.ts.
 import type { APIRoute } from "astro";
 import {
-  json, payReady, keyId, memberFrom, ownedCompany, billingFor, billingBySub, saveBilling, setCompanyPlan, rzp,
+  json, payReady, webhookReady, keyId, memberFrom, ownedCompany, billingFor, billingBySub, saveBilling, setCompanyPlan, rzp,
   planIdFor, firstChargeAt, subscriptionTotal, checkoutSignatureOk, webhookSignatureOk, billingView, LIVE, PRICES, PLAN_NAMES,
 } from "../../../lib/pay";
 
 const OFF = { error: "Payments aren’t switched on yet. Please try again soon, or contact us." };
 const sec = (t: number | null | undefined) => (t ? new Date(t * 1000) : null);
+
+/* GET /api/pay/health: whether payments are switched on. Yes or no only, never the keys. */
+export const GET: APIRoute = async ({ params }) => {
+  if (params.action !== "health") return json({ error: "Unknown action" }, 404);
+  return json({ payments: payReady(), webhook: webhookReady() });
+};
 
 export const POST: APIRoute = async ({ params, request }) => {
   const action = params.action;

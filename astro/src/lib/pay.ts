@@ -26,6 +26,7 @@ const DAY = 86_400_000;
 const YEARS = 10; /* yearly charges for up to ten years; customers can cancel any time */
 
 export const payReady = () => !!(RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET);
+export const webhookReady = () => !!RAZORPAY_WEBHOOK_SECRET;
 export const keyId = () => RAZORPAY_KEY_ID || "";
 
 export const json = (body: unknown, status = 200) =>
