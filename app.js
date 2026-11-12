@@ -3400,6 +3400,8 @@ const POSTS = [
  },
  {
   "slug": "asking-only-happy-customers-for-reviews",
+  "image": "/images/blog/asking-only-happy-customers-for-reviews.webp",
+  "imageAlt": "Happy and unhappy customers with phones beside a review page showing only five-star reviews",
   "cat": "Customer experience",
   "date": "2026-11-12",
   "tone": 3,
@@ -3525,6 +3527,8 @@ const POSTS = [
  },
  {
   "slug": "fake-or-competitor-review",
+  "image": "/images/blog/fake-or-competitor-review.webp",
+  "imageAlt": "Business owner inspecting a suspicious one-star review posted by an anonymous competitor",
   "cat": "Reviews & reputation",
   "date": "2026-11-12",
   "tone": 4,
@@ -3666,6 +3670,8 @@ const POSTS = [
  },
  {
   "slug": "negative-employee-reviews-after-layoffs",
+  "image": "/images/blog/negative-employee-reviews-after-layoffs.webp",
+  "imageAlt": "Stressed manager at his laptop as one-star employee reviews pile up after layoffs",
   "cat": "Startup growth",
   "date": "2026-11-12",
   "tone": 5,
