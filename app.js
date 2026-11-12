@@ -2950,6 +2950,8 @@ const POSTS = [
  },
  {
   "slug": "why-ai-gets-your-company-wrong",
+  "image": "/images/blog/why-ai-gets-your-company-wrong.webp",
+  "imageAlt": "AI assistant confused about a company's details, then giving the right answer after the facts are checked",
   "cat": "Startup growth",
   "date": "2026-11-12",
   "tone": 6,
@@ -3100,6 +3102,8 @@ const POSTS = [
  },
  {
   "slug": "what-ai-tools-repeat-from-your-reviews",
+  "image": "/images/blog/what-ai-tools-repeat-from-your-reviews.webp",
+  "imageAlt": "Business owner watching an AI assistant read customer reviews about service, delivery and support",
   "cat": "Reviews & reputation",
   "date": "2026-11-12",
   "tone": 1,
@@ -3227,6 +3231,8 @@ const POSTS = [
  },
  {
   "slug": "make-your-website-easy-for-ai-to-read",
+  "image": "/images/blog/make-your-website-easy-for-ai-to-read.webp",
+  "imageAlt": "AI crawler inspecting a company website for readable code, sitemap, page speed and structured data",
   "cat": "Startup growth",
   "date": "2026-11-12",
   "tone": 2,
