@@ -3846,7 +3846,7 @@ function vHelp() {
 /* ---------- who runs the site ----------
    Razorpay checks that the business named here matches the KYC documents.
    Fill these in before applying. Empty fields are simply not shown. */
-const OPERATOR = { legalName: 'Kautilya Upadhyay', address: 'Agra, Uttar Pradesh, India', phone: '', taxNote: '' };
+const OPERATOR = { legalName: '', address: 'Agra, Uttar Pradesh, India', phone: '', taxNote: '' };
 const opName = () => OPERATOR.legalName || 'Know The Company';
 const opBox = () => OPERATOR.legalName ? `<div class="box"><h2>Who runs this site</h2><p>Know The Company is run by <b style="color:var(--fg)">${esc(OPERATOR.legalName)}</b>.${OPERATOR.address ? `<br>Address: ${esc(OPERATOR.address)}` : ''}${OPERATOR.phone ? `<br>Phone: <span style="user-select:all;color:var(--fg)">${esc(OPERATOR.phone)}</span>` : ''}</p></div>` : '';
 
