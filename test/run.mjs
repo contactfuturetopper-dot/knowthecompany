@@ -145,6 +145,15 @@ f.dispatchEvent(new g.window.Event('submit', { bubbles: true, cancelable: true }
 await new Promise(r => setTimeout(r, 60));
 click('[data-act="cotab"][data-tab="employees"]'); await new Promise(r => setTimeout(r, 30));
 report.push('emp form present: ' + !!app.querySelector('#emp-form'));
+{ /* ways to get verified without a work email: LinkedIn, offer letter, salary slip or bank statement */
+  const vals = [...app.querySelectorAll('input[name="e-ver"]')].map(r => r.value).join(',');
+  const pick = v => { const r = app.querySelector(`input[name="e-ver"][value="${v}"]`); r.checked = true; r.dispatchEvent(new g.window.Event('change', { bubbles: true })); };
+  pick('salary'); const s = [app.querySelector('#e-ver-li').hidden, app.querySelector('#e-ver-file').hidden, app.querySelector('#e-ver-file label').textContent];
+  pick('linkedin'); const l = [app.querySelector('#e-ver-li').hidden, app.querySelector('#e-ver-file').hidden];
+  pick('');
+  report.push(`verify options: ${vals} | salary shows file: ${!s[1] && s[0]} (${s[2]}) | linkedin shows link: ${!l[0] && l[1]}`);
+  if (vals !== ',linkedin,offer,salary' || s[1] || !s[0] || l[0] || !l[1]) errors.push('employee verify options broken');
+}
 // add a company
 g.location.hash = 'add'; g.window.dispatchEvent(new g.window.HashChangeEvent('hashchange')); await new Promise(r => setTimeout(r, 30));
 const af = app.querySelector('#add-form'); af['a-name'].value = 'Blue Lotus Sarees'; af['a-web'].value = 'https://www.bluelotus.in/';
