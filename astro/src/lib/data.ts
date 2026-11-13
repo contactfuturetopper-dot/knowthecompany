@@ -58,8 +58,8 @@ export function dedupeCompanies(cos: any[]): any[] {
   return cos.filter(c => keep.has(c));
 }
 
-const PUBLIC_FIELDS = ["_id", "_createdDate", "_updatedDate", "company", "companySlug", "type", "displayName", "anonymous", "rating", "subRatings", "title", "body", "pros", "cons", "advice", "recommend", "employmentStatus", "jobTitle", "location", "tenure", "experienceDate", "invited", "firstHand"];
-const TEAM_FIELDS = ["proofChecked", "workEmailVerified", "reply", "replyAt", "importedFrom", "originalDate"];
+const PUBLIC_FIELDS = ["_id", "_createdDate", "_updatedDate", "company", "companySlug", "type", "displayName", "anonymous", "rating", "subRatings", "title", "body", "pros", "cons", "advice", "recommend", "employmentStatus", "jobTitle", "location", "tenure", "experienceDate", "invited", "firstHand", "verifyPending"]; /* never linkedinUrl: it would unmask an anonymous review */
+const TEAM_FIELDS = ["proofChecked", "workEmailVerified", "linkedinVerified", "reply", "replyAt", "importedFrom", "originalDate"];
 
 /* The reviews a visitor may see, cleaned. `cos` must be the companies list (for who manages what). */
 export function publicReviews(raw: any[], cos: any[]): any[] {

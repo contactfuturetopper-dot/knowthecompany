@@ -225,7 +225,7 @@ function indexReviews(items) {
     const team = adminTouched(r); /* labels and replies only count once the team has set them: see "trust" above */
     const c = BYWID[typeof r.company === 'object' && r.company ? r.company._id : r.company]; if (!c) continue;
     const imported = team && r.importedFrom ? { from: String(r.importedFrom), date: monthOf(r.originalDate || '') } : null; /* a past review a Plus company shared, confirmed with its writer by the team */
-    const base = { wid: r._id, by: r._owner || (MINE.has(r._id) && S.user ? S.user.id : ''), type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), ym: String((imported && r.originalDate) || r._createdDate || '').slice(0, 7), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified };
+    const base = { wid: r._id, by: r._owner || (MINE.has(r._id) && S.user ? S.user.id : ''), type: r.type || 'customer', imported, date: imported && imported.date ? imported.date : monthOf(r._createdDate), ym: String((imported && r.originalDate) || r._createdDate || '').slice(0, 7), rating: Number(r.rating) || 0, reply: team ? r.reply || '' : '', replyFrom: c.name, verified: team && !!r.workEmailVerified, liVerified: team && !!r.linkedinVerified, pending: !!r.verifyPending && !(team && (r.linkedinVerified || r.workEmailVerified)) };
     if (r.type === 'employee') empBucket(c.id).reviews.push({ ...base, status: r.employmentStatus || 'Employee', title: r.jobTitle || '', loc: r.location || '', years: r.tenure || '', sub: r.subRatings || {}, pros: r.pros || '', cons: r.cons || '', advice: r.advice || '', rec: r.recommend === 'yes' ? 'yes' : 'no', named: !r.anonymous && !!r.displayName, name: r.anonymous ? '' : (r.displayName || '') });
     else if (r.type === 'interview') empBucket(c.id).interviews.push({ ...base, role: r.jobTitle || '', outcome: r.interviewOutcome || '', diff: r.interviewDifficulty || '', exp: r.interviewExperience || '', process: r.body || '', questions: r.interviewQuestions || '' });
     else (REVIEWS[c.id] = REVIEWS[c.id] || []).push({ ...base, name: r.displayName || 'Reviewer', title: r.title || '', body: r.body || '', proof: team && !!r.proofChecked, invited: !!r.invited });
@@ -407,7 +407,7 @@ function loadCached() {
    which reviews on screen are theirs, show a new review before the server's one-minute cache catches up,
    and stop a second review of the same company. */
 let MINE = new Set(), MINE_ITEMS = [], MINE_FOR = '';
-const mergeMine = items => { const have = new Set(items.map(r => r._id)); return items.concat(MINE_ITEMS.filter(r => !have.has(r._id)).map(r => ({ ...r, _owner: '', _team: false, proofChecked: false, workEmailVerified: false, reply: '', importedFrom: '' }))); };
+const mergeMine = items => { const have = new Set(items.map(r => r._id)); return items.concat(MINE_ITEMS.filter(r => !have.has(r._id)).map(r => ({ ...r, _owner: '', _team: false, proofChecked: false, workEmailVerified: false, linkedinVerified: false, reply: '', importedFrom: '' }))); };
 async function loadMine() {
   const id = S.user ? S.user.id : '';
   if (id === MINE_FOR) return false;
@@ -1049,8 +1049,16 @@ function empGate(c, what) {
   if (S.user) return `<div class="box soft" id="emp-gate"><h2>Company accounts can't post here</h2><p>Employee reviews come from personal reviewer accounts. Log out and log in as a reviewer to share yours.</p></div>`;
   return `<div class="box soft" id="emp-gate"><h2>Log in to ${what} anonymously</h2><p>A quick login stops fake posts. Your name and email are never shown, and ${esc(c.name)} can't see who wrote it.</p><div><button class="btn p" type="button" id="gate-login" data-act="gate-login">Log in to continue</button></div></div>`;
 }
+/* '' when empty, null when it isn't a LinkedIn profile link, else the cleaned https link */
+function linkedinUrl(s) {
+  s = String(s || '').trim(); if (!s) return '';
+  if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+  let u; try { u = new URL(s); } catch (e) { return null; }
+  if (!/(^|\.)linkedin\.com$/i.test(u.hostname) || !/^\/(in|pub)\/[^/]+/i.test(u.pathname)) return null;
+  return 'https://www.linkedin.com' + u.pathname.replace(/\/+$/, '');
+}
 function anonNote(c) {
-  return `<div class="democode">You choose below whether to post anonymously or with your name. Your email is never shown. ${workVerified(c) ? `You're logged in with a work email at ${esc(c.web)}, so this will carry a “Work email verified” badge.` : `To get a “Work email verified” badge, log in with your work email at ${esc(c.web)}.`}</div>`;
+  return `<div class="democode">You choose below whether to post anonymously or with your name. Your email is never shown. ${workVerified(c) ? `You're logged in with a work email at ${esc(c.web)}, so this will carry a “Work email verified” badge.` : `To get a “Work email verified” badge, log in with your work email at ${esc(c.web)}. No work email? Add your LinkedIn profile below and our team will check it.`}</div>`;
 }
 function empSummary(list) {
   if (!list.length) return '';
@@ -1088,6 +1096,7 @@ function empForm(c) {
       <div class="planpick">
         <label><input type="radio" name="e-show" value="anon" ${S.empShow !== 'named' ? 'checked' : ''}><span><b>Anonymous</b><small>Shown as “Anonymous employee”. ${esc(c.name)} can't see who wrote it. In a small team, your job title and dates can still hint at who you are, so share only what you're comfortable with.</small></span></label>
         <label><input type="radio" name="e-show" value="named" ${S.empShow === 'named' ? 'checked' : ''}><span><b>With my name</b><small>Shown as “${esc(displayName())}”. Named reviews often carry more weight with readers.</small></span></label></div></fieldset>
+    ${workVerified(c) ? '' : `<div class="field"><label class="l" for="e-linkedin">Your LinkedIn profile <span class="meta">(optional, to get verified)</span></label><input id="e-linkedin" type="url" maxlength="200" inputmode="url" autocomplete="url" placeholder="https://www.linkedin.com/in/your-name" aria-describedby="e-linkedin-h err-e-linkedin"><p class="meta" id="e-linkedin-h" style="font-size:13px">No work email? Share your LinkedIn profile and our team will check that you work or worked at ${esc(c.name)}. Your review still goes live straight away, marked “Verification pending” until we've checked. Only our team sees this link. It is never shown on the review, even an anonymous one.</p><p class="err" id="err-e-linkedin" hidden>Enter a LinkedIn profile link like https://www.linkedin.com/in/your-name, or leave it empty.</p></div>`}
     <label class="check"><input id="e-first" type="checkbox"><span>I work or worked at this company, and this is my own experience.</span></label><p class="err" id="err-e-first" hidden>Tick the box to confirm.</p><p class="meta" style="font-size:13px">Don't name junior colleagues or share confidential company information. Your review is published as soon as you post it. Reviews that break the <a href="#guidelines">guidelines</a> are taken down.</p>
     <div><button class="btn p lg" type="submit">Post review</button></div>
   </form>`;
@@ -1097,7 +1106,7 @@ function empCard(r, idx, cid) {
   const subs = SUBS.filter(([k]) => r.sub && r.sub[k]).map(([k, l]) => `<span class="pill cat">${l} ${r.sub[k]}/5</span>`).join('');
   return `<article class="review">
     <div class="who">${PERSON(40)}<div class="t"><span style="font-size:13px;font-weight:700;color:var(--muted)">${r.named && r.name ? esc(r.name) : 'Anonymous employee'}</span><h3 style="font-size:16px">${esc(r.status)} · ${esc(r.title)}</h3><span class="meta">${esc(r.loc || 'Location not shared')} · ${esc(r.years)} · ${esc(r.date)}</span></div>
-      ${r.verified ? `<span class="pill ok">${TICK('var(--accent-soft-ink)')}Work email verified</span>` : ''}${mine ? '<span class="pill cat">Your review</span>' : ''}</div>
+      ${r.verified ? `<span class="pill ok">${TICK('var(--accent-soft-ink)')}Work email verified</span>` : r.liVerified ? `<span class="pill ok">${TICK('var(--accent-soft-ink)')}LinkedIn verified</span>` : r.pending ? '<span class="pill cat" title="The writer shared their LinkedIn profile. Our team is checking it.">Verification pending</span>' : ''}${mine ? '<span class="pill cat">Your review</span>' : ''}</div>
     ${starRow(r.rating, 18)}
     ${subs ? `<div class="tags">${subs}</div>` : ''}
     <div class="ersec"><h4>Pros</h4><p>${esc(r.pros)}</p></div>
@@ -3918,7 +3927,7 @@ const HELP = [
     ['Why was my review removed?', 'Only reviews that break our review guidelines, or that we must remove by law, are taken down. We email you the reason.']]],
   ['For employees', [
     ['Can I post an employee review anonymously?', 'Yes. You choose for each review: anonymous, or with your name. Your email is never shown, and your employer can\'t see who wrote an anonymous review.'],
-    ['How do you verify employees?', 'Log in with your work email at the company\'s website domain to get a “Work email verified” badge.'],
+    ['How do you verify employees?', 'Log in with your work email at the company\'s website domain to get a “Work email verified” badge. No work email? Add your LinkedIn profile when you write the review and our team will check it. Your review goes live straight away, marked “Verification pending”, and gets a “LinkedIn verified” badge once we\'ve checked. Only our team sees your LinkedIn link.'],
     ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
     ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
   ['For employers', [
@@ -3972,7 +3981,7 @@ function vTerms() {
 }
 function vPrivacy() {
   return legalPage('Privacy policy', 'Privacy policy', 'This policy explains what personal data Know The Company collects when you use Know The Company, why, and your choices.', [
-    ['What we collect', ['Account details: your name and email address.', 'Content you post: reviews, replies, reports and messages.', 'Proof files you upload to verify a review. We delete these after checking them.', 'Documents and ID cards you upload to claim a company. Only our team can see them, and we use them only to check the claim.', 'Work email addresses used to verify employee reviews. We never show them to employers or the public.', 'Business listing details and payment confirmations. Payment details are handled by our payment provider, not stored by us.', 'Basic technical data such as device type and pages visited, to keep the site secure.']],
+    ['What we collect', ['Account details: your name and email address.', 'Content you post: reviews, replies, reports and messages.', 'Proof files you upload to verify a review. We delete these after checking them.', 'Documents and ID cards you upload to claim a company. Only our team can see them, and we use them only to check the claim.', 'Work email addresses used to verify employee reviews. We never show them to employers or the public.', 'LinkedIn profile links you choose to share to verify an employee review. Only our team sees them, to check that you work or worked at the company. We never show them to employers or the public.', 'Business listing details and payment confirmations. Payment details are handled by our payment provider, not stored by us.', 'Basic technical data such as device type and pages visited, to keep the site secure.']],
     ['How we use it', ['To run your account and show your reviews with your chosen name.', 'To detect fake reviews and abuse.', 'To verify businesses and process listing payments.', 'To reply to your messages and send login codes.']],
     ['What we never do', 'We never sell your personal data or show reviewers\' email addresses to businesses.'],
     ['Sharing', 'We share data only with service providers who help us run Know The Company (hosting, email, payments), and when required by law, such as a valid court order.'],
@@ -4389,11 +4398,13 @@ document.addEventListener('submit', async e => {
     let data;
     if (id === 'emp-form') {
       const rec = f.querySelector('input[name="e-rec"]:checked');
-      if (!check([['e-title', !v('e-title')], ['e-overall', !S.emp.overall, 'e-overall-1'], ['e-pros', v('e-pros').length < 20], ['e-cons', v('e-cons').length < 20], ['e-rec', !rec, 'e-rec-yes']])) return;
+      const li = f['e-linkedin'] ? linkedinUrl(v('e-linkedin')) : '';
+      if (!check([['e-title', !v('e-title')], ['e-overall', !S.emp.overall, 'e-overall-1'], ['e-pros', v('e-pros').length < 20], ['e-cons', v('e-cons').length < 20], ['e-rec', !rec, 'e-rec-yes'], ...(f['e-linkedin'] ? [['e-linkedin', li === null]] : [])])) return;
       if (!checkFirst(f, 'e-first')) return;
       const sub = {}; SUBS.forEach(([k]) => { if (S.emp[k]) sub[k] = S.emp[k]; });
       const show = (f.querySelector('input[name="e-show"]:checked') || {}).value || 'anon'; S.empShow = show;
       data = { type: 'employee', displayName: show === 'named' ? displayName() : '', anonymous: show !== 'named', rating: S.emp.overall, subRatings: sub, pros: v('e-pros'), cons: v('e-cons'), advice: v('e-advice'), recommend: rec.value, employmentStatus: v('e-status'), jobTitle: v('e-title'), location: v('e-loc'), tenure: v('e-years') };
+      if (li && !workVerified(c)) { data.linkedinUrl = li; data.verifyPending = true; } /* the team checks the profile; the link itself is team-only (never in /api/data) */
     } else {
       if (!check([['i-role', !v('i-role')], ['i-process', v('i-process').length < 20]])) return;
       if (!checkFirst(f, 'i-first')) return;
@@ -4930,10 +4941,11 @@ document.addEventListener('submit', e => {
     const done = (kind, item, msg, headId) => { empBucket(c.id)[kind].unshift({ by: S.user.email, ...item, verified: workVerified(c), date: monthNow() }); store.set('tn_emp', EMP); delete S.formCache[f.id]; render(); toast(msg); const h = document.getElementById(headId); if (h) h.scrollIntoView({ block: 'start' }); };
     if (f.id === 'emp-form') {
       const rec = f.querySelector('input[name="e-rec"]:checked');
-      if (!check([['e-title', !v('e-title')], ['e-overall', !S.emp.overall, 'e-overall-1'], ['e-pros', v('e-pros').length < 20], ['e-cons', v('e-cons').length < 20], ['e-rec', !rec, 'e-rec-yes']])) return;
+      const li = f['e-linkedin'] ? linkedinUrl(v('e-linkedin')) : '';
+      if (!check([['e-title', !v('e-title')], ['e-overall', !S.emp.overall, 'e-overall-1'], ['e-pros', v('e-pros').length < 20], ['e-cons', v('e-cons').length < 20], ['e-rec', !rec, 'e-rec-yes'], ...(f['e-linkedin'] ? [['e-linkedin', li === null]] : [])])) return;
       const sub = {}; SUBS.forEach(([k]) => { sub[k] = S.emp[k]; });
       const show = (f.querySelector('input[name="e-show"]:checked') || {}).value || 'anon';
-      const item = { status: v('e-status'), title: v('e-title'), loc: v('e-loc'), years: v('e-years'), rating: S.emp.overall, sub, pros: v('e-pros'), cons: v('e-cons'), advice: v('e-advice'), rec: rec.value, named: show === 'named', name: show === 'named' ? displayName() : '' };
+      const item = { status: v('e-status'), title: v('e-title'), loc: v('e-loc'), years: v('e-years'), rating: S.emp.overall, sub, pros: v('e-pros'), cons: v('e-cons'), advice: v('e-advice'), rec: rec.value, named: show === 'named', name: show === 'named' ? displayName() : '', pending: !!li && !workVerified(c) };
       S.empShow = show;
       S.emp = EMP_ZERO(); done('reviews', item, 'Review posted', 'er-h');
     }
