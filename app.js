@@ -2046,6 +2046,718 @@ const BLOG_CATS = ['Reviews & reputation', 'Customer experience', 'Startup growt
    The server reads this list at build time and writes the article into the page for search engines. */
 const POSTS = [
  {
+  "slug": "is-this-company-legit",
+  "image": "/images/blog/is-this-company-legit.webp",
+  "imageAlt": "Illustration of a man at a laptop checking a company, with a verified building, star ratings and a checklist",
+  "cat": "Reviews & reputation",
+  "date": "2026-11-18",
+  "tone": 3,
+  "title": "Is this company legit? How to check before you buy, apply or sign up",
+  "seo": "Is this company legit? How to check in 10 minutes",
+  "desc": "How to check if a company or website is legit before you pay, apply or share your details: official registers, domain age, payment red flags and reviews.",
+  "excerpt": "Scam losses hit new records in 2025. Here is a ten-minute routine to check any company or online shop before you hand over money or personal details.",
+  "body": [
+   [
+    "p",
+    "You have found a shop with the exact item you want at a good price. Maybe a company has offered you a job, or an app wants your bank details. Before you go any further, it is worth ten minutes to check the business is real."
+   ],
+   [
+    "p",
+    "The numbers explain why. People in the US reported losing about $16 billion to fraud in 2025, the [Federal Trade Commission says](https://www.ftc.gov/news-events/news/press-releases/2026/06/ftc-data-show-people-reported-losing-3-point-5-billion-imposter-scams-2025), the highest figure on record. In the UK, [UK Finance reports](https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release) that purchase scams made up 71% of push payment fraud cases in 2025. Australians reported A$2.18 billion in scam losses, according to the [ACCC](https://www.accc.gov.au/media-release/continued-action-critical-to-combat-fraud-as-annual-scam-losses-exceed-2-billion)."
+   ],
+   [
+    "h",
+    "1. Check the company is registered"
+   ],
+   [
+    "p",
+    "**A real company almost always appears on an official government register.** These searches are free or mostly free:"
+   ],
+   [
+    "ul",
+    [
+     "UK: [Companies House](https://find-and-update.company-information.service.gov.uk/) shows the company number, registered address, directors, filed accounts and whether it has been dissolved.",
+     "US: each state keeps its own business register. The National Association of Secretaries of State [links to every state's search](https://www.nass.org/business-services/corporate-registration). For listed companies, use the SEC's [EDGAR search](https://www.sec.gov/edgar/search/).",
+     "EU: the European e-Justice Portal searches company registers across EU and EEA countries. Some national registers charge for documents.",
+     "Australia: [ABN Lookup](https://abr.business.gov.au/) shows whether a business number is active, and [ASIC's registers](https://www.asic.gov.au/online-services/search-asic-registers/company-and-organisation-registers) give basic company details for free.",
+     "India: the Ministry of Corporate Affairs publishes company master data, including the company identification number, status and directors."
+    ]
+   ],
+   [
+    "p",
+    "Then **compare the details with what the business shows you.** The name on the website, invoice or offer letter should match the register, and so should the address. A company formed last month that claims \"20 years of experience\" is a warning. Remember that registers record what companies file. Companies House, for one, says it does not check the information is accurate."
+   ],
+   [
+    "h",
+    "2. Look at the website itself"
+   ],
+   [
+    "ul",
+    [
+     "**Check how old the domain is.** [ICANN Lookup](https://lookup.icann.org/en) shows when most domain names were registered. A shop claiming a long history on a domain created three weeks ago is not telling the truth.",
+     "Look closely at the address. Copied designs on lookalike domains are common, the UK's [National Cyber Security Centre warns](https://www.ncsc.gov.uk/guidance/shopping-online-securely), so check the spelling letter by letter.",
+     "Paste the address into Google's [Safe Browsing site status](https://transparencyreport.google.com/safe-browsing/search) to see whether it is flagged as dangerous.",
+     "Do not rely on the padlock. The FTC and Citizens Advice both point out that a secure https address does not mean the site is legitimate. Scam sites use them too.",
+     "Look for a full postal address, a phone number and a returns policy. Only a contact form or only a PO box is a reason to keep checking."
+    ]
+   ],
+   [
+    "h",
+    "3. Watch how they want to be paid"
+   ],
+   [
+    "p",
+    "**The payment method is often the clearest sign.** The FTC says scammers insist on [cryptocurrency or gift cards](https://consumer.ftc.gov/articles/how-avoid-scam), and the NCSC's advice is never to pay an online shop by direct bank transfer. Be wary of:"
+   ],
+   [
+    "ul",
+    [
+     "a request to pay by bank transfer, crypto, gift cards or a money transfer service",
+     "a discount for paying \"outside\" the website or a marketplace",
+     "pressure to pay today because the offer or job \"will be gone\"",
+     "prices far below every other seller"
+    ]
+   ],
+   [
+    "p",
+    "**Pay by credit card where you can.** In the UK, [section 75 of the Consumer Credit Act](https://www.citizensadvice.org.uk/consumer/somethings-gone-wrong-with-a-purchase/getting-your-money-back-if-you-paid-by-card-or-paypal/) makes the card company jointly responsible for a single item costing more than £100 and no more than £30,000. In the US, the [Fair Credit Billing Act](https://consumer.ftc.gov/articles/using-credit-cards-and-disputing-charges) lets you dispute charges for goods not delivered as agreed, and limits your liability for unauthorised charges to $50. Debit cards usually only offer a voluntary chargeback."
+   ],
+   [
+    "h",
+    "4. Read what other people say"
+   ],
+   [
+    "p",
+    "Search the company name with the words \"scam\" and \"complaint\", as the [FTC suggests](https://consumer.ftc.gov/articles/online-shopping). Then **read reviews from customers and employees, not just the star rating.** Look for:"
+   ],
+   [
+    "ul",
+    [
+     "reviews spread over months or years, not dozens posted in one week",
+     "detail you can picture, such as delivery times, refund experiences or interview steps",
+     "the same complaint repeated by different people, such as parcels that never arrive or refunds that never come",
+     "how the company replies, and whether it replies at all"
+    ]
+   ],
+   [
+    "p",
+    "A company with no reviews anywhere is not proof of a scam, as new businesses have to start somewhere. **A company with no register entry, no history and no reviews is a reason to walk away.**"
+   ],
+   [
+    "h",
+    "5. If it is a job, check the employer too"
+   ],
+   [
+    "p",
+    "Job scams copy real company names. Find the vacancy on the company's own careers page, contact the company through the phone number or email on its official website and never pay for training, equipment or a background check. Real employers do not charge you to hire you."
+   ],
+   [
+    "h",
+    "If you have already paid"
+   ],
+   [
+    "p",
+    "Contact your bank or card provider straight away and ask about a chargeback or section 75 claim. Then report it: in the US at [ReportFraud.ftc.gov](https://reportfraud.ftc.gov/), in the UK at [Report Fraud](https://www.reportfraud.police.uk/) and in Australia through [Scamwatch](https://www.scamwatch.gov.au/). Reports help the authorities spot patterns and warn other people."
+   ],
+   [
+    "faq",
+    [
+     [
+      "How can I check if a company is legit for free?",
+      "Search the official business register for the country the company says it is based in, such as Companies House in the UK or the state register in the US. Then check the domain age on ICANN Lookup and read independent reviews from customers and employees."
+     ],
+     [
+      "Does a padlock mean a website is safe?",
+      "No. The padlock only means the connection is encrypted. Scam websites can and do use https."
+     ],
+     [
+      "Is it safe to pay a company by bank transfer?",
+      "Only if you have confirmed the company is real and you trust it. Bank transfers are hard to reverse, which is why scammers prefer them. A credit card gives you far more protection."
+     ],
+     [
+      "What if a company has no reviews?",
+      "New businesses may have none yet. In that case lean harder on the other checks: a register entry, a real address, a domain with some history and a safe way to pay."
+     ],
+     [
+      "Where do I report a scam company?",
+      "Your bank first, then the national fraud reporting service: ReportFraud.ftc.gov in the US, Report Fraud in the UK and Scamwatch in Australia. Elsewhere, use your national police or consumer protection service."
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "employee-net-promoter-score",
+  "image": "/images/blog/employee-net-promoter-score.webp",
+  "imageAlt": "Illustration of a happy team behind a laptop showing a sad, neutral and happy score scale next to a rising gauge",
+  "cat": "Startup growth",
+  "date": "2026-11-18",
+  "tone": 2,
+  "title": "Employee Net Promoter Score (eNPS): what it is, how to work it out and what counts as a good score",
+  "seo": "Employee Net Promoter Score (eNPS): formula and benchmarks",
+  "desc": "What eNPS is, the one question behind it, how to calculate it, what a good score looks like in 2026 and how to run the survey so people answer honestly.",
+  "excerpt": "eNPS asks your team one question and turns the answers into a single number. Here is how to calculate it, what a good score looks like this year and what to do with the result.",
+  "body": [
+   [
+    "p",
+    "Employee Net Promoter Score, or eNPS, is the shortest staff survey you can run. It asks one question about whether people would recommend your company as a place to work, and turns the answers into a number between -100 and +100."
+   ],
+   [
+    "p",
+    "It is popular because it is quick and easy to track over time. It is also easy to misread. **The number tells you how people feel. It never tells you why.**"
+   ],
+   [
+    "h",
+    "Where it comes from"
+   ],
+   [
+    "p",
+    "The idea started with customers. In 2003 Fred Reichheld of Bain & Company published [The One Number You Need to Grow](https://hbr.org/2003/12/the-one-number-you-need-to-grow) in Harvard Business Review, arguing that one question about recommending a company predicted growth better than long satisfaction surveys. Bain's [account of the method's history](https://www.netpromotersystem.com/about/history-of-net-promoter/) says the recommend question was the strongest predictor in 11 of 14 industry case studies it tested."
+   ],
+   [
+    "p",
+    "Companies soon asked the same question of their own staff. Net Promoter, NPS and Net Promoter Score are trademarks of Bain & Company, NICE Systems and Fred Reichheld, so you will see the employee version written as eNPS or employee NPS."
+   ],
+   [
+    "h",
+    "The question"
+   ],
+   [
+    "p",
+    "Bain's page on [employee NPS](https://www.netpromotersystem.com/about/employee-nps/) says most companies that use it ask:"
+   ],
+   [
+    "quote",
+    "\"How likely would you recommend this company as a place to work?\""
+   ],
+   [
+    "p",
+    "People answer on a scale from 0 (not at all likely) to 10 (extremely likely). Keep the wording the same every time you run it, or you cannot compare one survey with the next."
+   ],
+   [
+    "h",
+    "How to work it out"
+   ],
+   [
+    "ol",
+    [
+     "**Sort the answers into three groups.** Scores of 9 or 10 are promoters. Scores of 7 or 8 are passives. Scores of 0 to 6 are detractors.",
+     "Work out what percentage of all answers fall into each group.",
+     "**Subtract the percentage of detractors from the percentage of promoters.** Passives count towards the total but not towards either side."
+    ]
+   ],
+   [
+    "p",
+    "An example: 50 people answer. 20 give 9 or 10, so 40% are promoters. 18 give 7 or 8. 12 give 6 or below, so 24% are detractors. Your eNPS is 40 minus 24, which is **+16**. It is written as a whole number, not a percentage."
+   ],
+   [
+    "p",
+    "The score can run from -100 (everyone is a detractor) to +100 (everyone is a promoter). Notice how harsh the scale is. A 7 feels positive to the person who gave it, yet it does nothing for your score."
+   ],
+   [
+    "h",
+    "What counts as a good score in 2026"
+   ],
+   [
+    "p",
+    "There is no single benchmark, because each survey company measures a different set of employers. Three recent figures show the range:"
+   ],
+   [
+    "ul",
+    [
+     "BambooHR's [2026 Employee Happiness Report](https://www.bamboohr.com/resources/data-at-work/data-stories/employee-satisfaction-survey-2026), drawn from more than 1,400 mostly small and mid-sized companies, puts the average at 40 for January to June 2026. Construction scored 51, finance 47, healthcare 40, technology 37 and restaurants 34.",
+     "QuestionPro's 2025 benchmark, from a survey of 5,000 employees, puts the average at 32, up from 25 the year before.",
+     "Perceptyx, which works mostly with large employers and holds more than 20 million responses, [puts the overall benchmark](https://blog.perceptyx.com/employee-net-promoter-score) in the low to mid 20s."
+    ]
+   ],
+   [
+    "p",
+    "So **anything above zero means you have more fans than critics**, scores in the 20s and 30s are typical, and 40 or more is strong. Bain also notes that employee scores often come out well below customer scores, so do not compare the two."
+   ],
+   [
+    "p",
+    "**The most useful comparison is your own score over time.** A move from +5 to +18 in a year tells you more than whether +18 beats another company's figure."
+   ],
+   [
+    "h",
+    "How to run it so people answer honestly"
+   ],
+   [
+    "ul",
+    [
+     "**Keep it confidential, and say so.** Bain's guidance is that answers must stay confidential and reach managers only in a form that hides who said what. If people suspect they can be identified, the detractors stop answering and your score looks better than reality.",
+     "**Never report on very small groups.** Perceptyx [recommends a minimum group size](https://blog.perceptyx.com/anonymous-or-confidential-an-employee-survey-guide-for-leaders), typically five respondents or more, for every team, filter and comment. In a team of three, everyone knows who gave the 2.",
+     "**Always ask why.** Add one open question straight after the score, such as \"What is the main reason for your score?\" The comments are where the actions come from.",
+     "Run it regularly. Many companies ask quarterly, and some monthly during big changes. Once a year is too slow to see whether anything you changed worked."
+    ]
+   ],
+   [
+    "h",
+    "What to do with the result"
+   ],
+   [
+    "p",
+    "Read the comments before you look at the number again. Group them into themes such as workload, pay, managers or career growth. Pick one or two themes, tell the team what you are changing and run the survey again. People stop answering surveys when nothing happens afterwards."
+   ],
+   [
+    "p",
+    "It also helps to compare eNPS with what former and current employees write in public. A survey tells you what people say to you. Public employee reviews show what they say to everyone else, and job candidates read those first. Our guide on [what candidates read in employee reviews](/blog/what-candidates-read-in-employee-reviews) covers what they look for."
+   ],
+   [
+    "h",
+    "Why it matters beyond HR"
+   ],
+   [
+    "p",
+    "Gallup's [State of the Global Workplace 2026](https://www.gallup.com/workplace/349484/state-of-the-global-workplace.aspx) report found that only 20% of employees worldwide were engaged at work in 2025, the lowest level since 2020. Gallup estimates low engagement costs the world economy about $10 trillion in lost productivity, roughly 9% of global GDP. A one-question survey will not fix that on its own, but it gives you an early, cheap signal that something is changing."
+   ],
+   [
+    "faq",
+    [
+     [
+      "What is a good eNPS score?",
+      "Anything above zero means you have more promoters than detractors. Recent benchmarks put typical scores between the low 20s and 40, depending on who is measured. The more useful test is whether your own score is rising over time."
+     ],
+     [
+      "How is eNPS calculated?",
+      "Take the percentage of people who answer 9 or 10 and subtract the percentage who answer 0 to 6. People who answer 7 or 8 count in the total but not on either side."
+     ],
+     [
+      "Can eNPS be negative?",
+      "Yes. If more people score 0 to 6 than 9 or 10, the result is below zero. The lowest possible score is -100."
+     ],
+     [
+      "How often should we run an eNPS survey?",
+      "Quarterly suits most companies. Monthly can help during a big change such as a restructure. Keep the question wording the same each time."
+     ],
+     [
+      "Should eNPS be anonymous?",
+      "It should at least be confidential, with results shown only for groups large enough that no one can be identified. Without that, unhappy staff tend not to answer."
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "signs-of-a-toxic-workplace",
+  "image": "/images/blog/signs-of-a-toxic-workplace.webp",
+  "imageAlt": "Illustration of a job seeker imagining two workplaces: a stressed employee with a shouting manager and a relaxed, friendly team",
+  "cat": "Reviews & reputation",
+  "date": "2026-11-18",
+  "tone": 5,
+  "title": "Signs of a toxic workplace and how to spot them before you accept the offer",
+  "seo": "Signs of a toxic workplace: how to spot them before you join",
+  "desc": "The signs of a toxic workplace, the red flags in the hiring process, questions to ask in the interview and how to read employee reviews before you accept a job.",
+  "excerpt": "Most people discover a toxic workplace after they join. Here are the signs to look for in the job advert, the interview and employee reviews, so you can spot it before you sign.",
+  "body": [
+   [
+    "p",
+    "A bad job is hard to undo. You may have resigned from somewhere else, turned down other offers or moved city. So it pays to look for the warning signs before you say yes, while you still have a choice."
+   ],
+   [
+    "p",
+    "The stakes are real. Gallup's [State of the Global Workplace 2026](https://www.gallup.com/workplace/697904/state-of-the-global-workplace-global-data.aspx) found 40% of employees worldwide felt a lot of stress during the previous day. In the UK, the CIPD's [Good Work Index 2026](https://www.cipd.org/globalassets/media/comms/news/2026/good-work-index-2026.pdf) found a quarter of employees say work harms their mental health, and 30% say their workload is too high."
+   ],
+   [
+    "h",
+    "What makes a workplace toxic"
+   ],
+   [
+    "p",
+    "Hard work and a tough boss are not the same as a toxic culture. Researchers at MIT Sloan Management Review, who studied large volumes of employee feedback, described five traits that set toxic workplaces apart: **disrespectful, non-inclusive, unethical, cutthroat and abusive.** The World Health Organization's [list of psychosocial risks at work](https://www.who.int/news-room/fact-sheets/detail/mental-health-at-work) covers similar ground, including excessive workloads, a culture that allows negative behaviour, authoritarian supervision, bullying and job insecurity."
+   ],
+   [
+    "p",
+    "In practice, it tends to show up as:"
+   ],
+   [
+    "ul",
+    [
+     "people afraid to speak up, admit a mistake or ask a question",
+     "managers who shout, belittle or take credit for others' work",
+     "colleagues set against each other through constant comparison or competition",
+     "rules bent for favourites or for results",
+     "workloads that only work if people give up evenings and weekends",
+     "high turnover that nobody explains"
+    ]
+   ],
+   [
+    "h",
+    "Red flags in the job advert"
+   ],
+   [
+    "ul",
+    [
+     "**The same role keeps being advertised.** If you saw the vacancy six months ago too, ask why it is open again.",
+     "Phrases such as \"work hard, play hard\", \"thrive under pressure\" or \"we're like a family\" with nothing concrete about hours, pay or support.",
+     "A long list of duties that reads like two or three jobs in one.",
+     "No pay range, especially in places where the law now requires one."
+    ]
+   ],
+   [
+    "h",
+    "Red flags in the hiring process"
+   ],
+   [
+    "p",
+    "**How a company treats candidates is a preview of how it treats staff.** Watch for:"
+   ],
+   [
+    "ul",
+    [
+     "interviewers who arrive late, are distracted or have clearly not read your application",
+     "a job description that changes between interviews",
+     "pressure to accept an offer the same day",
+     "vague or evasive answers about why the last person left",
+     "a manager who talks negatively about their own team",
+     "no chance to meet the people you would actually work with"
+    ]
+   ],
+   [
+    "p",
+    "SHRM's careers advice adds a related warning: [many staff with short tenure](https://www.shrm.org/topics-tools/flagships/all-things-work/career-catfishing-red-flags) is worth asking about. If most of the team joined in the past year, find out what happened to the people before them."
+   ],
+   [
+    "h",
+    "Questions to ask in the interview"
+   ],
+   [
+    "p",
+    "Ask these calmly and listen to how people answer as much as what they say. Hesitation, contradictions between interviewers or a change of subject tell you a lot. Some of these come from [MIT's careers advice](https://cdo.mit.edu/blog/2023/06/06/40-smart-questions-to-ask-at-the-end-of-any-job-interview/):"
+   ],
+   [
+    "ul",
+    [
+     "\"Why are you hiring for this role?\"",
+     "\"If this isn't a new position, why did the person before me leave?\"",
+     "\"How long have the people in this team been here?\"",
+     "\"What does a normal week look like, and how often do people work late or at weekends?\"",
+     "\"Can you tell me about a time the team disagreed, and how it was resolved?\"",
+     "\"How is performance measured in this role?\"",
+     "\"Could I speak to someone who would be my colleague?\""
+    ]
+   ],
+   [
+    "p",
+    "**A healthy employer is usually happy to answer.** One that bristles at fair questions is showing you how it handles questions after you join."
+   ],
+   [
+    "h",
+    "What employee reviews can tell you"
+   ],
+   [
+    "p",
+    "Interviews show you the company at its most polished. **Reviews from current and former employees show you an ordinary Tuesday.** Read them for patterns rather than single stories:"
+   ],
+   [
+    "ul",
+    [
+     "the same complaint from different people over time, such as a named problem with managers, unpaid overtime or late salaries",
+     "reviews from the department or location you would join",
+     "whether things are getting better or worse in recent reviews",
+     "how the company replies, and whether it acknowledges problems or only argues"
+    ]
+   ],
+   [
+    "p",
+    "One angry review proves little. Ten reviews describing the same manager behaviour in the same team is a pattern. Our guide on [what candidates read in employee reviews](/blog/what-candidates-read-in-employee-reviews) explains what to weigh up, and if you are unsure whether the company itself is genuine, our guide on [how to check if a company is legit](/blog/is-this-company-legit) walks through the checks."
+   ],
+   [
+    "h",
+    "If you are already in one"
+   ],
+   [
+    "p",
+    "Keep a dated record of incidents, emails and messages. Talk to HR or a manager you trust if it is safe to do so. In the UK, [Acas](https://www.acas.org.uk/bullying-at-work) offers free advice on bullying. There is no specific law against bullying there, but it can count as harassment under the Equality Act 2010 if it relates to a protected characteristic such as age, race or sex, and employers have had a strengthened duty to take all reasonable steps to prevent sexual harassment since October 2026. Elsewhere, check your national employment rights body or a union. And if your health is suffering, put it first."
+   ],
+   [
+    "faq",
+    [
+     [
+      "What are the signs of a toxic workplace?",
+      "People afraid to speak up, managers who belittle staff, colleagues set against each other, rules bent for favourites, workloads that depend on unpaid overtime and high turnover nobody explains."
+     ],
+     [
+      "How can I tell if a company is toxic before I join?",
+      "Look for a role that keeps being re-advertised, pressure to accept quickly and vague answers about why the last person left. Then read employee reviews from the team or location you would join and look for repeated complaints."
+     ],
+     [
+      "What questions should I ask to spot a toxic workplace?",
+      "Ask why the role is open, why the last person left, how long the team has been there, what a normal week looks like and how disagreements are handled. Ask to speak to a future colleague."
+     ],
+     [
+      "Are a few bad employee reviews a red flag?",
+      "Not on their own. Every employer has unhappy former staff. Look for the same problem described by different people over time, and for how the company replies."
+     ],
+     [
+      "Is a high-pressure job the same as a toxic one?",
+      "No. A demanding job can still be fair, respectful and well managed. It becomes toxic when people are treated with disrespect, rules are bent or the workload only works by damaging people's health."
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "employer-branding-and-employee-reviews",
+  "image": "/images/blog/employer-branding-and-employee-reviews.webp",
+  "imageAlt": "Illustration of a laptop showing a company badge surrounded by employee reviews with star ratings and a rising chart",
+  "cat": "Startup growth",
+  "date": "2026-11-18",
+  "tone": 4,
+  "title": "Employer branding: what it is and how employee reviews shape it",
+  "seo": "Employer branding: what it is and how reviews shape it",
+  "desc": "What employer branding means, what candidates weigh up in 2026, how pay transparency laws change job adverts and why your employee reviews matter so much.",
+  "excerpt": "Your employer brand is what people believe it is like to work for you. Here is what shapes it in 2026, from pay transparency laws to the reviews your own staff write.",
+  "body": [
+   [
+    "p",
+    "Every company has an employer brand, whether it works on one or not. It is simply what people believe it is like to work there. Candidates form that view from your job adverts and careers page, from friends who work for you and, more and more, from what current and former employees write in public."
+   ],
+   [
+    "h",
+    "What employer branding means"
+   ],
+   [
+    "p",
+    "The term goes back to a 1996 paper by Tim Ambler and Simon Barrow in the Journal of Brand Management, which described the employer brand as \"the package of functional, economic and psychological benefits provided by employment\". The CIPD's [current definition](https://www.cipd.org/en/knowledge/factsheets/recruitment-brand-factsheet/) is more practical: the way organisations set themselves apart in the job market so they can attract, recruit, keep and engage the right people."
+   ],
+   [
+    "p",
+    "**Employer branding is the work of making that reputation accurate and attractive.** The accurate part matters most. A careers page promising a relaxed culture will not survive a dozen reviews describing weekend emails."
+   ],
+   [
+    "h",
+    "What candidates weigh up in 2026"
+   ],
+   [
+    "p",
+    "Randstad's [Employer Brand Research 2026](https://www.randstad.com/workforce-insights/employer-branding/), based on more than 166,000 people in 34 markets, ranks the reasons people choose an employer in this order:"
+   ],
+   [
+    "ol",
+    [
+     "salary and benefits",
+     "work-life balance",
+     "job security",
+     "work atmosphere",
+     "career progression"
+    ]
+   ],
+   [
+    "p",
+    "None of these can be shown with a slogan. **Candidates look for evidence**, and the most convincing evidence comes from people who have worked there. Our guide on [what candidates read in employee reviews](/blog/what-candidates-read-in-employee-reviews) covers the patterns they notice."
+   ],
+   [
+    "p",
+    "Trust is also under pressure. Edelman's [Trust at Work 2026 report](https://www.edelman.com/trust/2026/trust-barometer/special-report-work) found trust in \"my employer\" fell to 74% globally, down five points since August 2024 and the first fall since 2021. And Gartner [found](https://www.gartner.com/en/newsroom/press-releases/2025-07-31-gartner-survey-shows-just-26-percent-of-job-applicants-trust-ai-will-fairly-evaluate-them) that only 51% of candidates accepted an offer in their most recent hiring process in mid-2025, down from 74% two years earlier. Candidates are more selective, and they check."
+   ],
+   [
+    "h",
+    "Pay transparency is now part of the brand"
+   ],
+   [
+    "p",
+    "**In more and more places, the law now decides part of what your job advert says.**"
+   ],
+   [
+    "ul",
+    [
+     "In the EU, the [Pay Transparency Directive](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023L0970) had to be written into national law by 7 June 2026. Applicants have a right to know the starting pay or pay range before the interview, for example in the job advert, and employers may not ask about pay history. Job adverts and titles must be gender-neutral.",
+     "In the US, several states require a pay range in job postings, including [Colorado](https://cdle.colorado.gov/dlss/labor-laws-by-topic/equal-pay-for-equal-work-act), [California](https://www.dir.ca.gov/dlse/California_Equal_Pay_Act.htm), [New York](https://dol.ny.gov/pay-transparency), [Washington](https://lni.wa.gov/workers-rights/wages/equal-pay-opportunities-act/), [Illinois](https://labor.illinois.gov/laws-rules/conmed/equal-pay-act-salary-transparency.html) since January 2025, [New Jersey](https://www.nj.gov/labor/lwdhome/press/2025/20250530_Salary_Ranges.shtml) since June 2025 and [Massachusetts](https://www.mass.gov/info-details/pay-transparency-in-massachusetts) since October 2025. Each sets its own size threshold."
+    ]
+   ],
+   [
+    "p",
+    "Colorado's labour department reports that the share of its job postings showing pay rose from under 25% in late 2020 to over 80% by late 2023. Once ranges are public, candidates compare them, and current staff compare them with their own pay. A pay range that looks low against the market, or against what employees say in reviews, becomes part of your reputation."
+   ],
+   [
+    "h",
+    "Why employee reviews carry so much weight"
+   ],
+   [
+    "p",
+    "Your careers page is your version. Employee reviews are everyone else's. They cover exactly the things candidates rank highest, such as pay, workload, managers and job security, and they are written by people with nothing to sell."
+   ],
+   [
+    "p",
+    "**How you respond is part of the brand too.** A 2025 study in the journal Human Resource Management by Höllig, Ademi and Tumasjan [analysed](https://onlinelibrary.wiley.com/doi/10.1002/hrm.22316) almost 300,000 employee reviews of 21,099 employers. Reviews of employers that replied publicly were 5.34% more detailed, and one-star reviews were 19.01% more detailed. When employees see that someone reads and answers, they explain more, which gives candidates a fuller picture and gives you something to act on."
+   ],
+   [
+    "h",
+    "How to build an employer brand people believe"
+   ],
+   [
+    "ul",
+    [
+     "**Fix the experience first.** If reviews keep mentioning the same problem, such as late salaries or unclear promotions, change it before you spend money on recruitment campaigns.",
+     "Ask your current team for honest reviews. A steady flow of recent reviews from people who still work there gives a truer picture than a handful of old complaints. Our guide on [how to ask employees for reviews](/blog/how-to-ask-employees-for-reviews) explains how to do it fairly.",
+     "Reply to employee reviews, including the critical ones. Thank people, acknowledge the point and say what is changing. Our guide to [negative employee reviews after layoffs](/blog/negative-employee-reviews-after-layoffs) has examples for the hardest cases.",
+     "Publish pay ranges, even where the law does not yet require it.",
+     "**Measure how your own staff feel.** A short regular survey such as an [Employee Net Promoter Score](/blog/employee-net-promoter-score) tells you early whether the brand you describe matches the one people experience."
+    ]
+   ],
+   [
+    "faq",
+    [
+     [
+      "What is employer branding in simple terms?",
+      "It is your reputation as a place to work, and the work you do to make that reputation accurate and attractive to the people you want to hire."
+     ],
+     [
+      "What is the difference between employer brand and company brand?",
+      "Your company brand is what customers think of your products or services. Your employer brand is what current, former and future employees think of working for you. The two affect each other."
+     ],
+     [
+      "Do employee reviews affect hiring?",
+      "Yes. Candidates read them to check pay, workload, managers and culture, which are the factors they rank highest when choosing an employer."
+     ],
+     [
+      "Should employers reply to employee reviews?",
+      "Yes, calmly and specifically. Research published in 2025 found that employees write more detailed reviews when employers reply publicly, especially in critical reviews."
+     ],
+     [
+      "Do we have to put salaries in job adverts?",
+      "It depends where you hire. EU countries had to adopt pay transparency rules by June 2026, and several US states require pay ranges in job postings. Check the rules for each location you advertise in."
+     ]
+    ]
+   ]
+  ]
+ },
+ {
+  "slug": "how-to-spot-a-job-scam",
+  "image": "/images/blog/how-to-spot-a-job-scam.webp",
+  "imageAlt": "Illustration of a man at a laptop eyeing a job offer email on a fishing hook, with a hooded scammer behind it",
+  "cat": "Reviews & reputation",
+  "date": "2026-11-18",
+  "tone": 6,
+  "title": "Job scams: how to spot a fake job offer before it costs you",
+  "seo": "Job scams: how to spot a fake job offer",
+  "desc": "How job scams work in 2026, from task scams to fake cheques, the warning signs in a fake job offer, how to check the employer is real and where to report it.",
+  "excerpt": "Job scams cost people hundreds of millions in 2025. Here is how the common ones work, the signs that give a fake job offer away and what to do if you have already paid.",
+  "body": [
+   [
+    "p",
+    "A message arrives out of nowhere: flexible hours, good pay, no experience needed. When you are looking for work, it is tempting to reply. Scammers know that, and job scams are growing fast."
+   ],
+   [
+    "p",
+    "The FBI's Internet Crime Complaint Center received 24,688 complaints about employment scams in 2025, with reported losses of almost $363 million, according to its [2025 annual report](https://www.ic3.gov/AnnualReport/Reports/2025_IC3Report.pdf). In Australia, losses to job scams reported to Scamwatch rose 81.5% in a year to $24.8 million, the [National Anti-Scam Centre reports](https://www.scamwatch.gov.au/system/files/targeting-scams-report-2025.pdf). And the US Federal Trade Commission [says](https://www.ftc.gov/news-events/data-visualizations/data-spotlight/2026/04/reported-losses-scams-social-media-eight-times-higher-2020) one in three people who lost money to a job scam in 2025 were first contacted on social media."
+   ],
+   [
+    "h",
+    "The scams to know about"
+   ],
+   [
+    "h3",
+    "Task scams"
+   ],
+   [
+    "p",
+    "You are offered paid work rating products, liking videos or \"optimising\" apps, usually in sets of tasks shown on a website or app. The first few payments arrive, which builds trust. Then you are told to deposit your own money, often in cryptocurrency, to reach the next level or release your earnings. The FTC [describes these \"gamified\" scams](https://www.ftc.gov/news-events/data-visualizations/data-spotlight/2024/12/paying-get-paid-gamified-job-scams-drive-record-losses) as the reason job scam reports quadrupled in 2024. **If a job asks you to pay to get paid, it is a scam.**"
+   ],
+   [
+    "h3",
+    "Fake cheques"
+   ],
+   [
+    "p",
+    "The \"employer\" sends you a cheque to buy equipment or supplies and asks you to send part of it back or pay a named supplier. The cheque later bounces, and the money you sent is gone. The FTC's [job scam advice](https://consumer.ftc.gov/articles/job-scams) warns that a cheque can appear to clear and still turn out to be fake days later."
+   ],
+   [
+    "h3",
+    "Upfront fees"
+   ],
+   [
+    "p",
+    "You are told you have the job, but first you must pay for training, a laptop, a security check or visa paperwork. Then another fee appears, and another. The UK's Report Fraud service lists these in its guide to [recruitment scams](https://www.reportfraud.police.uk/recruitment-scams/)."
+   ],
+   [
+    "h3",
+    "Identity theft dressed up as onboarding"
+   ],
+   [
+    "p",
+    "Before any real interview, you are asked for a copy of your passport, your bank details \"for salary set-up\" or your tax number. There may be no job at all. The aim is to open accounts or take loans in your name."
+   ],
+   [
+    "h",
+    "Warning signs in a job offer"
+   ],
+   [
+    "ul",
+    [
+     "**You were contacted first, out of the blue,** by text, WhatsApp, Telegram or social media, for a job you never applied for.",
+     "The pay is high for very little work or no experience.",
+     "The \"interview\" happens entirely by text chat, or there is no interview at all.",
+     "The recruiter uses a free email address such as Gmail or Outlook rather than the company's own domain.",
+     "You are rushed to accept, start or pay today.",
+     "**Any request for money, at any stage.** Real employers pay you. They do not charge you to hire you.",
+     "Requests for ID documents or bank details before you have a written offer from a company you have checked."
+    ]
+   ],
+   [
+    "p",
+    "The FBI also warns that some scammers now use AI-generated voices and faces in video interviews. A video call alone does not prove the person is who they say they are."
+   ],
+   [
+    "h",
+    "How to check the job is real"
+   ],
+   [
+    "ol",
+    [
+     "**Find the vacancy on the company's own website.** Go to the careers page yourself, rather than following a link in the message. If the role is not there, be suspicious.",
+     "Contact the company using the phone number or email on its official website and ask whether the recruiter works for them.",
+     "Check the company is registered. In the UK, search [Companies House](https://find-and-update.company-information.service.gov.uk/). Our guide on [how to check if a company is legit](/blog/is-this-company-legit) lists registers in other countries.",
+     "Read reviews from current and former employees. A real employer usually has a history of people describing interviews, managers and pay. A \"company\" with no employees anywhere is a warning.",
+     "For jobs abroad, check visa costs with the official embassy or government website. Report Fraud advises this because fake visa fees are common."
+    ]
+   ],
+   [
+    "h",
+    "If you have already paid or shared details"
+   ],
+   [
+    "ul",
+    [
+     "**Call your bank straight away.** In the UK, dialling [159](https://stopscamsuk.org.uk/159) connects you to most banks' fraud teams. Elsewhere, use the number on the back of your card.",
+     "Stop all contact with the scammer and do not send any more money, even if they promise a refund or threaten you.",
+     "If you shared ID documents, contact the organisation that issued them and watch your credit file for accounts you did not open.",
+     "Report it. In the US, use [ReportFraud.ftc.gov](https://reportfraud.ftc.gov/) and the FBI's [IC3](https://www.ic3.gov/). In England, Wales and Northern Ireland, use [Report Fraud](https://www.reportfraud.police.uk/), which replaced Action Fraud, or call 0300 123 2040. In Scotland, call Police Scotland on 101. In Australia, report to [Scamwatch](https://www.scamwatch.gov.au/)."
+    ]
+   ],
+   [
+    "p",
+    "Being scammed is not a sign that you were careless. These schemes are run by organised groups who do this every day. Reporting it quickly improves your chances of getting money back and helps stop the same scam reaching someone else."
+   ],
+   [
+    "faq",
+    [
+     [
+      "How can I tell if a job offer is fake?",
+      "Warning signs include being contacted out of the blue, pay that is too high for the work, an interview held only by text chat, a recruiter using a free email address and any request for money or bank details before you have a checked, written offer."
+     ],
+     [
+      "Do real employers ever ask you to pay?",
+      "No. A real employer does not charge you for training, equipment, background checks or the job itself. If you are asked to pay to get a job, it is a scam."
+     ],
+     [
+      "What is a task scam?",
+      "A job where you are paid small amounts for simple online tasks, such as rating products, and then asked to deposit your own money to continue or to withdraw your earnings. The money you deposit is lost."
+     ],
+     [
+      "Can a job scam happen over video call?",
+      "Yes. The FBI warns that some scammers use AI-generated faces and voices. Always check the job through the company's official website as well."
+     ],
+     [
+      "Where do I report a job scam?",
+      "Tell your bank first. Then report it to ReportFraud.ftc.gov and IC3 in the US, Report Fraud in England, Wales and Northern Ireland, Police Scotland on 101 or Scamwatch in Australia."
+     ]
+    ]
+   ]
+  ]
+ },
+ {
   "slug": "check-your-company-in-chatgpt-perplexity-gemini",
   "image": "/images/blog/check-your-company-in-chatgpt-perplexity-gemini.webp",
   "imageAlt": "Business owner comparing what ChatGPT, Perplexity and Google say about his company on a laptop",

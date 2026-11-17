@@ -195,6 +195,41 @@
   "intro": "Estimate how much of your house rent allowance is tax-free in India (old tax regime)."
  },
  {
+  "route": "blog-is-this-company-legit",
+  "title": "Is this company legit? How to check in 10 minutes · Know The Company",
+  "desc": "How to check if a company or website is legit before you pay, apply or share your details: official registers, domain age, payment red flags and reviews.",
+  "h1": "Is this company legit? How to check before you buy, apply or sign up",
+  "intro": "Scam losses hit new records in 2025. Here is a ten-minute routine to check any company or online shop before you hand over money or personal details."
+ },
+ {
+  "route": "blog-employee-net-promoter-score",
+  "title": "Employee Net Promoter Score (eNPS): formula and benchmarks · Know The Company",
+  "desc": "What eNPS is, the one question behind it, how to calculate it, what a good score looks like in 2026 and how to run the survey so people answer honestly.",
+  "h1": "Employee Net Promoter Score (eNPS): what it is, how to work it out and what counts as a good score",
+  "intro": "eNPS asks your team one question and turns the answers into a single number. Here is how to calculate it, what a good score looks like this year and what to do with the result."
+ },
+ {
+  "route": "blog-signs-of-a-toxic-workplace",
+  "title": "Signs of a toxic workplace: how to spot them before you join · Know The Company",
+  "desc": "The signs of a toxic workplace, the red flags in the hiring process, questions to ask in the interview and how to read employee reviews before you accept…",
+  "h1": "Signs of a toxic workplace and how to spot them before you accept the offer",
+  "intro": "Most people discover a toxic workplace after they join. Here are the signs to look for in the job advert, the interview and employee reviews, so you can spot it before you sign."
+ },
+ {
+  "route": "blog-employer-branding-and-employee-reviews",
+  "title": "Employer branding: what it is and how reviews shape it · Know The Company",
+  "desc": "What employer branding means, what candidates weigh up in 2026, how pay transparency laws change job adverts and why your employee reviews matter so much.",
+  "h1": "Employer branding: what it is and how employee reviews shape it",
+  "intro": "Your employer brand is what people believe it is like to work for you. Here is what shapes it in 2026, from pay transparency laws to the reviews your own staff write."
+ },
+ {
+  "route": "blog-how-to-spot-a-job-scam",
+  "title": "Job scams: how to spot a fake job offer · Know The Company",
+  "desc": "How job scams work in 2026, from task scams to fake cheques, the warning signs in a fake job offer, how to check the employer is real and where to report it.",
+  "h1": "Job scams: how to spot a fake job offer before it costs you",
+  "intro": "Job scams cost people hundreds of millions in 2025. Here is how the common ones work, the signs that give a fake job offer away and what to do if you have already paid."
+ },
+ {
   "route": "blog-check-your-company-in-chatgpt-perplexity-gemini",
   "title": "Check what ChatGPT and Perplexity say about your company · Know The Company",
   "desc": "A five-minute check for any business: what to ask ChatGPT, Perplexity and Gemini about your company, what to note down and how to fix wrong answers.",

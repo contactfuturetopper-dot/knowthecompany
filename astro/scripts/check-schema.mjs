@@ -109,7 +109,7 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   {
     const blog = await resolvePage("/blog");
     assert.equal(blog.status, 200, "blog page exists once there are posts");
-    assert.ok(blog.body.includes('<a href="/blog/dpdp-rules-review-requests">') && (blog.body.match(/<article>/g) || []).length === 13 && blog.body.includes('<a href="/blog/fake-review-laws-around-the-world">'), "blog page links every article");
+    assert.ok(blog.body.includes('<a href="/blog/dpdp-rules-review-requests">') && (blog.body.match(/<article>/g) || []).length === 18 && blog.body.includes('<a href="/blog/fake-review-laws-around-the-world">'), "blog page links every article");
     const post = await resolvePage("/blog/how-to-reply-to-a-bad-review"), html = renderShell(post);
     const types = (post.ld || []).map(n => n["@type"]);
     assert.ok(post.status === 200 && types.includes("BlogPosting") && types.includes("FAQPage") && post.ogType === "article", "article page has BlogPosting and FAQ data");
