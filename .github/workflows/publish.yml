@@ -68,7 +68,7 @@ jobs:
         working-directory: astro
         run: npm run check
 
-      - name: Server keys (Razorpay, Brevo)
+      - name: Server keys (Razorpay, daily job)
         working-directory: astro
         env:
           WIX_API_KEY: ${{ secrets.WIX_API_KEY }}
@@ -77,14 +77,11 @@ jobs:
           RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
           RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
           RAZORPAY_WEBHOOK_SECRET: ${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
-          # Review invitation emails (Business plan): Brevo API key and the verified sender address.
-          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-          INVITE_SENDER_EMAIL: ${{ secrets.INVITE_SENDER_EMAIL }}
-          # Secret the daily reminder job (reminders.yml) signs its call with.
+          # Secret the daily job (reminders.yml) signs its call with; it also signs invitation opt-out links.
           REMINDER_SECRET: ${{ secrets.REMINDER_SECRET }}
         run: |
           npx wix login --api-key "$WIX_API_KEY"
-          for k in RAZORPAY_KEY_ID RAZORPAY_KEY_SECRET RAZORPAY_WEBHOOK_SECRET BREVO_API_KEY INVITE_SENDER_EMAIL REMINDER_SECRET; do
+          for k in RAZORPAY_KEY_ID RAZORPAY_KEY_SECRET RAZORPAY_WEBHOOK_SECRET REMINDER_SECRET; do
             if [ -n "${!k}" ]; then npx wix env set --key="$k" --value="${!k}" >/dev/null && echo "$k set"; else echo "$k not set (payments stay off)"; fi
           done
 

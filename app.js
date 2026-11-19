@@ -3567,7 +3567,7 @@ const POSTS = [
    ],
    [
     "p",
-    "Companies on our Business plan can send review invitations by email. Before sending, the company confirms it has permission to contact everyone on its list. We keep only a scrambled code of each address, never the address itself, so we can stop anyone being invited twice within 90 days. Every invitation has a link to stop all future invitations, from any company, and we honour it permanently."
+    "Companies on our Business plan can send review invitations by email. Before sending, the company confirms it has permission to contact everyone on its list. We keep only a scrambled code of each address, never the address itself, so we can stop anyone being invited twice within 90 days. Our email service needs the address to send the invitation, and we delete its copy within a day of sending. Every invitation has a link to stop all future invitations, from any company, and we honour it permanently."
    ],
    [
     "faq",

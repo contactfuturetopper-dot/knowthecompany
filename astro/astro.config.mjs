@@ -20,12 +20,9 @@ export default defineConfig({
       RAZORPAY_KEY_ID: envField.string({ context: "server", access: "secret", optional: true }),
       RAZORPAY_KEY_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
       RAZORPAY_WEBHOOK_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
-      // Review invitation emails for the Business plan (src/lib/business.ts): a Brevo API key and the sender
-      // address verified in Brevo. Until both are set, invitations go by WhatsApp and review links only.
-      BREVO_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
-      INVITE_SENDER_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
-      // The daily reminder job's secret (src/lib/reminders.ts, .github/workflows/reminders.yml). Until it is
-      // set, no reminder emails go out before a free period ends.
+      // The daily job's secret (src/lib/reminders.ts, .github/workflows/reminders.yml). It also signs the
+      // opt-out link in review invitations, which Wix sends (src/lib/invite-mail.ts). Until it is set, no
+      // reminder emails or invitations go out.
       REMINDER_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },

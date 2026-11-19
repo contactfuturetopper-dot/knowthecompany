@@ -1,4 +1,4 @@
-// Checks the paid-plan server code end to end against fakes: Wix data in memory, Razorpay and Brevo
+// Checks the paid-plan server code end to end against fakes: Wix data, email and contacts in memory, Razorpay
 // answered locally, members identified by their token. Covers upgrading Plus to Business, renewals and
 // cancellations from Razorpay's webhook, review invitation emails (quota, 90-day repeat rule, opt-out) and
 // team logins. Run: node scripts/check-business.mjs
@@ -17,11 +17,28 @@ const stubs = {
   "astro:env/server": `export const RAZORPAY_KEY_ID = "rzp_test_key", RAZORPAY_KEY_SECRET = "${KEY}", RAZORPAY_WEBHOOK_SECRET = "${WH}", BREVO_API_KEY = "brevo_test", INVITE_SENDER_EMAIL = "reviews@knowthecompany.com", REMINDER_SECRET = "rem_secret_test";`,
   "@wix/essentials": `export const auth = { elevate: f => f };`,
   "@wix/data": `export const items = globalThis.__items;`,
-  "@wix/email-transmissions": `export const emailTransmissions = { sendEmailTransmission: (t, o) => { globalThis.__wixMail.push({ t, o }); return Promise.resolve({ emailTransmission: { status: "ACCEPTED" } }); } };`,
+  "@wix/email-transmissions": "export const emailTransmissions = globalThis.__tx;",
+  "@wix/crm": "export const contacts = globalThis.__contacts;",
 };
-globalThis.__wixMail = [];
+/* Wix email and contacts, in memory. Like Wix, sending to a new address creates a contact. */
+globalThis.__wixMail = []; globalThis.__invites = []; const txs = new Map(), cts = new Map(); let txN = 0, ctN = 0;
+const contactOf = email => [...cts.values()].filter(c => c.primaryInfo.email === email);
+globalThis.__tx = {
+  sendEmailTransmission: async (t, o) => {
+    const id = "tx" + (++txN); txs.set(id, { _id: id, status: "PROCESSED", toRecipients: t.toRecipients.map(r => ({ ...r, status: "SENT" })) });
+    for (const r of t.toRecipients) if (r.emailAddress && !contactOf(r.emailAddress).length) { const cid = "ct" + (++ctN); cts.set(cid, { _id: cid, _createdDate: new Date(), primaryInfo: { email: r.emailAddress } }); }
+    (t.metadata && t.metadata.kind === "review-invite" ? globalThis.__invites : globalThis.__wixMail).push({ t, o, id });
+    return { emailTransmission: { _id: id, status: "ACCEPTED" } };
+  },
+  getEmailTransmission: async id => { const t = txs.get(id); if (!t) throw new Error("NOT_FOUND"); return structuredClone(t); },
+  deleteEmailTransmission: async id => { txs.delete(id); },
+};
+globalThis.__contacts = {
+  queryContacts: async q => ({ contacts: contactOf(q.filter["primaryInfo.email"].$eq).map(c => structuredClone(c)) }),
+  deleteContact: async id => { cts.delete(id); },
+};
 const plugin = { name: "stubs", setup(b) {
-  b.onResolve({ filter: /^(astro:env\/server|@wix\/essentials|@wix\/data|@wix\/email-transmissions)$/ }, a => ({ path: a.path, namespace: "stub" }));
+  b.onResolve({ filter: /^(astro:env\/server|@wix\/essentials|@wix\/data|@wix\/email-transmissions|@wix\/crm)$/ }, a => ({ path: a.path, namespace: "stub" }));
   b.onLoad({ filter: /.*/, namespace: "stub" }, a => ({ contents: stubs[a.path], loader: "js" }));
   b.onResolve({ filter: /\?raw$/ }, a => ({ path: path.resolve(a.resolveDir, a.path.replace(/\?raw$/, "")), namespace: "raw" }));
   b.onLoad({ filter: /.*/, namespace: "raw" }, a => ({ contents: fs.readFileSync(a.path, "utf8"), loader: "text" }));
@@ -41,12 +58,13 @@ globalThis.__items = {
   get: async (c, id) => { const v = col(c).get(id); return v ? structuredClone(v) : null; },
   insert: async (c, it) => { const id = it._id || "id" + (++seq); const v = { ...structuredClone(it), _id: id, _createdDate: now(), _updatedDate: now() }; if (col(c).has(id)) throw new Error("exists"); col(c).set(id, v); return structuredClone(v); },
   update: async (c, it) => { const prev = col(c).get(it._id); if (!prev) throw new Error("missing " + it._id); const v = { ...structuredClone(it), _createdDate: prev._createdDate, _updatedDate: new Date(Date.now() + 1000).toISOString() }; col(c).set(it._id, v); return structuredClone(v); },
+  remove: async (c, id) => { const v = col(c).get(id); col(c).delete(id); return v ? structuredClone(v) : null; },
   query: c => { const f = []; let n = 50; const q = { eq: (k, v) => (f.push([k, v]), q), limit: x => ((n = x), q), find: async () => ({ items: [...col(c).values()].filter(it => f.every(([k, v]) => it[k] === v)).slice(0, n).map(x => structuredClone(x)) }) }; return q; },
 };
 
-/* ---- Razorpay, Brevo and Wix members, answered locally ---- */
+/* ---- Razorpay and Wix members, answered locally ---- */
 const members = { "tok-m1": { id: "m1", loginEmail: "owner@acme.in", contact: { firstName: "Asha" } }, "tok-m2": { id: "m2", loginEmail: "dev@acme.in", contact: { firstName: "Dev" } }, "tok-m3": { id: "m3", loginEmail: "rev@x.in", contact: { firstName: "Rev" } } };
-const rzpSubs = {}, rzpCalls = [], brevo = [];
+const rzpSubs = {}, rzpCalls = [];
 let subN = 0;
 globalThis.fetch = async (url, o = {}) => {
   const u = String(url), body = o.body ? JSON.parse(o.body) : null;
@@ -60,7 +78,6 @@ globalThis.fetch = async (url, o = {}) => {
     let m = p.match(/^\/subscriptions\/(sub_\d+)\/cancel$/); if (m) { rzpSubs[m[1]].status = "cancelled"; return ok(rzpSubs[m[1]]); }
     m = p.match(/^\/subscriptions\/(sub_\d+)$/); if (m) return ok({ ...rzpSubs[m[1]], status: "active", current_end: Math.floor(Date.now() / 1000) + 365 * 86400 });
   }
-  if (u === "https://api.brevo.com/v3/smtp/email") { brevo.push(body); return ok({ messageIds: body.messageVersions.map((_, i) => "m" + i) }); }
   throw new Error("unexpected fetch " + u);
 };
 
@@ -83,6 +100,8 @@ const company = () => col("Companies").get("acme.in");
 const company2 = id => col("Companies").get(id);
 col("Companies").set("acme.in", { _id: "acme.in", title: "Acme <Tools>", slug: "acme-tools", website: "acme.in", claimStatus: "verified", ownerMemberIds: ["m1"], plan: "plus", _owner: ADMIN, _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-02T00:00:00Z" });
 col("Companies").set("other.in", { _id: "other.in", title: "Other", claimStatus: "verified", ownerMemberIds: ["m3"], plan: "plus", _owner: ADMIN, _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-02T00:00:00Z" });
+
+const remind = async (auth) => { const req = new Request("https://www.knowthecompany.com/api/pay/reminders", { method: "POST", headers: auth ? { "X-Reminder-Secret": auth } : {}, body: "{}" }); const res = await pay.POST({ params: { action: "reminders" }, request: req }); return { status: res.status, data: await res.json() }; };
 
 /* ---- 1. Plus company sets up Plus autopay, then upgrades to Business ---- */
 let r = await call(pay, "subscribe", "tok-m1", { company: "acme.in", plan: "plus" });
@@ -115,16 +134,31 @@ r = await call(invite, "status", "tok-m1", { company: "acme.in" });
 assert.deepEqual([r.status, r.data.email, r.data.sent, r.data.limit], [200, true, 0, 1000], "invite status");
 r = await call(invite, "send", "tok-m1", { company: "acme.in", kind: "customer", emails: ["Asha@Example.com", "asha@example.com", "ravi@example.com", "not-an-email"] });
 assert.equal(r.status, 200, "send"); assert.equal(r.data.sent, 2, "duplicates merged, bad address left out"); assert.equal(r.data.invalid, 1);
-const mail = brevo.at(-1);
-assert.equal(mail.messageVersions.length, 2, "one message per person"); assert.ok(!mail.to, "no shared To line");
-assert.ok(mail.subject.includes("Acme <Tools>") && mail.htmlContent.includes("Acme &lt;Tools&gt;") && !mail.htmlContent.includes("Acme <Tools>"), "company name escaped in the email");
-assert.ok(mail.htmlContent.includes("https://www.knowthecompany.com/#invite-co-acme-tools") && mail.htmlContent.includes("{{params.optout}}") && /Good or bad/.test(mail.htmlContent), "review link, opt-out link and honest-review wording");
+/* a member who is already a contact keeps their contact; Ravi's is new and gets cleaned up */
+const sent2 = globalThis.__invites.slice(-2);
+assert.equal(sent2.length, 2, "one email per person"); assert.ok(sent2.every(m => m.t.toRecipients.length === 1), "no shared To line");
+const mail = sent2.find(m => m.t.toRecipients[0].emailAddress === "asha@example.com").t;
+assert.equal(mail.type, "TRANSACTIONAL");
+assert.ok(mail.emailSubject.includes("Acme <Tools>") && mail.emailHtmlContent.includes("Acme &lt;Tools&gt;") && !mail.emailHtmlContent.includes("Acme <Tools>"), "company name escaped in the email");
+assert.ok(mail.emailHtmlContent.includes("https://www.knowthecompany.com/#invite-co-acme-tools") && mail.emailHtmlContent.includes("/api/invite/optout?h=") && /Good or bad/.test(mail.emailHtmlContent), "review link, own opt-out link and honest-review wording");
 const log = col("InviteLog").get("acme.in|" + new Date().toISOString().slice(0, 7));
 assert.equal(log.sent, 2); assert.ok(log.hashes.every(h => /^[a-f0-9]{64}$/.test(h)) && !JSON.stringify(log).includes("@"), "only hashes are stored, never addresses");
+assert.equal(col("InviteCleanup").size, 2, "cleanup list holds the two emails"); assert.ok(!JSON.stringify([...col("InviteCleanup").values()]).includes("@"), "cleanup list holds no addresses");
 r = await call(invite, "send", "tok-m1", { company: "acme.in", kind: "customer", emails: ["ravi@example.com", "meera@example.com"] });
 assert.deepEqual([r.data.sent, r.data.skippedRecent], [1, 1], "nobody is invited twice within 90 days");
+/* the daily job deletes the contacts invitations created, but never a member's or an older contact */
+cts.set("member-asha", { _id: "member-asha", _createdDate: new Date(Date.now() - 86_400_000 * 30), primaryInfo: { email: "old@example.com" }, memberInfo: { memberId: "x" } });
+r = await call(invite, "send", "tok-m1", { company: "acme.in", kind: "customer", emails: ["old@example.com"] });
+assert.equal(r.data.sent, 1);
+assert.ok(contactOf("ravi@example.com").length && contactOf("meera@example.com").length, "Wix made contacts for the new addresses");
+const cleanRes = await remind("rem_secret_test");
+assert.equal(cleanRes.status, 200);
+assert.equal(contactOf("ravi@example.com").length + contactOf("meera@example.com").length + contactOf("asha@example.com").length, 0, "contacts made by invitations are deleted");
+assert.equal(contactOf("old@example.com").length, 1, "an existing member's contact is never deleted");
+assert.equal(col("InviteCleanup").size, 0, "cleanup list emptied"); assert.ok(globalThis.__invites.every(m => !txs.has(m.id)), "Wix's records of the invitation emails are deleted");
+assert.ok(cleanRes.data.invites.contactsDeleted >= 3, JSON.stringify(cleanRes.data.invites));
 /* opt-out */
-const optUrl = new URL(mail.messageVersions.find(v => v.to[0].email === "asha@example.com").params.optout);
+const optUrl = new URL(mail.emailHtmlContent.match(/href="(https:\/\/www\.knowthecompany\.com\/api\/invite\/optout[^"]+)"/)[1].replace(/&amp;/g, "&"));
 const optRes = await invite.GET({ params: { action: "optout" }, url: optUrl });
 assert.equal(optRes.status, 200, "opt-out link works"); assert.ok((await optRes.text()).includes("won’t get review invitations"));
 const forged = await invite.GET({ params: { action: "optout" }, url: new URL(optUrl.href.replace(/s=[^&]+/, "s=000")) });
@@ -186,7 +220,6 @@ const { addMonths } = await import(await bundle("src/lib/pay.ts", "paylib"));
 assert.equal(addMonths(new Date("2026-08-31T10:00:00Z"), 6).toISOString().slice(0, 10), "2027-02-28", "31 August + 6 months is the end of February");
 assert.equal(addMonths(new Date("2026-11-19T10:00:00Z"), 6).toISOString().slice(0, 10), "2027-05-19");
 /* the reminder job */
-const remind = async (auth) => { const req = new Request("https://www.knowthecompany.com/api/pay/reminders", { method: "POST", headers: auth ? { "X-Reminder-Secret": auth } : {}, body: "{}" }); const res = await pay.POST({ params: { action: "reminders" }, request: req }); return { status: res.status, data: await res.json() }; };
 assert.equal((await remind()).status, 401, "the reminder job needs its secret");
 assert.equal((await remind("wrong_secret_xx")).status, 401, "a wrong secret is refused");
 const setStart = days => col("Billing").set(basicRow()._id, { ...basicRow(), status: "authenticated", startAt: new Date(Date.now() + days * 86_400_000 - 3_600_000) });
