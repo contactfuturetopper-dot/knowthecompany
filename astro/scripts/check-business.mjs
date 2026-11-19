@@ -185,35 +185,35 @@ const { addMonths } = await import(await bundle("src/lib/pay.ts", "paylib"));
 assert.equal(addMonths(new Date("2026-08-31T10:00:00Z"), 6).toISOString().slice(0, 10), "2027-02-28", "31 August + 6 months is the end of February");
 assert.equal(addMonths(new Date("2026-11-19T10:00:00Z"), 6).toISOString().slice(0, 10), "2027-05-19");
 /* the reminder job */
-const remind = async (auth) => { const req = new Request("https://www.knowthecompany.com/api/pay/reminders", { method: "POST", headers: auth ? { Authorization: auth } : {}, body: "{}" }); const res = await pay.POST({ params: { action: "reminders" }, request: req }); return { status: res.status, data: await res.json() }; };
+const remind = async (auth) => { const req = new Request("https://www.knowthecompany.com/api/pay/reminders", { method: "POST", headers: auth ? { "X-Reminder-Secret": auth } : {}, body: "{}" }); const res = await pay.POST({ params: { action: "reminders" }, request: req }); return { status: res.status, data: await res.json() }; };
 assert.equal((await remind()).status, 401, "the reminder job needs its secret");
-assert.equal((await remind("Bearer wrong_secret_xx")).status, 401, "a wrong secret is refused");
+assert.equal((await remind("wrong_secret_xx")).status, 401, "a wrong secret is refused");
 const setStart = days => col("Billing").set(basicRow()._id, { ...basicRow(), status: "authenticated", startAt: new Date(Date.now() + days * 86_400_000 - 3_600_000) });
 setStart(40);
-let rr = await remind("Bearer rem_secret_test");
+let rr = await remind("rem_secret_test");
 assert.equal(rr.status, 200); assert.equal(rr.data.sent, 0, "nothing 40 days ahead"); assert.equal(globalThis.__wixMail.length, 0);
 setStart(15);
-rr = await remind("Bearer rem_secret_test");
+rr = await remind("rem_secret_test");
 assert.equal(rr.data.sent, 1, "15-day reminder");
 const m15 = globalThis.__wixMail.at(-1);
 assert.deepEqual(m15.t.toRecipients, [{ emailAddress: "rev@x.in" }]); assert.equal(m15.t.type, "TRANSACTIONAL");
 assert.ok(m15.t.emailSubject.includes("15 days") && m15.t.emailSubject.includes("₹999"), m15.t.emailSubject);
 assert.ok(m15.t.emailHtmlContent.includes("https://www.knowthecompany.com/dashboard") && /Cancel autopay before/.test(m15.t.emailHtmlContent), "cancel link and wording");
 assert.ok(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-8[0-9a-f]{3}-[0-9a-f]{12}$/.test(m15.o.idempotencyKey), "GUID idempotency key");
-rr = await remind("Bearer rem_secret_test");
+rr = await remind("rem_secret_test");
 assert.equal(rr.data.sent, 0, "the same reminder never goes twice");
-setStart(7); rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 1, "7-day reminder");
-setStart(2); rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 1, "2-day reminder");
+setStart(7); rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 1, "7-day reminder");
+setStart(2); rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 1, "2-day reminder");
 assert.deepEqual(basicRow().remindersSent, [15, 7, 2]);
-setStart(1); rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 0, "nothing more after the 2-day one");
+setStart(1); rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 0, "nothing more after the 2-day one");
 /* a late first run sends only the nearest reminder, not all three at once */
 col("Billing").set(basicRow()._id, { ...basicRow(), remindersSent: [] }); setStart(2);
-const n0 = globalThis.__wixMail.length; rr = await remind("Bearer rem_secret_test");
+const n0 = globalThis.__wixMail.length; rr = await remind("rem_secret_test");
 assert.equal(globalThis.__wixMail.length - n0, 1, "one email per run"); assert.deepEqual(basicRow().remindersSent, [2]);
 /* an autopay that has already charged gets no reminders */
 col("Billing").set(basicRow()._id, { ...basicRow(), status: "active", remindersSent: [] }); setStart(7);
 col("Billing").set(basicRow()._id, { ...basicRow(), status: "active" });
-rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 0, "no reminders once paying");
+rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 0, "no reminders once paying");
 
 console.log("BUSINESS CHECK: ok");
 fs.rmSync(tmp, { recursive: true, force: true });
