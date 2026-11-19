@@ -10,6 +10,7 @@ import {
 import { emailReady } from "../../../lib/business";
 import { remindersReady, reminderAuthOk, runReminders } from "../../../lib/reminders";
 import { runLapses } from "../../../lib/lapse";
+import { cleanupInvites } from "../../../lib/invite-mail";
 
 const OFF = { error: "Payments aren’t switched on yet. Please try again soon, or contact us." };
 const getCompany = (id: string) => auth.elevate(items.get)("Companies", id).catch(() => null) as Promise<any>;
@@ -31,7 +32,8 @@ export const POST: APIRoute = async ({ params, request }) => {
       if (!reminderAuthOk(request.headers.get("X-Reminder-Secret") || "")) return json({ error: "Not allowed" }, 401);
       const reminders = await runReminders();
       const lapses = await runLapses().catch(() => ({ error: "lapse check failed" }));
-      return json({ ...reminders, lapses });
+      const invites = await cleanupInvites().catch(() => ({ error: "invite cleanup failed" }));
+      return json({ ...reminders, lapses, invites });
     }
     const me = await memberFrom(request);
     if (!me) return json({ error: "Please log in again." }, 401);

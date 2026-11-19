@@ -4,10 +4,11 @@
 import type { APIRoute } from "astro";
 import { json, memberFrom } from "../../../lib/pay";
 import {
-  businessCompany, emailReady, inviteLog, recentHashes, optedOut, addOptOut, saveLog, optSig, sha256, sendBatch,
+  businessCompany, emailReady, inviteLog, recentHashes, optedOut, addOptOut, saveLog, optSig, sha256,
   INVITES_A_MONTH, EMAIL_RE, ORIGIN, monthKey,
 } from "../../../lib/business";
 import { slug } from "../../../lib/page";
+import { sendBatch, QuotaError } from "../../../lib/invite-mail";
 
 export const POST: APIRoute = async ({ params, request }) => {
   try {
@@ -41,10 +42,14 @@ export const POST: APIRoute = async ({ params, request }) => {
       if (!fresh.length) return json({ ok: true, sent: 0, skippedRecent, skippedOptOut, invalid, left });
       const page = `${ORIGIN}/#invite-${kind === "employee" ? "team-" : ""}co-${company.slug || slug(company.title || company._id)}`;
       const to = await Promise.all(fresh.map(async f => ({ email: f.email, optout: `${ORIGIN}/api/invite/optout?h=${f.hash}&s=${await optSig(f.hash)}` })));
-      await sendBatch(company, kind, page, to);
+      let done: string[];
+      try { done = await sendBatch(company, kind, page, to); }
+      catch (e) { if (e instanceof QuotaError) return json({ error: "Our email allowance for this month has run out, so nothing was sent. Please use your WhatsApp and review links, or try again next month." }, 429); throw e; }
+      const sentHashes = fresh.filter(f => done.includes(f.email)).map(f => f.hash);
       const exists = (log.sent || 0) > 0 || (log.hashes || []).length > 0;
-      await saveLog({ ...log, sent: (log.sent || 0) + fresh.length, hashes: [...(log.hashes || []), ...fresh.map(f => f.hash)] }, exists);
-      return json({ ok: true, sent: fresh.length, skippedRecent, skippedOptOut, invalid, left: left - fresh.length });
+      await saveLog({ ...log, sent: (log.sent || 0) + sentHashes.length, hashes: [...(log.hashes || []), ...sentHashes] }, exists);
+      const notSent = fresh.length - sentHashes.length;
+      return json({ ok: true, sent: sentHashes.length, ...(notSent ? { notSent } : {}), skippedRecent, skippedOptOut, invalid, left: left - sentHashes.length });
     }
     return json({ error: "Unknown action" }, 404);
   } catch (e: any) {

@@ -1,5 +1,5 @@
-// Business plan tools on the server: who may use them, review invitation emails (sent through Brevo),
-// and team logins. The browser side is the "Business tools" tab of the dashboard (app.js).
+// Business plan tools on the server: who may use them, review invitation emails (sent through Wix, see
+// invite-mail.ts), and team logins. The browser side is the "Business tools" tab of the dashboard (app.js).
 //
 // Two team-only collections hold what these need:
 //   InviteLog    one item per company per month: how many invitations went out, and a SHA-256 hash of
@@ -9,7 +9,7 @@
 //                and who used it.
 import { auth } from "@wix/essentials";
 import { items } from "@wix/data";
-import { BREVO_API_KEY, INVITE_SENDER_EMAIL } from "astro:env/server";
+import { REMINDER_SECRET } from "astro:env/server";
 import { adminTouched } from "./data";
 
 export const INVITES_A_MONTH = 1000;
@@ -22,7 +22,8 @@ export const update = auth.elevate(items.update);
 export const insert = auth.elevate(items.insert);
 export const query = auth.elevate(items.query);
 
-export const emailReady = () => !!(BREVO_API_KEY && INVITE_SENDER_EMAIL);
+/* Invitations go out through Wix. They need the server secret, which signs every opt-out link. */
+export const emailReady = () => !!REMINDER_SECRET;
 
 /* The company, if this member is one of its verified owners and it is on the Business plan. */
 export async function businessCompany(memberId: string, companyId: string): Promise<any | null> {
@@ -63,7 +64,7 @@ export async function addOptOut(hash: string) {
 export const saveLog = (l: any, exists: boolean) => (exists ? update("InviteLog", l) : insert("InviteLog", l));
 
 /* Opt-out links are signed, so nobody can opt someone else out by guessing. */
-export async function optSig(hash: string): Promise<string> { return (await sha256(`${BREVO_API_KEY || ""}|optout|${hash}`)).slice(0, 24); }
+export async function optSig(hash: string): Promise<string> { return (await sha256(`${REMINDER_SECRET || ""}|optout|${hash}`)).slice(0, 24); }
 
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 
@@ -84,24 +85,6 @@ export function inviteEmail(company: any, kind: "customer" | "employee", link: s
 <p style="font-size:12px;color:#5B6576;text-align:center;margin:16px 0 0">Know The Company · Agra, Uttar Pradesh, India · <a href="${ORIGIN}" style="color:#5B6576">knowthecompany.com</a></p>
 </div></body></html>`;
   return { subject, html };
-}
-
-/* One call to Brevo with one message version per address (Brevo allows up to 1,000 per call). */
-export async function sendBatch(company: any, kind: "customer" | "employee", link: string, to: { email: string; optout: string }[]) {
-  const first = inviteEmail(company, kind, link, "{{params.optout}}");
-  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-    method: "POST",
-    headers: { accept: "application/json", "content-type": "application/json", "api-key": BREVO_API_KEY || "" },
-    body: JSON.stringify({
-      sender: { email: INVITE_SENDER_EMAIL, name: "Know The Company" },
-      subject: first.subject,
-      htmlContent: first.html,
-      tags: ["review-invite", kind],
-      messageVersions: to.map(t => ({ to: [{ email: t.email }], params: { optout: t.optout } })),
-    }),
-  });
-  if (!res.ok) throw new Error(`Brevo ${res.status}: ${(await res.text().catch(() => "")).slice(0, 200)}`);
-  return res.json().catch(() => ({}));
 }
 
 export const EMAIL_RE = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/i;
