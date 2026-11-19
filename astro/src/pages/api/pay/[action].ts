@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     /* The daily reminder job (GitHub Actions), signed with REMINDER_SECRET. */
     if (action === "reminders") {
       if (!remindersReady()) return json({ error: "Reminders aren’t switched on." }, 503);
-      if (!reminderAuthOk(request.headers.get("Authorization") || "")) return json({ error: "Not allowed" }, 401);
+      if (!reminderAuthOk(request.headers.get("X-Reminder-Secret") || "")) return json({ error: "Not allowed" }, 401);
       return json(await runReminders());
     }
     const me = await memberFrom(request);

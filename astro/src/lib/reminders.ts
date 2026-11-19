@@ -1,7 +1,8 @@
 // Emails before a free period ends and autopay makes its first charge (Basic's 6 free months, Plus's 30 days).
 //
 // A GitHub Actions job (.github/workflows/reminders.yml) calls POST /api/pay/reminders once a day with the
-// REMINDER_SECRET. This file finds every autopay that is set up but hasn't charged yet (Billing status
+// REMINDER_SECRET in the X-Reminder-Secret header (Wix hosting answers any "Authorization: Bearer" request
+// with its 404 page, so the secret has its own header). This file finds every autopay that is set up but hasn't charged yet (Billing status
 // "authenticated") and emails its owner 15, 7 and 2 days before the first charge. Wix sends the emails
 // (Email Transmissions API). Each reminder is sent once: the days already reminded are kept on the Billing
 // row in remindersSent. Razorpay separately sends the bank's 24-hour pre-debit notice.
@@ -23,7 +24,7 @@ export const remindersReady = () => !!REMINDER_SECRET;
 
 /* The job's secret, compared without leaking timing. */
 export function reminderAuthOk(header: string): boolean {
-  const want = REMINDER_SECRET ? `Bearer ${REMINDER_SECRET}` : "";
+  const want = REMINDER_SECRET || "";
   if (!want || header.length !== want.length) return false;
   let d = 0;
   for (let i = 0; i < want.length; i++) d |= want.charCodeAt(i) ^ header.charCodeAt(i);
