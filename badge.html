@@ -63,7 +63,7 @@ async function run() {
   if (!res.ok) throw new Error('reviews ' + res.status);
   const items = (await res.json()).rvs || [];
   const list = items.filter(r => (r.type || 'customer') === type && Number(r.rating) >= 1 && Number(r.rating) <= 5);
-  const verified = adminTouched(co) && co.claimStatus === 'verified' ? '<span class="ver">Verified</span>' : '';
+  const verified = adminTouched(co) && co.claimStatus === 'verified' && !co.planLapsed ? '<span class="ver">Verified</span>' : '';
   if (!list.length) {
     el.innerHTML = `<span class="row"><span class="msg">No ${type} reviews yet</span>${verified}</span><span class="meta">Be the first to review ${esc(name)} on ${brand}</span>`;
     return;

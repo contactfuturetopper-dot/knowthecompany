@@ -80,6 +80,7 @@ const webhook = async (event, sub) => {
 };
 const ADMIN = "c0f544a7-207e-490b-b7d9-830ef39f49c7";
 const company = () => col("Companies").get("acme.in");
+const company2 = id => col("Companies").get(id);
 col("Companies").set("acme.in", { _id: "acme.in", title: "Acme <Tools>", slug: "acme-tools", website: "acme.in", claimStatus: "verified", ownerMemberIds: ["m1"], plan: "plus", _owner: ADMIN, _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-02T00:00:00Z" });
 col("Companies").set("other.in", { _id: "other.in", title: "Other", claimStatus: "verified", ownerMemberIds: ["m3"], plan: "plus", _owner: ADMIN, _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-02T00:00:00Z" });
 
@@ -219,6 +220,39 @@ assert.deepEqual(basicRow().remindersSent, [7], "the 7-day slot is used, the 2-d
 col("Billing").set(basicRow()._id, { ...basicRow(), status: "active", remindersSent: [] }); setStart(7);
 col("Billing").set(basicRow()._id, { ...basicRow(), status: "active" });
 rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 0, "no reminders once paying");
+
+/* ---- 6. Basic without autopay after its free period: lapsed until autopay is set up ---- */
+const { freeEndsAt, shouldLapse } = await import(await bundle("src/lib/lapse.ts", "lapse"));
+const D = s => Date.parse(s);
+assert.equal(new Date(freeEndsAt(D("2026-11-10T10:00:00Z"))).toISOString().slice(0, 10), "2027-11-10", "claimed before the change: the promised year");
+assert.equal(new Date(freeEndsAt(D("2026-12-05T10:00:00Z"))).toISOString().slice(0, 10), "2027-06-05", "claimed after: 6 months");
+assert.equal(freeEndsAt(D("2027-05-01T10:00:00Z")), D("2027-05-01T10:00:00Z"), "after the launch offer: no free period");
+const T = D("2027-07-01T00:00:00Z");
+assert.equal(shouldLapse({}, [], D("2026-12-05T00:00:00Z"), T), true, "6 months over, no autopay: lapsed");
+assert.equal(shouldLapse({}, [], D("2026-11-10T00:00:00Z"), T), false, "promised year not over yet");
+assert.equal(shouldLapse({}, [{ status: "authenticated" }], D("2026-12-05T00:00:00Z"), T), false, "autopay waiting to charge: fine");
+assert.equal(shouldLapse({}, [{ status: "cancelling", currentEnd: "2027-09-01T00:00:00Z" }], D("2026-12-05T00:00:00Z"), T), false, "paid year still running");
+assert.equal(shouldLapse({ planEndsAt: "2027-08-01T00:00:00Z" }, [], D("2026-12-05T00:00:00Z"), T), false, "plan paid until a later date");
+assert.equal(shouldLapse({}, [], 0, T), false, "no claim on record: never lapsed");
+/* end to end through the daily job: a company claimed 7 months ago with no autopay */
+const sevenAgo = new Date(Date.now() - 214 * 86_400_000).toISOString();
+col("Companies").set("lapse.in", { _id: "lapse.in", title: "Lapse Co", claimStatus: "verified", ownerMemberIds: ["m2"], plan: "basic", _owner: ADMIN, _createdDate: "2026-01-01T00:00:00Z", _updatedDate: "2026-01-02T00:00:00Z" });
+col("Claims").set("cl-lapse", { _id: "cl-lapse", company: "lapse.in", _owner: "m2", status: "approved", _createdDate: sevenAgo });
+const realNow = Date.now;
+if (Date.now() < D("2026-11-19T00:00:00+05:30") + 214 * 86_400_000) { /* claims 7 months ago predate the change and get a year; move the clock instead */
+  col("Claims").set("cl-lapse", { ...col("Claims").get("cl-lapse"), _createdDate: "2026-12-01T00:00:00Z" });
+  Date.now = () => D("2027-07-01T00:00:00Z");
+}
+rr = await remind("rem_secret_test");
+assert.equal(company2("lapse.in").planLapsed, true, "the daily job lapses it"); assert.ok(rr.data.lapses.lapsed >= 1);
+const { firstChargeAt } = await import(await bundle("src/lib/pay.ts", "paylib2"));
+assert.equal(firstChargeAt("basic", company2("lapse.in")), null, "a lapsed company pays for Basic from today");
+Date.now = realNow;
+/* setting up autopay clears the lapse at once */
+r = await call(pay, "subscribe", "tok-m2", { company: "lapse.in", plan: "basic" });
+assert.equal(r.status, 200, "lapsed company can still set up autopay"); const lapseSub = r.data.subscriptionId;
+r = await call(pay, "verify", "tok-m2", { company: "lapse.in", subscriptionId: lapseSub, paymentId: "pay_9", signature: hmac(KEY, `pay_9|${lapseSub}`) });
+assert.equal(r.status, 200); assert.equal(company2("lapse.in").planLapsed, false, "autopay brings the listing back");
 
 console.log("BUSINESS CHECK: ok");
 fs.rmSync(tmp, { recursive: true, force: true });
