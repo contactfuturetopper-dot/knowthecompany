@@ -47,13 +47,16 @@ const money = (plan: string, currency: string) => {
 };
 const dateText = (t: number) => new Date(t).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata" });
 
-export function reminderEmail(row: any, company: any, days: number) {
+/* The subject counts the days actually left (a late run can send the 7-day reminder with 3 days to go). */
+export function reminderEmail(row: any, company: any, now = Date.now()) {
   const name = company?.title || "your company";
   const plan = PLAN_NAMES[row.plan] || "Basic listing";
   const amount = money(row.plan, row.currency || "INR");
-  const when = dateText(new Date(row.startAt).getTime());
+  const at = new Date(row.startAt).getTime();
+  const when = dateText(at);
+  const left = Math.max(1, Math.round((at - now) / DAY));
   const link = `${ORIGIN}/dashboard`;
-  const subject = `${days === 2 ? "In 2 days" : `In ${days} days`}: ${amount} autopay for ${name}'s ${plan}`;
+  const subject = `${left === 1 ? "Tomorrow" : `In ${left} days`}: ${amount} autopay for ${name}'s ${plan}`;
   const html = `<!doctype html><html><body style="margin:0;background:#F3F5F8;font-family:Arial,Helvetica,sans-serif;color:#0F172A">
 <div style="max-width:560px;margin:0 auto;padding:28px 20px"><div style="background:#fff;border-radius:16px;padding:28px">
 <p style="font-size:14px;color:#5B6576;margin:0 0 18px">Know The Company</p>
@@ -80,7 +83,7 @@ export async function runReminders(now = Date.now()) {
     if (!row.email) { res.skippedNoEmail++; continue; }
     try {
       const company: any = await get("Companies", row.company).catch(() => null);
-      const mail = reminderEmail(row, company, days);
+      const mail = reminderEmail(row, company, now);
       await send(
         { emailSubject: mail.subject, emailHtmlContent: mail.html, emailTextContent: mail.text, senderName: "Know The Company", toRecipients: [{ emailAddress: row.email }], type: "TRANSACTIONAL" as any },
         { idempotencyKey: await keyFor(`${row.subscriptionId}|${days}`) },
