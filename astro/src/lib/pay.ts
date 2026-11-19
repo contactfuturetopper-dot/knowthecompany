@@ -87,7 +87,8 @@ export async function setCompanyPlan(companyId: string, plan: string, until?: Da
   /* Writing here marks the company as touched by the team, so anything a member set on a company they
      added themselves (verified status, owners, badges) is cleared first. Only the team verifies. */
   const clean = adminTouched(c) ? {} : { claimStatus: "none", verifiedVia: "", ownerMemberIds: [], employerPage: null, warning: null, logo: "" };
-  await update("Companies", { ...c, ...clean, plan, ...(until ? { planEndsAt: until } : {}) });
+  /* A plan set up or renewed ends any lapse straight away (lapse.ts). */
+  await update("Companies", { ...c, ...clean, plan, planLapsed: false, ...(until ? { planEndsAt: until } : {}) });
 }
 
 /* ---- Razorpay API ---- */
@@ -136,6 +137,8 @@ export function firstChargeAt(plan: string, company: any): Date | null {
   /* Business has no free period: its first year starts, and is charged, today. */
   if (plan === "business") return null;
   if (plan === "plus") return LAUNCH ? new Date(now + PLUS_TRIAL_DAYS * DAY) : null;
+  /* A company whose free period already ran out (lapse.ts) pays for Basic from today. */
+  if (company.planLapsed) return null;
   return LAUNCH ? addMonths(new Date(now), BASIC_FREE_MONTHS) : null;
 }
 /* Same day of the month, n months on; a day the later month lacks (31 August + 6) falls back to its last day. */

@@ -87,7 +87,9 @@ function dedupeCos(items) {
 /* A company its owner listed goes live once its plan is set up or the team approves it (either one marks
    it as touched by the team). Until then only the member who listed it sees it. Same rule as lib/data.ts. */
 const awaitingCo = it => !!it && it.addedBy === 'owner' && !adminTouched(it);
-const trustedCo = it => adminTouched(it) ? it : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null, logo: '' };
+/* A verified company whose free period ended without autopay (planLapsed, set by the server's daily job,
+   astro/src/lib/lapse.ts) shows as not verified: no badge, no replies or owner content, until autopay is set up. */
+const trustedCo = it => adminTouched(it) ? (it.planLapsed && it.claimStatus === 'verified' ? { ...it, claimStatus: 'lapsed' } : it) : { ...it, claimStatus: 'none', verifiedVia: '', plan: 'none', ownerMemberIds: [], employerPage: null, warning: null, logo: '' };
 /* The company's logo: its official icon, imported by the team into the site's media library, or one its owners set. */
 const logoOf = c => { const u = String((c && c.raw && c.raw.logo) || ''); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; };
 
@@ -276,7 +278,7 @@ function applyOwner(items) {
   for (const k of Object.keys(MEDIA)) delete MEDIA[k];
   const prof = {};
   for (const it of items) {
-    const c = BYWID[it.company]; if (!c || !ownsCo(c, it._owner)) continue;
+    const c = BYWID[it.company]; if (!c || !ownsCo(c, it._owner) || isLapsed(c)) continue;
     if (it.kind === 'profile') (prof[c.wid] = prof[c.wid] || []).push(it);
     else if (it.kind === 'reply' && it.text) {
       const pools = [REVIEWS[c.id] || [], empData(c.id).reviews];
@@ -358,7 +360,7 @@ async function loadMedia(c) {
   if (!c || MEDIA[c.wid] || !(c.raw.ownerMemberIds || []).length) return;
   MEDIA[c.wid] = { loading: true };
   try {
-    const items = (await fetchAll('OwnerContent', [{ field: 'company', op: 'eq', value: c.wid }])).filter(it => ownsCo(c, it._owner));
+    const items = (await fetchAll('OwnerContent', [{ field: 'company', op: 'eq', value: c.wid }])).filter(it => ownsCo(c, it._owner) && !isLapsed(c));
     const photos = items.filter(it => it.kind === 'photo' && it.src).sort((a, b) => String(a._createdDate || '').localeCompare(String(b._createdDate || '')));
     const cover = latest(items.filter(it => it.kind === 'cover' && it.src));
     c.raw.photos = photos.map(it => ({ src: it.src, wid: it._id, by: it._owner }));
@@ -1448,6 +1450,7 @@ function shrinkImg(file, max) {
     const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height); let q = 0.8, url = cv.toDataURL('image/jpeg', q); while (url.length > 420000 && q > 0.35) { q -= 0.1; url = cv.toDataURL('image/jpeg', q); } res(url); }; im.src = fr.result; }; fr.readAsDataURL(file); });
 }
 const isVerifiedCo = c => !!(c && c.raw && c.raw.claimStatus === 'verified');
+const isLapsed = c => !!(c && c.raw && c.raw.claimStatus === 'lapsed');
 const ICO_THUMB = '<path d="M7 11v9H4v-9z"/><path d="M7 11l4-7a2 2 0 0 1 3 2l-1 4h5.5a2 2 0 0 1 2 2.4l-1.3 6A2 2 0 0 1 17.2 20H7"/>';
 const ICO_FLAG = '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>';
 const svgI = (d, s = 15) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -1514,6 +1517,7 @@ function coLinks(c) {
 }
 function coSide(c) {
   const cl = CLAIMS[c.id];
+  if (isLapsed(c)) return `<div class="box soft"><h2>Listing not active</h2><p>${esc(c.name)} was verified on Know The Company, but its listing isn’t active right now, so it shows no Verified badge or replies. Reviews stay open, and ratings never change because of a plan.</p></div>`;
   if (!cl) return `<div class="box"><h2>Is this your company?</h2><p>Claim this profile to verify it, reply to reviews and set up an employer page.</p><a class="btn p" href="#claim" data-act="claim" data-id="${c.id}" data-name="${esc(c.name)}" data-web="${esc(c.web)}">${LAUNCH ? 'Claim free' : 'Claim for [[PB]] a year'}</a></div>
       <div class="box soft"><h2>About this listing</h2><p>This profile was created from public information so customers and employees can share reviews. ${esc(c.name)} has not claimed it and is not affiliated with Know The Company.</p><div style="display:flex;flex-wrap:wrap;gap:14px"><a href="#guidelines" style="font-size:14px;font-weight:700">How we list companies</a><button class="link" type="button" data-act="suggest" data-id="${c.id}" style="font-size:14px">Suggest an edit</button></div></div>`;
   if (!isVerifiedCo(c)) return `<div class="box soft"><h2>Claimed by the company</h2><p>${esc(c.name)} has claimed this profile. We're checking its documents, and the Verified badge appears once that's done. Verification never changes ratings.</p></div>`;
@@ -1831,14 +1835,16 @@ function vDashboard() {
   const empty = !mine.length && claims && !claims.length;
   const sel = mine.find(c => c.id === S.dashCo) || mine[0];
   if (sel) { S.user.coId = sel.id; S.user.plan = coPlan(sel); loadMedia(sel); }
-  const TABS = [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews'], ...(sel && isBusiness(sel) ? [['business', 'Business tools']] : []), ['plan', 'Plan and payments']];
+  const lapsed = isLapsed(sel);
+  const TABS = lapsed ? [['overview', 'Overview'], ['plan', 'Plan and payments']] : [['overview', 'Overview'], ['page', 'Company page'], ['employer', 'Employer page'], ['reviews', 'Reviews and replies'], ['import', 'Past reviews'], ...(sel && isBusiness(sel) ? [['business', 'Business tools']] : []), ['plan', 'Plan and payments']];
+  const lapsedNote = lapsed ? `<section class="box" style="gap:10px;border-color:var(--gold)"><h2 style="font-size:19px">Your free period has ended</h2><p>${esc(sel.name)}’s Verified badge, replies and page edits are paused. Your page and reviews stay public. Set up Basic autopay under <b>Plan and payments</b> and everything comes back straight away: your badge, replies and edits.</p><div><a class="btn p" href="#dashboard" data-act="dash-tab" data-tab="plan">Set up autopay</a></div></section>` : '';
   const tab = TABS.some(t => t[0] === S.dashTab) ? S.dashTab : 'overview';
   const pick = mine.length > 1 ? `<div class="field" style="max-width:360px"><label class="l" for="dash-co">Company</label><select id="dash-co" data-dashco>${mine.map(c => `<option value="${c.id}" ${c === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : '';
   const tabs = sel ? `<nav style="display:flex;flex-wrap:wrap;gap:8px" aria-label="Dashboard sections">${TABS.map(([k, l]) => `<a class="btn ${k === tab ? 'p' : 'g'}" href="#dashboard" data-act="dash-tab" data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>` : '';
   const body = !sel ? '' : tab === 'business' ? businessPanel(sel) : tab === 'plan' ? planPanel(sel) : tab === 'import' ? importPanel(sel) : tab === 'page' ? companyPagePanel() : tab === 'employer' ? employerPanel() : tab === 'reviews' ? ownReviews(sel, reviewsFor(sel.id), empData(sel.id).reviews) : coCard(sel);
   return `<div class="dash"><div class="wrap" style="padding-block:28px 8px"><div class="mainc" style="gap:18px;max-width:920px;margin:0 auto">
     <div class="toolbar"><div><h1 style="font-size:28px">Company dashboard</h1><p style="color:var(--muted)">${esc(S.user.name)}${S.user.email ? ' · ' + esc(S.user.email) : ''}</p></div><div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn o" href="#claim">Claim a company</a><a class="btn g" href="#list">List a new company</a></div></div>
-    ${pick}${tabs}${body}
+    ${pick}${lapsedNote}${tabs}${body}
     ${empty ? `<div class="empty"><b>You haven’t claimed a company yet</b><p>Claim your company page free, verify it, and get links to collect reviews from customers and your team.</p><a class="btn p" href="#claim">Claim your company page</a></div>`
       : `<section class="box" style="gap:10px"><h2>Your claims and requests</h2>${claimList || '<p class="meta">None yet.</p>'}${S.claimsErr ? `<p class="err">${esc(S.claimsErr)}</p>` : ''}</section>`}
   </div></div></div>`;
@@ -4851,7 +4857,7 @@ function planPanel(c, inClaim) {
   if (tier !== 'business' && !running('business')) out.push(box('Business', `${P.PZ} a year, starting today`, `Everything in Plus, with review invitations to your customers by email and WhatsApp, rating trends and a monthly report, up to ${LOCATIONS_MAX} branches and up to ${TEAM_MAX} team logins.`, btn('business', 'Choose Business', tier === 'plus')));
   if (tier === 'business' && !running('business')) out.push(box('Business', `${until}${P.PZ} a year`, 'Keep your review invitations, reports, branches and team logins without a break.', btn('business', 'Continue with Business', true)));
   /* Basic needs autopay set up at the start, so it comes first: nothing is charged until the free months end. */
-  if (tier === 'basic' && !live.some(b => b.status !== 'cancelling')) out.unshift(box('Basic', LAUNCH ? `Free for your first 6 months, then ${P.PB} a year` : `${P.PB} a year`, LAUNCH ? `Your verified company page, with your details kept up to date. Set up autopay now with UPI or a card: nothing is charged today, the first ${P.PB} is charged when your 6 free months end, and we email you before then. Cancel any time before the first charge.` : 'Your verified company page, with your details kept up to date.', btn('basic', LAUNCH ? 'Start Basic free with autopay' : 'Choose Basic', true)));
+  if (tier === 'basic' && !live.some(b => b.status !== 'cancelling')) out.unshift(box('Basic', isLapsed(c) ? `${P.PB} a year, starting today` : LAUNCH ? `Free for your first 6 months, then ${P.PB} a year` : `${P.PB} a year`, isLapsed(c) ? 'Your free period has ended. Set up yearly autopay to bring back your Verified badge, replies and page edits straight away.' : LAUNCH ? `Your verified company page, with your details kept up to date. Set up autopay now with UPI or a card: nothing is charged today, the first ${P.PB} is charged when your 6 free months end, and we email you before then. Cancel any time before the first charge.` : 'Your verified company page, with your details kept up to date.', btn('basic', isLapsed(c) ? 'Set up Basic autopay' : LAUNCH ? 'Start Basic free with autopay' : 'Choose Basic', true)));
   return `<section class="box" style="gap:16px">
     <div class="toolbar"><h2>${inClaim ? 'Choose your plan' : 'Plan and payments'}</h2><span class="pill ${tier !== 'basic' ? 'ok' : 'un'}">${TIER_NAME[tier]} plan</span></div>
     ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}

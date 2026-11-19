@@ -27,7 +27,7 @@ export function cardData(c: any, reviews: any[], path: string): CardData {
   const enough = (l: any[]) => l.length >= MIN_REVIEWS;
   return {
     name: c.title || c._id, web: c.website || c._id, path,
-    verified: adminTouched(c) && c.claimStatus === "verified",
+    verified: adminTouched(c) && c.claimStatus === "verified" && !c.planLapsed,
     customer: { n: cu.length, avg: enough(cu) ? Math.round(avgOf(cu) * 10) / 10 : null },
     employee: {
       n: em.length, avg: enough(em) ? Math.round(avgOf(em) * 10) / 10 : null,
