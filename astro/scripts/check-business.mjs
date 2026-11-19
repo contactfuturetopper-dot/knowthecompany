@@ -210,6 +210,11 @@ setStart(1); rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 0,
 col("Billing").set(basicRow()._id, { ...basicRow(), remindersSent: [] }); setStart(2);
 const n0 = globalThis.__wixMail.length; rr = await remind("rem_secret_test");
 assert.equal(globalThis.__wixMail.length - n0, 1, "one email per run"); assert.deepEqual(basicRow().remindersSent, [2]);
+/* a late run with 3 days left sends the 7-day reminder, but its subject says 3 days */
+col("Billing").set(basicRow()._id, { ...basicRow(), remindersSent: [] }); setStart(3);
+rr = await remind("rem_secret_test"); assert.equal(rr.data.sent, 1);
+assert.ok(globalThis.__wixMail.at(-1).t.emailSubject.startsWith("In 3 days"), globalThis.__wixMail.at(-1).t.emailSubject);
+assert.deepEqual(basicRow().remindersSent, [7], "the 7-day slot is used, the 2-day one still comes");
 /* an autopay that has already charged gets no reminders */
 col("Billing").set(basicRow()._id, { ...basicRow(), status: "active", remindersSent: [] }); setStart(7);
 col("Billing").set(basicRow()._id, { ...basicRow(), status: "active" });
