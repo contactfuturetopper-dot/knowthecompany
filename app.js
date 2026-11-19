@@ -821,7 +821,7 @@ const REASONS = [
   ['Know what to fix', 'See ratings for pay, management, service and value, and get an email for every new review.', false],
   ['Stand out in your category', 'Most startups and growing companies have no independent reviews yet. The first ones to collect them stand out.', false],
   ['Proof you can reuse', 'Link to your Know The Company page from your website, careers page, LinkedIn, proposals, pitch decks and email signature.', false],
-  ['Fair and low-cost', 'Basic is free for your first year. Paying never changes a rating, so your rating actually means something.', false]
+  ['Fair and low-cost', 'Basic is free for your first 6 months. Paying never changes a rating, so your rating actually means something.', false]
 ];
 const reasonCard = ([h, p, hot], i) => `<div class="reason${hot ? ' hot' : ''}"><span class="n">${String(i + 1).padStart(2, '0')}</span><h3>${h}</h3><p>${p}</p></div>`;
 function vWhy() {
@@ -849,7 +849,7 @@ function vWhy() {
       <div class="reasons">${REASONS.map(reasonCard).join('')}</div></section>
 
     <section class="wrap sec"><div class="sechead"><div><p class="eyebrow">Getting started</p><h2>Three steps, about ten minutes</h2></div></div><div class="steps">
-      <div class="step"><span>1</span><h3>Claim your page</h3><p>Add your details and story. ${LAUNCH ? 'Free for your first year.' : 'Plans from [[PB]] a year.'}</p></div>
+      <div class="step"><span>1</span><h3>Claim your page</h3><p>Add your details and story. ${LAUNCH ? 'Free for your first 6 months.' : 'Plans from [[PB]] a year.'}</p></div>
       <div class="step"><span>2</span><h3>Invite people</h3><p>Send your review links to customers and your team. Employee reviews can stay anonymous.</p></div>
       <div class="step"><span>3</span><h3>Share your page</h3><p>Link to your page from your website, careers page and LinkedIn.</p></div></div></section>
 
@@ -860,7 +860,7 @@ function vWhy() {
       ['Can we pay to improve our rating?', 'Never. Plans add tools, not stars. That rule is the reason customers, job seekers and AI tools can trust your rating.']
     ].map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>
 
-    <section class="wrap sec"><div class="cta"><div style="display:flex;flex-direction:column;gap:14px;max-width:640px"><p class="eyebrow" style="color:var(--gold)">Free first year</p><h2>${LAUNCH ? 'Claim your company page free for a year.' : 'Get your company page today.'}</h2><p style="color:var(--deep-muted)">Join before ${LAUNCH_END} and Basic is free for your first year.</p><a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>`;
+    <section class="wrap sec"><div class="cta"><div style="display:flex;flex-direction:column;gap:14px;max-width:640px"><p class="eyebrow" style="color:var(--gold)">Free for 6 months</p><h2>${LAUNCH ? 'Claim your company page free for 6 months.' : 'Get your company page today.'}</h2><p style="color:var(--deep-muted)">Join before ${LAUNCH_END} and Basic is free for your first 6 months.</p><a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'Claim your company page free' : 'List your company'}</a></div></div></section>`;
 }
 
 function vHome() {
@@ -933,8 +933,8 @@ ${POSTS.length ? `    <section class="wrap sec"><div class="sechead"><div><h2>Fr
 
     <section class="wrap sec"><div class="cta">
       <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px">
-        <h2>${LAUNCH ? 'List your company free for a year.' : 'Get a verified listing for [[PB]] a year.'}</h2>
-        <p>Show up in your category, reply to clients and employees, and share proof of your reputation.${LAUNCH ? ` Businesses that join before ${LAUNCH_END} get their first year free.` : ''}</p></div>
+        <h2>${LAUNCH ? 'List your company free for 6 months.' : 'Get a verified listing for [[PB]] a year.'}</h2>
+        <p>Show up in your category, reply to clients and employees, and share proof of your reputation.${LAUNCH ? ` Businesses that join before ${LAUNCH_END} get their first 6 months free.` : ''}</p></div>
       <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:16px">
         <ul class="ticks">${['Verified company badge','Reply to every review','Employer branding page','Website link and photos'].map(t => `<li>${TICK('var(--deep-muted)')}${t}</li>`).join('')}</ul>
         <a class="btn gold lg" href="#list" style="align-self:flex-start">${LAUNCH ? 'List your company free' : 'List your company – [[PB]]'}</a></div>
@@ -975,7 +975,7 @@ function vCategory(k) {
         <div class="field"><label class="l" for="f-text">Name or website</label><input id="f-text" type="text" data-filter="text" value="${esc(f.text)}" placeholder="Filter this list"></div>
         <div class="field"><label class="l" for="f-sort">Sort by</label><select id="f-sort" data-filter="sort"><option value="name" ${f.sort === 'name' ? 'selected' : ''}>Name A–Z</option><option value="za" ${f.sort === 'za' ? 'selected' : ''}>Name Z–A</option><option value="reviews" ${f.sort === 'reviews' ? 'selected' : ''}>Most reviewed</option></select></div>
       </div>
-      <div class="box soft"><h2>Run a company in this category?</h2><p>Get a verified listing here, ${LAUNCH ? 'free for your first year' : 'for [[PB]] a year'}.</p><a class="btn p" href="#list">List your company</a></div></aside>
+      <div class="box soft"><h2>Run a company in this category?</h2><p>Get a verified listing here, ${LAUNCH ? 'free for your first 6 months' : 'for [[PB]] a year'}.</p><a class="btn p" href="#list">List your company</a></div></aside>
       <div class="mainc" id="cat-results">${catResults(k)}</div>
     </div></div>`;
 }
@@ -1382,14 +1382,14 @@ const FAQS = [
   ['Does this help if the site is new?', 'Yes. Your page link and review link work wherever your customers already are: your website, careers page, LinkedIn, proposals and email signature. Visitors from our site come on top of that as it grows.'],
 
   ['What’s the difference between Basic, Plus and Business?', `Basic gives you a verified profile with a link to your website, replies to reviews and an employer page. Plus ([[PP]] a year) adds call, WhatsApp and email buttons, a photo gallery, offers and updates and no competitor suggestions on your profile. Business ([[PZ]] a year) adds review invitations by email and WhatsApp, rating trends, up to ${LOCATIONS_MAX} branches and up to ${TEAM_MAX} team logins. Every plan is reviewed and rated exactly the same way.`],
-  LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, the listing costs [[PB]] a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?','[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
+  LAUNCH ? ['Is it really free?', `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first 6 months. After that, the listing costs [[PB]] a year by yearly autopay, which you set up when you choose Basic. We email you before the first charge, and you can cancel autopay at any time.`] : ['How much does it cost?','[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
   ['Will a verified listing improve my rating?','No. Ratings come only from reviews. Verified and unverified companies are reviewed and moderated the same way.'],
   ['Can I remove a bad review?','No, but you can reply publicly, and report a review that breaks our guidelines so our team can check it.'],
   ['How does the website link help me?','Customers reading your reviews can visit your site in one click from your verified profile. Links on profiles are marked nofollow or sponsored, as search engines require, so the value is real visitors rather than search ranking.'],
   ['What is the employer branding page?','A “Work at” section on your profile where you show why people should join you: benefits, team size, open roles and photos. It sits beside your employee reviews and never changes your ratings.'],
   ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
   ['Can I switch plans?', `Yes. Upgrade to Plus at any time from your dashboard${LAUNCH ? `, with ${PLUS_TRIAL_DAYS} days free` : ''}. If you cancel Plus, your profile moves to Basic when the year you paid for ends, and keeps all its reviews.`],
-  LAUNCH ? ['Can companies in any country join?','Yes. Companies anywhere can list, and Basic is free for the first year.'] : ['Can I pay from any country?','Yes. Cards from any country are accepted.']
+  LAUNCH ? ['Can companies in any country join?','Yes. Companies anywhere can list, and Basic is free for the first 6 months.'] : ['Can I pay from any country?','Yes. Cards from any country are accepted.']
 ];
 const cprof = c => { const r = (c && c.raw) || {};
   return { logo: r.logo, cover: r.cover, about: r.about, founded: r.founded, size: r.teamSize, hq: r.headquarters, web2: r.website2, services: r.services || [], hours: r.hours, phone: r.phone, email: r.publicEmail, address: r.address, socials: r.socials || [],
@@ -1610,10 +1610,10 @@ function claimPanel() {
       <div class="vopts">${opt('website', 'Website', 'Add a DNS record or a tag', 'Instant')}${opt('docs', 'Documents', 'Checked by our team')}${opt('id', 'ID card', 'Your company ID, checked by our team')}</div>
       <div class="vbody">${body}</div>
       <h3 style="font-size:17px">Choose a plan</h3>
-      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${!['plus', 'business'].includes(d.plan) ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first year, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
+      <div class="planpick"><label><input type="radio" name="plan" value="basic" ${!['plus', 'business'].includes(d.plan) ? 'checked' : ''}><span><b>Basic</b><small>${LAUNCH ? 'Free for your first 6 months, then [[PB]] a year' : '[[PB]] a year'}</small></span></label>
         <label><input type="radio" name="plan" value="plus" ${d.plan === 'plus' ? 'checked' : ''}><span><b>Plus</b><small>${LAUNCH ? `${PLUS_TRIAL_DAYS} days free, then [[PP]] a year` : `[[PP]] a year`}. Contact buttons, photos, offers and updates</small></span></label>
         <label><input type="radio" name="plan" value="business" ${d.plan === 'business' ? 'checked' : ''}><span><b>Business</b><small>[[PZ]] a year. Everything in Plus, with review invitations, trends, branches and team logins</small></span></label></div>
-      <p class="meta">${LAUNCH ? 'No payment now. Nothing is charged when a free period ends unless you set up autopay.' : 'Plans renew every year by autopay. You can cancel at any time.'}</p>
+      <p class="meta">${LAUNCH ? 'Nothing to pay today. Next you set up autopay, and the first charge comes only when your free period ends. You can cancel any time before then.' : 'Plans renew every year by autopay. You can cancel at any time.'}</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px"><button class="btn p lg" type="button" data-act="cf-submit" ${ready ? '' : 'disabled'}>Send my claim</button><button class="btn g lg" type="button" data-act="cf-edit">Back to your details</button></div></div>`; }
   const pageId = d.coWid && BYWID[d.coWid] ? BYWID[d.coWid].id : '', claimCo = d.coWid ? BYWID[d.coWid] : null;
   const viaWeb = d.method === 'website';
@@ -1629,7 +1629,7 @@ function claimPanel() {
 function calcOut(sale) {
   const n = p => Math.max(1, Math.ceil(p / Math.max(1, sale)));
   const c = p => `${n(p)} new ${n(p) === 1 ? 'customer' : 'customers'} a year`;
-  return `<div><small>Basic, ₹${BASIC_PRICE.toLocaleString('en-IN')} a year</small><b>${n(BASIC_PRICE)}</b><em>${c(BASIC_PRICE)} covers it${LAUNCH ? ' (free in your first year)' : ''}</em></div>
+  return `<div><small>Basic, ₹${BASIC_PRICE.toLocaleString('en-IN')} a year</small><b>${n(BASIC_PRICE)}</b><em>${c(BASIC_PRICE)} covers it${LAUNCH ? ' (free for your first 6 months)' : ''}</em></div>
     <div><small>Plus, ₹${PLUS_PRICE.toLocaleString('en-IN')} a year</small><b>${n(PLUS_PRICE)}</b><em>${c(PLUS_PRICE)} covers it</em></div>`;
 }
 /* Claim: the company is already on the site. List (vList): the company isn't, so it is added first.
@@ -1640,7 +1640,7 @@ function vClaim() {
       <div style="flex:1 1 560px;display:flex;flex-direction:column;gap:18px">${crumbs([['Home', '#home'], ['For employers', '#list'], ['Claim your company']])}
         <h1>Claim your company page</h1>
         <p class="lede">Your company is already on Know The Company. Claim its page to reply to reviews, tell job seekers what it’s like to work with you, and get the Verified badge. You keep every review it already has.</p>
-        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Claim before ${LAUNCH_END} and Basic is free for your first year.</p>` : ''}</div>
+        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Claim before ${LAUNCH_END} and Basic is free for your first 6 months.</p>` : ''}</div>
     </div></section>
     <section class="wrap sec" id="list-form-area" style="padding-top:40px"><div class="layout">
       <div class="mainc">${panel}</div>
@@ -1662,7 +1662,7 @@ function vList() {
         <h1>List your company${LAUNCH ? ' for <span style="color:var(--gold)">free</span>' : ''}</h1>
         <p class="lede">Get a verified company page, reply to customer and employee reviews, and share your review links. It takes about five minutes.</p>
         <div style="display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center"><a class="btn gold lg" href="#list" data-act="to-form">Start now</a><a href="#claim" style="color:#fff;font-weight:600">Company already on the site? Claim its page</a></div>
-        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Basic is free for your first year when you join before ${LAUNCH_END}.</p>` : ''}</div>
+        ${LAUNCH ? `<p style="color:var(--deep-muted);font-size:14px">Basic is free for your first 6 months when you join before ${LAUNCH_END}.</p>` : ''}</div>
       <div class="lbvis" aria-label="Example of how reviews appear on Know The Company"><span class="tagex">Example</span>
         <div class="rc">${starRow(4, 18)}<p class="q">“Students are motivated, and the academic team listens to teachers about the syllabus.”</p><span class="by">Anonymous employee · Maths teacher · Example Company</span><span class="brand">${TICK('var(--accent)')}Reviewed on Know The Company</span></div>
         <div class="chipline"><span>${TICK('var(--accent)')}Verified company</span><span>${STAR(true, 16)} 4.0 from customers</span><span>67% of employees recommend</span></div></div>
@@ -1671,7 +1671,7 @@ function vList() {
       <ol class="how3" aria-label="How listing works">
         <li><span>1</span><div><b>Add your company</b><small>Search for it first. If it is not on the site yet, add its name, website and category.</small></div></li>
         <li><span>2</span><div><b>Show you work there</b><small>Add a record to your website, or upload a company document or ID card.</small></div></li>
-        <li><span>3</span><div><b>Pick a plan</b><small>${LAUNCH ? 'Basic is free for your first year. You can move up later.' : 'Start with Basic and move up later.'}</small></div></li>
+        <li><span>3</span><div><b>Pick a plan</b><small>${LAUNCH ? 'Basic is free for your first 6 months. You can move up later.' : 'Start with Basic and move up later.'}</small></div></li>
       </ol>
       <div class="listmain">
       <div>${panel}</div>
@@ -1718,7 +1718,7 @@ function vList() {
       <div class="out" aria-live="polite">${calcOut(S.calcSale || 1500)}</div>
     </div></section>
 
-    <section class="wrap sec"><div class="box soft" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 420px"><h2 style="font-size:22px">Plans from free</h2><p>${LAUNCH ? 'Basic is free for your first year.' : 'Basic is [[PB]] a year.'} Plus is [[PP]] a year, and Business, for teams and several branches, is [[PZ]] a year. Every plan is reviewed and rated exactly the same way.</p></div><a class="btn p lg" href="#pricing">See plans and pricing</a></div></section>
+    <section class="wrap sec"><div class="box soft" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:6px;flex:1 1 420px"><h2 style="font-size:22px">Plans from free</h2><p>${LAUNCH ? 'Basic is free for your first 6 months.' : 'Basic is [[PB]] a year.'} Plus is [[PP]] a year, and Business, for teams and several branches, is [[PZ]] a year. Every plan is reviewed and rated exactly the same way.</p></div><a class="btn p lg" href="#pricing">See plans and pricing</a></div></section>
     <section class="wrap sec"><div class="fair"><h2>Paying never changes your rating. That's why people trust the badge.</h2><ul>${['Every review is published the same way, good or bad','You can reply, but you can never remove or hide a review','You never see who wrote an anonymous employee review','Plans add tools, never stars, ranking or awards'].map(x => `<li>${TICK('var(--accent)')}${x}</li>`).join('')}</ul></div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><div><p class="eyebrow">Fair questions</p><h2>What employers ask us</h2></div></div><div style="display:flex;flex-direction:column;gap:10px">${FAQS.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div></section>`;
 }
@@ -4565,7 +4565,7 @@ function listCard(where) {
   return `<div class="listcard ${where}"><img class="lc-img" src="/images/banner/list-your-company-2.webp" alt="Founder celebrating a five-star review as his company appears on the map" width="720" height="480" loading="lazy" decoding="async"><p class="lc-eye">For businesses</p><h2>List your company for <span class="lc-free">FREE</span></h2>
     <ul class="ticks">${['Verified company page','Reply to customer and employee reviews','Readable by Google and AI search tools'].map(t => `<li>${TICK('var(--gold)')}<span>${t}</span></li>`).join('')}</ul>
     <a class="btn gold" href="#list">List your company</a>
-    <p class="lc-note">${LAUNCH ? `Basic is free for your first year when you join before ${LAUNCH_END}.` : 'Plans from [[PB]] a year.'}</p></div>`;
+    <p class="lc-note">${LAUNCH ? `Basic is free for your first 6 months when you join before ${LAUNCH_END}.` : 'Plans from [[PB]] a year.'}</p></div>`;
 }
 function vPost(p) {
   const blocks = p.body.map(postBlock);
@@ -4622,7 +4622,7 @@ function vAbout() {
       <p style="color:var(--muted);font-size:18px;max-width:680px">Know The Company is an open review platform for startups and growing companies, everywhere. Big brands already have thousands of reviews; the companies people actually hire, work with and work for often have none. Anyone can read and write reviews for free. We show how a company treats both its customers and its employees.</p></div></section>
     <section class="wrap sec"><h2 class="sr">Our mission and how we work</h2><div class="steps">
       <div class="step"><p class="lbl">Our mission</p><h3>Honest information before you pay</h3><p>Customers deserve to know how a company treats people before they hand over money or personal data.</p></div>
-      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first year for companies that join before ${LAUNCH_END}, then [[PB]] a year. Plus costs [[PP]] a year, and Business [[PZ]] a year.` : `Businesses can buy a Basic listing for [[PB]] a year, Plus for [[PP]] a year or Business for [[PZ]] a year.`} A listing gives a business tools, and never changes its rating.</p></div>
+      <div class="step"><p class="lbl">How we earn</p><h3>Companies pay for tools, not stars</h3><p>${LAUNCH ? `Basic listings are free for the first 6 months for companies that join before ${LAUNCH_END}, then [[PB]] a year. Plus costs [[PP]] a year, and Business [[PZ]] a year.` : `Businesses can buy a Basic listing for [[PB]] a year, Plus for [[PP]] a year or Business for [[PZ]] a year.`} A listing gives a business tools, and never changes its rating.</p></div>
       <div class="step"><p class="lbl">Who we serve</p><h3>Startups and growing companies worldwide</h3><p>From a two-person studio to a 500-person scale-up, every company can be listed and reviewed.</p></div></div></section>
     <section class="wrap sec" style="max-width:900px"><div class="sechead"><h2>What we stand for</h2></div>
       <div style="display:flex;flex-direction:column;gap:12px">${[['Neutral','Paid and unpaid companies are reviewed and moderated the same way.'],['Transparent','We publish how many reviews we remove and why.'],['Real people','Reviewers confirm their email before they can post.'],['Fair to companies','Every company can reply publicly and report reviews that break our rules.']].map(([a, b]) => `<div class="box" style="flex-direction:row;gap:16px;align-items:baseline;flex-wrap:wrap"><b style="min-width:150px">${a}</b><span style="color:var(--muted);flex:1 1 300px">${b}</span></div>`).join('')}</div>
@@ -4660,8 +4660,8 @@ const HELP = [
     ['Can my employer remove my review?', 'No. We remove a review only when it breaks our guidelines or we receive a valid legal order.'],
     ['What should I not include?', 'Names of junior colleagues, confidential company information or trade secrets, and accusations you can\'t back up with evidence.']]],
   ['For employers', [
-    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first year if you join before ${LAUNCH_END}, then [[PB]] a year. ` : 'It costs [[PB]] a year. ') + `Plus ([[PP]] a year) adds call, WhatsApp and email buttons, photos, and offers and updates. Business ([[PZ]] a year) adds review invitations, rating trends, branches and team logins.`],
-    LAUNCH ? ['Do I need to pay?', `Not in your first year. Companies that join before ${LAUNCH_END} get Basic free for their first year. After that, listings cost [[PB]] a year by yearly autopay, which you set up only if you want to continue. You can cancel autopay at any time.`] : ['How much does it cost?', '[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
+    ['What does a verified listing include?', 'Basic includes a verified badge, an employer branding page, city and category pages, replies to reviews and a review link. ' + (LAUNCH ? `It is free for your first 6 months if you join before ${LAUNCH_END}, then [[PB]] a year. ` : 'It costs [[PB]] a year. ') + `Plus ([[PP]] a year) adds call, WhatsApp and email buttons, photos, and offers and updates. Business ([[PZ]] a year) adds review invitations, rating trends, branches and team logins.`],
+    LAUNCH ? ['Do I need to pay?', `Not in your first 6 months. Companies that join before ${LAUNCH_END} get Basic free for their first 6 months. After that, listings cost [[PB]] a year by yearly autopay, which you set up when you choose Basic. We email you before the first charge, and you can cancel autopay at any time.`] : ['How much does it cost?', '[[PB]] a year, paid by yearly autopay. You can cancel at any time, and your listing stays active until the end of the year you paid for.'],
     ['Can I post jobs?', 'Job posts are coming soon. For now, Know The Company focuses on customer and employee reviews. Verified businesses will be the first to post jobs when they launch.'],
     ['Can I get a refund?', 'Yes. If you pay for a plan and change your mind within 14 days, write to knowthecompanysupport@gmail.com for a full refund. If we can’t verify your company, we refund you in full. See our <a href="#refunds">refunds and cancellations policy</a>.'],
     ['Can paying remove bad reviews?', 'No. Payment never changes ratings or hides reviews. You can reply publicly or report reviews that break the rules.'],
@@ -4722,7 +4722,7 @@ function vPrivacy() {
 /* The three listing plans as cards. Choosing one opens the listing form with that plan picked. */
 function planCards() {
   return `<div class="plans">
-        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First year free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first year</span>' : '<b>[[PB]]</b><span style="color:var(--muted)">a year</span>'}</div>
+        <div class="price"><span class="eyebrow">Basic</span>${LAUNCH ? '<span class="pill un" style="align-self:flex-start">First 6 months free</span>' : ''}<div class="amt">${LAUNCH ? '<b>Free</b><span style="color:var(--muted)">for your first 6 months</span>' : '<b>[[PB]]</b><span style="color:var(--muted)">a year</span>'}</div>
           <p class="meta" style="font-size:14px">${LAUNCH ? `Then [[PB]] a year by autopay. For companies that join before ${LAUNCH_END}.` : 'Renews yearly by autopay. Cancel any time.'}</p><span class="daily">[[DB]]</span>
           <ul>${BASIC_PERKS.map(p => `<li>${TICK()}<span>${p}</span></li>`).join('')}</ul>
           <a class="btn o lg" href="#list" data-act="pick-plan" data-plan="basic">${LAUNCH ? 'Start free' : 'Choose Basic'}</a></div>
@@ -4740,7 +4740,7 @@ function planCards() {
 }
 const PLAN_FAQS = [
   ['Which plan should I choose?', `Start with Basic if you want a verified page and to reply to reviews. Choose Plus if you want customers to call, WhatsApp or visit your website straight from your page. Choose Business if you want to invite every customer to review you, follow your ratings month by month, show several branches or give your team their own logins.`],
-  ['Is there a free period?', LAUNCH ? `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus is free for its first ${PLUS_TRIAL_DAYS} days. Business is charged from the day you choose it.` : 'Some offers include a free period. Business is charged from the day you choose it.'],
+  ['Is there a free period?', LAUNCH ? `Yes. Companies that join before ${LAUNCH_END} get Basic free for their first 6 months, and Plus is free for its first ${PLUS_TRIAL_DAYS} days. Business is charged from the day you choose it.` : 'Some offers include a free period. Business is charged from the day you choose it.'],
   ['How do I pay, and can I cancel?', 'Plans renew once a year by autopay through Razorpay, using a card, UPI or netbanking. You can cancel any time from your dashboard, and a year you have paid for runs to its end.'],
   ['Can I move between plans?', 'Yes. Move up from your dashboard whenever you like. Moving up stops the lower plan’s autopay, so you never pay for two plans at once.'],
   ['Does paying change my rating?', 'No. Paying never changes your rating, the order of reviews or how reviews are checked, and no plan lets you hide or remove a review.'],
@@ -4761,7 +4761,7 @@ function vRefunds() {
   return legalPage('Refunds and cancellations', 'Refunds and cancellations', `This policy covers the paid listing plans on Know The Company${OPERATOR.legalName ? `, run by ${esc(OPERATOR.legalName)}` : ''}. Reading and writing reviews is free, so none of this applies to reviewers.`, [
     ['1. What you pay for', [`Basic listing: ₹${BASIC_PRICE.toLocaleString('en-IN')} a year in India, or $19 a year outside India. Plus listing: ₹${PLUS_PRICE.toLocaleString('en-IN')} a year in India, or $39 a year outside India. Business listing: ₹${BUSINESS_PRICE.toLocaleString('en-IN')} a year in India, or $179 a year outside India.${JOBS_ON ? ` Extra job posts: ₹${EXTRA_JOB} each.` : ''}`, 'Each plan runs for one year from the day it starts and renews every year by autopay until you cancel. Current prices are always on our <a href="#pricing">pricing page</a>.', 'A listing is a digital service. Nothing is shipped to you.']],
     ['2. How the service is delivered', ['You can choose and pay for a plan as soon as you send your claim. A website check verifies you straight away; documents and ID cards are checked by our team, usually within 2 working days, and your Verified badge and listing tools switch on when the check passes.', 'If we can’t verify your company, we cancel the order and refund the full amount.']],
-    ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first year, and Plus starts with ${PLUS_TRIAL_DAYS} days free. Business has no free period.` : 'Some offers include a free period before payment.', 'You are never charged at the end of a free period unless you set up autopay. We email you before it ends.']],
+    ['3. Free periods', [LAUNCH ? `Companies that join before ${LAUNCH_END} get Basic free for their first 6 months, and Plus starts with ${PLUS_TRIAL_DAYS} days free. Business has no free period.` : 'Some offers include a free period before payment.', 'You are charged when a free period ends only if you have set up autopay, and we email you before the first charge so you can cancel in time.']],
     ['4. Autopay and cancelling', ['Paid plans renew every year by autopay on the card, UPI or bank mandate you used. For Indian cards, UPI and bank mandates, your bank or payment app notifies you at least 24 hours before each renewal charge.', 'You can cancel autopay at any time, by writing to knowthecompanysupport@gmail.com from the email address on your listing, or by cancelling the mandate in your UPI app or with your bank.', 'When you cancel, no further charges are made and your tools stay active until the end of the year you paid for.', 'If a plan ends, your profile stays on the site as an unclaimed profile and keeps its reviews.']],
     ['5. Refunds', ['Change your mind within 14 days of paying, and we refund the full amount. No reason is needed.', 'After 14 days, fees for the current year are not refundable, except where the law requires a refund.', 'If you were charged twice, or charged for an order that failed, we refund the extra amount in full.', 'If we suspend a listing because it broke our terms, for example by trying to manipulate reviews, the fee is not refunded.']],
     ['6. How refunds are paid', ['Refunds go back to the payment method you used. We start the refund within 5 working days of approving it.', 'Your bank or card provider may take another 5 to 7 working days to show it in your account.']],
@@ -4846,11 +4846,12 @@ function planPanel(c, inClaim) {
   const box = (h, sub, body, button) => `<div class="box soft" style="gap:10px"><h3>${h}</h3>${sub ? `<p><b>${sub}</b></p>` : ''}<p>${body}</p>${button}</div>`;
   const until = d && d.planEndsAt ? `Yours until ${esc(fmt(d.planEndsAt))}, then ` : '';
   const out = [];
-  if (tier === 'basic' && !running('plus') && !running('business')) out.push(box('Plus', LAUNCH ? `Free for your first month, then ${P.PP} a year` : `${P.PP} a year`, 'Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.', btn('plus', LAUNCH ? 'Start Plus free' : 'Choose Plus', true)));
+  if (tier === 'basic' && !running('plus') && !running('business')) out.push(box('Plus', LAUNCH ? `Free for your first month, then ${P.PP} a year` : `${P.PP} a year`, 'Reply as a verified company, add photos and updates, an employer page, and send us reviews you collected before joining.', btn('plus', LAUNCH ? 'Start Plus free' : 'Choose Plus', live.some(b => b.status !== 'cancelling'))));
   if (tier === 'plus' && !running('plus') && !running('business')) out.push(box('Plus', `${until}${P.PP} a year`, 'Keep replying as a verified company, your photos, updates and employer page without a break.', btn('plus', 'Continue with Plus', true)));
   if (tier !== 'business' && !running('business')) out.push(box('Business', `${P.PZ} a year, starting today`, `Everything in Plus, with review invitations to your customers by email and WhatsApp, rating trends and a monthly report, up to ${LOCATIONS_MAX} branches and up to ${TEAM_MAX} team logins.`, btn('business', 'Choose Business', tier === 'plus')));
   if (tier === 'business' && !running('business')) out.push(box('Business', `${until}${P.PZ} a year`, 'Keep your review invitations, reports, branches and team logins without a break.', btn('business', 'Continue with Business', true)));
-  if (tier === 'basic' && !live.some(b => b.status !== 'cancelling')) out.push(box('Basic', LAUNCH ? `Free for your first year, then ${P.PB} a year` : `${P.PB} a year`, 'Your verified company page, with your details kept up to date.', btn('basic', LAUNCH ? 'Start Basic free' : 'Choose Basic', false)));
+  /* Basic needs autopay set up at the start, so it comes first: nothing is charged until the free months end. */
+  if (tier === 'basic' && !live.some(b => b.status !== 'cancelling')) out.unshift(box('Basic', LAUNCH ? `Free for your first 6 months, then ${P.PB} a year` : `${P.PB} a year`, LAUNCH ? `Your verified company page, with your details kept up to date. Set up autopay now with UPI or a card: nothing is charged today, the first ${P.PB} is charged when your 6 free months end, and we email you before then. Cancel any time before the first charge.` : 'Your verified company page, with your details kept up to date.', btn('basic', LAUNCH ? 'Start Basic free with autopay' : 'Choose Basic', true)));
   return `<section class="box" style="gap:16px">
     <div class="toolbar"><h2>${inClaim ? 'Choose your plan' : 'Plan and payments'}</h2><span class="pill ${tier !== 'basic' ? 'ok' : 'un'}">${TIER_NAME[tier]} plan</span></div>
     ${rows ? `<div style="display:flex;flex-direction:column;gap:10px">${rows}</div>` : ''}

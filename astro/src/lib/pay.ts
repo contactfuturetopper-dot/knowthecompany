@@ -24,7 +24,9 @@ export const PLAN_NAMES: Record<string, string> = { basic: "Basic listing", plus
 export const RANK: Record<string, number> = { basic: 0, plus: 1, business: 2 };
 export const planKey = (p: unknown) => (p === "business" ? "business" : p === "plus" ? "plus" : "basic");
 export const PLUS_TRIAL_DAYS = 30;
-/* Launch offer, same dates as app.js: Basic free for the first year, Plus free for its first 30 days. */
+/* Basic's free period, in calendar months. app.js says "6 months" in its text; change both together. */
+export const BASIC_FREE_MONTHS = 6;
+/* Launch offer, same dates as app.js: Basic free for its first 6 months, Plus free for its first 30 days. */
 export const LAUNCH = Date.now() < Date.parse("2027-04-01T00:00:00+05:30");
 const DAY = 86_400_000;
 const YEARS = 10; /* yearly charges for up to ten years; customers can cancel any time */
@@ -122,7 +124,8 @@ export async function planIdFor(plan: string, currency: string): Promise<string>
 }
 
 /* When the first charge falls. If the company's current plan already runs to a date (planEndsAt), autopay
-   starts then. Otherwise Plus starts with its free days during the launch offer, and Basic is free for a year. */
+   starts then. Otherwise Plus starts with its free days during the launch offer, and Basic is free for
+   BASIC_FREE_MONTHS calendar months. */
 export function firstChargeAt(plan: string, company: any): Date | null {
   const now = Date.now();
   const ends = company.planEndsAt ? new Date(company.planEndsAt).getTime() : 0;
@@ -133,7 +136,17 @@ export function firstChargeAt(plan: string, company: any): Date | null {
   /* Business has no free period: its first year starts, and is charged, today. */
   if (plan === "business") return null;
   if (plan === "plus") return LAUNCH ? new Date(now + PLUS_TRIAL_DAYS * DAY) : null;
-  return LAUNCH ? new Date(now + 365 * DAY) : null;
+  return LAUNCH ? addMonths(new Date(now), BASIC_FREE_MONTHS) : null;
+}
+/* Same day of the month, n months on; a day the later month lacks (31 August + 6) falls back to its last day. */
+export function addMonths(d: Date, n: number): Date {
+  const out = new Date(d.getTime());
+  const day = out.getUTCDate();
+  out.setUTCDate(1);
+  out.setUTCMonth(out.getUTCMonth() + n);
+  const last = new Date(Date.UTC(out.getUTCFullYear(), out.getUTCMonth() + 1, 0)).getUTCDate();
+  out.setUTCDate(Math.min(day, last));
+  return out;
 }
 export const subscriptionTotal = YEARS;
 
