@@ -8,6 +8,7 @@ import {
   planIdFor, firstChargeAt, subscriptionTotal, checkoutSignatureOk, webhookSignatureOk, billingView, LIVE, PRICES, PLAN_NAMES, RANK, planKey,
 } from "../../../lib/pay";
 import { emailReady } from "../../../lib/business";
+import { remindersReady, reminderAuthOk, runReminders } from "../../../lib/reminders";
 
 const OFF = { error: "Payments aren’t switched on yet. Please try again soon, or contact us." };
 const getCompany = (id: string) => auth.elevate(items.get)("Companies", id).catch(() => null) as Promise<any>;
@@ -23,6 +24,12 @@ export const POST: APIRoute = async ({ params, request }) => {
   const action = params.action;
   try {
     if (action === "webhook") return await webhook(request);
+    /* The daily reminder job (GitHub Actions), signed with REMINDER_SECRET. */
+    if (action === "reminders") {
+      if (!remindersReady()) return json({ error: "Reminders aren’t switched on." }, 503);
+      if (!reminderAuthOk(request.headers.get("Authorization") || "")) return json({ error: "Not allowed" }, 401);
+      return json(await runReminders());
+    }
     const me = await memberFrom(request);
     if (!me) return json({ error: "Please log in again." }, 401);
     const body = await request.json().catch(() => ({}));
@@ -50,7 +57,8 @@ export const POST: APIRoute = async ({ params, request }) => {
         ...(start ? { start_at: Math.floor(start.getTime() / 1000) } : {}),
         notes: { company: company._id, member: me.id, plan },
       });
-      await saveBilling({ company: company._id, member: me.id, plan, currency, subscriptionId: sub.id, status: sub.status || "created", startAt: start || null, lastEvent: "created" });
+      /* The owner's login email is kept on the team-only Billing row for the reminders before the first charge. */
+      await saveBilling({ company: company._id, member: me.id, email: me.email, plan, currency, subscriptionId: sub.id, status: sub.status || "created", startAt: start || null, lastEvent: "created" });
       return json({
         key: keyId(), subscriptionId: sub.id, plan, currency, amount: PRICES[plan][currency], startAt: start ? start.toISOString() : "",
         name: PLAN_NAMES[plan], company: company.title, prefill: { name: me.name, email: me.email },

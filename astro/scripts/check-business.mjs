@@ -2,6 +2,7 @@
 // answered locally, members identified by their token. Covers upgrading Plus to Business, renewals and
 // cancellations from Razorpay's webhook, review invitation emails (quota, 90-day repeat rule, opt-out) and
 // team logins. Run: node scripts/check-business.mjs
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -9,16 +10,18 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const root = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "ktc-biz-"));
 const KEY = "rzp_secret_test", WH = "wh_secret_test";
 const stubs = {
-  "astro:env/server": `export const RAZORPAY_KEY_ID = "rzp_test_key", RAZORPAY_KEY_SECRET = "${KEY}", RAZORPAY_WEBHOOK_SECRET = "${WH}", BREVO_API_KEY = "brevo_test", INVITE_SENDER_EMAIL = "reviews@knowthecompany.com";`,
+  "astro:env/server": `export const RAZORPAY_KEY_ID = "rzp_test_key", RAZORPAY_KEY_SECRET = "${KEY}", RAZORPAY_WEBHOOK_SECRET = "${WH}", BREVO_API_KEY = "brevo_test", INVITE_SENDER_EMAIL = "reviews@knowthecompany.com", REMINDER_SECRET = "rem_secret_test";`,
   "@wix/essentials": `export const auth = { elevate: f => f };`,
   "@wix/data": `export const items = globalThis.__items;`,
+  "@wix/email-transmissions": `export const emailTransmissions = { sendEmailTransmission: (t, o) => { globalThis.__wixMail.push({ t, o }); return Promise.resolve({ emailTransmission: { status: "ACCEPTED" } }); } };`,
 };
+globalThis.__wixMail = [];
 const plugin = { name: "stubs", setup(b) {
-  b.onResolve({ filter: /^(astro:env\/server|@wix\/essentials|@wix\/data)$/ }, a => ({ path: a.path, namespace: "stub" }));
+  b.onResolve({ filter: /^(astro:env\/server|@wix\/essentials|@wix\/data|@wix\/email-transmissions)$/ }, a => ({ path: a.path, namespace: "stub" }));
   b.onLoad({ filter: /.*/, namespace: "stub" }, a => ({ contents: stubs[a.path], loader: "js" }));
   b.onResolve({ filter: /\?raw$/ }, a => ({ path: path.resolve(a.resolveDir, a.path.replace(/\?raw$/, "")), namespace: "raw" }));
   b.onLoad({ filter: /.*/, namespace: "raw" }, a => ({ contents: fs.readFileSync(a.path, "utf8"), loader: "text" }));
@@ -26,7 +29,7 @@ const plugin = { name: "stubs", setup(b) {
 const bundle = async (rel, name) => {
   const out = path.join(tmp, name + ".mjs");
   await build({ entryPoints: [path.join(root, rel)], bundle: true, format: "esm", platform: "node", outfile: out, logLevel: "error", plugins: [plugin] });
-  return out;
+  return pathToFileURL(out).href;
 };
 
 /* ---- Wix data, in memory ---- */
@@ -167,6 +170,50 @@ assert.equal(await webhook("subscription.cancelled", bizSub), 200);
 assert.equal(company().plan, "basic", "when Business ends the company falls back to Basic");
 r = await call(invite, "status", "tok-m1", { company: "acme.in" });
 assert.equal(r.status, 403, "invitations stop with the plan");
+
+/* ---- 5. Basic: 6 free months with autopay, and Wix reminder emails before the first charge ---- */
+col("Companies").set("new.in", { _id: "new.in", title: "New Co", claimStatus: "verified", ownerMemberIds: ["m3"], plan: "basic", _owner: ADMIN, _createdDate: "2026-11-01T00:00:00Z", _updatedDate: "2026-11-02T00:00:00Z" });
+const before = Date.now();
+r = await call(pay, "subscribe", "tok-m3", { company: "new.in", plan: "basic" });
+assert.equal(r.status, 200, "basic subscribe"); assert.equal(r.data.amount, 99900, "Basic is ₹999");
+const start = new Date(r.data.startAt), six = new Date(before); six.setUTCMonth(six.getUTCMonth() + 6);
+assert.ok(Math.abs(start - six) < 3 * 86_400_000, `Basic's first charge is 6 months away (${r.data.startAt})`);
+assert.ok(start - before < 200 * 86_400_000, "not a year any more");
+const basicRow = () => [...col("Billing").values()].find(b => b.subscriptionId === r.data.subscriptionId);
+assert.equal(basicRow().email, "rev@x.in", "owner's email kept for the reminders");
+const { addMonths } = await import(await bundle("src/lib/pay.ts", "paylib"));
+assert.equal(addMonths(new Date("2026-08-31T10:00:00Z"), 6).toISOString().slice(0, 10), "2027-02-28", "31 August + 6 months is the end of February");
+assert.equal(addMonths(new Date("2026-11-19T10:00:00Z"), 6).toISOString().slice(0, 10), "2027-05-19");
+/* the reminder job */
+const remind = async (auth) => { const req = new Request("https://www.knowthecompany.com/api/pay/reminders", { method: "POST", headers: auth ? { Authorization: auth } : {}, body: "{}" }); const res = await pay.POST({ params: { action: "reminders" }, request: req }); return { status: res.status, data: await res.json() }; };
+assert.equal((await remind()).status, 401, "the reminder job needs its secret");
+assert.equal((await remind("Bearer wrong_secret_xx")).status, 401, "a wrong secret is refused");
+const setStart = days => col("Billing").set(basicRow()._id, { ...basicRow(), status: "authenticated", startAt: new Date(Date.now() + days * 86_400_000 - 3_600_000) });
+setStart(40);
+let rr = await remind("Bearer rem_secret_test");
+assert.equal(rr.status, 200); assert.equal(rr.data.sent, 0, "nothing 40 days ahead"); assert.equal(globalThis.__wixMail.length, 0);
+setStart(15);
+rr = await remind("Bearer rem_secret_test");
+assert.equal(rr.data.sent, 1, "15-day reminder");
+const m15 = globalThis.__wixMail.at(-1);
+assert.deepEqual(m15.t.toRecipients, [{ emailAddress: "rev@x.in" }]); assert.equal(m15.t.type, "TRANSACTIONAL");
+assert.ok(m15.t.emailSubject.includes("15 days") && m15.t.emailSubject.includes("₹999"), m15.t.emailSubject);
+assert.ok(m15.t.emailHtmlContent.includes("https://www.knowthecompany.com/dashboard") && /Cancel autopay before/.test(m15.t.emailHtmlContent), "cancel link and wording");
+assert.ok(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-8[0-9a-f]{3}-[0-9a-f]{12}$/.test(m15.o.idempotencyKey), "GUID idempotency key");
+rr = await remind("Bearer rem_secret_test");
+assert.equal(rr.data.sent, 0, "the same reminder never goes twice");
+setStart(7); rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 1, "7-day reminder");
+setStart(2); rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 1, "2-day reminder");
+assert.deepEqual(basicRow().remindersSent, [15, 7, 2]);
+setStart(1); rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 0, "nothing more after the 2-day one");
+/* a late first run sends only the nearest reminder, not all three at once */
+col("Billing").set(basicRow()._id, { ...basicRow(), remindersSent: [] }); setStart(2);
+const n0 = globalThis.__wixMail.length; rr = await remind("Bearer rem_secret_test");
+assert.equal(globalThis.__wixMail.length - n0, 1, "one email per run"); assert.deepEqual(basicRow().remindersSent, [2]);
+/* an autopay that has already charged gets no reminders */
+col("Billing").set(basicRow()._id, { ...basicRow(), status: "active", remindersSent: [] }); setStart(7);
+col("Billing").set(basicRow()._id, { ...basicRow(), status: "active" });
+rr = await remind("Bearer rem_secret_test"); assert.equal(rr.data.sent, 0, "no reminders once paying");
 
 console.log("BUSINESS CHECK: ok");
 fs.rmSync(tmp, { recursive: true, force: true });

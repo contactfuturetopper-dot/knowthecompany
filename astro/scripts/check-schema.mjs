@@ -1,11 +1,12 @@
 // Checks the structured data (JSON-LD) the server adds to each page, against mocked Wix data:
 // every page parses, a company page carries its rating without the owner's own review, and nothing in
 // the data can close the <script> tag early. Run: node scripts/check-schema.mjs (after npm run sync).
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-const root = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tmp = fs.mkdtempSync(path.join((await import("node:os")).tmpdir(), "ktc-ld-"));
 const out = path.join(tmp, "page.bundle.mjs");
 await build({
@@ -51,7 +52,7 @@ globalThis.fetch = async (url, init) => {
   if (body.dataCollectionId === "Reviews") { if (!f.company) { const { limit, offset } = body.query.paging; return ok({ dataItems: reviews.slice(offset, offset + limit).map(data => ({ data })) }); } return ok({ dataItems: reviews.filter(r => r.company === f.company.$eq).map(data => ({ data })) }); }
   throw new Error("unexpected " + url + JSON.stringify(body));
 };
-const { resolvePage, renderShell, sitemapXml, SITEMAP_PATH } = await import(out);
+const { resolvePage, renderShell, sitemapXml, SITEMAP_PATH } = await import(pathToFileURL(out).href);
 for (const p of ["/", "/company/future-topper", "/category/education-and-e-learning", "/tools/hike", "/tools", "/blog", "/about", "/pricing", "/nope"]) {
   const pg = await resolvePage(p);
   const html = renderShell(pg);
@@ -92,7 +93,7 @@ for (const p of ["/", "/company/future-topper", "/category/education-and-e-learn
   assert.ok(cat.desc.startsWith("Reviews of online courses") && cat.body.includes("Reviews of online courses"), "category intro");
   assert.ok(/Future Topper<\/a> \(futuretopper\.in\): (Customers|Employees) \d\.\d out of 5/.test(cat.body), "category page shows ratings without JavaScript");
   {
-    const mod = await import(out);
+    const mod = await import(pathToFileURL(out).href);
     const co = { _id: "x.com", title: "A <b>&\"Co", website: "x.com", claimStatus: "verified", ownerMemberIds: ["o"], _owner: "c0f544a7-207e-490b-b7d9-830ef39f49c7" };
     const rv = (type, n, rating, rec) => Array.from({ length: n }, () => ({ type, rating, recommend: rec }));
     const few = mod.cardSvg(mod.cardData(co, rv("customer", 4, 5), "/company/x"));

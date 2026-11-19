@@ -1,0 +1,26 @@
+# Once a day, asks the site to email companies whose free period ends in 15, 7 or 2 days, before autopay
+# makes its first charge (astro/src/lib/reminders.ts). Wix sends the emails; each one goes out only once.
+# Needs the repository secret REMINDER_SECRET, the same value the publish workflow stores on Wix's servers.
+name: Autopay reminders
+
+on:
+  schedule:
+    - cron: "30 3 * * *" # 9:00 in India
+  workflow_dispatch:
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send today's reminders
+        env:
+          REMINDER_SECRET: ${{ secrets.REMINDER_SECRET }}
+        run: |
+          if [ -z "$REMINDER_SECRET" ]; then
+            echo "::error::Add a repository secret named REMINDER_SECRET (Settings → Secrets and variables → Actions), then publish the site once."
+            exit 1
+          fi
+          curl -fsS --retry 3 --retry-all-errors -X POST "https://www.knowthecompany.com/api/pay/reminders" \
+            -H "Authorization: Bearer $REMINDER_SECRET" -H "Content-Type: application/json" -d '{}'
+          echo

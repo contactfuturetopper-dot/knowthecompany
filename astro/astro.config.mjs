@@ -24,6 +24,9 @@ export default defineConfig({
       // address verified in Brevo. Until both are set, invitations go by WhatsApp and review links only.
       BREVO_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       INVITE_SENDER_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
+      // The daily reminder job's secret (src/lib/reminders.ts, .github/workflows/reminders.yml). Until it is
+      // set, no reminder emails go out before a free period ends.
+      REMINDER_SECRET: envField.string({ context: "server", access: "secret", optional: true }),
     },
   },
 });
